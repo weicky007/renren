@@ -1,0 +1,97 @@
+{template '_header'}
+<style>
+    .tplcolor{
+        color: #44abf7;
+        cursor: pointer;
+    }
+    .tplcolor:hover{
+        color: #2e6da4;
+    }
+    textarea, textarea:focus{
+        text-indent:0
+    }
+</style>
+<div class="page-header">
+    <span class="tplcolor">消息通知</span>
+</div>
+<div class="page-content">
+    <form id="setform" action="" method="post" class="form-horizontal form-validate" novalidate="novalidate">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">任务接取通知</label>
+            <div class="col-sm-9 col-xs-12">
+                <textarea name="msg[pick]</a>" class="form-control" rows="5" id="pick">{$msg['msg_pick']}</textarea>
+                <span class="help-block" data-id="pick">
+                    模板变量：<a class="tplcolor">[接取时间]</a> <a class="tplcolor">[截止时间]</a> <a class="tplcolor">[用户昵称]</a> <a class="tplcolor">[任务名称]</a> 
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">任务进度通知</label>
+            <div class="col-sm-9 col-xs-12">
+                <textarea name="msg[progress]</a>" class="form-control" rows="5" id="progress">{$msg['msg_progress']}</textarea>
+                <span class="help-block" data-id="progress">
+                    模板变量：<a class="tplcolor">[接取时间]</a> <a class="tplcolor">[截止时间]</a> <a class="tplcolor">[当前时间]</a> <a class="tplcolor">[用户昵称]</a> <a class="tplcolor">[任务名称]</a>  <a class="tplcolor">[当前进度]</a>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">任务完成通知</label>
+            <div class="col-sm-9 col-xs-12">
+                <textarea name="msg[finish]</a>" class="form-control" rows="5" id="finish">{$msg['msg_finish']}</textarea>
+                <span class="help-block" data-id="finish">
+                    模板变量：<a class="tplcolor">[接取时间]</a> <a class="tplcolor">[截止时间]</a> <a class="tplcolor">[当前时间]</a> <a class="tplcolor">[用户昵称]</a> <a class="tplcolor">[任务名称]</a> 
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">关注海报通知</label>
+            <div class="col-sm-9 col-xs-12">
+                <textarea name="msg[follow]</a>" class="form-control" rows="5" id="follow">{$msg['msg_follow']}</textarea>
+                <span class="help-block" data-id="follow">模板变量：
+                   <a class="tplcolor">[当前时间]</a> <a class="tplcolor">[海报所有者昵称]</a> <a class="tplcolor">[扫描者昵称]</a> <a class="tplcolor">[任务名称]</a>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-9 col-xs-12">
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    (function ($) {
+        $.fn.extend({
+            insertAtCaret: function (myValue) {
+                var $t = $(this)[0];
+                if (document.selection) {
+                    this.focus();
+                    sel = document.selection.createRange();
+                    sel.text = myValue;
+                    this.focus();
+                } else
+                if ($t.selectionStart || $t.selectionStart == '0') {
+                    var startPos = $t.selectionStart;
+                    var endPos = $t.selectionEnd;
+                    var scrollTop = $t.scrollTop;
+                    $t.value = $t.value.substring(0, startPos) + myValue + $t.value.substring(endPos, $t.value.length);
+                    this.focus();
+                    $t.selectionStart = startPos + myValue.length;
+                    $t.selectionEnd = startPos + myValue.length;
+                    $t.scrollTop = scrollTop;
+                } else {
+                    this.value += myValue;
+                    this.focus();
+                }
+            }
+        })
+    })(jQuery);
+
+    $('.tplcolor').click(function () {
+        var id = $(this).parent().attr('data-id');
+        var text = $(this).text();
+        $("#"+id).insertAtCaret(text);
+    })
+</script>
+{template '_footer'}

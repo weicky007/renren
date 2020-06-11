@@ -1,0 +1,45 @@
+<style>
+    .selected{
+        background-color: #f0ad4e;
+        border-color: #f0ad4e;
+    }
+</style>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">商城积分</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">奖励</span>
+                <input type="text" name="followrewardcredit" class="form-control" value="{$followreward['credit']}">
+                <span class="input-group-addon">个 积分</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">商城余额</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">奖励</span>
+                <input type="text" name="followrewardbalance" class="form-control" value="{$followreward['balance']}">
+                <span class="input-group-addon">元 余额</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">微信红包</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">奖励</span>
+                <input type="text" name="followrewardredpacket" class="form-control" value="{$followreward['redpacket']}">
+                <span class="input-group-addon">元 红包</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">商城优惠券</label>
+        <div class="col-sm-9 col-xs-12">
+            <a class="btn btn-default" data-target="#selector" onclick="$('#selector').modal();"data-type="followcoupon"><i class="fa fa-plus"></i> 选择优惠券</a>
+            <textarea name="followrewardcoupon" class="hide">{php echo json_encode($followreward['coupon'])}</textarea>
+        </div>
+    </div>
+    <div id="couponfollowreward"></div>
+

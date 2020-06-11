@@ -1,0 +1,324 @@
+{template '_header'}
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/live/static/css/room.css?v={php echo time()}">
+
+<div class="fui-page">
+    <div class="fui-content {if $fullscreen}fullscreen{/if}">
+
+        {if is_mobile() && !is_ios()}
+        <div class="block-title" >互动直播</div>
+        {/if}
+
+        <div class="block-video" style="background-image: url('{$poster}')">
+
+            <video class="video" id="player" src="{$video}" webkit-playsinline="true" playsinline="true" x-webkit-airplay="true"  x5-video-player-type="h5" x5-video-player-fullscreen="true"></video>
+
+            <div class="block-info">
+                <div class="live-info">
+                    <div class="face">
+                        <img src="{php echo tomedia($room['thumb'])}" />
+                    </div>
+                    <div class="text">{$room['title']}</div>
+                    {if $favorite}
+                        <div class="btn-favorite disabled">取消</div>
+                    {else}
+                        <div class="btn-favorite">订阅</div>
+                    {/if}
+                </div>
+                {if !empty($room_coupon) && $room['iscoupon']>0}
+                    <div class="btn-gifts">
+                        <div class="inner"></div>
+                        <div class="text">商城礼包待领取</div>
+                    </div>
+                {/if}
+            </div>
+
+            <div class="block-online">
+                <div class="online"><span id="online">1</span>人观看</div>
+                <!--<div class="mycard">我的邀请卡</div>-->
+            </div>
+
+            <div class="live-tips loading">
+                <div class="inner">
+                    <div class="text">加载直播间配置中</div>
+                    <div class="date"></div>
+                </div>
+            </div>
+
+            <div class="live-tips play btn-play">
+                <div class="inner">
+                    <div class="text"><i class="icon icon-iconfontplay2"></i></div>
+                </div>
+            </div>
+
+            <div class="live-tips failed">
+                <div class="inner btn-reconnect">
+                    <div class="text">与通讯服务器连接失败</div>
+                    <div class="date">点击此处重新连接</div>
+                </div>
+            </div>
+
+            <div class="live-tips stop">
+                <div class="inner">
+                    <div class="text">直播还未开始</div>
+                    <div class="date">预计{php echo date('Y-m-d H:i:s', $room['livetime'])}开播</div>
+                </div>
+            </div>
+
+            <div class="live-tips pause">
+                <div class="inner">
+                    <div class="text">管理员暂停了直播</div>
+                    <div class="date">请稍等片刻</div>
+                </div>
+            </div>
+        </div>
+
+        {if !$fullscreen}
+        <div class="block-tab">
+            <a data-tab="chat" class="active">聊天</a>
+            {if !empty($room_goods)}
+                <a data-tab="goods">商品</a>
+            {/if}
+            <a data-tab="room">直播间</a>
+            <a data-tab="diy01" style="display: none;">自定义</a>
+        </div>
+        {/if}
+
+        <div class="block-content">
+            <div class="layer-at layer">
+                <div class="layer-close"></div>
+                <div class="at-text">管理员@了你</div>
+                <div class="at-icon">@</div>
+            </div>
+
+            <div class="tab-content" data-tab="chat">
+                {loop $records $record}
+                <div class="msg {if $fullscreen&&(!empty($record['status']) || $record['type']=='redpack')}nopadding{/if}" data-msgid="{$record['id']}">
+                    {if !empty($record['status'])}
+                    <div class="tip">
+                        <div class="text">{$record['text']}</div>
+                    </div>
+                    {else}
+                    {if $record['type']=='text' || $record['type']=='image' || !$fullscreen}
+                    <div class="nickname {if $record['mid']==$member['id']}self{/if}" data-uid="{$record['mid']}" data-nickname="{$record['nickname']}">{$record['nickname']}{if $record['mid']==$member['id']}(你){/if}:&nbsp;</div>
+                    {/if}
+                    <div class="content">{$record['text']}
+                        {if $record['mid']==$member['id']}<span class="btn-repeal"> 撤回</span>{/if}
+                    </div>
+                    {/if}
+                </div>
+                {/loop}
+            </div>
+            {if !$fullscreen}
+                <div class="tab-content" data-tab="goods">
+                    {loop $room_goods $row}
+                    <div class="goods-item">
+                        <div class="thumb">
+                            <img src="{php echo tomedia($row['thumb'])}" alt="{$row['title']}" />
+                        </div>
+                        <div class="info">
+                            <div class="title">{$row['title']}</div>
+                            <div class="price">
+                                <div class="num">
+                                    <span class="label">直播价</span>
+                                    <span class="bigprice">&yen;{php echo price_format($row['liveprice'],2)}</span>
+                                    {if $row['marketprice']>$row['liveprice']}
+                                    <span class="product">原价: &yen;{php echo price_format($row['marketprice'],2)}</span>
+                                    {/if}
+                                </div>
+                                <div class="btn-buy">
+                                    <a href="{php echo mobileUrl('goods/detail',array('id'=>$row['id'], 'liveid'=>$roomid))}" data-nocache="true">立即去购买</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/loop}
+                </div>
+                <div class="tab-content" data-tab="room">
+                    <div class="shop-info">
+                        <div class="logo">
+                            <img src="{php echo tomedia($shop['logo'])}" alt="{$shop['name']}" />
+                        </div>
+                        <div class="info">{$shop['name']}</div>
+                        <a class="btn-enter" href="{php echo mobileUrl()}" data-nocache="true">进入商城</a>
+                    </div>
+                    <div class="room-info">
+                        <p>直播间: {$room['title']}</p>
+                        <p>直播时间: {php echo date('Y-m-d H:i:s', $room['livetime'])}</p>
+                    </div>
+                    <div class="room-info">
+                        <p>直播间介绍: {if !empty($room['introduce'])}{php echo htmlspecialchars_decode($room['introduce'])}{else}暂无介绍{/if}</p>
+                    </div>
+                </div>
+                <div class="tab-content" data-tab="diy01">diy01</div>
+            {/if}
+        </div>
+
+        <!---------------------------------------------------------------------------------------------------------->
+
+        <div class="layer-mask"></div>
+
+        <!-- 店铺信息+关注弹窗 -->
+        <div class="layer-roominfo layer">
+            <div class="layer-close"></div>
+            <div class="room-face">
+                <img src="{php echo tomedia($room['thumb'])}" alt="{$shop['name']}" />
+            </div>
+            <div class="room-title">{$room['title']}</div>
+            <div class="room-info">
+                <p>直播间：{$room['title']}</p>
+                <p>直播时间：{php echo date('Y-m-d H:i:s', $room['livetime'])}</p>
+            </div>
+            {if !empty($room['introduce'])}
+            <div class="room-info">直播间介绍：{php echo htmlspecialchars_decode($room['introduce'])}</div>
+            {else}
+            <div class="room-info">暂无介绍</div>
+            {/if}
+            {if $favorite}
+                <div class="room-btn disabled" data-roomid="{$room['id']}">取消订阅</div>
+            {else}
+                <div class="room-btn" data-roomid="{$room['id']}">点击订阅</div>
+            {/if}
+        </div>
+
+        <!-- 礼物弹窗 -->
+        <div class="layer-gifts layer">
+            <div class="layer-close"></div>
+            <div class="inner">
+                {loop $room_coupon $coupon}
+                <div class="coupon-item roomcoupon {if $coupon['iscoupon'] === false}disabled{/if}" data-roomid="{$room['id']}" data-couponid="{$coupon['couponid']}" data-livetime="{$room['livetime']}">
+                    <div class="left">
+                        <span>{$coupon['display_title']}</span>
+                    </div>
+                    <div class="center">
+                        <div class="title">{$coupon['couponname']}</div>
+                        <div class="subtitle">满{$coupon['enough']}元可用</div>
+                    </div>
+                    <div class="right"></div>
+                    <div class="live-mask">{if $coupon['iscoupon'] === false}{$coupon['couponmessage']}{/if}</div>
+                </div>
+                {/loop}
+            </div>
+        </div>
+
+        <!-- 红包弹窗 -->
+        <div class="layer-redpack layer">
+            <div class="layer-close"></div>
+            <div class="redpack-title">红包来了，速抢速抢速抢速抢速抢</div>
+            <!-- 抢之前显示 -->
+            <div class="redpack-bg"></div>
+            <div class="redpack-draw">抢</div>
+            <!-- 抢之后显示 -->
+            <div class="redpack-info">
+                <div class="price"><span>￥</span>50</div>
+                <div class="type">余额红包</div>
+            </div>
+            <div class="redpack-list">
+                <div class="title">看看其他人手气如何？</div>
+                <div class="inner">
+                    <div class="item">
+                        <div class="avatar">
+                            <img src="../addons/ewei_shopv2/static/images/customer.jpg" />
+                        </div>
+                        <div class="nickname">王小花</div>
+                        <div class="price">￥12.51</div>
+                    </div>
+                    <div class="item">
+                        <div class="avatar">
+                            <img src="../addons/ewei_shopv2/static/images/customer.jpg" />
+                        </div>
+                        <div class="nickname">王小花</div>
+                        <div class="price">￥12.51</div>
+                    </div>
+                    <div class="item">
+                        <div class="avatar">
+                            <img src="../addons/ewei_shopv2/static/images/customer.jpg" />
+                        </div>
+                        <div class="nickname">王小花</div>
+                        <div class="price">￥12.51</div>
+                    </div>
+                    <div class="item">
+                        <div class="avatar">
+                            <img src="../addons/ewei_shopv2/static/images/customer.jpg" />
+                        </div>
+                        <div class="nickname">王小花</div>
+                        <div class="price">￥12.51</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 优惠券弹层 -->
+        <div class="layer-coupon layer">
+            <div class="layer-close"></div>
+            <div class="title">优惠券已到账</div>
+            <div class="item">
+                <div class="left"><span>￥</span>500</div>
+                <div class="center">
+                    <div class="title">店铺优惠券</div>
+                    <div class="subtitle">满100元可用</div>
+                </div>
+                <div class="right"></div>
+            </div>
+            <div class="tip">请到个人中心查看</div>
+        </div>
+
+        <!--商品弹层 -->
+        <div class="layer-goods layer">
+            <div class="layer-close"></div>
+            <div class="inner">
+                {loop $room_goods $row}
+                <div class="goods-item">
+                    <div class="thumb">
+                        <img src="{php echo tomedia($row['thumb'])}" alt="{$row['title']}" />
+                    </div>
+                    <div class="info">
+                        <div class="title">{$row['title']}</div>
+                        <div class="price">
+                            <div class="num">
+                                <span class="label">直播价</span>
+                                <span class="bigprice">&yen;{php echo price_format($row['liveprice'],2)}</span>
+                                {if $row['marketprice']>$row['liveprice']}
+                                <span class="product">原价: &yen;{php echo price_format($row['marketprice'],2)}</span>
+                                {/if}
+                            </div>
+                            <div class="btn-buy"><a href="{php echo mobileUrl('goods/detail',array('id'=>$row['id'], 'liveid'=>$roomid))}" data-nocache="true">立即去购买</a></div>
+                        </div>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+        </div>
+
+        <div class="fui-footer block-input">
+            {if !empty($room_goods)}
+                <div class="btn-goods"></div>
+            {/if}
+            <div class="input">
+                <div class="input-place">服务器连接中...</div>
+                <input id="input" placeholder="跟大家说点什么吧..."  style="display: none
+" />
+                <div class="btn-emoji"></div>
+            </div>
+            <div class="btn-like"></div>
+            <div class="btn-send">发送</div>
+        </div>
+
+        <div class="block-emoji">
+            {loop $emojiList $i $emojiItem}
+                {if !empty($emojiItem)}
+                    <div class="item" title="{$emojiItem}">
+                        <img class="face" src="../addons/ewei_shopv2/plugin/live/static/images/face/{$i}.gif"/>
+                    </div>
+                {/if}
+            {/loop}
+        </div>
+
+        <script type="text/javascript">
+            require(['../addons/ewei_shopv2/plugin/live/static/js/live.js'],function(modal){
+                modal.init({wsConfig: {$wsConfig}});
+            });
+        </script>
+    </div>
+</div>
+
+{template '_footer'}
