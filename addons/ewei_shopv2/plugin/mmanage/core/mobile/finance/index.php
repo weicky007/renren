@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -143,8 +142,8 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$type = ($type == 2 ? 'credit1' : 'credit2');
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$condition = ' and log.uniacid=:uniacid and (log.module=:module1  or log.module=:module2)and m.uniacid=:uniacid  and log.credittype=:credittype';
-		$params = array(':uniacid' => $_W['uniacid'], ':module1' => 'ewei_shopv2', ':module2' => 'ewei_shop', ':credittype' => $type);
+		$condition = ' and log.uniacid=:uniacid and log.module=:module and m.uniacid=:uniacid  and log.credittype=:credittype';
+		$params = array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':credittype' => $type);
 
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
@@ -164,7 +163,6 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$condition .= ' and m.groupid=' . intval($_GPC['groupid']);
 		}
 
-		$condition .= ' and log.uid<>0';
 		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
 
 		if (empty($_GPC['export'])) {

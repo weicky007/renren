@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,6 +20,11 @@ class Sms_EweiShopV2Page extends AppMobilePage
 	public function changepwd()
 	{
 		$this->loginSMS('changepwd');
+	}
+
+	public function changemobile()
+	{
+		$this->loginSMS('bind');
 	}
 
 	public function changemobie()
@@ -65,7 +70,7 @@ class Sms_EweiShopV2Page extends AppMobilePage
 		}
 
 		$code = random(5, true);
-		$ret = com('sms')->send($mobile, $sms_id, array('验证码' => $code));
+		$ret = com('sms')->send($mobile, $sms_id, array('验证码' => $code, '商城名称' => $_W['shopset']['shop']['name']));
 
 		if ($ret['status']) {
 			m('cache')->set($key, $code);

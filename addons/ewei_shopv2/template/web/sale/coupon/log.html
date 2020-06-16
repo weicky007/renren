@@ -138,10 +138,8 @@
 
         <td>{if $row['coupontype']==0}
             <label class='label label-success'>消费</label>
-            {elseif $row['coupontype']==1}
+            {else}
             <label class='label label-warning'>充值</label>
-            {elseif $row['coupontype']==2}
-            <label class='label label-warning'>收银台</label>
             {/if}{$row['couponname']}
         </td>
         <td>
@@ -177,4 +175,3 @@
 </div>
 {/if}
 {template '_footer'}
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

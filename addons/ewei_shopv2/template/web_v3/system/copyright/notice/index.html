@@ -90,7 +90,7 @@
                     data-toggle='ajaxSwitch'
                     data-switch-value='{$row['status']}'
                     data-switch-value0='0|隐藏|label label-default|{php echo webUrl('system/copyright/notice/status',array('status'=>1,'id'=>$row['id']))}'
-                    data-switch-value1='1|显示|label label-primary|{php echo webUrl('system/copyright/notice/status',array('status'=>0,'id'=>$row['id']))}'
+                    data-switch-value1='1|显示|label label-success|{php echo webUrl('system/copyright/notice/status',array('status'=>0,'id'=>$row['id']))}'
                     {/if}
                     >
                     {if $row['status']==1}显示{else}隐藏{/if}</span>
@@ -156,4 +156,3 @@
 
 
 {template '_footer'}
-<!--OTEzNzAyMDIzNTAzMjQyOTE0-->

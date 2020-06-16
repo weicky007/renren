@@ -46,17 +46,20 @@
                 <label class="col-lg control-label {ifp 'sysset.sms.temp.edit'}must{/if}">服务商</label>
                 <div class="col-sm-9 col-xs-12">
                     {ife 'sysset.sms.temp' $item}
-                    {if !empty($smsset['juhe']) || (!empty($item) && $item['type']=='juhe')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="juhe" {if $item['type']=='juhe' || empty($item)}checked{/if} {if !empty($item['type'])}disabled{/if}> 聚合数据</label>{/if}
+                    {if !empty($smsset['aliyun_new']) || (!empty($item) && $item['type']=='aliyun_new')}
+                    <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="aliyun_new" {if $item['type']=='aliyun_new' || empty($item)} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里云短信(新版)</label>
+                    {/if}
+                    {if !empty($smsset['juhe']) || (!empty($item) && $item['type']=='juhe')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="juhe" {if $item['type']=='juhe'}checked{/if} {if !empty($item['type'])}disabled{/if}> 聚合数据</label>{/if}
+                    {if !empty($smsset['emay']) || (!empty($item) && $item['type']=='emay')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="0" name="type" value="emay" {if $item['type']=='emay'} checked{/if} {if !empty($item['type'])}disabled{/if}> 亿美软通</label>{/if}
                     {if !empty($smsset['dayu']) || (!empty($item) && $item['type']=='dayu')}
                     <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="dayu" {if $item['type']=='dayu'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里大于(老用户)</label>
                     {/if}
                     {if !empty($smsset['aliyun']) || (!empty($item) && $item['type']=='aliyun')}
-                    <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="aliyun" {if $item['type']=='aliyun'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里云短信</label>
+                    <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="aliyun" {if $item['type']=='aliyun'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里云短信(旧版)</label>
                     {/if}
-                    {if !empty($smsset['emay']) || (!empty($item) && $item['type']=='emay')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="0" name="type" value="emay" {if $item['type']=='emay'} checked{/if} {if !empty($item['type'])}disabled{/if}> 亿美软通</label>{/if}
                     <div class="help-block">注意：选择短信服务商请先至 <a href="{php echo webUrl('sysset/sms/set')}" target="_blank">短信接口设置</a> 页面设置好短信服务商的接口信息。(<span class="text-danger">保存后不可修改</span> )</div>
                     {else}
-                    <div class='form-control-static'>{if $item['type']=='juhe'}聚合数据{elseif $item['type']=='dayu'}阿里大于{elseif $item['type']=='emay'}亿美软通{/if}</div>
+                    <div class='form-control-static'>{if $item['type']=='juhe'}聚合数据{elseif $item['type']=='dayu'}阿里大于{elseif $item['type']=='emay'}亿美软通{elseif $item['type']=='aliyun'}阿里云短信(旧版){elseif $item['type']=='aliyun_new'}阿里云短信(新版){/if}</div>
                     {/if}
                 </div>
             </div>
@@ -73,7 +76,7 @@
                 </div>
             </div>
 
-            <div class="form-group sms-template-sign" style="{if $item['type']=='dayu' || $item['type']=='aliyun' || $item['type']=='emay'}display:block;{else}display:none;{/if}">
+            <div class="form-group sms-template-sign" style="{if $item['type']=='dayu' || $item['type']=='aliyun' || $item['type']=='aliyun_new' || $item['type']=='emay' || empty($item)}display:block;{else}display:none;{/if}">
                 <label class="col-lg control-label {ifp 'sysset.sms.temp.edit'}must{/if}" >短信签名</label>
                 <div class="col-sm-9 col-xs-12">
                     {ife 'sysset.sms.temp' $item}
@@ -338,6 +341,7 @@
                 <div class="panel-heading tm tm-login" style="display:none">登录/注册</div>
                 <div class="panel-body tm tm-login" style="display:none">
                     <a href='JavaScript:' class="btn btn-default btn-sm">验证码</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">商城名称</a>
                 </div>
 
                 <div class="panel-footer">
@@ -366,7 +370,7 @@
                 $(".sms-template-1").hide();
                 $(".sms-template-0").show();
             }
-            if(val=='dayu' || val=='aliyun' || val=='emay'){
+            if(val=='dayu' || val=='aliyun' || val=='aliyun_new' || val=='emay'){
                 $(".sms-template-sign").show();
             }else{
                 $(".sms-template-sign").hide();
@@ -447,5 +451,3 @@
     </script>
 
 {template '_footer'}
-
-<!--NDAwMDA5NzgyNw==-->

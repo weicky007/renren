@@ -16,7 +16,7 @@
 	.basic{
 		float: left;
 		width: 492px;
-		height: 600px;
+		height: 500px;
 		border: 1px solid #e5e5e5;
 		margin: 30px 0 0 30px;
 	}
@@ -282,10 +282,6 @@
 				发送总量
 				<span class="remark">{$card['card_totalquantity']}</span>
 			</div>
-			<div class="card_cell">
-				领取数量
-				<span class="remark">{php echo intval($card['card_totalquantity']) - intval($card['card_quantity'])}</span>
-			</div>
 			<div>
 				{ifp 'member.card'}
 					<a class='edit_btn edit_card' href="{php echo webUrl('member/card/post')}"> 编辑会员卡</a>
@@ -327,4 +323,3 @@
 
 </script>
 {template '_footer'}
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

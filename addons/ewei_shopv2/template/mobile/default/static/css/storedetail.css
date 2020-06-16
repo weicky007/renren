@@ -108,7 +108,7 @@ body{
 	-ms-transform: scaleY(0.5);
 	transform: scaleY(0.5);
 }
-/*shangjia*/
+
 .fui-list.merchant {
 	padding: .9rem .6rem;
 }
@@ -170,7 +170,7 @@ body{
 }
 
 
-/*common*/
+
 .text-danger{
 	color: #ff5555 !important;
 }
@@ -928,4 +928,3 @@ i{
 	padding: 0;
 }
 
-/*NDAwMDA5NzgyNw==*/

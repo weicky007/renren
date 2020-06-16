@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{if !empty($copyright) && !empty($copyright['title'])}{$copyright['title']}{/if}-悟空社区 5kym.cn</title>
+        <title>{if !empty($copyright) && !empty($copyright['title'])}{$copyright['title']}{/if}</title>
         <link rel="shortcut icon" href="{$_W['siteroot']}{$_W['config']['upload']['attachdir']}/{if !empty($_W['setting']['copyright']['icon'])}{$_W['setting']['copyright']['icon']}{else}images/global/wechat.jpg{/if}" />
         <link href="{php echo EWEI_SHOPV2_LOCAL}static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
         <link href="{php echo EWEI_SHOPV2_LOCAL}static/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
@@ -37,7 +37,7 @@
         </script>
 
         <!-- 兼容微擎1.5.3 -->
-        {if IMS_VERSION >= 1.5}
+        {if IMS_VERSION >= 1.0}
         <link href="{php echo EWEI_SHOPV2_LOCAL}static/css/we7.common.css?v=1.0.0" rel="stylesheet">
         <script type="text/javascript" src="./resource/js/lib/bootstrap.min.js"></script>
         <script type="text/javascript" src="./resource/js/app/common.min.js?v=20170802"></script>

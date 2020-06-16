@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -38,20 +37,6 @@ class Page extends WeModuleSite
 		if (($lasttime + $interval) <= $current) {
 			m('cache')->set('closeorder', date('Y-m-d H:i:s', $current), 'global');
 			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', NULL, NULL, 1);
-		}
-
-		$lasttime = strtotime(m('cache')->getString('closeorder_virtual', 'global'));
-		$interval_v = intval(m('cache')->getString('closeorder_virtual_time', 'global'));
-
-		if (empty($interval_v)) {
-			$interval_v = 60;
-		}
-
-		$current = time();
-
-		if (($lasttime + $interval_v) <= $current) {
-			m('cache')->set('closeorder_virtual', date('Y-m-d H:i:s', $current), 'global');
-			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', array('uniacid' => $_W['uniacid']), NULL, 1);
 		}
 
 		$lasttime = strtotime(m('cache')->getString('fullback_receive', 'global'));
@@ -332,14 +317,6 @@ class Page extends WeModuleSite
 
 				if (!is_file($source)) {
 					$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/' . $ptemplate . '/' . $pfilename . '/index.html';
-				}
-
-				if (!is_file($source)) {
-					$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/default/' . $pfilename . '.html';
-				}
-
-				if (!is_file($source)) {
-					$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/default/' . $pfilename . '/index.html';
 				}
 			}
 		}

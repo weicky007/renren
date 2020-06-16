@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -113,7 +113,8 @@ class Address_EweiShopV2Page extends AppMobilePage
 			app_error(AppError::$ParamsError, '收件区域为空');
 		}
 
-		if (empty($data['datavalue'])) {
+		$set = m('util')->get_area_config_set();
+		if (!empty($set['address_street']) && (empty($data['datavalue']) || empty($data['streetdatavalue']))) {
 			app_error(AppError::$ParamsError, '地址数据出错，请重新选择');
 		}
 

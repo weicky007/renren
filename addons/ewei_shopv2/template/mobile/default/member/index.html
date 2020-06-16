@@ -18,7 +18,7 @@
 					{if empty($_W['shopset']['trade']['closerecharge'])}<a href="{php echo mobileUrl('member/recharge')}"><div class="btn">充值</div></a>{/if}
 				</div>
 				<div class="child userinfo">
-					<a href="{php echo mobileUrl('member/info')}" data-nocache="true" style="color: white;">
+					<a href="{php echo mobileUrl('member/info/face')}" data-nocache="true" style="color: white;">
 						<div class="face"><img src="{$member['avatar']}" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/></div>
 						<div class="name">{$member['nickname']}</div>
 					</a>
@@ -431,4 +431,3 @@
 
 {template '_footer'}
 
-<!--青岛易联互动网络科技有限公司-->

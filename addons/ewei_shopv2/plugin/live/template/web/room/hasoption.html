@@ -44,10 +44,9 @@
                             <td>{$item['title']}</td>
                             <td>&yen;{$item['marketprice']}</td>
                             <td style="" class="fullprice" data-price="{$item['marketprice']}">
-                                <input name="option_liveprice_{$item['id']}" type="text" class="form-control option_liveprice option_liveprice_{$item['id']}" placeholder="0" value="{$item['liveprice']}">
+                                <input name="option_liveprice_{$item['id']}" type="text" class="form-control option_liveprice option_liveprice_{$item['id']}" placeholder="0" value="{if empty($item['liveprice'])}{$item['marketprice']}{/if}">
                             </td>
-
-                            <td style="text-align: right;"><input type='checkbox' name="optionid" {if $item['isoption']}checked{/if} value="{$item['id']}"/></td>
+                            <td style="text-align: right;"><input type='checkbox' name="optionid" {if !empty($item['liveprice'])}checked{/if} value="{$item['id']}"/></td>
                         </tr>
                         {/loop}
                         {else}
@@ -55,7 +54,7 @@
                                 <td>{$goods['title']}</td>
                                 <td>&yen;{$goods['marketprice']}</td>
                                 <td style="" class="fullprice" data-price="{$goods['marketprice']}">
-                                    <input name="liveprice{$goodsid}" type="text" class="form-control liveprice liveprice{$goodsid}" placeholder="0" value="{$goods['liveprice']}">
+                                    <input name="liveprice{$goodsid}" type="text" class="form-control liveprice liveprice{$goodsid}" placeholder="0" value="{if empty($goods['liveprice'])}{$goods['marketprice']}{/if}">
                                     <input type="hidden" name="live_goods" data-goodsid="{$goodsid}" data-id="{$goods['id']}">
                                 </td>
 
@@ -79,18 +78,24 @@
             var price = parseFloat($(this).parent("td").attr("data-price"));
             var liveprice = $(this).val();
             if(price<=liveprice){
-                $(this).val(price-0.01);
+                $(this).val(price);
             }else{
                 $(this).val(liveprice);
+            }
+            if(liveprice<=0){
+                $(this).val(0);
             }
         });
         $(".liveprice").blur(function () {
             var price = parseFloat($(this).parent("td").attr("data-price"));
             var liveprice = $(this).val();
             if(price<=liveprice){
-                $(this).val(price-0.01);
+                $(this).val(price);
             }else{
                 $(this).val(liveprice);
+            }
+            if(liveprice<=0){
+                $(this).val(0);
             }
         })
 
@@ -130,7 +135,10 @@
                     option[index] = $(this).find("input[name='optionid']").val();
                     liveprice = $(this).find("input[name^='option_liveprice']").val() ? parseFloat($(this).find("input[name^='option_liveprice']").val()).toFixed(2) : 0;
                     if(price<=liveprice){
-                        liveprice = price - 0.01;
+                        liveprice = price;
+                    }
+                    if(liveprice<=0){
+                        liveprice = 0;
                     }
                     livegoods[index] = [liveprice];
                     optoinhtml += '<input type="hidden" value="'+livegoods[index]+'" name="livegoodsoption'+option[index]+'" >';
@@ -166,7 +174,7 @@
                 var price = parseFloat($("#param-items .fullprice").attr("data-price"));
                 var livegoods = $("input[name='liveprice"+goodsid+"']").val();
                 if(price <= livegoods){
-                    livegoods = price - 0.01;
+                    livegoods = price;
                 }
 
                 var livegoodshtml = '<input type="hidden" value="'+livegoods+'" name="goods'+{$goodsid}+'" >';
@@ -190,7 +198,7 @@
             var option_allprice = parseFloat(Math.abs($("input.option_liveprice_"+opid+"").val())).toFixed(2);
             var price = parseFloat($(this).find("td.fullprice").attr("data-price"));
             if(price<=option_allprice){
-                $("input.option_liveprice_"+opid+"").val(price-0.01);
+                $("input.option_liveprice_"+opid+"").val(price);
             }else{
                 $("input.option_liveprice_"+opid+"").val(option_allprice);
             }
@@ -199,6 +207,7 @@
     }
 
 </script>
+
 
 
 

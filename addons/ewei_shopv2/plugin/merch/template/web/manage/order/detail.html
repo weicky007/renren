@@ -503,7 +503,7 @@
                             {if $item['status'] == 2}商家已发货，等待买家收货并交易完成{/if}
                             {if $item['status'] == -1}
                             {if !empty($refund) && $refund['status']==1}
-                            <span class="label label-default">已维权</span> {if !empty($refund['refundtime'])}维权时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
+                            <span class="label label-default">已退款</span> {if !empty($refund['refundtime'])}退款时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
                             {/if}
                             {/if}
                         </div>
@@ -752,4 +752,3 @@
 
 {template '_footer'}
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

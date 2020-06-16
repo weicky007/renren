@@ -19,6 +19,13 @@ define(['core', 'tpl'], function (core, tpl) {
         modal.initWs();
         modal.initClick();
         modal.initPlayer();
+        modal.initNotice();
+
+        // 处理安卓播放中跳转后返回
+        if(modal.wsConfig.isMobile && !modal.wsConfig.isIos){
+            modal.x5videoexitfullscreen();
+        }
+
         setInterval(function () {
             var tipIndex = Math.floor(Math.random() * 3);
             if (tipIndex == 2 && !modal.wsCanAt) {
@@ -29,39 +36,14 @@ define(['core', 'tpl'], function (core, tpl) {
                 modal.wsSend('communication', {toUser: 'system'});
                 modal.clickLike()
             }
-        }, 8000);
-        $(".roomcoupon").off("click").on("click", function () {
-            var _this = $(this);
-            var roomid = parseInt(_this.attr("data-roomid"));
-            var couponid = parseInt(_this.attr("data-couponid"));
-            var livetime = parseInt(_this.attr("data-livetime"));
-            var disabled = _this.hasClass("disabled") ? false : true;
-            if (disabled) {
-                core.json('live/room/roomcoupon', {
-                    roomid: roomid,
-                    livetime: livetime,
-                    couponid: couponid
-                }, function (ret) {
-                    var result = ret.result;
-                    if (ret.status < -1) {
-                        _this.addClass("disabled").find(".live-mask").text(result.message);
-                        return
-                    } else if (ret.status >= -1 && ret.status <= 0) {
-                        FoxUI.toast.show(result.message)
-                    } else {
-                        FoxUI.toast.show('优惠券已领取，请到我的优惠券中查看')
-                    }
-                })
-            }
-        })
+        }, 8000)
     };
     modal.initPlayer = function () {
-        if (modal.wsConfig.isMobile && modal.wsConfig.isIos) {
-            var playerHeight = $('body').width() * 0.56;
-            if (!$('.fui-content').hasClass('fullscreen')) {
-                $('.block-video').css('height', playerHeight + 'px');
-                $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px')
-            }
+        var playerHeight = $('body').width() * 0.56;
+        if (!$('.fui-content').hasClass('fullscreen')) {
+            $('.block-video').css('height', playerHeight + 'px');
+            $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px');
+            $('.block-notice').css('top', playerHeight + $('.block-tab').height() + 'px')
         }
         var player = $('#player')[0];
         if (!modal.wsConfig.isMobile || modal.wsConfig.isIos) {
@@ -71,23 +53,30 @@ define(['core', 'tpl'], function (core, tpl) {
             $('.fui-content').addClass('player-fullscreen');
             var playerHeight = $('body').width() * 0.56;
             if (!$('.fui-content').hasClass('fullscreen')) {
+                $('.block-video').css('height', 'auto');
                 $('.block-tab').css('top', $('.block-title').height() + playerHeight + 'px');
-                $('.block-content').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px')
+                $('.block-content').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px');
+                $('.block-notice').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px')
             }
         });
         player.addEventListener("x5videoexitfullscreen", function () {
-            var playerHeight = $('body').width() * 0.56;
-            $('.block-tab').css('top', playerHeight + 'px');
-            $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px');
-            $('.fui-content').removeClass('player-fullscreen')
+            modal.x5videoexitfullscreen();
         })
+    };
+    modal.x5videoexitfullscreen = function () {
+        var playerHeight = $('body').width() * 0.56;
+        $('.block-tab').css('top', playerHeight + 'px');
+        $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px');
+        $('.fui-content').removeClass('player-fullscreen');
+        $('.block-notice').css('top', playerHeight + $('.block-tab').height() + 'px');
+        $('.btn-play').show()
     };
     modal.initWs = function () {
         if (!modal.wsConfig) {
             modal.liveMsg('notice', '通讯服务器配置错误');
             return
         } else {
-            $('.block-input .input-place').html('初始化通讯服务...').show().siblings().hide();
+            $('.block-input .input-place').html('初始化通讯服务...').show().siblings().hide()
         }
         var wsConfig = modal.wsConfig;
         var wsClient = new WebSocket(wsConfig.address);
@@ -123,6 +112,9 @@ define(['core', 'tpl'], function (core, tpl) {
                 } else {
                     $('.btn-repeal').removeClass('show')
                 }
+                setTimeout(function () {
+                    modal.scrollBottom()
+                }, 10)
             } else if (data.type == 'notice') {
                 modal.liveMsg('notice', data.text)
             } else if (data.type == 'setting') {
@@ -155,7 +147,7 @@ define(['core', 'tpl'], function (core, tpl) {
                 }
             } else if (data.type == 'userEnter') {
                 if (data.role != 'manage') {
-                    modal.liveMsg('notice', data.nickname + ' 进入直播间！掌声欢迎~')
+                    modal.userEnter(data.nickname)
                 }
                 modal.realOnline++;
                 modal.initOnline()
@@ -223,22 +215,26 @@ define(['core', 'tpl'], function (core, tpl) {
                 }
             } else if (data.type == 'clicklike') {
                 modal.clickLike()
+            } else if (data.type == 'goods') {
+                modal.liveGoods(data)
             } else if (data.type == 'redpack') {
                 modal.liveMsg('redpack', data)
             } else if (data.type == 'redpackget') {
                 if (data.prestatus == 0) {
-                    FoxUI.toast.show('获取失败')
+                    FoxUI.toast.show('红包不存在或已过期')
                 } else if (data.prestatus == 1) {
                     $('.layer-mask').fadeIn(200);
-                    $('.layer-redpack').addClass('in open')
+                    $('.layer-redpack').addClass('in open').find('.price').html('<span>￥</span>' + data.money)
                 } else if (data.prestatus == 2) {
                     $('.layer-redpack .redpack-info .price').addClass('small').html('手速慢太慢了，没抢到..');
+                    $('.msg .content .redpack[data-pushid="' + data.redpackid + '"]').addClass('drew').find('.desc').text('已抢光');
                     $('.layer-mask').fadeIn(200);
                     $('.layer-redpack').addClass('in open')
                 } else if (data.prestatus == 3) {
                     $('.layer-mask').fadeIn(200);
                     $('.layer-redpack').removeClass('open').addClass('in')
                 }
+                modal.initRedpackList(data.list);
                 FoxUI.loader.hide();
                 $(document).find('.redpack[data-pushid="' + data.redpackid + '"]').removeClass('stop')
             } else if (data.type == 'redpackdraw') {
@@ -254,23 +250,54 @@ define(['core', 'tpl'], function (core, tpl) {
                     }, 1500)
                 } else if (data.status == 1 || data.status == 3) {
                     setTimeout(function () {
+                        if (data.status == 3) {
+                            $('.msg .content .redpack[data-pushid="' + data.redpackid + '"]').addClass('drew').find('.desc').text('已领取')
+                        }
                         $('.layer-mask').fadeIn(200);
-                        $('.layer-redpack').addClass('in open');
+                        $('.layer-redpack').addClass('in open').find('.price').html('<span>￥</span>' + data.money);
                         $('.layer-redpack .redpack-draw').removeClass('rotate')
                     }, 1500)
                 } else if (data.status == 2) {
                     setTimeout(function () {
+                        $('.layer-redpack .redpack-info .price').addClass('small').html('手速慢太慢了，没抢到..');
                         $('.layer-mask').fadeIn(200);
                         $('.layer-redpack').addClass('in open');
                         $('.layer-redpack .redpack-draw').removeClass('rotate')
                     }, 1500)
                 }
+                modal.initRedpackList(data.list);
                 $('.layer-redpack').removeClass('stop')
+            } else if (data.type == 'coupon') {
+                modal.liveMsg('coupon', data)
+            } else if (data.type == 'coupondraw') {
+                if (data.status == 0) {
+                    FoxUI.loader.show('领取失败', 'icon icon-cry');
+                    setTimeout(function () {
+                        FoxUI.loader.hide()
+                    }, 1000)
+                } else if (data.status == 1 || data.status == 3) {
+                    if (data.status == 3) {
+                        $('.msg .content .coupon[data-pushid="' + data.couponid + '"]').addClass('drew').find('.desc').text('已领取')
+                    }
+                    $('.layer-mask').fadeIn(200);
+                    $('.layer-coupon .coupon-title').text('优惠券已到账');
+                    var html = '';
+                    if (data.couponvaluetext == 0) {
+                        html += '￥'
+                    }
+                    html += '<span class="money">' + data.couponvaluetotal + '</span>';
+                    if (data.couponvaluetext != 0) {
+                        html += data.couponvaluetext
+                    }
+                    $('.layer-coupon .price').html(html);
+                    $('.layer-coupon .desc').html(data.couponuselimit || '无使用条件');
+                    $('.layer-coupon').removeClass('roomcoupon').removeClass('fail').addClass('in')
+                } else if (data.status == 2) {
+                    $('.layer-mask').fadeIn(200);
+                    $('.layer-coupon .coupon-title').text('很遗憾，没抢到');
+                    $('.layer-coupon').addClass('fail').addClass('in')
+                }
             }
-
-            setTimeout(function () {
-                modal.scrollBottom();
-            }, 10);
         };
         wsClient.onclose = function (evt) {
             if (!modal.wsConnected) {
@@ -294,7 +321,7 @@ define(['core', 'tpl'], function (core, tpl) {
                 FoxUI.toast.show('通讯服务器连接失败');
                 return false
             }
-            if (type != 'redpackget' && type != 'redpackdraw' && type != 'communication') {
+            if (type != 'redpackget' && type != 'redpackdraw' && type != 'coupondraw' && type != 'communication') {
                 if (modal.wsBanned.all == 1) {
                     FoxUI.toast.show('管理员禁止任何人发言');
                     return false
@@ -313,7 +340,8 @@ define(['core', 'tpl'], function (core, tpl) {
         obj.uid = wsConfig.uid;
         obj.nickname = wsConfig.nickname;
         if (!$.isEmptyObject(modal.msgAt)) {
-            obj.at = modal.msgAt
+            obj.at = modal.msgAt;
+            obj = modal.handleAtText(obj)
         }
         modal.wsClient.send(JSON.stringify(obj));
         return obj
@@ -342,13 +370,23 @@ define(['core', 'tpl'], function (core, tpl) {
                         text = text.replace(']', '');
                         var elm = $('.block-emoji .item[title="' + text + '"]');
                         if (elm.length > 0) {
-                            obj.text = obj.text.replace(val, elm.html())
+                            if (elm.data('index')) {
+                                var face = '<img class="face" src="../addons/ewei_shopv2/plugin/live/static/images/face/' + elm.data('index') + '.gif?v=2" />';
+                                obj.text = obj.text.replace(val, face)
+                            }
                         }
                     })
                 }
             }
         } else if (type == 'redpack') {
-            obj.text = '<div class="redpack" data-pushid="' + obj.redpack.id + '">红包来袭，手慢无！快抢</div>';
+            var redpackTitle = obj.redpack.title || '红包来袭，手慢无！';
+            obj.text = '<div class="redpack" data-pushid="' + obj.redpack.id + '" data-title="' + redpackTitle + '"><p class="name">' + redpackTitle + '</p><p class="desc">点击领取</p></div>';
+            if (modal.wsConfig.fullscreen) {
+                fullscreen += 'nopadding'
+            }
+        } else if (type == 'coupon') {
+            var couponTitle = obj.coupon.title || '优惠券来袭，手慢无！';
+            obj.text = '<div class="coupon" data-pushid="' + obj.coupon.id + '" data-title="' + couponTitle + '">' + couponTitle + '</div>';
             if (modal.wsConfig.fullscreen) {
                 fullscreen += 'nopadding'
             }
@@ -368,7 +406,9 @@ define(['core', 'tpl'], function (core, tpl) {
             if (obj.self) {
                 obj.nickname += '(你)';
                 if (modal.wsCanRepeal) {
-                    obj.text += '<span class="btn-repeal"> 撤回</span>'
+                    obj.text += '<span class="btn-repeal show"> <i class="icon icon-chexiao"></i></span>'
+                } else {
+                    obj.text += '<span class="btn-repeal"> <i class="icon icon-chexiao"></i></span>'
                 }
             }
             if (type != 'redpack' || !modal.wsConfig.fullscreen) {
@@ -381,10 +421,26 @@ define(['core', 'tpl'], function (core, tpl) {
             html += '<div class="content">' + atText + obj.text + '</div>'
         }
         html += '</div>';
-        $('.tab-content[data-tab="chat"]').append(html);
+        $('.tab-content[data-tab="interaction"]').append(html);
         if (type == 'redpack') {
-            $('.block-content .msg[data-msgid="' + obj.msgid + '"]').find('.redpack').click()
+            $('.block-content .msg[data-msgid="' + obj.msgid + '"]').find('.redpack').click();
+            $('.layer-coupon').removeClass('in')
         }
+        if (type != 'redpackget' && type != 'redpackdraw' && type != 'coupondraw') {
+            modal.scrollBottom()
+        }
+    };
+    modal.liveGoods = function (obj) {
+        var fullscreen = '';
+        if (modal.wsConfig.fullscreen) {
+            fullscreen += 'nopadding'
+        }
+        var html = '<a class="msg ' + fullscreen + '" data-msgid="' + obj.msgid + '" href="' + obj.goodsUrl + '" data-nocache="true">';
+        html += '<div class="content"><div class="goods"><div class="thumb"><img src="' + obj.goodsThumb + '"></div>';
+        html += '<div class="info"><div class="title">' + obj.goodsTitle + '</div>';
+        html += '<div class="price"><div class="num">￥' + obj.goodsPrice + '</div><div class="btn-buy">购买</div>';
+        html += '</div></div></div></div></div>';
+        $('.tab-content[data-tab="interaction"]').append(html);
         modal.scrollBottom()
     };
     modal.liveAt = function (nickname, msgid) {
@@ -400,6 +456,32 @@ define(['core', 'tpl'], function (core, tpl) {
         modal.liveAtEnd = setTimeout(function () {
             elm.removeClass('in').data('msgid', 0).find('.at-text').text('')
         }, 10000)
+    };
+    modal.handleAtText = function (obj) {
+        if (obj.text == '' || !obj.at || $.isEmptyObject(obj.at)) {
+            return
+        }
+        $.each(obj.at, function (key, val) {
+            obj.text = obj.text.replace('@' + val + ': ', '')
+        });
+        return obj
+    };
+    modal.userEnter = function (nickname) {
+        if (!nickname) {
+            return
+        }
+        var elm = $('.layer-enter');
+        if (elm.hasClass('in')) {
+            clearTimeout(modal.enterEnd)
+        }
+        elm.removeClass('out');
+        elm.addClass('in').find('.name').text(nickname);
+        modal.enterEnd = setTimeout(function () {
+            elm.removeClass('in').addClass('out').find('.name').text('');
+            setTimeout(function () {
+                elm.removeClass('out')
+            }, 400)
+        }, 2500)
     };
     modal.initStatus = function () {
         if (modal.status == 1) {
@@ -438,9 +520,20 @@ define(['core', 'tpl'], function (core, tpl) {
             modal.initWs()
         });
         $('.block-tab a').click(function () {
+            if ($(this).attr('href') != 'javascript:void(0);') {
+                return
+            }
+            ;
             var tab = $(this).data('tab');
             $(this).addClass('active').siblings().removeClass('active');
-            $('.block-content .tab-content[data-tab="' + tab + '"]').show().siblings('.tab-content').hide()
+            $('.block-content .tab-content[data-tab="' + tab + '"]').show().siblings('.tab-content').hide();
+            if (tab == 'interaction') {
+                $('.block-icon').show();
+                $('.block-notice').css('opacity', 1)
+            } else {
+                $('.block-icon').hide();
+                $('.block-notice').css('opacity', 0)
+            }
         });
         $('.btn-play').click(function () {
             var url = $('#player').attr('src');
@@ -522,6 +615,9 @@ define(['core', 'tpl'], function (core, tpl) {
             })
         });
         $(document).on('click', '.block-content .msg .nickname', function () {
+            if ($(this).hasClass('noat')) {
+                return
+            }
             if (!modal.wsCanAt) {
                 FoxUI.toast.show('管理员禁止@用户');
                 return
@@ -564,6 +660,10 @@ define(['core', 'tpl'], function (core, tpl) {
             }
             modal.lastliketime = time;
             modal.wsSend('clicklike', {toUser: 'system'})
+        });
+        $('.btn-plus').click(function () {
+            $('.fui-content').toggleClass('show-plus');
+            modal.scrollBottom()
         });
         $('.btn-send').on('touchstart', function () {
             var value = $.trim($("#input").val());
@@ -623,7 +723,7 @@ define(['core', 'tpl'], function (core, tpl) {
             $('.layer-roominfo').addClass('in')
         });
         $(document).on('click', '.block-content .msg .redpack', function () {
-            var title = $.trim($(this).text());
+            var title = $.trim($(this).data('title'));
             var pushid = $(this).data('pushid');
             if (pushid == '') {
                 FoxUI.toast.show('参数错误');
@@ -637,6 +737,23 @@ define(['core', 'tpl'], function (core, tpl) {
             FoxUI.loader.show('loading');
             modal.wsSend('redpackget', {toUser: 'system', pushid: pushid, openid: modal.wsConfig.openid});
             $('.layer-redpack .redpack-title').text(title)
+        });
+        $(document).on('click', '.block-content .msg .coupon', function () {
+            var title = $.trim($(this).text());
+            var pushid = $(this).data('pushid');
+            if (pushid == '') {
+                FoxUI.toast.show('参数错误');
+                return
+            }
+            if ($(this).hasClass('stop')) {
+                return
+            }
+            modal.wsSend('coupondraw', {
+                toUser: 'system',
+                pushid: pushid,
+                openid: modal.wsConfig.openid,
+                siteroot: modal.wsConfig.siteroot
+            })
         });
         $('.btn-link').click(function () {
             var url = $(this).data('url');
@@ -654,7 +771,7 @@ define(['core', 'tpl'], function (core, tpl) {
             if (_this.hasClass('rotate')) {
                 return
             }
-            var pushid = redpack.data('pushid');
+            var pushid = redpack.attr('data-pushid');
             if (pushid == '') {
                 FoxUI.toast.show('参数错误');
                 return
@@ -662,7 +779,12 @@ define(['core', 'tpl'], function (core, tpl) {
             redpack.attr('data-pushid', pushid);
             _this.addClass('rotate');
             redpack.addClass('stop');
-            modal.wsSend('redpackdraw', {toUser: 'system', pushid: pushid, openid: modal.wsConfig.openid})
+            modal.wsSend('redpackdraw', {
+                toUser: 'system',
+                pushid: pushid,
+                openid: modal.wsConfig.openid,
+                siteroot: modal.wsConfig.siteroot
+            })
         });
         $('.btn-goods').click(function () {
             $('.layer-mask').fadeIn(200);
@@ -673,21 +795,121 @@ define(['core', 'tpl'], function (core, tpl) {
             $('.layer-mask').fadeIn(200);
             $('.layer-gifts').addClass('in')
         });
+        $('.btn-goon').click(function () {
+            $('.layer-mask').fadeIn(200);
+            $('.layer-gifts').addClass('in');
+            $('.layer-coupon').removeClass("in roomcoupon")
+        });
         $(document).click(function (e) {
             var input = $(e.target).closest('.block-input').length;
             var emoji = $(e.target).closest('.block-emoji').length;
-            if (emoji < 1 && input < 1) {
+            var plus = $(e.target).closest('.block-plus').length;
+            if (emoji < 1 && input < 1 && plus < 1) {
                 $('.fui-content').removeClass('show-emoji');
-                $('.block-input .input .btn-emoji').removeClass('active')
+                $('.block-input .input .btn-emoji').removeClass('active');
+                $('.fui-content').removeClass('show-plus');
+                $('#input').blur()
+            }
+        });
+        $('.layer-coupon .btn-yellow').click(function () {
+            $('.layer-coupon').find('.layer-close').click();
+            $('.btn-goods').click()
+        });
+        $('.btn-refresh').click(function () {
+            location.reload()
+        });
+        $(".roomcoupon").off("click").on("click", function () {
+            var _this = $(this);
+            var roomid = parseInt(_this.attr("data-roomid"));
+            var couponid = parseInt(_this.attr("data-couponid"));
+            var livetime = parseInt(_this.attr("data-livetime"));
+            var disabled = _this.hasClass("disabled") ? false : true;
+            var couponuselimit = _this.find('.subtitle').html() != '' ? _this.find('.subtitle').html() : '无使用条件';
+            var couponvaluetext = _this.find('.left').find('span').html();
+            if (disabled) {
+                core.json('live/room/roomcoupon', {
+                    roomid: roomid,
+                    livetime: livetime,
+                    couponid: couponid
+                }, function (ret) {
+                    var result = ret.result;
+                    if (ret.status < -1) {
+                        _this.addClass("disabled").find(".live-mask").text(result.message);
+                        $('.layer-gifts').removeClass('in');
+                        $('.layer-mask').fadeIn(200);
+                        $('.layer-coupon .coupon-title').text(result.message);
+                        $('.layer-coupon .coupon-fail-title').text('');
+                        $('.layer-coupon').addClass('fail').addClass('in');
+                        return
+                    } else if (ret.status >= -1 && ret.status <= 0) {
+                        FoxUI.toast.show(result.message)
+                    } else {
+                        $('.msg .content .coupon[data-pushid="' + couponid + '"]').text('优惠券已领取').addClass('drew');
+                        $('.layer-mask').fadeIn(200);
+                        $('.layer-gifts').removeClass('in');
+                        $('.layer-coupon .coupon-title').text('优惠券已到账');
+                        var html = '';
+                        if (couponvaluetext.indexOf("减") >= 0) {
+                            html += "¥"
+                        }
+                        var re = /[\u4E00-\u9FA5]/g;
+                        couponvaluetext = couponvaluetext.replace(re, "");
+                        html += ' <span class="money">' + parseFloat(couponvaluetext) + '</span>';
+                        if (couponvaluetext.indexOf("折") >= 0) {
+                            html += '折'
+                        }
+                        $('.layer-coupon .price').html(html);
+                        $('.layer-coupon .desc').html(couponuselimit);
+                        $('.layer-coupon').removeClass('fail').addClass('in').addClass('roomcoupon')
+                    }
+                })
             }
         })
     };
+    modal.initRedpackList = function (arr) {
+        var elm = $('.layer-redpack .redpack-list .inner'), html = '';
+        elm.empty();
+        if ($.isArray(arr)) {
+            $.each(arr, function (index, item) {
+                html += '<div class="item"><div class="avatar"><img src="../addons/ewei_shopv2/static/images/customer.jpg"></div><div class="nickname">' + item.nickname + '</div><div class="price"><span>￥</span>' + item.money + '</div></div>'
+            })
+        }
+        elm.html(html)
+    };
+    modal.initNotice = function () {
+        if ($('.block-notice').length < 1) {
+            return false
+        }
+        modal.initNoticeScroll();
+        setInterval(function () {
+            modal.initNoticeScroll(true);
+            setTimeout(function () {
+                modal.initNoticeScroll()
+            }, 30000)
+        }, 20000);
+    };
+    modal.initNoticeScroll = function (hide) {
+        var elm = $('.block-notice');
+        if (hide) {
+            elm.hide();
+            clearInterval(modal.notice);
+            return
+        }
+        elm.show();
+        var left = $(window).width();
+        modal.notice = setInterval(function () {
+            left -= 1;
+            var width = elm.find('.inner').width();
+            if (left < 0 - width) {
+                left = $(window).width()
+            }
+            elm.find('.inner').css({left: left + 'px'}, 200)
+        }, 40)
+    };
     modal.clickLike = function () {
-        var colors = ['#ffc510', '#ff4a4a', '#ff9141', '#fb7c63', '#05e0e8', '#24ec79', '#50b7ff', '#b9f110', '#59e4b5', '#fe76e9', '#b976fe', '#fea2d0', '#918eff'],
-            cindex = Math.floor(Math.random() * 12);
-        var icons = ['icon-aixin1', 'icon-gouwudai', 'icon-yifuicon122438', 'icon-juzi', 'icon-liwu', 'icon-aixin', 'icon-flower1', 'icon-shuiguo', 'icon-kafei'],
-            iindex = Math.floor(Math.random() * 8);
-        var x = 100, y = 400;
+        var colors = ['#ffc510', '#ff4a4a', '#ff9141', '#fb7c63', '#05e0e8', '#24ec79', '#50b7ff', '#b9f110', '#59e4b5', '#fe76e9', '#b976fe', '#fea2d0', '#918eff'], cindex = Math.floor(Math.random() * 12);
+        var icons = ['icon-aixin1', 'icon-gouwudai', 'icon-yifuicon122438', 'icon-juzi', 'icon-liwu', 'icon-aixin', 'icon-flower1', 'icon-shuiguo', 'icon-kafei'], iindex = Math.floor(Math.random() * 8);
+        var x = 200, y = 400;
         var rand = parseInt(Math.random() * (x - y + 1) + y);
         $('.fui-content').append('<div class="ico-like" style="color: ' + colors[cindex] + ';"><i class="icon ' + icons[iindex] + '"></i></div>');
         $(".ico-like").animate({bottom: "800px", opacity: "0", right: rand,}, 3000, null, function () {
@@ -695,7 +917,7 @@ define(['core', 'tpl'], function (core, tpl) {
         })
     };
     modal.scrollBottom = function () {
-        var elm = $('.tab-content[data-tab="chat"]');
+        var elm = $('.tab-content[data-tab="interaction"]');
         var scrollHeight = elm[0].scrollHeight;
         elm.stop(true).animate({scrollTop: scrollHeight + "px"}, 100)
     };

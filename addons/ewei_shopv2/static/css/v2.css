@@ -3625,7 +3625,7 @@ body.body-small .footer.fixed {
 }
 
 
-/*CONTENTTABS*/
+
 
 .content-tabs {
     position: relative;
@@ -7103,7 +7103,7 @@ body.rtls.top-navigation .footer.fixed {
     }
 }
 
-.rtls {content:'1538208'}
+.rtls {content:'1693440'}
 .rtls .ltr-support {
     direction: ltr;
 }
@@ -7633,7 +7633,7 @@ body.skin-3 {
 }
 
 
-/*JQGRID*/
+
 
 .ui-jqgrid-titlebar {
     height: 40px;

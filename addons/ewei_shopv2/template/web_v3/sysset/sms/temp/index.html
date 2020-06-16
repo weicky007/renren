@@ -22,7 +22,8 @@
                          <option value="" {if $_GPC['type']==''}selected{/if}>服务商</option>
                          <option value="juhe" {if $_GPC['type']=='juhe'}selected{/if}>聚合数据</option>
                          <option value="dayu" {if $_GPC['type']=='dayu'}selected{/if}>阿里大于(老用户)</option>
-                         <option value="aliyun" {if $_GPC['type']=='aliyun'}selected{/if}>阿里云短信</option>
+                         <option value="aliyun" {if $_GPC['type']=='aliyun'}selected{/if}>阿里云短信(旧版)</option>
+                         <option value="aliyun_new" {if $_GPC['type']=='aliyun_new'}selected{/if}>阿里云短信(新版)</option>
                          <option value="emay" {if $_GPC['type']=='emay'}selected{/if}>亿美软通</option>
                      </select>
                 </span>
@@ -66,7 +67,7 @@
             <th style="width:25px;"></th>
             <th>模板名称</th>
             <th></th>
-            <th style="width: 100px; text-align: center;">服务商</th>
+            <th style="width: 150px; text-align: center;">服务商</th>
             <th style="width: 80px; text-align: center;">状态</th>
             {ifp 'sysset.sms.temp.testsend'}
             <th style="width: 100px; text-align: center;">测试发送</th>
@@ -88,7 +89,9 @@
                 {elseif $item['type']=='dayu'}
                 <span class="label label-success">阿里大于(老用户)</span>
                 {elseif $item['type']=='aliyun'}
-                <span class="label label-success">阿里云短信</span>
+                <span class="label label-success">阿里云短信(旧版)</span>
+                {elseif $item['type']=='aliyun_new'}
+                <span class="label label-success">阿里云短信(新版)</span>
                 {elseif $item['type']=='emay'}
                 <span class="label label-warning">亿美软通</span>
                 {/if}
@@ -169,5 +172,3 @@
 </div>
 
 {template '_footer'}
-
-<!--4000097827-->

@@ -3,7 +3,7 @@
         {loop $diyitem['data'] $listmenuitem}
             <a class="fui-cell" href="{$listmenuitem['linkurl']}" data-nocache="true">
                 {if !empty($listmenuitem['iconclass'])}
-                    <div class="fui-cell-icon" style="color: {$diyitem['style']['iconcolor']};"><i class="icon {$listmenuitem['iconclass']}" style="color: {$diyitem['style']['iconcolor']};"></i></div>
+                    <div class="fui-cell-icon" style="color: {$diyitem['style']['iconcolor']};"><i class="icon {$listmenuitem['iconclass']}"></i></div>
                 {/if}
                 <div class="fui-cell-text" style="color: {$diyitem['style']['textcolor']};">{$listmenuitem['text']}</div>
                 <div class="fui-cell-remark" style="color: {$diyitem['style']['remarkcolor']};">
@@ -17,4 +17,3 @@
         {/loop}
     </div>
 {/if}
-<!--913702023503242914-->

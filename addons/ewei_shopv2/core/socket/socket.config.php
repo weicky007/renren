@@ -17,13 +17,13 @@ define('SOCKET_SERVER_PORT', '9501');
 define('SOCKET_SERVER_SSL', true);
 
 // 设置SSL KEY文件路径
-define('SOCKET_SERVER_SSL_KEY_FILE', '/usr/local/nginx/conf/ssl/214058193370257.key');
+define('SOCKET_SERVER_SSL_KEY_FILE', '/www/server/panel/vhost/cert/t2.lupiao.net/privkey.pem');
 
 // 设置SSL CERT文件路径
-define('SOCKET_SERVER_SSL_CERT_FILE', '/usr/local/nginx/conf/ssl/214058193370257.pem');
+define('SOCKET_SERVER_SSL_CERT_FILE', '/www/server/panel/vhost/cert/t2.lupiao.net/fullchain.pem');
 
 // 设置启动的worker进程数
 define('SOCKET_SERVER_WORKNUM', 8);
 
 // 设置客户端请求IP
-define('SOCKET_CLIENT_IP', 'wx.weizancc.com');
+define('SOCKET_CLIENT_IP', 't2.lupiao.net');

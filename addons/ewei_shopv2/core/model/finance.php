@@ -805,6 +805,7 @@ class Finance_EweiShopV2Model
 		else 
 		{
 			$days = (double) ($endtime - $starttime)/ 86400;
+			
 			$d = 0;
 			while ($d < $days) 
 			{
@@ -812,6 +813,7 @@ class Finance_EweiShopV2Model
 				++$d;
 			}
 		}
+		
 		if (empty($dates)) 
 		{
 			show_message('对账单日期选择错误!', '', 'error');

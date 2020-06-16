@@ -105,24 +105,7 @@
 			{loop $list $row}
 			<tr ><td colspan='8' style='height:20px;padding:0;border:none;'>&nbsp;</td></tr>
 			<tr class='trorder' style='background:#f8f8f8'>
-					<td colspan="8">
-						{$row['logno']}
-						{if $item['merchid'] == 0}
-						{ifp 'creditshop.log.remarksaler'}
-						<a class=''  data-toggle="ajaxModal" href="{php echo webUrl('creditshop/log/remarksaler', array('id' => $row['id']))}" style="float: right">
-							{if !empty($row['remarksaler'])}
-							<i class="icow icow-flag-o" style="color: #df5254;display: inline-block;vertical-align: middle" title="  查看备注"></i>
-							备注
-							&nbsp
-							{else}
-							<i class="icow icow-yibiaoji" style="color: #999;display: inline-block;vertical-align: middle" title="  添加备注" ></i>
-							备注
-							&nbsp
-							{/if}
-						</a>
-						{/if}
-						{/if}
-					</td>
+					<td colspan="8">{$row['logno']}</td>
 			</tr>
 			<tr class="trbody">
 				<td style="text-align: left"><img src="{php echo tomedia($row['thumb'])}" style='width:30px;height:30px;padding1px;border:1px solid #ccc' onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" /> {$row['title']}</td>
@@ -269,4 +252,3 @@
 	</div>
 </div>
 {template '_footer'}
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

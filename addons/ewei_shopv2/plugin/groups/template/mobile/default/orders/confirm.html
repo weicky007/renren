@@ -195,7 +195,7 @@
                 ¥ <span class='dispatchprice'>{php echo number_format($goods['freight'],2)}</span>
             </div>
         </div>
-        {if $heads == 1 && $set['discount'] ==1 && $goods['headsmoney'] >= 0}
+        {if $heads == 1 && $set['discount'] ==1 && $goods['headsmoney'] > 0}
         <div class="fui-cell">
             <div class="fui-cell-label" style='width:auto' >
                 团长优惠 <span class="text-danger">{if $goods['headstype']==1}{php echo number_format($goods['headsdiscount'] / 10,1)}折{/if}</span>

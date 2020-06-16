@@ -81,7 +81,7 @@ class Op_EweiShopV2Page extends MobileLoginPage
 			pdo_update('ewei_shop_order_refund', $change_refund, array('id' => $order['refundid'], 'uniacid' => $_W['uniacid']));
 		}
 		pdo_update('ewei_shop_order', array('status' => 3, 'finishtime' => time(), 'refundstate' => 0), array('id' => $order['id'], 'uniacid' => $_W['uniacid']));
-		m('order')->setStocksAndCredits($orderid, 3);
+		m('order')->setStocksAndCredits($orderid, 1);
 		m('order')->fullback($orderid);
 		m('member')->upgradeLevel($order['openid'], $orderid);
 		m('order')->setGiveBalance($orderid, 1);

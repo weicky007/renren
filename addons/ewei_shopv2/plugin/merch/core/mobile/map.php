@@ -1,8 +1,7 @@
 <?php
-
-class Map_EweiShopV2Page extends PluginMobilePage
+class Map_EweiShopV2Page extends PluginMobilePage 
 {
-	public function main()
+	public function main() 
 	{
 		global $_W;
 		global $_GPC;
@@ -11,5 +10,4 @@ class Map_EweiShopV2Page extends PluginMobilePage
 		include $this->template();
 	}
 }
-
 ?>

@@ -1,5 +1,4 @@
 <?php
-
 echo "\r\n";
 
 if (!defined('IN_IA')) {

@@ -1,5 +1,5 @@
 <?php
-
+//haha
 class ErrorCode
 {
 	static public $OK = 0;

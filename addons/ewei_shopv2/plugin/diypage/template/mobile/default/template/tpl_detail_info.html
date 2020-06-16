@@ -81,12 +81,12 @@
 <div class="row row-time">
     <div id='time-container' class='fui-labeltext fui-labeltext-danger' style="border-color: {$diyitem['style']['timecolor']}";
          data-now="{php echo date('Y-m-d H:i:s')}"
-         data-start-label="距离{php echo empty($_W['shopset']['trade']['istimetext'])? '限时购': $_W['shopset']['trade']['istimetext']}开始"
-         data-end-label="距离{php echo empty($_W['shopset']['trade']['istimetext'])? '限时购': $_W['shopset']['trade']['istimetext']}结束"
+         data-start-label='距离限时购开始'
+         data-end-label='距离限时购结束'
          data-end-text='活动已经结束，下次早点来~'
          data-start="{php echo date('Y-m-d H:i:s', $goods['timestart'])}"
          data-end="{php echo date('Y-m-d H:i:s', $goods['timeend'])}">
-        <div class='label' style="background: {$diyitem['style']['timecolor']};">{php echo empty($_W['shopset']['trade']['istimetext'])? '限时购': $_W['shopset']['trade']['istimetext']}</div>
+        <div class='label' style="background: {$diyitem['style']['timecolor']};">限时购</div>
         <div class='text'>
             <span class="day number" style="color: {$diyitem['style']['timetextcolor']};"></span>
             <span class="time">天</span>
@@ -119,49 +119,32 @@
 </div>
 {/if}
 
-<div class="fui-cell"  style="font-size: 0.55rem;line-height: 1.2rem;justify-content: space-between;-webkit-justify-content: space-between;flex-wrap: wrap;-webkit-flex-wrap: wrap;color: #666;">
+<div class="fui-cell">
+    <div class="fui-cell-text flex">
         {if is_array($goods['dispatchprice'])}
             {if $goods['type']==1 && $goods['isverify']!=2}
-                <p style="color: {$diyitem['style']['textcolor']};">快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</p>
+                <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</span>
             {/if}
         {else}
             {if $goods['type']==1 && $goods['isverify']!=2}
-                <p style="color: {$diyitem['style']['textcolor']};">快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</p>
+                <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</span>
             {/if}
         {/if}
         {if $seckillinfo==false || ( $seckillinfo && $seckillinfo.status==1)}
             {if $goods['showtotal'] == 1}
-            <p style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</p>
+            <span style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</span>
             {/if}
             {if !empty($goods['showsales'])}
-                <p style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</p>
+                <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
             {/if}
         {else}
-            <p></p>
-            <p></p>
+            <span></span>
+            <span></span>
         {/if}
         {if $goods['province'] != '请选择省份' && $goods['city'] != '请选择城市'}
-            <p style="color: {$diyitem['style']['textcolor']};">{$goods['province']} {$goods['city']}</p>
+            <span style="color: {$diyitem['style']['textcolor']};">{$goods['province']} {$goods['city']}</span>
         {/if}
-</div>
-
-{if $goods['ispresell']==1 && ( $goods['preselltimeend'] > time() ||  $goods['preselltimeend'] == 0)}
-<div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0'>
-    <div class="fui-list">
-        <div class="fui-list-media" style="margin-right: 0;align-self: flex-start;-webkit-align-self: flex-start">
-            <div class='fui-cell-text'>
-                <span style="font-size: 0.65rem;color: #666;vertical-align: top">预售：</span>
-            </div>
-        </div>
-        <div class="fui-list-inner" style="font-size:0.65rem;color:#666;">
-            {if $goods['preselltimeend'] > 0}
-            结束时间：{php echo date('m月d日 H:i:s', $goods['preselltimeend'])}<br />
-            {/if}
-            预计发货：{if $goods['presellsendtype']>0}购买后{$goods['presellsendtime']}天发货{else}{php echo date('m月d日', $goods['presellsendstatrttime'])}{/if}
-        </div>
     </div>
 </div>
-{/if}
 
 </div>
-<!--913702023503242914-->

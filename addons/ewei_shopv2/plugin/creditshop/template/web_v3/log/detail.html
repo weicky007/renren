@@ -36,10 +36,7 @@
         <div class="form-group">
             <label class="col-lg control-label">粉丝</label>
                 <div class="col-sm-9 col-xs-12">
-                <img src="{$member['avatar']}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/>
-                    <a href="{php echo webUrl('member/list/detail',array('id'=>$member['id']))}" target='_blank' class="text-primary">
-                        {$member['nickname']}
-                    </a>
+                <img src="{$member['avatar']}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/> {$member['nickname']}
             </div>
         </div>
         <div class="form-group">
@@ -236,4 +233,3 @@
 </div>
 {template '_footer'}
  
-<!--913702023503242914-->

@@ -92,7 +92,7 @@ class Setting_EweiShopV2Page extends PluginWebPage
 			{
 				if (($item != '.') && ($item != '..')) 
 				{
-					(is_dir($path . '/' . $item) ? delDirAndFile($path . '/' . $item, $delDir) : unlink($path . '/' . $item));
+					(is_dir($path . '/' . $item) ? $this->delDirAndFile($path . '/' . $item, $delDir) : unlink($path . '/' . $item));
 				}
 			}
 			closedir($handle);
@@ -205,11 +205,11 @@ class Setting_EweiShopV2Page extends PluginWebPage
 			$alllimit = intval($_GPC['alllimit']);
 			if (pdo_get('ewei_shop_exchange_setting', array('uniacid' => $_W)) == false) 
 			{
-				pdo_insert('ewei_shop_exchange_setting', array('uniacid' => $_W['uniacid'], 'mistake' => $mistake, 'freeze' => $freeze, 'grouplimit' => $grouplimit, 'alllimit' => $alllimit));
+				pdo_insert('ewei_shop_exchange_setting', array('uniacid' => $_W['uniacid'], 'mistake' => $mistake, 'freeze' => $freeze, 'grouplimit' => $grouplimit, 'alllimit' => $alllimit, 'no_qrimg' => (int) $_GPC['no_qrimg'], 'rule' => $_GPC['rule']));
 			}
 			else 
 			{
-				pdo_update('ewei_shop_exchange_setting', array('mistake' => $mistake, 'freeze' => $freeze, 'grouplimit' => $grouplimit, 'alllimit' => $alllimit), array('uniacid' => $_W['uniacid']));
+				pdo_update('ewei_shop_exchange_setting', array('mistake' => $mistake, 'freeze' => $freeze, 'grouplimit' => $grouplimit, 'alllimit' => $alllimit, 'no_qrimg' => (int) $_GPC['no_qrimg'], 'rule' => $_GPC['rule']), array('uniacid' => $_W['uniacid']));
 			}
 			show_json(1, '保存成功');
 		}

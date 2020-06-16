@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -27,7 +27,7 @@ class Notice_EweiShopV2Page extends WebPage
 
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_notice') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_notice') . ' WHERE 1 ' . $condition, $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 

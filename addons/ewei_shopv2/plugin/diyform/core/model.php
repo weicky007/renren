@@ -1,12 +1,11 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
 class DiyformModel extends PluginModel
 {
-	public $_data_type_config = array(0 => '单行文本', 1 => '多行文本', 2 => '下拉框', 3 => '多选框', 14 => '单选框', 5 => '图片', 6 => '身份证号码', 7 => '日期', 8 => '日期范围', 9 => '城市', 10 => '确认文本', 11 => '时间', 12 => '时间范围', 13 => '提示文本');
+	public $_data_type_config = array(0 => '单行文本', 1 => '多行文本', 2 => '下拉框', 3 => '多选框', 5 => '图片', 6 => '身份证号码', 7 => '日期', 8 => '日期范围', 9 => '城市', 10 => '确认文本', 11 => '时间', 12 => '时间范围', 13 => '提示文本');
 	public $_default_data_config = array('', '自定义', '姓名', '电话', '微信号');
 	public $_default_date_config = array('', '填写当天', '特定日期');
 
@@ -73,15 +72,6 @@ class DiyformModel extends PluginModel
 				}
 				else {
 					if (($temp_tp_type == 2) || ($temp_tp_type == 3)) {
-						$text_array = explode("\n", trim($tp_text[$key]));
-
-						foreach ($text_array as $k => $v) {
-							$text_array[$k] = trim($v);
-						}
-
-						$data[$i]['tp_text'] = $text_array;
-					}
-					else if ($temp_tp_type == 14) {
 						$text_array = explode("\n", trim($tp_text[$key]));
 
 						foreach ($text_array as $k => $v) {

@@ -166,7 +166,7 @@
     <label class="col-lg control-label">主账户名</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        <input type="text" class="form-control" name="username" value="{if !empty($account['username'])}{$account['username']}{else}{$show_name}{/if}" />
+        <input type="text" class="form-control" name="username" value="{$account['username']}" />
         {else}
         <div class="form-control-static">{$item['username']}</div>
         {/if}
@@ -176,7 +176,7 @@
     <label class="col-lg control-label">主账户密码</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        <input type="text" class="form-control" name="pwd" value="{if !empty($account['pwd'])}{else}{$show_pass}{/if}"/>
+        <input type="text" class="form-control" name="pwd" />
         {else}
         <div class="form-control-static">******</div>
         {/if}
@@ -305,4 +305,3 @@
     </div>
 </div>
 
-<!--青岛易联互动网络科技有限公司-->

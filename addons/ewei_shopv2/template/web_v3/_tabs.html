@@ -16,9 +16,11 @@
 				{/loop}
 			</ul>
 		{else}
+			{if $submenu['title']<>'历史日志'}
 			<ul class="single">
 				<li {if $submenu['active']}class="active"{/if} style=" position: relative"><a href="{$submenu['url']}" style="cursor: pointer;" data-route="{$submenu['route']}">{$submenu['title']}</a></li>
 			</ul>
+			{/if}
 		{/if}
 	{/loop}
 {/if}

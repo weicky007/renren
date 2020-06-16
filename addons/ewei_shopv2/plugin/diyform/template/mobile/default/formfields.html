@@ -53,7 +53,7 @@
             {if !empty($f_data[$k1])}
             {loop $f_data[$k1] $k2 $v2}
             <input type="hidden" name="field_data{php echo $i}[]" value="{$v2}" />
-            <li style="background-image:url({php echo tomedia($v2)})" class="image image-sm" data-filename="{$v2}"><span class="image-remove"><i class="icon icon-close"></i></span></li>
+            <li style="background-image:url({php echo tomedia($v2)})" class="image image-sm" data-filename="{$v2}"><span class="image-remove"><i class="icon icon-roundclose"></i></span></li>
             {/loop}
             {/if}
 
@@ -108,12 +108,6 @@
     </div>
     {else if $v1['data_type'] == 13}
         {$v1['tp_text']}
-    {else if $v1['data_type'] == 14}
-    {loop $v1['tp_text'] $k2 $v2}
-    <label class="radio-inline">
-        <input type="radio" class='fui-radio fui-radio-danger' id="field_data{php echo $i}" name='field_data{php echo $i}' {if $k2 == 0} data-checked="true"{/if} value="{php echo $v2}"/> {php echo $v2}
-    </label>
-     {/loop}
     {/if}
 
 </div>
@@ -166,11 +160,9 @@
         });
         $('.diyform-container .diyform-container-uploader').uploader({
             uploadUrl: "{php echo mobileUrl('util/uploader')}",
-            removeIcon: 'icon icon-close',
             removeUrl:"{php echo mobileUrl('util/uploader/remove')}"
         });
     })
 </script>
 </div>
 
-<!--青岛易联互动网络科技有限公司-->

@@ -22,7 +22,7 @@ if (is_file(__DIR__ . '/defines-local.php'))
 !defined('EWEI_SHOPV2_LOCAL') && define('EWEI_SHOPV2_LOCAL','../addons/ewei_shopv2/');
 !defined('EWEI_SHOPV2_STATIC') && define('EWEI_SHOPV2_STATIC', EWEI_SHOPV2_URL.'static/');
 !defined('EWEI_SHOPV2_PREFIX') && define('EWEI_SHOPV2_PREFIX','ewei_shop_');
-!defined('EWEI_SHOPV2_AUTH_URL') && define('EWEI_SHOPV2_AUTH_URL','https://mp.weixin.qq.com/');
+!defined('EWEI_SHOPV2_AUTH_URL') && define('EWEI_SHOPV2_AUTH_URL','http://shop.010xr.com/api/api.php');
 define('EWEI_SHOPV2_PLACEHOLDER','../addons/ewei_shopv2/static/images/placeholder.png');
   
  

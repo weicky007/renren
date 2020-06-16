@@ -20,7 +20,7 @@
     <div class="page-toolbar m-b-sm m-t-sm">
         <div class="col-sm-4">
             <span class=''>
-                {ifp 'sns.posts.add'}
+                {if $isManager}
                     <a class='btn btn-primary btn-sm' href="{php echo webUrl('sns/posts/add')}"><i class='fa fa-plus'></i> 发表话题</a>
                 {/if}
                 {ifp 'sns.board.add'}
@@ -171,7 +171,7 @@
                 </a>
             </td>
             <td style="text-align:left;">
-                {ifp 'sns.posts.add'}
+                {if $isManager && !empty($row['isadmin'])}
                 <a class='btn btn-default btn-sm  btn-op btn-operation' href="{php echo webUrl('sns/posts/edit', array('id' => $row['id']))}" title="编辑">
                      <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
                         <i class="icow icow-bianji2"></i>
@@ -254,4 +254,3 @@
 </div>
 
 {template '_footer'}
-<!--4000097827-->

@@ -1,6 +1,4 @@
-<script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
-<script src="{php echo EWEI_SHOPV2_LOCAL}static/js/require.js"></script>
-<script src="./resource/js/app/config.js"></script>
+
 <style type="text/css">
     .popover{z-index:10000;}
     .alert{margin-top:10px;}
@@ -16,7 +14,7 @@
             <th style="width:100px;text-align: center;">操作</th>
         </tr>
         </thead>
-        <tbody id="param-items" class="ui-sortable container">
+        <tbody class="ui-sortable container">
         {loop $goods $row}
         <tr>
             <td>
@@ -25,7 +23,7 @@
             <td style="text-align: right;">&yen;{$row['marketprice']}</td>
             <td style="text-align: right;">{$row['total']}</td>
             <td style="text-align: center;">
-                <a href="javascript:;" class="label label-primary" onclick='biz.selector_new.set(this, {php echo json_encode($row);})'>选择</a>
+                <a href="javascript:void(0);" class="label label-primary" onclick='biz.selector_new.set(this, {php echo json_encode($row);})'>选择</a>
             </td>
         </tr>
         {/loop}
@@ -61,7 +59,7 @@
         $.ajax({
             url:"{php echo webUrl('live/room/query')}",
             type:'get',
-            data:{title:keyword,page:pindex,psize:8},
+            data:{title:keyword,page:pindex},
             async : false, //默认为true 异步
             success:function(data){
                 $(".content").html(data);

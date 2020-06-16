@@ -78,7 +78,7 @@
 			{ifp 'member.list.edit'}
 			<input type="submit"  value="提交" class="btn btn-primary" />
 			{/if}
-			<input type="button" class="btn btn-default" name="submit" onclick="history.back();" value="返回列表" {ifp 'member.list.edit'}style='margin-left:10px;'{/if} />
+			<input type="button" class="btn btn-default" name="submit" onclick="history.go(-1)" value="返回列表" {ifp 'member.list.edit'}style='margin-left:10px;'{/if} />
 		</div>
 	</div>
 
@@ -86,4 +86,3 @@
 </div>
 
 {template '_footer'}
-<!--913702023503242914-->

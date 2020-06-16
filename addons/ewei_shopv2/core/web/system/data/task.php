@@ -1,12 +1,11 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-class Task_EweiShopV2Page extends SystemPage
+class Task_EweiShopV2Page extends SystemPage 
 {
-	public function main()
+	public function main() 
 	{
 		global $_W;
 		global $_GPC;
@@ -21,8 +20,8 @@ class Task_EweiShopV2Page extends SystemPage
 		$fullback_receive_time = m('cache')->getString('fullback_receive_time', 'global');
 		$status_receive_time = m('cache')->getString('status_receive_time', 'global');
 		$liveroom_receive_time = m('cache')->getString('liveroom_receive_time', 'global');
-
-		if ($_W['ispost']) {
+		if ($_W['ispost']) 
+		{
 			m('cache')->set('task_mode', intval($_GPC['task_mode']), 'global');
 			m('cache')->set('receive_time', intval($_GPC['receive_time']), 'global');
 			m('cache')->set('closeorder_time', intval($_GPC['closeorder_time']), 'global');
@@ -36,9 +35,7 @@ class Task_EweiShopV2Page extends SystemPage
 			m('cache')->set('liveroom_receive_time', intval($_GPC['liveroom_receive_time']), 'global');
 			show_json(1);
 		}
-
 		include $this->template();
 	}
 }
-
 ?>

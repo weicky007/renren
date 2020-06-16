@@ -42,21 +42,6 @@
                 </div>
             </div>
             {/loop}
-
-            {if p('threen')}
-            {php $threen = json_decode($item['threen'],1);}
-            <div class="form-group">
-                <label class="col-sm-2 control-label">3N营销会员</label>
-                <div class="col-sm-6 col-xs-12">
-                    <div class="input-group">
-                        <input type="number" name="threen[discount]" class="form-control" value="{$threen['discount']}" data-min="0" data-max="10" />
-                        <div class="input-group-addon">折 或者 会员价</div>
-                        <input type="number" name="threen[price]" class="form-control" value="{php $threen = json_decode($item['threen'],1);}{$threen['price']}" />
-                        <div class="input-group-addon">元</div>
-                    </div>
-                </div>
-            </div>
-            {/if}
         </div>
         <div id="discounts_1" {if $discounts['type']!=1} style="display:none;" {/if}>
         <div class="form-group discounts-info">
@@ -84,4 +69,3 @@
         })
     });
 </script>
-<!--913702023503242914-->

@@ -2,6 +2,9 @@
 {template '_header'}
 
 <script type="text/javascript" src="../addons/ewei_shopv2/static/js/dist/area/cascade.js"></script>
+<script type="text/javascript" src="/web/resource/js/lib/moment.js"></script>
+<link rel="stylesheet" href="/web/resource/components/datetimepicker/jquery.datetimepicker.css">
+<link rel="stylesheet" href="/web/resource/components/daterangepicker/daterangepicker.css">
 <style type='text/css'>
     .tabs-container .form-group {overflow: hidden;}
     .tabs-container .tabs-left > .nav-tabs {}
@@ -26,6 +29,9 @@
 		border-left: 3px solid #fff;
 		padding: 10px 10px;
 	}
+    {if $item['type']==4}
+    .type-4 {display: none;}
+    {/if}
 </style>
 <div class="page-header">
     当前位置：
@@ -197,6 +203,9 @@
 				if ($('#virtual').val() == '0') {
 					$('.choosetemp').show();
 				}
+				// 商品类型如果为虚拟卡密则不允许修改库存
+                $('#weight').attr('readonly',true);
+                $('#total').attr('readonly',true);
 			}
 			if (window.type == '2' || window.type == '3'|| window.type == '5') {
 				$(':checkbox[name=cash]').attr("checked",false);
@@ -205,6 +214,12 @@
 				$(':checkbox[name=cash]').parent().show();
 
 			}
+
+            if(window.type=='4'){
+                $('.type-4').hide();
+            }else{
+                $('.type-4').show();
+            }
 		})
 
 		$(":checkbox[name='buyshow']").click(function () {
@@ -337,12 +352,14 @@
 			return false;
 		}
 		var spec_item_title = 1;
-		$(".spec_item").each(function (i) {
-			var _this = this;
-			if($(_this).find(".spec_item_title").length == 0){
-				spec_item_title = 0;
-			}
-		});
+		if($("#hasoption").get(0).checked){
+			$(".spec_item").each(function (i) {
+				var _this = this;
+				if($(_this).find(".spec_item_title").length == 0){
+					spec_item_title = 0;
+				}
+			});
+		}
 		if(spec_item_title == 0){
 			$('form').attr('stop',1),tip.msgbox.err('详细规格没有填写,请填写详细规格!');
 			return false;
@@ -753,4 +770,3 @@
 </script>
 {template '_footer'}
 
-<!--4000097827-->

@@ -3,7 +3,7 @@
 <tr>
 
     <td style='text-align:center;'>
-        {ifp 'sale.coupon.shareticket'}
+        {ifp 'sale.sendticket.share.edit'}
         <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('sale/sendticket/share/change',array('typechange'=>'order','id'=>$item['id']))}" >{$item['order']}</a>
         {else}
         {$item['order']}
@@ -13,14 +13,14 @@
         <!--<img src="{php echo tomedia($item['shareicon'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  />-->
     <!--</td>-->
     <td class='full' style="overflow-x: hidden">
-        {ifp 'sale.coupon.shareticket'}
+        {ifp 'sale.sendticket.share.edit'}
         <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('sale/sendticket/share/change',array('typechange'=>'sharetitle','id'=>$item['id']))}" >{$item['sharetitle']}</a>
         {else}
         {$item['sharetitle']}
         {/if}
     </td>
     <td>
-        {ifp 'sale.coupon.shareticket'}
+        {ifp 'sale.sendticket.share.edit'}
         满<a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('sale/sendticket/share/change',array('typechange'=>'enough','id'=>$item['id']))}" >{$item['enough']}</a>
         {else}
         {$item['enough']}
@@ -42,12 +42,12 @@
         {if $item['status']==1}开启{else}关闭{/if}</span>
     </td>
     <td  style="overflow:visible;position:relative;text-align: center;">
-        {ifp 'sale.coupon.shareticket'}
+        {ifp 'sale.sendticket.share.edit|sale.sendticket.share.view'}
         <a  class='btn btn-default btn-sm' href="{php echo webUrl('sale/coupon/shareticket/edit', array('type'=>$_GPC['type'],'id' => $item['id'],'page'=>$page))}" title="{ifp 'sale.sendticket.share.edit'}编辑{else}查看{/if}">
-            <i class='fa fa-edit'></i> {ifp 'sale.coupon.shareticket.edit'}编辑{else}查看{/if}
+            <i class='fa fa-edit'></i> {ifp 'sale.sendticket.share.edit'}编辑{else}查看{/if}
         </a>
         {/if}
-        {ifp 'sale.coupon.shareticket'}
+        {ifp 'sale.sendticket.share.delete1'}
         <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo webUrl('sale/coupon/shareticket/delete1', array('id' => $item['id']))}" data-confirm='如果此活动存在记录，会无法关联到相关信息, 确认要删除吗?？'><i class='fa fa-remove'></i> 删除</a>
         {/if}
     </td>
@@ -57,4 +57,3 @@
 {else}
 <td colspan="6" style="text-align: center;">暂时没有任何分享活动!</td>
 {/if}
-<!--NDAwMDA5NzgyNw==-->

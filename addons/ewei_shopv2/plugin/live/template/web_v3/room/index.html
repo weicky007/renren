@@ -137,7 +137,7 @@
                        </span>
                 </a>
                 {ife 'live.room' $item}
-                <a href="javascript:void(0);" class="btn btn-op btn-operation" data-id="{$row['id']}" data-title="{$row['title']}" >
+                <a class="btn btn-op btn-operation" data-toggle="ajaxRemove"  href="{php echo webUrl('live/room/deleted', array('id' => $row['id']))}" data-confirm="确认删除此直播间吗？">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
                              <i class='icow icow-shanchu1'></i>
                         </span>

@@ -89,12 +89,7 @@
             {else}
             {if !empty($v1['tp_text'])}{loop $v1['tp_text'] $k2 $v2}{php echo $v2."<br>";}{/loop}{/if}
             {/if}
-        {else if ($data_type==14)}
-            {ifp 'diyform.temp.edit|diyform.add'}
-            <textarea class="form-control" name="tp_text[{php echo $kw}]" placeholder="一行一个选项" style="height: 120px;">{if !empty($v1['tp_text'])}{loop $v1['tp_text'] $k2 $v2}{php echo $v2."\n";}{/loop}{/if}</textarea>
-            {else}
-            {if !empty($v1['tp_text'])}{loop $v1['tp_text'] $k2 $v2}{php echo $v2."<br>";}{/loop}{/if}
-            {/if}
+
         {else if $data_type==8}
 
             设置默认起始日期&nbsp;
@@ -152,4 +147,3 @@
 
 </tr>
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

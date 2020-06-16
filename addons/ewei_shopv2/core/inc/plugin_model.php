@@ -1,5 +1,4 @@
 <?php
-
 class PluginModel
 {
 	private $pluginname;

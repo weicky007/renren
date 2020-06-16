@@ -149,9 +149,8 @@
     width: 3.39rem;
     height:2.4rem;
     background: #ff5555;
-    z-index: 0;
+    z-index: 10;
     transform-origin: left bottom;
-    -webkit-transform-origin: left bottom;
     transform:rotate(-45deg);
     -ms-transform:rotate(-45deg);
     -moz-transform:rotate(-45deg);
@@ -171,7 +170,7 @@
     width: 2.25rem;
     height: 1rem;
     background: #04a6f8;
-    z-index: 0;
+    z-index: 10;
     text-align: center;
     color: #fff;
     font-size: 0.6rem;
@@ -186,7 +185,7 @@
     width:1.6rem;
     height: 1.6rem;
     background: #ffb805;
-    z-index: 0;
+    z-index: 10;
     text-align: center;
     border-radius: 50%;
     color: #fff;
@@ -210,7 +209,7 @@
     width:1.6rem;
     height: 1.6rem;
     background: #19dbab;
-    z-index: 0;
+    z-index: 10;
     text-align: center;
     color: #fff;
     font-size: 0.6rem;
@@ -560,18 +559,10 @@
     color: #fff;
     padding: 0;
 }
-.diymenu .item .inner.left .icon{
-    line-height: 1.5rem;
-    margin-right: 0.1rem;
-}
 .diymenu .item .inner.left {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-top: 0.25rem;
 }
-.diymenu .item .inner.left .text.left{
-    margin-top: 0;
-}
+
 .diymenu .item .inner:before {
     content: "";
     position: absolute;
@@ -621,7 +612,6 @@
 }
 .diymenu .item .inner .icon.left {
     font-size: 18px;
-    /*vertical-align: super;*/
 }
 
 .diymenu .item .inner.image {
@@ -969,7 +959,7 @@
 .page-commission-index .headinfo {
     border: 0;
 }
-/*swiper*/
+
 /*.swiper-button-next, .swiper-button-prev{*/
     /*top:1.725rem;*/
 /*}*/
@@ -1100,9 +1090,6 @@
     right: 0;
     z-index: 100;
 }
-.diy-fixedsearch+div{
-    top:44px;
-}
 
 .diy-fixedsearch .background {
     position: absolute;
@@ -1210,4 +1197,3 @@
     right: 5px;
     width:auto;
 }
-/*NDAwMDA5NzgyNw==*/

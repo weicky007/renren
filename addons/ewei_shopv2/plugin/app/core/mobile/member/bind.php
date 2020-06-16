@@ -1,8 +1,11 @@
 <?php
-
-if (!defined('IN_IA')) {
+//haha 
+?>
+<?php
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+
 
 require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Bind_EweiShopV2Page extends AppMobilePage
@@ -18,15 +21,19 @@ class Bind_EweiShopV2Page extends AppMobilePage
 		if ($this->iswxapp) {
 			$needbind = false;
 			if (empty($this->member['mobileverify']) || empty($this->member['mobile'])) {
-				if ((empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind'])) || !empty($_W['shopset']['wap']['open'])) {
+				if ((empty($_W['shopset']['app']['isclose']) && !(empty($_W['shopset']['app']['openbind']))) || !(empty($_W['shopset']['wap']['open']))) {
 					$needbind = true;
 				}
+
 			}
 
-			if (!$needbind) {
+
+			if (!($needbind)) {
 				app_error(AppError::$BindNotOpen);
 			}
+
 		}
+
 	}
 
 	public function main()
@@ -38,12 +45,13 @@ class Bind_EweiShopV2Page extends AppMobilePage
 		if (empty($sendtime) || (($sendtime + 60) < time())) {
 			$endtime = 0;
 		}
-		else {
+		 else {
 			$endtime = 60 - time() - $sendtime;
 		}
 
 		$memberArr = array('mobile' => $member['mobile']);
-		app_json(array('member' => $memberArr, 'binded' => !empty($member['mobile']) && !empty($member['mobileverify']) ? 1 : 0, 'endtime' => $endtime));
+
+		app_json(array('member' => $memberArr, 'binded' => (!(empty($member['mobile'])) && !(empty($member['mobileverify'])) ? 1 : 0), 'endtime' => $endtime));
 	}
 
 	public function submit()
@@ -61,9 +69,10 @@ class Bind_EweiShopV2Page extends AppMobilePage
 			$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'];
 			$sendcode = m('cache')->get($key);
 			$sendtime = m('cache')->get($key_time);
-			if (!isset($sendcode) || ($sendcode !== $verifycode) || !isset($sendtime) || (($sendtime + 60) < time())) {
+			if (!(isset($sendcode)) || ($sendcode !== $verifycode) || !(isset($sendtime)) || (($sendtime + 60) < time())) {
 				app_error(AppError::$VerifyCodeError, '验证码错误或已过期');
 			}
+
 
 			$member2 = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and uniacid=:uniacid and mobileverify=1 limit 1', array(':mobile' => $mobile, ':uniacid' => $_W['uniacid']));
 
@@ -72,12 +81,20 @@ class Bind_EweiShopV2Page extends AppMobilePage
 				m('bind')->update($member['id'], array('mobile' => $mobile, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'mobileverify' => 1));
 				m('cache')->del($key);
 				m('account')->setLogin($member['id']);
+
+				if (empty($member['mobileverify'])) {
+					m('bind')->sendCredit($member);
+				}
+
+
 				app_json();
 			}
+
 
 			if ($member['id'] == $member2['id']) {
 				app_error(AppError::$BindSelfBinded);
 			}
+
 
 			if (m('bind')->iswxm($member) && m('bind')->iswxm($member2)) {
 				if ($confirm) {
@@ -88,12 +105,13 @@ class Bind_EweiShopV2Page extends AppMobilePage
 					m('account')->setLogin($member['id']);
 					app_json();
 				}
-				else {
+				 else {
 					app_error(AppError::$BindWillRelieve, '此手机号已与其他帐号绑定, 如果继续将会解绑之前帐号, 确定继续吗？');
 				}
 			}
 
-			if (!m('bind')->iswxm($member2)) {
+
+			if (!(m('bind')->iswxm($member2))) {
 				if ($confirm) {
 					$result = m('bind')->merge($member2, $member);
 
@@ -101,18 +119,20 @@ class Bind_EweiShopV2Page extends AppMobilePage
 						app_error(AppError::$BindError, $result['message']);
 					}
 
+
 					$salt = m('account')->getSalt();
 					m('bind')->update($member['id'], array('mobile' => $mobile, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'mobileverify' => 1));
 					m('cache')->del($key);
 					m('account')->setLogin($member['id']);
 					app_json();
 				}
-				else {
+				 else {
 					app_error(AppError::$BindWillMerge, '此手机号已通过其他方式注册, 如果继续将会合并账号信息, 确定继续吗？');
 				}
 			}
 
-			if (!m('bind')->iswxm($member)) {
+
+			if (!(m('bind')->iswxm($member))) {
 				if ($confirm) {
 					$result = m('bind')->merge($member, $member2);
 
@@ -120,20 +140,24 @@ class Bind_EweiShopV2Page extends AppMobilePage
 						app_error(AppError::$BindError, $result['message']);
 					}
 
+
 					$salt = m('account')->getSalt();
 					m('bind')->update($member2['id'], array('mobile' => $mobile, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'mobileverify' => 1));
 					m('cache')->del($key);
 					m('account')->setLogin($member2['id']);
 					app_json();
 				}
-				else {
+				 else {
 					app_error(AppError::$BindWillMerge, '此手机号已通过其他方式注册, 如果继续将会合并账号信息, 确定继续吗？');
 				}
 			}
+
 		}
+
 
 		app_error(AppError::$ParamsError);
 	}
 }
+
 
 ?>

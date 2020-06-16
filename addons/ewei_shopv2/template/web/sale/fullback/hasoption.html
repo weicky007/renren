@@ -277,12 +277,12 @@
                             $("#optiontitle"+{$goodsid}+"").html("设置");
                         }else{
                             $("#optiontitle"+{$goodsid}+"").html(""+data.result.title+"...");
+                            var $objOption = $("#fullbackgoods"+{$goodsid}+"").nextAll();
+                            if($objOption){
+                                $objOption.remove();
+                            }
+                            $("#fullbackgoods"+{$goodsid}+"").after(optoinhtml)
                         }
-                        var $objOption = $("#fullbackgoods"+{$goodsid}+"").nextAll();
-                        if($objOption){
-                            $objOption.remove();
-                        }
-                        $("#fullbackgoods"+{$goodsid}+"").after(optoinhtml)
 
                     }
                 });
@@ -345,4 +345,3 @@
 
 
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

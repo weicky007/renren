@@ -1,13 +1,12 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
 require EWEI_SHOPV2_PLUGIN . 'merch/core/inc/page_merch.php';
-class List_EweiShopV2Page extends MerchWebPage
+class List_EweiShopV2Page extends MerchWebPage 
 {
-	public function detail()
+	public function detail() 
 	{
 		global $_W;
 		global $_GPC;
@@ -20,23 +19,22 @@ class List_EweiShopV2Page extends MerchWebPage
 		$diyform_flag = 0;
 		$diyform_flag_commission = 0;
 		$diyform_plugin = p('diyform');
-
-		if ($diyform_plugin) {
-			if (!empty($member['diymemberdata'])) {
+		if ($diyform_plugin) 
+		{
+			if (!(empty($member['diymemberdata']))) 
+			{
 				$diyform_flag = 1;
 				$fields = iunserializer($member['diymemberfields']);
 			}
-
-			if (!empty($member['diycommissiondata'])) {
+			if (!(empty($member['diycommissiondata']))) 
+			{
 				$diyform_flag_commission = 1;
 				$cfields = iunserializer($member['diycommissionfields']);
 			}
 		}
-
 		$groups = m('member')->getGroups();
 		$levels = m('member')->getLevels();
 		include $this->template();
 	}
 }
-
 ?>

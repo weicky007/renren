@@ -32,7 +32,7 @@ $config['cookie']['path'] = '/';
 
 // --------------------------  CONFIG SETTING  --------------------------- //
 $config['setting']['charset'] = 'utf-8';
-$config['setting']['cache'] = 'mysql';
+$config['setting']['cache'] = 'redis';
 $config['setting']['timezone'] = 'Asia/Shanghai';
 $config['setting']['memory_limit'] = '256M';
 $config['setting']['filemode'] = 0644;
@@ -61,8 +61,8 @@ $config['setting']['proxy']['host'] = '';
 $config['setting']['proxy']['auth'] = '';
 
 // --------------------------  CONFIG REDIS  --------------------------- //
-$config['setting']['redis']['server'] = '';
+$config['setting']['redis']['server'] = '127.0.0.1 ';
 $config['setting']['redis']['port'] = 6379;
-$config['setting']['redis']['pconnect'] = 0; 
+$config['setting']['redis']['pconnect'] = 1;
 $config['setting']['redis']['requirepass'] = ''; 
 $config['setting']['redis']['timeout'] = 1;

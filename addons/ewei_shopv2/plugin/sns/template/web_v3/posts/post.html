@@ -6,7 +6,7 @@
 <div class="page-content">
     <div class="page-sub-toolbar">
         <span class=''>
-            {ife 'sns.posts' $item}
+            {if $isManager}
                 <a class='btn btn-primary btn-sm' href="{php echo webUrl('sns/posts/add')}"><i class='fa fa-plus'></i> 发表话题</a>
             {/if}
             {ifp 'sns.posts.add'}
@@ -133,7 +133,7 @@
 
         </div>
 
-    {ife 'sns.posts' $item}
+{ife 'sns.posts' $item}
 <div class="form-group">
     <label class="col-lg control-label"></label>
     <div class="col-sm-9 col-xs-12">
@@ -161,4 +161,3 @@
     });*/
 </script>
 {template '_footer'}
-<!--4000097827-->

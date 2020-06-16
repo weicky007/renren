@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,7 +22,7 @@ class Log_EweiShopV2Page extends AppMobilePage
 		$newList = array();
 		if (is_array($list) && !empty($list)) {
 			foreach ($list as $row) {
-				$newList[] = array('id' => $row['id'], 'type' => $row['type'], 'money' => $row['money'], 'typestr' => $apply_type[$row['applytype']], 'status' => $row['status'], 'deductionmoney' => $row['deductionmoney'], 'realmoney' => $row['realmoney'], 'createtime' => date('Y-m-d H:i', $row['createtime']));
+				$newList[] = array('id' => $row['id'], 'type' => $row['type'], 'money' => $row['money'], 'typestr' => $apply_type[$row['applytype']], 'status' => $row['status'], 'deductionmoney' => $row['deductionmoney'], 'realmoney' => $row['realmoney'], 'rechargetype' => $row['rechargetype'], 'createtime' => date('Y-m-d H:i', $row['createtime']));
 			}
 		}
 

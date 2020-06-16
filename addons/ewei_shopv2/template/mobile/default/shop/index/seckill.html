@@ -10,7 +10,11 @@
 </div>
 
 <script>
-
+	if($(".seckill-group").length>0) {
+		require(['../addons/ewei_shopv2/plugin/seckill/static/js/timer.js'], function (modal) {
+			modal.initTimers();
+		});
+	}
 	{if count($seckillinfo['goods'])>=4}
 	if($(".seckill-group").length>0){
 
@@ -53,14 +57,7 @@
 			})
 		});
 	}
-	{else}
-		if($(".seckill-group").length>0) {
-			require(['../addons/ewei_shopv2/plugin/seckill/static/js/timer.js'], function (modal) {
-				modal.initTimers();
-			});
-		}
 	{/if}
 
 </script>
 {/if}
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

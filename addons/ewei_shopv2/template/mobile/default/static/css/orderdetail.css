@@ -1,4 +1,4 @@
-/*common*/
+
 .text-danger{
 	color: #ff5555 !important;
 }
@@ -65,7 +65,6 @@
 }
 .fui-according-header .text{
 	padding: 0;
-	font-size: 0.7rem;
 }
 .fui-according-header .remark:after{
 	content: " ";
@@ -758,4 +757,3 @@ i{
 	padding: 0;
 }
 
-/*4000097827*/

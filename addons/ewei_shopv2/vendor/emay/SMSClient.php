@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__) . '/nusoaplib/nusoap.php';
 class SMSClient
 {
 	/**
@@ -59,6 +60,7 @@ class SMSClient
 		if ($sessionKey != '') {
 			$this->sessionKey = $sessionKey;
 		}
+
 
 		$this->soap = new nusoap_client($url, false, $proxyhost, $proxyport, $proxyusername, $proxypassword, $timeout, $response_timeout);
 		$this->soap->soap_defencoding = $this->outgoingEncoding;
@@ -126,6 +128,7 @@ class SMSClient
 			$this->sessionKey = $sessionKey;
 		}
 
+
 		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $this->password);
 		$result = $this->soap->call('registEx', $params, $this->namespace);
 		return $result;
@@ -174,7 +177,7 @@ class SMSClient
 	{
 		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $sendTime, 'arg4' => $content, 'arg5' => $addSerial, 'arg6' => $charset, 'arg7' => $priority);
 
-		foreach ($mobiles as $mobile) {
+		foreach ($mobiles as $mobile ) {
 			array_push($params, new soapval('arg3', false, $mobile));
 		}
 
@@ -260,14 +263,15 @@ class SMSClient
 		$result = $this->soap->call('getMO', $params, $this->namespace);
 		if (is_array($result) && (0 < count($result))) {
 			if (is_array($result[0])) {
-				foreach ($result as $moArray) {
+				foreach ($result as $moArray ) {
 					$ret[] = new Mo($moArray);
 				}
 			}
-			else {
+			 else {
 				$ret[] = new Mo($result);
 			}
 		}
+
 
 		return $ret;
 	}
@@ -340,7 +344,7 @@ class SMSClient
 	{
 		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
 
-		foreach ($forwardMobiles as $mobile) {
+		foreach ($forwardMobiles as $mobile ) {
 			array_push($params, new soapval('arg2', false, $mobile));
 		}
 
@@ -425,6 +429,5 @@ class Mo
 	}
 }
 
-require_once dirname(__FILE__) . '/nusoaplib/nusoap.php';
 
 ?>

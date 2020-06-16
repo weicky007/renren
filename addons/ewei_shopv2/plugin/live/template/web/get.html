@@ -81,7 +81,10 @@
 <script type="text/javascript">
     $("#option_submit").off("click").on("click",function () {
         var url = $("#url").val();
+        var poster = $("#real_img").attr('src');
         $("input[name=url]").val(url);
+        $("input[name=thumb]").val(poster);
+        $(".coverthumb img.img-responsive").attr('src',poster);
         //关闭弹窗
         $('.hasoption-close').trigger('click');
     });
@@ -115,9 +118,9 @@
             $("#btn-clip").attr('data-href', ret.result.hls_url);
 
             $(".video-info").show();
+            $("#option_submit").show();
             if(ret.result.status==1){
                 $(".video-info2").show();
-                $("#option_submit").show();
                 $("#live-status").removeClass('label-danger').addClass('label-primary').text('直播中');
             }else{
                 $("#live-status").removeClass('label-primary').addClass('label-danger').text('未开播');

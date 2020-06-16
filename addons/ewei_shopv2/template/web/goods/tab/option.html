@@ -49,25 +49,17 @@
 <div class="form-group">
     <label class="col-sm-1 control-label"></label>
     <div class="col-sm-11">
-        {ife 'goods' $item}
-            {if $item['type'] == 3}
-            <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
-            {else}
-            <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
-            <label for="totalcnf2" class="radio-inline"><input type="radio" name="totalcnf" value="1" id="totalcnf2"  {if !empty($item) && $item['totalcnf'] == 1}checked="true"{/if} /> 付款减库存</label>
-            <label for="totalcnf3" class="radio-inline"><input type="radio" name="totalcnf" value="2" id="totalcnf3"  {if !empty($item) && $item['totalcnf'] == 2}checked="true"{/if} /> 永不减库存</label>
-            {/if}
+              {ife 'goods' $item}
+        <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
+        <label for="totalcnf2" class="radio-inline"><input type="radio" name="totalcnf" value="1" id="totalcnf2"  {if !empty($item) && $item['totalcnf'] == 1}checked="true"{/if} /> 付款减库存</label>
+        <label for="totalcnf3" class="radio-inline"><input type="radio" name="totalcnf" value="2" id="totalcnf3"  {if !empty($item) && $item['totalcnf'] == 2}checked="true"{/if} /> 永不减库存</label>
         {else}
-        {if $item['type'] == 3}
-        {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
-        {else}
+        
         <div class='form-control-static'>
-            {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
-            {if !empty($item) && $item['totalcnf'] == 1}付款减库存{/if}
-            {if !empty($item) && $item['totalcnf'] == 2}永不减库存{/if}
-        </div>
-        {/if}
-
+           {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
+           {if !empty($item) && $item['totalcnf'] == 1}付款减库存{/if}
+           {if !empty($item) && $item['totalcnf'] == 2}永不减库存{/if}
+         </div>
         
         {/if}
     </div>
@@ -80,8 +72,11 @@
 		<input type="checkbox" id="hasoption" value="1" name="hasoption" {if $item['hasoption']==1}checked{/if} />启用商品规格
 	</label>
 	  <span class="help-block">启用商品规格后，商品的价格及库存以商品规格为准,库存设置为0则会到”已售罄“中，手机也不会显示, -1为不限制</span>
-       {else}
+	 
+       {else} 
+      
            <div class='form-control-static'>{if $item['hasoption']==1}启用{else}不启用{/if} </div>
+           
        {/if}
            </div>
 </div>
@@ -1129,4 +1124,3 @@ function setinterval(type)
 
 
 </script>
-<!--青岛易联互动网络科技有限公司-->

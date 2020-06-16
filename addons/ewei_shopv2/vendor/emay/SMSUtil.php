@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__) . '/SMSClient.php';
 class SMSUtil
 {
 	public $gwUrl = 'http://sdkhttp.eucp.b2m.cn/sdk/SDKService?wsdl';
@@ -22,10 +23,10 @@ class SMSUtil
 		$this->sessionKey = $sessionKey;
 		$this->connectTimeOut = $timeout;
 		$this->readTimeOut = $response_timeout;
-		$this->proxyhost = empty($proxy['proxyhost']) ? false : $proxy['proxyhost'];
-		$this->proxyport = empty($proxy['$proxyport']) ? false : $proxy['proxyport'];
-		$this->proxyusername = empty($proxy['proxyusername']) ? false : $proxy['proxyusername'];
-		$this->proxypassword = empty($proxy['proxypassword']) ? false : $proxy['proxypassword'];
+		$this->proxyhost = (empty($proxy['proxyhost']) ? false : $proxy['proxyhost']);
+		$this->proxyport = (empty($proxy['$proxyport']) ? false : $proxy['proxyport']);
+		$this->proxyusername = (empty($proxy['proxyusername']) ? false : $proxy['proxyusername']);
+		$this->proxypassword = (empty($proxy['proxypassword']) ? false : $proxy['proxypassword']);
 		$this->client = new SMSClient($this->gwUrl, $this->serialNumber, $this->password, $this->sessionKey, $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword, $this->connectTimeOut, $this->readTimeOut);
 		$this->client->setOutgoingEncoding('UTF-8');
 	}
@@ -79,6 +80,7 @@ class SMSUtil
 			return $err;
 		}
 
+
 		return '';
 	}
 
@@ -99,6 +101,5 @@ class SMSUtil
 	}
 }
 
-require_once dirname(__FILE__) . '/SMSClient.php';
 
 ?>

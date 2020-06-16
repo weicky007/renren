@@ -1,0 +1,63 @@
+{template '_header'}
+
+<link href="../addons/ewei_shopv2/plugin/app/static/css/page.css?v=20170922" rel="stylesheet" type="text/css"/>
+
+<div class="page-header">
+    当前位置：
+    <span class="text-primary">{php echo m('plugin')->getName('app')}</span>
+</div>
+
+<div class="page-content">
+
+    <div class="alert alert-primary">
+        <p><b>小程序说明</b></p>
+        <p>小程序是微信小程序的管理后台，可在此设置个性化首页排版、基本设置、设置微信支付、审核发布。</p>
+    </div>
+
+    {if $error}
+        <div class="page-tips">
+            <p>欢迎使用小程序前端+后端,技术客服QQ：3086811716 </p>
+        </div>
+    {else}
+        <div class="wxapp-list">
+            {loop $list $item}
+                <div class="wxapp-item">
+                    <div class="logo">
+                        <img src="{$item['xcx_head_img']}" onerror="this.src='../addons/ewei_shopv2/static/images/app.jpg'"  />
+                    </div>
+                    <div class="name">{php echo empty($item['xcx_name'])? '未设置': $item['xcx_name']}</div>
+                    <div class="qrcode">
+                        {if $item['audit_status']==5}
+                            <img src="{$item['xcx_head_qrcode']}" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
+                        {elseif $item['audit_status']>1}
+                            <img src="{$item['xcx_qrcode_url']}" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
+                        {else}
+                            <div class="layer">未提交</div>
+                            <img src="../addons/ewei_shopv2/plugin/app/static/images/qrcode.png"  />
+                        {/if}
+                    </div>
+                    <div class="line"></div>
+                    <div class="text">
+                        <p>线上版本：{php echo $item['audit_status']==1? '未提交': $item['version_id']}</p>
+                        <p>审核状态：
+                            {if $item['audit_status']==1}<span>未提交</span>
+                            {elseif $item['audit_status']==2}<span class="text-warning">审核中(2)</span>
+                            {elseif $item['audit_status']==3}<span class="text-warning">审核中</span>
+                            {elseif $item['audit_status']==4}<span class="text-success">发布中(4)</span>
+                            {elseif $item['audit_status']==5}<span class="text-success">发布成功</span>
+                            {elseif $item['audit_status']==6}<span class="text-danger">审核失败</span>
+                            {/if}
+                        </p>
+                        <p>提交时间：
+                            <span {if $item['audit_status']>1 && !empty($item['version_time'])}data-toggle="tooltip"
+                            data-placement="top"
+                            data-original-title="{php echo date('Y-m-d H:i', $item['version_time'])}"{/if}>{php echo $item['audit_status']>1? date('Y-m-d', $item['version_time']): '未提交'}</span></p>
+                    </div>
+                </div>
+            {/loop}
+        </div>
+    {/if}
+</div>
+
+{template '_footer'}
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

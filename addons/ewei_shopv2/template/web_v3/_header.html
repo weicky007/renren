@@ -2,7 +2,7 @@
 
 {php $system=m('system')->init()}
 {php $sysmenus = m('system')->getMenu(true)}
-
+{php unset($sysmenus['menu'][8])}
 <div class="wb-header" style="position: fixed;">
     <div class="logo {if !empty($system['foldnav'])}small{/if}">
         {if !empty($copyright) && !empty($copyright['logo'])}
@@ -43,8 +43,10 @@
 
     <ul>
         {if $system['right_menu']['system']}
-            <li data-toggle="tooltip" data-placement="bottom" title="系统管理">
-                <a href="{php echo webUrl('system')}"><i class="icow icow-syssetL"></i></a>
+            <li data-toggle="tooltip" data-placement="bottom" title="">
+                <a href="{php echo webUrl('system')}">
+                    <!--<i class="icow icow-syssetL"></i>-->
+                    系统管理</a>
             </li>
         {/if}
         <li class="dropdown {if $system['merch']}auto{/if} ellipsis">
@@ -283,4 +285,3 @@
         <div class="wb-panel-fold {if empty($system['foldpanel'])}in{/if}">{if !empty($system['foldpanel'])}<i class="icow icow-info"></i> 消息提醒{else}<i class="fa fa-angle-double-right"></i> 收起面板{/if}</div>
     {/if}
     <div class="wb-container {if !empty($system['foldpanel'])}right-panel{/if}">
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

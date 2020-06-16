@@ -81,7 +81,7 @@
 			<th style='width:100px;'>会员</th>
 			<th style='width:90px;'>消耗</th>
 			<th style='width:90px;'>状态</th>
-			<th style="width:220px;">操作</th>
+			<th style="">操作</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -199,11 +199,6 @@
 						<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('creditshop/log/doexchange',array('id' => $row['id'],'type'=>$row['goodstype']));}"><i class='fa fa-exchange'></i> 兑换</a>
 				{/if}
 				{/if}
-				{if $item['merchid'] == 0}
-				{ifp 'creditshop.log.remarksaler'}
-				<a class='btn btn-default btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('creditshop/log/remarksaler', array('id' => $row['id']))}" ><i class='fa fa-flag-o'></i> 备注</a>
-				{/if}
-				{/if}
 			</td>
 		</tr>
 		{/loop}
@@ -217,4 +212,3 @@
 	{/if}
 </div>
 {template '_footer'}
-<!--青岛易联互动网络科技有限公司-->

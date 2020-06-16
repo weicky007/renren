@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -642,7 +642,7 @@ class Index_EweiShopV2Page extends AppMobilePage
 				$row['tagtitle'] = $tagtitle;
 			}
 
-			$newCoupon = array('id' => $row['id'], 'isdisa' => $row['isdisa'], 'color' => trim($row['color']), 'thumb' => $row['thumb'], 'couponname' => $row['couponname'], 'tagtitle' => $row['tagtitle'], 'backtype' => $row['backtype'], 'deduct' => $row['deduct'], 'discount' => (double) $row['discount'], 'backmoney' => $row['backtype'], 'backcredit' => $row['backcredit'], 'backredpack' => $row['backredpack'], 'timestr' => $row['timestr'], 'gettypestr' => $row['gettypestr'], 'lastratio' => $row['lastratio'], 'title2' => $title2, 'iconurl' => $row['isdisa'] ? $_W['siteroot'] . 'template/mobile/default/static/images/coupon/end.png' : '');
+			$newCoupon = array('id' => $row['id'], 'isdisa' => $row['isdisa'], 'color' => trim($row['color']), 'thumb' => $row['thumb'], 'couponname' => $row['couponname'], 'tagtitle' => $row['tagtitle'], 'backtype' => $row['backtype'], 'deduct' => $row['deduct'], 'discount' => (double) $row['discount'], 'backmoney' => $row['backmoney'], 'backcredit' => $row['backcredit'], 'backredpack' => $row['backredpack'], 'timestr' => $row['timestr'], 'gettypestr' => $row['gettypestr'], 'lastratio' => $row['lastratio'], 'title2' => $title2, 'iconurl' => $row['isdisa'] ? $_W['siteroot'] . 'template/mobile/default/static/images/coupon/end.png' : '');
 
 			if ($row['timestr'] == '0') {
 				$newCoupon['usestr'] = '永久有效';

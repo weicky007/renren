@@ -1,5 +1,5 @@
 <?php
-
+//haha
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,6 +15,14 @@ class Account_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		$this->authkey = $_W['setting']['site']['token'] . '_' . $_W['uniacid'];
 		$this->expire = 3600 * 24 * 30;
+	}
+
+	public function main()
+	{
+		global $_W;
+		$set = $_W['shopset']['wap'];
+		$result = array('color' => $set['color'], 'bg' => tomedia($set['bg']), 'logo' => tomedia($_W['shopset']['shop']['logo']), 'template' => $set['style'], 'wx' => $set['sns']['wx'], 'qq' => $set['sns']['qq'], 'closecolor' => '#ffffff');
+		app_json($result);
 	}
 
 	public function login()
@@ -37,7 +45,7 @@ class Account_EweiShopV2Page extends AppMobilePage
 			app_error(AppError::$UserLoginFail);
 		}
 
-		$token = base64_encode(authcode($mobile . '|' . $member['salt'], 'ENCODE', $this->authkey, $this->expire));
+		$token = base64_encode(authcode($member['id'] . '|' . $member['salt'], 'ENCODE', $this->authkey, $this->expire));
 		app_json(array(
 	'token'  => $token,
 	'expire' => $this->expire,
@@ -61,12 +69,14 @@ class Account_EweiShopV2Page extends AppMobilePage
 
 		@session_start();
 		$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
-		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'] . '_' . $mobile;
-		if (!isset($_SESSION[$key]) || ($_SESSION[$key] !== $verifycode)) {
+		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'];
+		$sendcode = m('cache')->get($key);
+		$sendtime = m('cache')->get($key_time);
+		if (!isset($sendcode) || ($sendcode !== $verifycode)) {
 			app_error(AppError::$VerifyCodeError);
 		}
 
-		if (!isset($_SESSION[$key_time]) || ((600 * 1000) < (time() - $_SESSION[$key_time]))) {
+		if (!isset($sendtime) || ((600 * 1000) < (time() - $sendtime))) {
 			app_error(AppError::$VerifyCodeTimeOut);
 		}
 
@@ -107,7 +117,7 @@ class Account_EweiShopV2Page extends AppMobilePage
 			p('commission')->checkAgent($openid);
 		}
 
-		$token = base64_encode(authcode($mobile . '|' . $salt, 'ENCODE', $this->authkey, $this->expire));
+		$token = base64_encode(authcode($member['id'] . '|' . $salt, 'ENCODE', $this->authkey, $this->expire));
 		app_json(array(
 	'token'  => $token,
 	'expire' => $this->expire,
@@ -155,7 +165,31 @@ class Account_EweiShopV2Page extends AppMobilePage
 	}
 
 	/**
-     * 修改密码
+     * 获取修改密码信息
+     */
+	public function getchangepwd()
+	{
+		global $_W;
+		global $_GPC;
+		$member = m('member')->getMember($_W['openid']);
+		if (empty($member['mobile']) || empty($member['mobileverify'])) {
+			app_error(AppError::$UserNotBindMobile, '不用通过手机号找回密码');
+		}
+
+		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'];
+		$sendtime = m('cache')->get($key_time);
+		if (empty($sendtime) || (($sendtime + 60) < time())) {
+			$endtime = 0;
+		}
+		else {
+			$endtime = 60 - time() - $sendtime;
+		}
+
+		app_json(array('mobile' => $member['mobile'], 'endtime' => $endtime));
+	}
+
+	/**
+     * 执行修改密码
      */
 	public function changepwd()
 	{
@@ -168,14 +202,15 @@ class Account_EweiShopV2Page extends AppMobilePage
 			app_error(AppError::$ParamsError);
 		}
 
-		@session_start();
 		$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
-		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'] . '_' . $mobile;
-		if (!isset($_SESSION[$key]) || ($_SESSION[$key] !== $verifycode)) {
+		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'];
+		$sendcode = m('cache')->get($key);
+		$sendtime = m('cache')->get($key_time);
+		if (!isset($sendcode) || ($sendcode !== $verifycode)) {
 			app_error(AppError::$VerifyCodeError);
 		}
 
-		if (!isset($_SESSION[$key_time]) || ((600 * 1000) < (time() - $_SESSION[$key_time]))) {
+		if (!isset($sendtime) || ((600 * 1000) < (time() - $sendtime))) {
 			app_error(AppError::$VerifyCodeTimeOut);
 		}
 
@@ -223,14 +258,15 @@ class Account_EweiShopV2Page extends AppMobilePage
 			app_error(AppError::$ParamsError);
 		}
 
-		@session_start();
 		$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
-		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'] . '_' . $mobile;
-		if (!isset($_SESSION[$key]) || ($_SESSION[$key] !== $verifycode)) {
+		$key_time = '__ewei_shopv2_member_verifycodesendtime_' . $_W['uniacid'];
+		$sendcode = m('cache')->get($key);
+		$sendtime = m('cache')->get($key_time);
+		if (!isset($sendcode) || ($sendcode !== $verifycode)) {
 			app_error(AppError::$VerifyCodeError);
 		}
 
-		if (!isset($_SESSION[$key_time]) || ((600 * 1000) < (time() - $_SESSION[$key_time]))) {
+		if (!isset($sendtime) || ((600 * 1000) < (time() - $sendtime))) {
 			app_error(AppError::$VerifyCodeTimeOut);
 		}
 
@@ -248,6 +284,47 @@ class Account_EweiShopV2Page extends AppMobilePage
 
 		pdo_update('ewei_shop_member', array('mobile' => $newmobile), array('id' => $member['id']));
 		app_json(array('mobile' => $newmobile));
+	}
+
+	/**
+     * SNS授权登录
+     */
+	public function sns()
+	{
+		global $_W;
+		global $_GPC;
+
+		if (!$_W['ispost']) {
+		}
+
+		$type = trim($_GPC['type']);
+
+		if ($type == 'qq') {
+			if (empty($_GPC['openid'])) {
+				app_error(AppError::$ParamsError, '参数错误(OPENID字段为空)');
+			}
+
+			if (empty($_GPC['userinfo'])) {
+				app_error(AppError::$ParamsError, '参数错误(USERINFO字段为空)');
+			}
+		}
+		else if ($type == 'wx') {
+			if (empty($_GPC['code']) && empty($_GPC['token'])) {
+				app_error(AppError::$ParamsError, '参数错误(CODE、TOKEN为空)');
+			}
+		}
+		else {
+			app_error(AppError::$ParamsError, '参数错误(SNS类型错误)');
+		}
+
+		$mid = m('member')->checkMemberSNS($type);
+		$member = m('member')->getMember($mid);
+		$token = base64_encode(authcode($member['id'] . '|' . $member['salt'], 'ENCODE', $this->authkey, $this->expire));
+		app_json(array(
+	'token'  => $token,
+	'expire' => $this->expire,
+	'member' => array('id' => $member['id'], 'mobile' => $member['mobile'], 'salt' => $member['salt'], 'nickname' => $member['nickname'], 'avatar' => $member['avatar'], 'openid' => $member['openid'])
+	));
 	}
 }
 

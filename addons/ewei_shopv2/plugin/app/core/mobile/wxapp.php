@@ -1,5 +1,5 @@
 <?php
-
+//haha
 function app_error($errcode = 0, $message = '')
 {
 	exit(json_encode(array('error' => $errcode, 'message' => empty($message) ? AppError::getError($errcode) : $message)));
@@ -105,6 +105,10 @@ class Wxapp_EweiShopV2Page extends Page
 				pdo_update('ewei_shop_member', $updateData, array('id' => $member['id'], 'uniacid' => $member['uniacid']));
 				$data['id'] = $member['id'];
 				$data['uniacid'] = $member['uniacid'];
+			}
+
+			if (p('commission')) {
+				p('commission')->checkAgent($member['openid']);
 			}
 
 			app_json($data, $data['openId']);

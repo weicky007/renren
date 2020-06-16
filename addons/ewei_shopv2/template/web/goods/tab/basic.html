@@ -404,11 +404,7 @@
     <div class="col-sm-9 col-xs-12 gimgs">
         {ife 'goods' $item}
         {php echo tpl_form_field_multi_image('thumbs',$piclist)}
-        {if p("offic")}
-        <span class="help-block image-block">第一张缩略图为长方形，建议尺寸750*310，其他为正方型图片，尺寸建议宽度为640*640，并保持图片大小一致</span>
-        {else}
         <span class="help-block image-block">第一张为缩略图，建议为正方型图片，其他为详情页面图片，尺寸建议宽度为640，并保持图片大小一致</span>
-        {/if}
         <span class="help-block">您可以拖动图片改变其显示顺序 </span>
         {else}
         {loop $piclist $p}
@@ -718,4 +714,3 @@
         })
     })
 </script>
-<!--NDAwMDA5NzgyNw==-->

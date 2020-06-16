@@ -2,7 +2,7 @@
     {if empty($diyitem['params']['showtype']) || count($diyitem['data'])<=intval($diyitem['params']['rownum'])}
         <div class="fui-picturew row-{$diyitem['params']['rownum']}" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px; background: {$diyitem['style']['background']};">
             {loop $diyitem['data'] $pictureitem}
-                <a class="item" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px;" href="{php echo empty($pictureitem['linkurl'])? 'javascript:;': $pictureitem['linkurl']}">
+                <a class="item" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px;" href="{$pictureitem['linkurl']}">
                     <div class="image">
                         <img src="{php echo tomedia($pictureitem['imgurl'])}">
                         {if !empty($pictureitem['title'])}
@@ -18,7 +18,7 @@
             <div class="swiper-container fui-picturew row-{$diyitem['params']['rownum']}" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px; background: {$diyitem['style']['background']};">
                 <div class="swiper-wrapper">
                     {loop $diyitem['data'] $pictureitem}
-                        <a class="swiper-slide item" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px;" href="{php echo empty($pictureitem['linkurl'])? 'javascript:;': $pictureitem['linkurl']}">
+                        <a class="swiper-slide item" style="padding: {$diyitem['style']['paddingtop']}px {$diyitem['style']['paddingleft']}px;" href="{$pictureitem['linkurl']}">
                             <div class="image">
                                 <img src="{php echo tomedia($pictureitem['imgurl'])}">
                                 {if !empty($pictureitem['title'])}
@@ -37,4 +37,3 @@
         </div>
     {/if}
 {/if}
-<!--OTEzNzAyMDIzNTAzMjQyOTE0-->

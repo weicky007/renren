@@ -4,7 +4,7 @@
     {if empty($diyitem['params']['goodsscroll'])}
         <div class="fui-goods-group {$diyitem['style']['liststyle']}" style="background: {$diyitem['style']['background']};">
             {loop $diyitem['data'] $goodsitem}
-                <a class="fui-goods-item" data-goodsid="{$goodsitem['gid']}" href="{php echo mobileUrl(empty($diyitem['params']['goodstype'])?'goods/detail':'creditshop/detail', array('id'=>$goodsitem['gid']))}" data-type="{php echo empty($diyitem['params']['goodstype'])? $goodsitem['ctype']:0}" data-nocache="true" style="position: relative;">
+                <a class="fui-goods-item" data-goodsid="{$goodsitem['gid']}" href="{php echo mobileUrl(empty($diyitem['params']['goodstype'])?'goods/detail':'creditshop/detail', array('id'=>$goodsitem['gid']))}" data-nocache="true" style="position: relative;">
                     <div class="image {php echo $diyitem['style']['liststyle']=='block one'?'auto':''}  {if $diyitem['params']['showicon']==1}{$diyitem['style']['iconstyle']}{/if}" data-text="
                             {if $diyitem['style']['goodsicon']=='recommand'}推荐{/if}
                             {if $diyitem['style']['goodsicon']=='hotsale'}热销{/if}
@@ -117,7 +117,7 @@
             <div class="swiper-container fui-goods-group {$diyitem['style']['liststyle']}" style="background: {$diyitem['style']['background']};">
                 <div class="swiper-wrapper">
                     {loop $diyitem['data'] $goodsitem}
-                    <a class="swiper-slide fui-goods-item" data-goodsid="{$goodsitem['gid']}" href="{php echo mobileUrl(empty($diyitem['params']['goodstype'])?'goods/detail':'creditshop/detail', array('id'=>$goodsitem['gid']))}" data-type="{php echo empty($diyitem['params']['goodstype'])? $goodsitem['ctype']:0}" data-nocache="true" style="position: relative;">
+                    <a class="swiper-slide fui-goods-item data-goodsid="{$goodsitem['gid']}" href="{php echo mobileUrl(empty($diyitem['params']['goodstype'])?'goods/detail':'creditshop/detail', array('id'=>$goodsitem['gid']))}" data-nocache="true" style="position: relative;">
                         <div class="image   {if $diyitem['params']['showicon']==1}{$diyitem['style']['iconstyle']}{/if}" data-text="
                             {if $diyitem['style']['goodsicon']=='recommand'}推荐{/if}
                             {if $diyitem['style']['goodsicon']=='hotsale'}热销{/if}
@@ -236,4 +236,3 @@
     {/if}
 {/if}
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

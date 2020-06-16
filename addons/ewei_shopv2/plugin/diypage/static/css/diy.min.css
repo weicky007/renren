@@ -337,7 +337,7 @@ html {
     color: #333;
 }
 
-/**/
+
 .fui-goods-group {
     height: auto;
     overflow: hidden;
@@ -492,7 +492,7 @@ html {
 .fui-goods-group.block .fui-goods-item .detail .productprice.noheight{
     display: none;
 }
-/**/
+
 
 .fui-cube {
     height: 0;
@@ -2057,7 +2057,7 @@ html {
     vertical-align: top;
 }
 
-/*LIST*/
+
 .fui-list-group {
     background-color: #fff;
     position: relative;
@@ -3700,4 +3700,3 @@ float:left;
     transform-origin: center bottom;
     border: 2px solid #ff5555;
 }
-/*6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4*/

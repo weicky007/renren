@@ -99,7 +99,7 @@
             <label class="col-lg control-label">短信通知</label>
             <div class="col-sm-9 col-xs-12">
                 <select class="select2" name="data[merch_apply_sms]">
-                    <option value="0">从短信模板库中选择</option>
+                    <option>从短信模板库中选择</option>
                     {loop $template_sms $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['merch_apply_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
                     {/loop}
@@ -179,7 +179,7 @@
             <label class="col-lg control-label">短信通知</label>
             <div class="col-sm-9 col-xs-12">
                 <select class="select2" name="data[merch_applymoney_sms]">
-                    <option value="0">从短信模板库中选择</option>
+                    <option>从短信模板库中选择</option>
                     {loop $template_sms $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['merch_applymoney_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
                     {/loop}
@@ -240,4 +240,3 @@
     })
 </script>
 {template '_footer'}
-<!--913702023503242914-->

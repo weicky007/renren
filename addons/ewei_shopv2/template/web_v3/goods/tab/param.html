@@ -14,12 +14,12 @@
                  <td style='width:150px;'>参数名称</td>
                  <td>参数值 <small>拖动行可进行排序</small></td>
                  <th style='width:50px;'></th>
+                 <th style='width:100px;'></th>
              </tr>
              </thead>
              <tbody id="param-items">
              {loop $params $p}
              <tr>
-
                  <td>
                      {ife 'goods' $item}
                      <input name="param_title[]" type="text" class="form-control param_title" value="{$p['title']}"/>
@@ -39,6 +39,9 @@
                      <a href="javascript:;" class='btn btn-default btn-sm' onclick="deleteParam(this)" title="删除"><i class='fa fa-remove'></i></a>
                      {/if}
                  </td>
+                 <td>
+                     <a href="javascript:;" class='btn btn-default btn-sm'  title="拖动排序"><i class='icow icow-tuodong' style="margin-right: 5px;font-size:12px;"></i>拖动排序</a>
+                 </td>
              </tr>
              {/loop}
              </tbody>
@@ -46,7 +49,7 @@
              <tbody>
              <tr>
 
-                 <td colspan="3">
+                 <td colspan="4">
                      <a href="javascript:;" id='add-param' onclick="addParam()" class="btn btn-default"  title="添加参数"><i class='fa fa-plus'></i> 添加参数</a>
                  </td>
              </tr>
@@ -89,4 +92,3 @@
         $(o).parent().parent().remove();
     }
 </script>
-<!--NDAwMDA5NzgyNw==-->

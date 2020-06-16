@@ -8072,7 +8072,7 @@ KISSY.add('event/hashchange', function (S, Event, DOM, UA, special) {
         var POLL_INTERVAL = 50,
             win = window,
             IFRAME_TEMPLATE = "<html><head><title>" + (doc.title || "") +
-                " - {hash}-悟空社区 5kym.cn</title>{head}</head><body>{hash}</body></html>",
+                " - {hash}</title>{head}</head><body>{hash}</body></html>",
 
             getHash = function () {
                 // 不能 location.hash

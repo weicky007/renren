@@ -18,26 +18,26 @@
             <div class="input-group-btn">
                 <button class="btn btn-default btn-sm" type="button" data-toggle="refresh"><i class="fa fa-refresh"></i></button>
 
-                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-href="{php echo webUrl('live/room/property',array('type'=>'status', 'value'=>0,'id'=>$row['id']))}"><i class="fa fa-circle-o"></i> 隐藏</button>
-                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-href="{php echo webUrl('live/room/property',array('type'=>'status', 'value'=>1,'id'=>$row['id']))}"><i class="fa fa-circle"></i> 显示</button>
+                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-href="{php echo webUrl('live/room/property',array('type'=>'status', 'value'=>0))}"><i class="fa fa-circle-o"></i> 隐藏</button>
+                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-href="{php echo webUrl('live/room/property',array('type'=>'status', 'value'=>1))}"><i class="fa fa-circle"></i> 显示</button>
                 <!--<button class="btn btn-default btn-sm" type="button" data-toggle="batch-remove" data-confirm="确认删除此直播间?"  data-href="{php echo webUrl('live/room/deleted')}"><i class="fa fa-trash"></i> 删除</button>-->
 
             </div>
         </div>
         <div class="col-sm-8 pull-right">
             <select name="state" class="form-control input-sm select-sm" style="width:75px;">
-                <option value="">状态</option>
-                <option value="1">显示</option>
-                <option value="0">关闭</option>
+                <option value="" {if $_GPC['state'] == ''} selected{/if}>状态</option>
+                <option value="1" {if $_GPC['state']=='1'}selected{/if}>显示</option>
+                <option value="0" {if $_GPC['state']=='0'}selected{/if}>关闭</option>
             </select>
             <select name="isrecommand" class="form-control input-sm select-sm" style="width:75px;">
-                <option value="">推荐</option>
-                <option value="1">是</option>
-                <option value="0">否</option>
+                <option value="" {if $_GPC['isrecommand'] == ''>推荐</option>
+                <option value="1" {if $_GPC['isrecommand']=='1'}selected{/if}>是</option>
+                <option value="0" {if $_GPC['isrecommand']=='0'}selected{/if}>否</option>
             </select>
-            <select name="cate" class="form-control input-sm select-sm" style="width:120px;">
-                <option value="">直播间名称</option>
-                <option value="90">直播间分类</option>
+            <select name="seach" class="form-control input-sm select-sm" style="width:120px;">
+                <option value="title" {if empty($_GPC['seach']) || $_GPC['seach'] == 'title'}selected{/if}>直播间名称</option>
+                <option value="cate" {if $_GPC['seach'] == 'cate'}selected{/if}>直播间分类</option>
             </select>
             <div class="input-group">
                 <input type="text" class="input-sm form-control" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"> <span class="input-group-btn">
@@ -67,7 +67,7 @@
             <th style="width: 50px; text-align: center;">热门</th>
             <th style="width: 50px; text-align: center;">推荐</th>
             <th style="width: 50px; text-align: center;">状态</th>
-            <th style="width: 200px;">操作</th>
+            <th style="width: 240px;">操作</th>
         </tr>
         </thead>
         <tbody id="sort">
@@ -85,7 +85,7 @@
             <td>{$row['name']}</td>
             <td style="text-align: center;">
                 <span class='label {if $row['hot']==1}label-success{else}label-default{/if}'
-                {ife 'leve.room' $item}
+                {ife 'live.room' $item}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$row['hot']}'
                 data-switch-value0='0|否|label label-default|{php echo webUrl('live/room/property',array('type'=>'hot', 'value'=>1,'id'=>$row['id']))}'
@@ -94,7 +94,7 @@
             </td>
             <td style="text-align: center;">
                 <span class='label {if $row['recommend']==1}label-success{else}label-default{/if}'
-                {ife 'leve.room' $item}
+                {ife 'live.room' $item}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$row['recommend']}'
                 data-switch-value0='0|否|label label-default|{php echo webUrl('live/room/property',array('type'=>'recommend', 'value'=>1,'id'=>$row['id']))}'
@@ -103,7 +103,7 @@
             </td>
             <td style="text-align: center;">
                 <span class='label {if $row['status']==1}label-success{else}label-default{/if}'
-                {ife 'leve.room' $item}
+                {ife 'live.room' $item}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$row['status']}'
                 data-switch-value0='0|关闭|label label-default|{php echo webUrl('live/room/property',array('type'=>'status', 'value'=>1,'id'=>$row['id']))}'
@@ -111,21 +111,21 @@
                 {/if}>{if $row['status']==1}显示{else}关闭{/if}</span>
             </td>
             <td style="text-align:left;">
-                {ifp 'leve.room.console'}
+                {ifp 'live.room.console'}
                 <a href="{php echo webUrl('live/room/console',array('id'=>$row['id']))}" class="btn btn-default btn-sm" title="操作台"><i class="fa fa-desktop"></i></a>
                 {/if}
-                {ife 'leve.room' $item}
+                {ife 'live.room' $item}
                 <a href="{php echo webUrl('live/room/edit',array('id'=>$row['id']))}" class="btn btn-default btn-sm" title="编辑"><i class="fa fa-edit"></i></a>
-                <a href="javascript:void(0);" class="btn_delete btn btn-default btn-sm" title="删除" data-id="{$row['id']}" data-title="{$row['title']}" ><i class="fa fa-trash"></i></a>
-                <!--{php echo webUrl('live/room/deleted',array('id'=>$row['id']))} data-toggle="ajaxRemove"
-                 data-confirm="确认删除此直播间?"
-                -->
                 {/if}
                 <a class="btn btn-default btn-sm js-clip" title="复制链接" data-href="{php echo mobileUrl('live/room', array('id' => $row['id']),true)}"><i class="fa fa-link"></i></a>
 
                 <a href="javascript:void(0);" class="btn btn-default btn-sm" data-toggle="popover" data-trigger="hover" data-html="true" data-content="<img src='{$row['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
                     <i class="glyphicon glyphicon-qrcode"></i>
                 </a>
+                <a class="btn btn-default btn-sm" title="直播间统计" href="{php echo webUrl('live/room/statistics', array('roomid' => $row['id']),true)}"><i class="glyphicon glyphicon-signal"></i></a>
+                {ife 'live.room' $item}
+                <a class="btn_delete btn btn-default btn-sm" data-toggle="ajaxRemove"  href="{php echo webUrl('live/room/deleted', array('id' => $row['id']))}" data-confirm="确认删除此直播间吗？" ><i class="fa fa-trash"></i></a>
+                {/if}
             </td>
         </tr>
         {/loop}

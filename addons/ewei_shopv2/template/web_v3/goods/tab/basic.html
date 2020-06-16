@@ -147,12 +147,12 @@
                     <input type="checkbox" name="presellstart" value="1" id="presellstart" {if $item['presellstart'] == 1}checked="true"{/if} />
                     预售开始时间
                 </span>
-            {php echo tpl_form_field_date('preselltimestart', !empty($item['preselltimestart']) ? date('Y-m-d H:i',$item['preselltimestart']) : date('Y-m-d H:i'),true)}
+            {php echo tpl_form_field_eweishop_date('preselltimestart', !empty($item['preselltimestart']) ? date('Y-m-d H:i',$item['preselltimestart']) : date('Y-m-d H:i'),true)}
                 <span class="input-group-addon">
                     <input type="checkbox" name="presellend" value="1" id="presellend" {if $item['presellend'] == 1}checked="true"{/if} />
                     预售结束时间
                 </span>
-            {php echo tpl_form_field_date('preselltimeend', !empty($item['preselltimeend']) ? date('Y-m-d H:i',$item['preselltimeend']) : date('Y-m-d H:i'),true)}
+            {php echo tpl_form_field_eweishop_date('preselltimeend', !empty($item['preselltimeend']) ? date('Y-m-d H:i',$item['preselltimeend']) : date('Y-m-d H:i'),true)}
         </div>
         <span class='help-block'>尽量填写完整，有助于于商品销售的数据分析</span>
         {else}
@@ -172,7 +172,7 @@
                         <input type="radio" name="presellsendtype" value="0" {if empty($item['presellsendtype'])}checked="true"{/if}   /> 固定时间
                     </label>
                 </span>
-            {php echo tpl_form_field_date('presellsendstatrttime', !empty($item['presellsendstatrttime']) ? date('Y-m-d H:i',$item['presellsendstatrttime']) : date('Y-m-d H:i'),true)}
+            {php echo tpl_form_field_eweishop_date('presellsendstatrttime', !empty($item['presellsendstatrttime']) ? date('Y-m-d H:i',$item['presellsendstatrttime']) : date('Y-m-d H:i'),true)}
         </div>
         {else}
         <div class='form-control-static'>
@@ -181,7 +181,7 @@
         {/if}
     </div>
     </div>
-    <div class="form-group presell_info" {if empty($item['type']) || $item['type'] > 1}style="display: none;"{/if}>
+    <div class="form-group presell_info" {if empty($item['ispresell']) || $item['ispresell'] > 1}style="display: none;"{/if}>
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-6 col-xs-6" style='padding-left:0'>
         {ife 'goods' $item}
@@ -440,7 +440,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">首图视频</label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_form_field_video2('video', $item['video'], array('disabled'=>!cv('goods.edit')))}
+            {php echo tpl_form_field_video2('video', $item['video'], array('disabled'=>!cv('goods.edit'), 'network'=>true, 'placeholder'=>'请选择视频'))}
             <div class='form-control-static'>设置后商品详情首图默认显示视频，目前仅支持小程序</div>
         </div>
     </div>
@@ -454,7 +454,6 @@
                 <input type="text" name="sales" id="sales" class="form-control" value="{$item['sales']}" />
                 <span class="input-group-addon">件</span>
             </div>
-            <span class="help-block">物品虚拟出售数，会员下单此数据就增加, 无论是否支付</span>
             {else}
             <div class='form-control-static'>{$item['sales']} 件</div>
             {/if}
@@ -689,7 +688,7 @@
 </label>
 {ife 'goods' $item}
 <div class="col-sm-4 col-xs-6">
-    {php echo tpl_form_field_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $item['statustimestart']),'endtime'=>date('Y-m-d H:i', $item['statustimeend'])),true);}
+    {php echo tpl_form_field_eweishop_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $item['statustimestart']),'endtime'=>date('Y-m-d H:i', $item['statustimeend'])),true);}
 </div>
 {else}
 <div class="col-sm-6 col-xs-6">
@@ -699,6 +698,22 @@
 </div>
 {/if}
 </div>
+
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">主商城搜索结果中是否显示该商品</label>
+    <div class="col-sm-9 col-xs-12">
+        {ife 'goods' $item}
+        <label class="radio-inline"><input type="radio" name="nosearch" value="1" {if $item['nosearch'] == 1}checked="true"{/if}   /> 隐藏</label>
+        <label class="radio-inline"><input type="radio" name="nosearch" value="0" {if empty($item['nosearch'])}checked="true"{/if}/> 显示</label>
+
+        <span class="help-block">禁止后,在主商城搜索结果中,将不会显示该商品</span>
+        {else}
+        <div class='form-control-static'>{if empty($item['nosearch'])}显示{else}隐藏{/if}</div>
+        {/if}
+    </div>
+</div>
+
 {if p('groups')}
 <div class="form-group" style="display: none;">
     <label class="col-sm-2 control-label">是否支持拼团</label>

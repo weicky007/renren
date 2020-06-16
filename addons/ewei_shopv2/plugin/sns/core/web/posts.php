@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,6 +9,11 @@ class Posts_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$isManager = false;
+		if (($_W['role'] == 'manager') || ($_W['role'] == 'founder')) {
+			$isManager = true;
+		}
+
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$condition = ' and p.uniacid = :uniacid and p.pid=0';

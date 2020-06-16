@@ -9,7 +9,7 @@
                     {if empty($diyitem['params']['hideup'])}
                     <div class="text" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['upname']}: {$diyitem['params']['upmember']}</div>
                     {/if}
-                    <div class="text" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['texticode']}：{if p("offic")}{$diyitem['params']['mobile']}{else}{$diyitem['params']['mid']}{/if}</div>
+                    <div class="text" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['texticode']}：{$diyitem['params']['mid']}</div>
                 </div>
             </div>
             {if !empty($diyitem['params']['seticon']) && !empty($diyitem['params']['setlink'])}
@@ -52,7 +52,7 @@
             {if empty($diyitem['params']['hideup'])}
             <div class="level">{$diyitem['params']['upname']}: {$diyitem['params']['upmember']}</div>
             {/if}
-            <div class="text" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['texticode']}：{if p("offic")}{$diyitem['params']['mobile']}{else}{$diyitem['params']['mid']}{/if}</div>
+            <div class="text" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['texticode']}：{$diyitem['params']['mid']}</div>
         </div>
         <div class="child">
             <div class="title" style="color: {$diyitem['style']['textcolor']};">{$diyitem['params']['textcanwithdraw']}</div>
@@ -63,4 +63,3 @@
         </div>
     </div>
 {/if}
-<!--NDAwMDA5NzgyNw==-->

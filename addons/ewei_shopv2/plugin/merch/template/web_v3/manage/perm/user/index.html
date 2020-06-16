@@ -1,6 +1,11 @@
 {template '_header'}
  
 <div class="page-header">
+    <span class="pull-right">
+           {if 'perm.user.add' && $_W['accounttotal']>$total}
+                   <a class='btn btn-primary btn-sm' href="{php echo merchUrl('perm/user/add')}"><i class="fa fa-plus"></i> 添加新操作员</a>
+           {/if}
+    </span>
     当前位置：<span class="text-primary">操作员管理 </span>
 </div>
 <div class="page-content">
@@ -12,13 +17,6 @@
                 <input type="hidden" name="do" value="web" />
                 <input type="hidden" name="r"  value="perm.user" />
                 <div class="page-toolbar m-b-sm m-t-sm">
-                            <div class="col-sm-4">
-                                <span class="pull-left">
-                                   {if 'perm.user.add' && $_W['accounttotal']>$total}
-                                           <a class='btn btn-primary btn-sm' href="{php echo merchUrl('perm/user/add')}"><i class="fa fa-plus"></i> 添加新操作员</a>
-                                   {/if}
-                                </span>
-                            </div>
                             <div class="col-sm-6 pull-right">
                             <div class="input-group">
                                 <div class="input-group-select">
@@ -185,4 +183,3 @@
     </script>
 {template '_footer'}
  
-<!--青岛易联互动网络科技有限公司-->

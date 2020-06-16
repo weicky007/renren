@@ -36,5 +36,9 @@
         {ifp 'app.pay'}
             <li {if $_W['routes']=='app.pay'}class="active"{/if}><a href="{php echo webUrl('app/pay')}">支付设置</a></li>
         {/if}
+        {ifp 'app.tmessage'}
+            <li {if $_W['routes']=='app.tmessage'}class="active"{/if}><a href="{php echo webUrl('app/tmessage')}">消息模板</a></li>
+        {/if}
     </ul>
 {/if}
+<!--青岛易联互动网络科技有限公司-->

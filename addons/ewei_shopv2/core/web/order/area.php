@@ -1,24 +1,21 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-class Area_EweiShopV2Page extends WebPage
+class Area_EweiShopV2Page extends WebPage 
 {
-	public function unicodeDecode($name)
+	public function unicodeDecode($name) 
 	{
 		$json = '{"str":"' . $name . '"}';
 		$arr = json_decode($json, true);
-
-		if (empty($arr)) {
+		if (empty($arr)) 
+		{
 			return '';
 		}
-
 		return $arr['str'];
 	}
-
-	public function main()
+	public function main() 
 	{
 		global $_W;
 		print_r(123);
@@ -32,9 +29,10 @@ class Area_EweiShopV2Page extends WebPage
 		$l3_array = array();
 		$data = array();
 		preg_match_all('/["[\\d]+",[^>]+(.*)[\\d]+"]/U', $content, $params1);
-
-		if (!empty($params1[0])) {
-			foreach ($params1[0] as &$row) {
+		if (!(empty($params1[0]))) 
+		{
+			foreach ($params1[0] as &$row ) 
+			{
 				$response = preg_replace('/(\\[|\\]|\\")/', '', $row);
 				$city_data = explode(',', $response);
 				$code = $city_data[0];
@@ -44,46 +42,48 @@ class Area_EweiShopV2Page extends WebPage
 				$data[$code]['status'] = 1;
 				$data[$code]['level'] = 0;
 				$data[$code]['pcode'] = $pcode;
-				if (($pcode == 1) || ($pcode == 2)) {
+				if (($pcode == 1) || ($pcode == 2)) 
+				{
 					$l1_array[$code] = $name;
 					$data[$code]['level'] = 1;
 					$data[$code]['name'] = $name;
 				}
-				else if (2 < $pcode) {
-					if (array_key_exists($pcode, $l1_array)) {
+				else if (2 < $pcode) 
+				{
+					if (array_key_exists($pcode, $l1_array)) 
+					{
 						$l2_array[$code] = $name;
 						$data[$code]['level'] = 2;
 						$data[$code]['name'] = $name;
 					}
-					else {
-						if (array_key_exists($pcode, $l2_array)) {
-							if (!array_key_exists($code, $l3_array)) {
-								$l3_array[$code] = $name;
-								$data[$code]['level'] = 3;
-								$data[$code]['name'] = $name;
-							}
+					else if (array_key_exists($pcode, $l2_array)) 
+					{
+						if (!(array_key_exists($code, $l3_array))) 
+						{
+							$l3_array[$code] = $name;
+							$data[$code]['level'] = 3;
+							$data[$code]['name'] = $name;
 						}
 					}
 				}
-				else {
+				else 
+				{
 					$data[$code]['name'] = $name;
 				}
 			}
 		}
-
 		unset($row);
-
-		foreach ($data as $k => $v) {
-			if (!empty($v)) {
+		foreach ($data as $k => $v ) 
+		{
+			if (!(empty($v))) 
+			{
 				pdo_insert('ewei_shop_city2', $v);
 			}
 		}
-
 		print_r('OK');
 		exit();
 	}
-
-	public function get_area($code)
+	public function get_area($code) 
 	{
 		global $_W;
 		$params = array();
@@ -92,8 +92,7 @@ class Area_EweiShopV2Page extends WebPage
 		$item = pdo_fetch($sql, $params);
 		return $item;
 	}
-
-	public function add_area($l1, $l2, $l3)
+	public function add_area($l1, $l2, $l3) 
 	{
 		global $_W;
 		error_reporting(0);
@@ -106,16 +105,18 @@ class Area_EweiShopV2Page extends WebPage
 		print_r($params1[0]);
 		exit();
 		$data = array();
-
-		if (!empty($params1[0])) {
-			foreach ($params1[0] as &$row) {
+		if (!(empty($params1[0]))) 
+		{
+			foreach ($params1[0] as &$row ) 
+			{
 				$response = preg_replace('/(\\[|\\]|\')/', '', $row);
 				$city_data = explode(',', $response);
 				$code = $city_data[0];
 				$name = $city_data[1];
 				$pcode = $city_data[2];
 				$words = $city_data[3];
-				if (!empty($code) && !empty($name)) {
+				if (!(empty($code)) && !(empty($name))) 
+				{
 					$data[$code]['name'] = $name;
 					$data[$code]['code'] = $code;
 					$data[$code]['status'] = 1;
@@ -125,21 +126,22 @@ class Area_EweiShopV2Page extends WebPage
 				}
 			}
 		}
-
-		if (!empty($data)) {
-			foreach ($data as $k => $v) {
-				if (!empty($v)) {
+		if (!(empty($data))) 
+		{
+			foreach ($data as $k => $v ) 
+			{
+				if (!(empty($v))) 
+				{
 					$item2 = $this->get_area($v['code']);
-
-					if (empty($item2)) {
+					if (empty($item2)) 
+					{
 						pdo_insert('ewei_shop_city', $v);
 					}
 				}
 			}
 		}
 	}
-
-	public function add_area2($l1, $l2, $l3)
+	public function add_area2($l1, $l2, $l3) 
 	{
 		global $_W;
 		error_reporting(0);
@@ -150,16 +152,18 @@ class Area_EweiShopV2Page extends WebPage
 		$content = $response['content'];
 		preg_match_all('/[\\\'[\\d]+\\\',[^>]+(.*)\\\']/U', $content, $params1);
 		$data = array();
-
-		if (!empty($params1[0])) {
-			foreach ($params1[0] as &$row) {
+		if (!(empty($params1[0]))) 
+		{
+			foreach ($params1[0] as &$row ) 
+			{
 				$response = preg_replace('/(\\[|\\]|\')/', '', $row);
 				$city_data = explode(',', $response);
 				$code = $city_data[0];
 				$name = $city_data[1];
 				$pcode = $l3;
 				$words = $city_data[3];
-				if (!empty($code) && !empty($name)) {
+				if (!(empty($code)) && !(empty($name))) 
+				{
 					$data[$code]['name'] = $name;
 					$data[$code]['code'] = $code;
 					$data[$code]['status'] = 1;
@@ -169,86 +173,84 @@ class Area_EweiShopV2Page extends WebPage
 				}
 			}
 		}
-
-		if (!empty($data)) {
-			foreach ($data as $k => $v) {
-				if (!empty($v)) {
+		if (!(empty($data))) 
+		{
+			foreach ($data as $k => $v ) 
+			{
+				if (!(empty($v))) 
+				{
 					$item2 = $this->get_area($v['code']);
-
-					if (empty($item2)) {
+					if (empty($item2)) 
+					{
 						pdo_insert('ewei_shop_city', $v);
 					}
 				}
 			}
 		}
 	}
-
-	public function get()
+	public function get() 
 	{
 		global $_W;
 		set_time_limit(0);
 		$list = $this->get_area_list(3);
 		print_r($list);
 		exit();
-
-		foreach ($list as $k3 => $v3) {
+		foreach ($list as $k3 => $v3 ) 
+		{
 			$l3 = $v3['code'];
 			$item2 = $this->get_area($v3['pcode']);
-
-			if (!empty($item2)) {
+			if (!(empty($item2))) 
+			{
 				$l2 = $item2['code'];
 				$l1 = $item2['pcode'];
-				if (!empty($l2) && !empty($l1)) {
+				if (!(empty($l2)) && !(empty($l1))) 
+				{
 					$this->add_area($l1, $l2, $l3);
 				}
 			}
-
 			sleep(1.5);
 		}
-
 		print_r('OK2');
 	}
-
-	public function getnoarea()
+	public function getnoarea() 
 	{
 		global $_W;
 		set_time_limit(0);
 		$list2 = $this->get_area_list(2);
 		print_r($list2);
 		exit();
-
-		foreach ($list2 as $k2 => $v2) {
+		foreach ($list2 as $k2 => $v2 ) 
+		{
 			$l1 = $v2['pcode'];
 			$l2 = $v2['code'];
 			$list3 = $this->get_child_list($v2['code']);
-
-			if (!empty($list3)) {
-				foreach ($list3 as $k3 => $v3) {
-					if (!empty($l2) && !empty($l1)) {
+			if (!(empty($list3))) 
+			{
+				foreach ($list3 as $k3 => $v3 ) 
+				{
+					if (!(empty($l2)) && !(empty($l1))) 
+					{
 						$l3 = $v3['code'];
 						$this->add_area2($l1, $l2, $l3);
 					}
 				}
 			}
-
 			sleep(1.5);
 		}
-
 		print_r('OK3');
 	}
-
-	public function count()
+	public function count() 
 	{
 		global $_W;
 		$list = $this->get_area_list(4);
-
-		foreach ($list as $k => $v) {
+		foreach ($list as $k => $v ) 
+		{
 			$params = array();
 			$params[':code'] = $v['code'];
 			$sql = 'select count(1) from ' . tablename('ewei_shop_city') . ' where  code=:code';
 			$count = pdo_fetchcolumn($sql, $params);
-
-			if (1 < $count) {
+			if (1 < $count) 
+			{
 				print_r($count);
 				print_r("\n");
 				print_r($v['name']);
@@ -256,8 +258,7 @@ class Area_EweiShopV2Page extends WebPage
 			}
 		}
 	}
-
-	public function get_area_list($level)
+	public function get_area_list($level) 
 	{
 		global $_W;
 		$params = array();
@@ -266,8 +267,7 @@ class Area_EweiShopV2Page extends WebPage
 		$list = pdo_fetchall($sql, $params);
 		return $list;
 	}
-
-	public function get_child_list($pcode)
+	public function get_child_list($pcode) 
 	{
 		global $_W;
 		$params = array();
@@ -276,92 +276,82 @@ class Area_EweiShopV2Page extends WebPage
 		$list = pdo_fetchall($sql, $params);
 		return $list;
 	}
-
-	public function check_area($name)
+	public function check_area($name) 
 	{
-		if ((-1 < strpos($name, '属于')) || (-1 < strpos($name, '合并')) || (-1 < strpos($name, '更名为'))) {
+		if ((-1 < strpos($name, '属于')) || (-1 < strpos($name, '合并')) || (-1 < strpos($name, '更名为'))) 
+		{
 			return 1;
 		}
-
 		return 0;
 	}
-
-	public function xml()
+	public function xml() 
 	{
 		global $_W;
-		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n <address>\r\n<province name=\"请选择省份\">\r\n\t<city name=\"请选择城市\">\r\n\t\t<county name=\"请选择区域\"/>\r\n\t</city>\r\n</province>";
+		$xml = '<?xml version="1.0" encoding="utf-8"?>' . "\r\n" . ' <address>' . "\r\n" . '<province name="请选择省份">' . "\r\n\t" . '<city name="请选择城市">' . "\r\n\t\t" . '<county name="请选择区域"/>' . "\r\n\t" . '</city>' . "\r\n" . '</province>';
 		$list1 = $this->get_area_list(1);
-
-		foreach ($list1 as $k1 => $v1) {
+		foreach ($list1 as $k1 => $v1 ) 
+		{
 			$xml .= "\n";
 			$xml .= '<province name="' . $v1['name'] . '" code="' . $v1['code'] . '">';
 			$list2 = $this->get_child_list($v1['code']);
-
-			foreach ($list2 as $k2 => $v2) {
+			foreach ($list2 as $k2 => $v2 ) 
+			{
 				$xml .= "\n";
 				$xml .= '<city name="' . $v2['name'] . '" code="' . $v2['code'] . '">';
 				$list3 = $this->get_child_list($v2['code']);
-
-				foreach ($list3 as $k3 => $v3) {
+				foreach ($list3 as $k3 => $v3 ) 
+				{
 					$check = $this->check_area($v3['name']);
-
-					if (!empty($check)) {
+					if (!(empty($check))) 
+					{
 						continue;
 					}
-
 					$xml .= "\n";
 					$xml .= '<county name="' . $v3['name'] . '" code="' . $v3['code'] . '" />';
 				}
-
 				$xml .= "\n";
 				$xml .= '</city>';
 			}
-
 			$xml .= "\n";
 			$xml .= '</province>';
 		}
-
 		$xml .= "\n";
 		$xml .= '</address>';
 		print_r($xml);
 		exit();
 	}
-
-	public function xmllist()
+	public function xmllist() 
 	{
 		global $_W;
 		$list2 = $this->get_area_list(2);
 		print_r($list2);
 		exit();
-
-		foreach ($list2 as $k2 => $v2) {
+		foreach ($list2 as $k2 => $v2 ) 
+		{
 			$list3 = $this->get_child_list($v2['code']);
 			$xml = '<?xml version="1.0" encoding="utf-8"?>';
 			$xml .= "\n";
 			$xml .= '<address>';
 			$xml .= "\n";
 			$xml .= '<city name="' . $v2['name'] . '" code="' . $v2['code'] . '">';
-
-			foreach ($list3 as $k3 => $v3) {
+			foreach ($list3 as $k3 => $v3 ) 
+			{
 				$check = $this->check_area($v3['name']);
-
-				if (!empty($check)) {
+				if (!(empty($check))) 
+				{
 					continue;
 				}
-
 				$xml .= "\n";
 				$xml .= '<county name="' . $v3['name'] . '" code="' . $v3['code'] . '">';
 				$list4 = $this->get_child_list($v3['code']);
-
-				foreach ($list4 as $k4 => $v4) {
+				foreach ($list4 as $k4 => $v4 ) 
+				{
 					$xml .= "\n";
 					$xml .= '    <street name="' . $v4['name'] . '" code="' . $v4['code'] . '" />';
 				}
-
 				$xml .= "\n";
 				$xml .= '</county>';
 			}
-
 			$xml .= "\n";
 			$xml .= '</city>';
 			$xml .= "\n";
@@ -369,127 +359,115 @@ class Area_EweiShopV2Page extends WebPage
 			$left = substr($v2['code'], 0, 2);
 			$styles = array();
 			$dir = IA_ROOT . '/addons/ewei_shopv2/static/js/dist/area/list/' . $left . '/';
-
-			if (!is_dir($dir)) {
+			if (!(is_dir($dir))) 
+			{
 				mkdir($dir, 511, true);
 			}
-
 			$filename = $dir . $v2['code'] . '.xml';
 			$fp = fopen($filename, 'w');
 			fwrite($fp, $xml);
 			fclose($fp);
 		}
 	}
-
-	public function js()
+	public function js() 
 	{
 		global $_W;
 		$xml = 'var FoxUICityData = [';
 		$list1 = $this->get_area_list(1);
-
-		foreach ($list1 as $k1 => $v1) {
+		foreach ($list1 as $k1 => $v1 ) 
+		{
 			$xml .= '{"text": "' . $v1['name'] . '",';
 			$xml .= '"children": [';
 			$list2 = $this->get_child_list($v1['code']);
-
-			foreach ($list2 as $k2 => $v2) {
+			foreach ($list2 as $k2 => $v2 ) 
+			{
 				$xml .= '{"text": "' . $v2['name'] . '",';
 				$xml .= '"children": [';
 				$list3 = $this->get_child_list($v2['code']);
-
-				foreach ($list3 as $k3 => $v3) {
+				foreach ($list3 as $k3 => $v3 ) 
+				{
 					$check = $this->check_area($v3['name']);
-
-					if (!empty($check)) {
+					if (!(empty($check))) 
+					{
 						continue;
 					}
-
 					$xml .= '"' . $v3['name'] . '",';
 				}
-
 				$xml = trim($xml, ',');
 				$xml .= ']},';
 			}
-
 			$xml .= ']},';
 		}
-
 		$xml = trim($xml, ',');
 		$xml .= '];';
 		print_r($xml);
 		exit();
 	}
-
-	public function js2()
+	public function js2() 
 	{
 		global $_W;
 		$xml = 'var FoxUICityDataNew = [';
 		$list1 = $this->get_area_list(1);
-
-		foreach ($list1 as $k1 => $v1) {
+		foreach ($list1 as $k1 => $v1 ) 
+		{
 			$xml .= '{"text": "' . $v1['name'] . '",';
 			$xml .= '"value": "' . $v1['code'] . '",';
 			$xml .= '"children": [';
 			$list2 = $this->get_child_list($v1['code']);
-
-			foreach ($list2 as $k2 => $v2) {
+			foreach ($list2 as $k2 => $v2 ) 
+			{
 				$xml .= '{"text": "' . $v2['name'] . '",';
 				$xml .= '"value": "' . $v2['code'] . '",';
 				$xml .= '"children": [';
 				$list3 = $this->get_child_list($v2['code']);
-
-				foreach ($list3 as $k3 => $v3) {
+				foreach ($list3 as $k3 => $v3 ) 
+				{
 					$check = $this->check_area($v3['name']);
-
-					if (!empty($check)) {
+					if (!(empty($check))) 
+					{
 						continue;
 					}
-
 					$xml .= '{"text": "' . $v3['name'] . '",';
 					$xml .= '"value": "' . $v3['code'] . '",';
 					$xml .= '"children": []';
 					$xml .= '},';
 				}
-
 				$xml = trim($xml, ',');
 				$xml .= ']},';
 			}
-
 			$xml .= ']},';
 		}
-
 		$xml = trim($xml, ',');
 		$xml .= '];';
 		print_r($xml);
 		exit();
 	}
-
-	public function copy()
+	public function copy() 
 	{
 		global $_W;
 		$list = $this->get_area_list(4);
-
-		foreach ($list as $k => $v) {
-			if (!empty($v)) {
-				if ($v['id'] <= 30340) {
+		foreach ($list as $k => $v ) 
+		{
+			if (!(empty($v))) 
+			{
+				if ($v['id'] <= 30340) 
+				{
 					continue;
 				}
-
 				unset($v['id']);
 			}
 		}
 	}
-
-	public function query()
+	public function query() 
 	{
 		$i = 0;
 		$list2 = $this->get_area_list(2);
 		$data = array();
-
-		foreach ($list2 as $k2 => $v2) {
+		foreach ($list2 as $k2 => $v2 ) 
+		{
 			$list3 = $this->get_child_list($v2['code']);
-
-			if (empty($list3)) {
+			if (empty($list3)) 
+			{
 				$data[$i]['code'] = $v2['code'] . '001';
 				$data[$i]['name'] = $v2['name'];
 				$data[$i]['level'] = 3;
@@ -499,14 +477,13 @@ class Area_EweiShopV2Page extends WebPage
 				++$i;
 			}
 		}
-
-		foreach ($data as $k => $v) {
-			if (!empty($v)) {
+		foreach ($data as $k => $v ) 
+		{
+			if (!(empty($v))) 
+			{
 			}
 		}
-
 		print_r($data);
 	}
 }
-
 ?>

@@ -2,7 +2,7 @@
 
 class TopLogger
 {
-	public $conf = array('separator' => '	', 'log_file' => '');
+	public $conf = array('separator' => "\t", 'log_file' => '');
 	private $fileHandle;
 
 	protected function getFileHandle()
@@ -12,14 +12,17 @@ class TopLogger
 				trigger_error('no log file spcified.');
 			}
 
+
 			$logDir = dirname($this->conf['log_file']);
 
 			if (!is_dir($logDir)) {
 				mkdir($logDir, 511, true);
 			}
 
+
 			$this->fileHandle = fopen($this->conf['log_file'], 'a');
 		}
+
 
 		return $this->fileHandle;
 	}
@@ -30,9 +33,11 @@ class TopLogger
 			return false;
 		}
 
+
 		if (is_array($logData)) {
 			$logData = implode($this->conf['separator'], $logData);
 		}
+
 
 		$logData = $logData . "\n";
 		fwrite($this->getFileHandle(), $logData);

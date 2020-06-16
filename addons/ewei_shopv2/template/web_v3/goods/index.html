@@ -136,6 +136,15 @@
                             <i class='icow icow-shanchu1'></i> 删除</button>
                         {/if}
                     {/if}
+
+                    {if $_GPC['goodsfrom']=='verify'}
+                    <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-remove' data-confirm="确定要通过审核吗?" data-href="{php echo webUrl('goods/checked')}">
+                        <i class='icow icow-shenhetongguo'></i> 批量审核通过</button>
+                    {/if}
+
+                    {ifp 'goods.edit'}
+                        <button class="btn btn-default btn-sm  btn-operation" type="button" data-toggle='batch-group'  id="batchcatesbut" >批量分类</button>
+                    {/if}
                 </div>
             </div>
     <table class="table table-responsive">
@@ -171,8 +180,9 @@
                     {/if}
                 </td>
                 <td>
-                    <img src="{php echo tomedia($item['thumb'])}" style="width:72px;height:72px;padding:1px;border:1px solid #efefef;margin: 7px 0" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
-
+                    <a href="{php echo webUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}">
+                        <img src="{php echo tomedia($item['thumb'])}" style="width:72px;height:72px;padding:1px;border:1px solid #efefef;margin: 7px 0" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
+                    </a>
                     {if !empty($item['newgoods'])}
                     <!--新-->
                     <div class="newgoodsflag">新</div>
@@ -455,8 +465,46 @@
     </div>
   {/if}
 </div>
+{template 'goods/batchcates'}
 {template '_footer'}
 <script>
+    //显示批量分类
+    $('#batchcatesbut').click(function () {
+        $('#batchcates').show();
+    })
+
+    //关闭批量分类
+    $('.modal-header .close').click(function () {
+        $('#batchcates').hide();
+    })
+
+    // 取消批量分类
+    $('.modal-footer .btn.btn-default').click(function () {
+        $('#batchcates').hide();
+    })
+
+
+    //确认
+    $('.modal-footer .btn.btn-primary').click(function () {
+        var selected_checkboxs = $('.table-responsive tbody tr td:first-child [type="checkbox"]:checked');
+        var goodsids = selected_checkboxs.map(function () {
+            return $(this).val()
+        }).get();
+
+        var cates=$('#cates').val();
+        var iscover=$('input[name="iscover"]:checked').val();
+        $.post(biz.url('goods/ajax_batchcates'),{'goodsids':goodsids,'cates': cates,'iscover':iscover}, function (ret) {
+            if (ret.status == 1) {
+                $('#batchcates').hide();
+                tip.msgbox.suc('修改成功');
+                window.location.reload();
+                return
+            } else {
+                tip.msgbox.err('修改失败');
+            }
+        }, 'json');
+    })
+
     $(document).on("click", '[data-toggle="ajaxEdit2"]',
             function (e) {
                 var _this = $(this)

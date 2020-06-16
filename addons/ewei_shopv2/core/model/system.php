@@ -1180,6 +1180,7 @@ class System_EweiShopV2Model
 		'items'    => array(
 			array('title' => '授权管理'),
 			array('title' => '系统更新', 'route' => 'upgrade'),
+			array('title' => '历史日志', 'route' => 'upgrade.log')
 			)
 		)
 	);
@@ -1296,12 +1297,12 @@ class System_EweiShopV2Model
 
 				if (p('grant')) {
 					$return_arr['menu_items'][] = 'line';
-					//$return_arr['menu_items'][] = array('text' => '应用授权', 'href' => webUrl('plugingrant'));
+					$return_arr['menu_items'][] = array('text' => '应用授权', 'href' => webUrl('system/plugin/plugingrant'));
 				}
 
 				if ($_W['isfounder']) {
 					$return_arr['menu_items'][] = 'line';
-					$return_arr['menu_items'][] = array('text' => '系统管理', 'href' => webUrl('system'), 'blank' => true);
+					//$return_arr['menu_items'][] = array('text' => '应用中心', 'href' => webUrl('system/plugin/apps'), 'blank' => true);
 					$return_arr['menu_items'][] = 'line';
 					$return_arr['menu_items'][] = array('text' => '系统更新', 'href' => webUrl('system/auth/upgrade'));
 				}
@@ -1314,6 +1315,7 @@ class System_EweiShopV2Model
 
 		return $return_arr;
 	}
+
 	/**
      * 获取后台数据
      * @return array

@@ -1,5 +1,6 @@
 <?php
 
+spl_autoload_register('Autoloader::autoload');
 class Autoloader
 {
 	/**
@@ -15,6 +16,7 @@ class Autoloader
 			$name = strstr($class, '\\', true);
 		}
 
+
 		$filename = TOP_AUTOLOADER_PATH . '/top/' . $name . '.php';
 
 		if (is_file($filename)) {
@@ -22,15 +24,16 @@ class Autoloader
 			return NULL;
 		}
 
+
 		$filename = TOP_AUTOLOADER_PATH . '/top/request/' . $name . '.php';
 
 		if (is_file($filename)) {
 			include $filename;
 			return NULL;
 		}
+
 	}
 }
 
-spl_autoload_register('Autoloader::autoload');
 
 ?>

@@ -24,7 +24,7 @@ ul, li {
     -webkit-flex-direction: column;
   justify-content: space-around;
 }
-/*select2*/
+
 .select2-container .select2-choice .select2-arrow{
     cursor: pointer;
     border-left:none !important;
@@ -118,7 +118,7 @@ textarea:focus{
 .caret {
     border: 0;
 }
-/*btn*/
+
 .btn {
     outline: none !important;
     padding: 8px 16px;
@@ -475,7 +475,7 @@ textarea:focus{
     color: #000 !important;
 }
 
-/*label*/
+
 .label {
     background-color: #d1dade;
     color: #fff;
@@ -526,7 +526,7 @@ textarea:focus{
 .control-label{
     color: #666;
 }
-/*progress*/
+
 .progress {
     height: 10px;
     margin: 0;
@@ -566,7 +566,7 @@ textarea:focus{
 .progress-bar-danger{
     background: #eb6060;
 }
-/*alert*/
+
 .alert{
     border-radius: 2px;
 }
@@ -607,7 +607,7 @@ textarea:focus{
 .alert a:hover{
     color:#333 !important;
 }
-/*panel*/
+
 .panel{
     border-radius: 2px;
     border-color: #efefef;
@@ -2219,7 +2219,7 @@ modal
 .multi-item{
     margin-top: 0.5em;
 }
-/*pop*/
+
 .popover{
     border: 1px solid #efefef;
     border: 1px solid #efefef;

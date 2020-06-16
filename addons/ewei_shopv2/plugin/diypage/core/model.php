@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -609,7 +608,7 @@ class DiypageModel extends PluginModel
 									}
 
 									$goodsids = $group['goodsids'];
-									$goods = pdo_fetchall('select id, title, subtitle, thumb, `type`, minprice, sales, salesreal, total, showlevels, showgroups, bargain, productprice from ' . tablename('ewei_shop_goods') . ' where id in( ' . $goodsids . ' ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid ' . $orderby . ' limit ' . $limit, array(':uniacid' => $_W['uniacid']));
+									$goods = pdo_fetchall('select id, title, subtitle, thumb, minprice, sales, salesreal, total, showlevels, showgroups, bargain, productprice from ' . tablename('ewei_shop_goods') . ' where id in( ' . $goodsids . ' ) and status=1 and `deleted`=0 and `status`=1 and uniacid=:uniacid ' . $orderby . ' limit ' . $limit, array(':uniacid' => $_W['uniacid']));
 									if (!empty($goods) && is_array($goods)) {
 										foreach ($goods as $index => $good) {
 											$showgoods = m('goods')->visit($good, $this->member);
@@ -617,7 +616,7 @@ class DiypageModel extends PluginModel
 											if (!empty($showgoods)) {
 												$childid = rand(1000000000, 9999999999);
 												$childid = 'C' . $childid;
-												$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'subtitle' => $good['subtitle'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'ctype' => $good['type'], 'bargain' => $good['bargain'], 'productprice' => $good['productprice'], 'sales' => $good['sales'] + $good['salesreal']);
+												$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'subtitle' => $good['subtitle'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'bargain' => $good['bargain'], 'productprice' => $good['productprice'], 'sales' => $good['sales'] + $good['salesreal']);
 											}
 										}
 									}
@@ -818,7 +817,6 @@ class DiypageModel extends PluginModel
 						$member = $this->member;
 						$commission = $this->commission;
 						$item['params']['mid'] = $member['id'];
-						$item['params']['mobile'] = $member['mobile'];
 						$item['params']['avatar'] = $member['avatar'];
 						$item['params']['nickname'] = $member['nickname'];
 						$item['params']['levelname'] = $member['commissionlevelname'];

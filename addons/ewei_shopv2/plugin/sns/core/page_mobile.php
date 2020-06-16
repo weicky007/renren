@@ -1,5 +1,4 @@
 <?php
-
 class SnsMobilePage extends PluginMobilePage
 {
 	public $islogin = 0;

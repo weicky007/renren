@@ -1,5 +1,5 @@
 <?php
-
+//haha
 function ranksort($a, $b)
 {
 	return $b['credit1'] < $a['credit1'] ? -1 : 1;

@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm control-label must">商品图片</label>
-                                    <div class="col-md-9">
+                                    <div class="col-md-9 gimgs">
                                         {php echo tpl_form_field_multi_image2('thumbs',$piclist)}
                                         <span class="help-block image-block">第一张为缩略图，建议为正方型图片，其他为详情页面图片，尺寸建议宽度为640，并保持图片大小一致</span>
                                         <span class="help-block">您可以拖动图片改变其显示顺序 </span>
@@ -98,7 +98,7 @@
                                 <div class="form-group">
                                     <label class="col-sm control-label">首图视频</label>
                                     <div class="col-md-9">
-                                        {php echo tpl_form_field_video2('video', $item['video'], array('disabled'=>!cv('goods.edit')))}
+                                        {php echo tpl_form_field_video2('video', $item['video'], array('disabled'=>!cv('goods.edit'), 'network'=>true, 'placeholder'=>'请选择视频'))}
                                         <div class='form-control-static'>设置后商品详情首图默认显示视频，目前仅支持小程序</div>
                                     </div>
                                 </div>
@@ -408,6 +408,9 @@
 
 </div>
 <script type="text/javascript">
+    require(['jquery.ui'],function(){
+        $('.multi-img-details').sortable({scroll:'false'});
+    })
     $(function () {
         $('form').submit(function(){
             var check = true;

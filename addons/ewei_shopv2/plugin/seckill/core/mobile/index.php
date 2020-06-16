@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -280,15 +279,10 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 		}
 
-		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.thumb_url,g.hasoption,g.marketprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . " tg  \r\n                  left join " . tablename('ewei_shop_goods') . " g on tg.goodsid = g.id \r\n                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ";
+		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.hasoption,g.marketprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . " tg  \r\n                  left join " . tablename('ewei_shop_goods') . " g on tg.goodsid = g.id \r\n                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ";
 		$goods = pdo_fetchall($sql, array(':taskid' => $taskid, ':roomid' => $roomid, ':uniacid' => $_W['uniacid'], ':timeid' => $time['id']));
 
 		foreach ($goods as &$g) {
-			if (p('offic')) {
-				$g['thumb_url'] = array_values(unserialize($g['thumb_url']));
-				$g['thumb'] = tomedia($g['thumb_url'][0]);
-			}
-
 			$seckillinfo = $this->model->getSeckill($g['goodsid'], 0, false);
 
 			if ($g['hasoption']) {

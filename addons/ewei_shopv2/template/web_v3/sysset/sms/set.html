@@ -15,7 +15,26 @@
             <p>余额查询：聚合数据、阿里大于需在服务商管理后台查看账户余额，亿美软通需在当前查看账户余额(设置好参数保存页面即可查看)。</p>
             <p>其他说明：阿里大于老用户仍然可以使用，但新用户仅支持<a href="https://market.aliyun.com/products/57002003/cmapi011900.html" target="_blank">阿里云短信</a></p>
         </div>
-
+        <div class="form-group-title">阿里云短信(新版)<small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="https://home.console.aliyun.com/">立即申请</a></small>
+            <span class="pull-right">
+                <input type="hidden" value="{$item['aliyun_new']}" name="aliyun_new" />
+                <input class="js-switch small" type="checkbox" {if !empty($item['aliyun_new'])}checked{/if}/>
+            </span>
+        </div>
+        <div class=" sms-aliyun_new" style="{if empty($item['aliyun_new'])}display: none;{/if}">
+            <div class="form-group">
+                <label class="col-lg control-label must">Access Key ID</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="aliyun_new_keyid" class="form-control valid" value="{$item['aliyun_new_keyid']}" data-rule-required="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label must">Access Key Secret</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="aliyun_new_keysecret" class="form-control valid" value="{$item['aliyun_new_keysecret']}" data-rule-required="true">
+                </div>
+            </div>
+        </div>
         <div class="form-group-title">聚合数据<small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="http://www.juhe.cn">立即申请</a></small>
         <span class="pull-right">
             <input type="hidden" value="{$item['juhe']}" name='juhe' />
@@ -30,43 +49,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="form-group-title">阿里大于(老用户)<small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="javascript:;">暂停申请</a></small>
-        <span class="pull-right">
-            <input type="hidden" value="{$item['dayu']}" name='dayu' />
-            <input class="js-switch small" type="checkbox" {if !empty($item['dayu'])}checked{/if}/>
-        </span>
-        </div>
-        <div class=" sms-dayu" style="{if empty($item['dayu'])}display: none;{/if}">
-            <div class="form-group">
-                <label class="col-lg control-label must">App Key</label>
-                <div class="col-sm-9 col-xs-12">
-                    <input type="text" name="dayu_key" class="form-control valid" value="{$item['dayu_key']}" data-rule-required="true">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-lg control-label must">App Secret</label>
-                <div class="col-sm-9 col-xs-12">
-                    <input type="text" name="dayu_secret" class="form-control valid" value="{$item['dayu_secret']}" data-rule-required="true">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group-title">阿里云短信<small style="padding-left: 10px;"><a target="_blank" href="https://market.aliyun.com/products/57002003/cmapi011900.html">立即申请</a></small>
-            <span class="pull-right">
-            <input type="hidden" value="{$item['aliyun']}" name='aliyun' />
-            <input class="js-switch small" type="checkbox" {if !empty($item['aliyun'])}checked{/if}/>
-        </span>
-        </div>
-        <div class=" sms-aliyun" style="{if empty($item['aliyun'])}display: none;{/if}">
-            <div class="form-group">
-                <label class="col-sm-2 control-label must">App Code</label>
-                <div class="col-sm-9 col-xs-12">
-                    <input type="text" name="aliyun_appcode" class="form-control valid" value="{$item['aliyun_appcode']}" data-rule-required="true">
-                </div>
-            </div>
-        </div>
-
         <div class="form-group-title">亿美软通 <small>(<span class="text-danger">余额: <span  id="num_emay">--</span></span>)</small><small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="http://www.emay.cn">立即申请</a></small>
             <span class="pull-right">
                 <input type="hidden" value="{$item['emay']}" name='emay' />
@@ -140,6 +122,43 @@
                 </div>
             </div>
         </div>
+        <div class="form-group-title">阿里大于(老用户)<small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="javascript:;">暂停申请</a></small>
+        <span class="pull-right">
+            <input type="hidden" value="{$item['dayu']}" name='dayu' />
+            <input class="js-switch small" type="checkbox" {if !empty($item['dayu'])}checked{/if}/>
+        </span>
+        </div>
+        <div class=" sms-dayu" style="{if empty($item['dayu'])}display: none;{/if}">
+            <div class="form-group">
+                <label class="col-lg control-label must">App Key</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="dayu_key" class="form-control valid" value="{$item['dayu_key']}" data-rule-required="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label must">App Secret</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="dayu_secret" class="form-control valid" value="{$item['dayu_secret']}" data-rule-required="true">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group-title">阿里云短信<small style="padding-left: 10px;"><a class="text-primary" target="_blank" href="https://market.aliyun.com/products/57002003/cmapi011900.html">立即申请</a></small>
+            <span class="pull-right">
+            <input type="hidden" value="{$item['aliyun']}" name='aliyun' />
+            <input class="js-switch small" type="checkbox" {if !empty($item['aliyun'])}checked{/if}/>
+        </span>
+        </div>
+        <div class=" sms-aliyun" style="{if empty($item['aliyun'])}display: none;{/if}">
+            <div class="form-group">
+                <label class="col-lg control-label must">App Code</label>
+                <div class="col-sm-9 col-xs-12">
+                    <input type="text" name="aliyun_appcode" class="form-control valid" value="{$item['aliyun_appcode']}" data-rule-required="true">
+                </div>
+            </div>
+        </div>
+
+
         <div class='input-group'>
             <label class="col-lg control-label"></label>
             {ifp 'sysset.sms.set'}
@@ -173,4 +192,3 @@
     });
 </script>
 {template '_footer'}
-<!--OTEzNzAyMDIzNTAzMjQyOTE0-->
