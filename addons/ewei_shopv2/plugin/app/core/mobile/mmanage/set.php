@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,7 +16,7 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 		$account = user_single(array('username' => trim($_GPC['_username'])));
 
 		if (empty($account)) {
-			app_error(AppError::$UserLoginFail, '未查询到此用户');
+			return app_error(AppError::$UserLoginFail, '未查询到此用户');
 		}
 
 		$editinfo = true;
@@ -49,24 +49,24 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 			$password2 = trim($_GPC['password2']);
 
 			if (empty($realname)) {
-				app_error(AppError::$ParamsError, '请输入真实姓名');
+				return app_error(AppError::$ParamsError, '请输入真实姓名');
 			}
 
 			if (empty($realname)) {
-				app_error(AppError::$ParamsError, '请输入手机号');
+				return app_error(AppError::$ParamsError, '请输入手机号');
 			}
 
 			if (!empty($password) || !empty($password2)) {
 				if (empty($password)) {
-					app_error(AppError::$ParamsError, '请输入密码');
+					return app_error(AppError::$ParamsError, '请输入密码');
 				}
 
 				if (empty($password2)) {
-					app_error(AppError::$ParamsError, '请重复输入密码');
+					return app_error(AppError::$ParamsError, '请重复输入密码');
 				}
 
 				if ($password != $password2) {
-					app_error(AppError::$ParamsError, '两次输入的密码不一致');
+					return app_error(AppError::$ParamsError, '两次输入的密码不一致');
 				}
 
 				$changepass = true;
@@ -79,14 +79,14 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 
 			$data = array('realname' => $realname, 'mobile' => $mobile);
 			pdo_update('ewei_shop_perm_user', $data, array('id' => $roleuser['id'], 'uniacid' => $_W['uniacid']));
-			app_json(array('changepass' => intval($changepassresult)));
+			return app_json(array('changepass' => intval($changepassresult)));
 		}
 
-		app_json(array(
-	'user'     => $roleuser,
-	'account'  => array('username' => $account['username'], 'uid' => $account['uid']),
-	'editinfo' => $editinfo
-	));
+		return app_json(array(
+			'user'     => $roleuser,
+			'account'  => array('username' => $account['username'], 'uid' => $account['uid']),
+			'editinfo' => $editinfo
+		));
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 			$code = trim($_GPC['code']);
 
 			if (empty($code)) {
-				app_error(AppError::$ParamsError);
+				return app_error(AppError::$ParamsError);
 			}
 
 			$openid = $this->getOpenid($code);
@@ -118,17 +118,16 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 		$account = user_single(array('username' => $username));
 
 		if (empty($account)) {
-			app_error(AppError::$UserLoginFail);
+			return app_error(AppError::$UserLoginFail);
 		}
 
 		if (!empty($roleuser) && empty($confirm)) {
-			if ($account['uid'] == ($roleuser['uid'] . '0')) {
-				app_error(AppError::$BindError, '操作账号已绑定当前微信');
+			if ($account['uid'] == $roleuser['uid'] . '0') {
+				return app_error(AppError::$BindError, '操作账号已绑定当前微信');
 			}
-			else {
-				$member_wa = iunserializer($roleuser['member_wa']);
-				app_json(array('error' => AppError::$BindConfirm, 'message' => '操作账号已绑定' . $member_wa['nickname'] . ' 确定要取消之前绑定？', 'openid' => $openid));
-			}
+
+			$member_wa = iunserializer($roleuser['member_wa']);
+			return app_json(array('error' => AppError::$BindConfirm, 'message' => '操作账号已绑定' . $member_wa['nickname'] . ' 确定要取消之前绑定？', 'openid' => $openid));
 		}
 
 		$data = array('openid_wa' => $openid, 'member_nick' => $userinfo['nickName']);
@@ -138,7 +137,7 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 			pdo_update('ewei_shop_perm_user', array('openid_wa' => '', 'member_nick' => ''), array('id' => $roleuser['id']));
 		}
 
-		app_json();
+		return app_json();
 	}
 
 	/**
@@ -159,12 +158,12 @@ class Set_EweiShopV2Page extends AppMobileAuthPage
 		$resp = ihttp_request($url);
 
 		if ($resp['code'] != 200) {
-			app_error(AppError::$UserLoginFail, '与微信连接失败，请稍后重试');
+			return app_error(AppError::$UserLoginFail, '与微信连接失败，请稍后重试');
 		}
 
 		$arr = @json_decode($resp['content'], true);
 		if (!empty($arr['errcode']) || !isset($arr['openid'])) {
-			app_error(AppError::$UserLoginFail, $arr['errmsg']);
+			return app_error(AppError::$UserLoginFail, $arr['errmsg']);
 		}
 
 		return $arr['openid'];

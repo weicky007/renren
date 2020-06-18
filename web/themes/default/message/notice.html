@@ -2,7 +2,7 @@
 <ul class="we7-page-tab">
 	<li {if $do == 'display'}class="active"{/if}><a href="{php echo url('message/notice/display');}">消息列表</a></li>
 	<li {if $do == 'setting'}class="active"{/if}><a href="{php echo url('message/notice/setting');}">消息设置</a></li>
-	{if user_is_founder($_W['uid'], true)}
+	{if $_W['isadmin']}
 	<li {if $do == 'wechat_setting'}class="active"{/if}><a href="{php echo url('message/notice/wechat_setting');}">微信提醒设置</a></li>
 	{/if}
 </ul>

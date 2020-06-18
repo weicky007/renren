@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -91,8 +92,11 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$end = $alltimes[$key + 1]['time'] - 1;
 				$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 			}
-			else {
+			else if (empty($task['overtimes'])) {
 				$endtime = strtotime(date('Y-m-d 23:59:59'));
+			}
+			else {
+				$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
 			}
 
 			if ($endtime < $currenttime) {
@@ -119,13 +123,16 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$end = $validtimes[$key + 1]['time'] - 1;
 				$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 			}
-			else {
+			else if (empty($task['overtimes'])) {
 				$endtime = strtotime(date('Y-m-d 23:59:59'));
+			}
+			else {
+				$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
 			}
 
 			$time['endtime'] = $endtime;
 			$time['starttime'] = $starttime;
-			if (($starttime <= $currenttime) && ($currenttime <= $endtime)) {
+			if ($starttime <= $currenttime && $currenttime <= $endtime) {
 				$time['status'] = 0;
 				$timeid = $time['id'];
 
@@ -188,18 +195,24 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 		$count = count($times);
 
-		if (($count - 1) <= $timeindex) {
+		if ($count - 1 <= $timeindex) {
 			$timeindex = $count - 1;
 		}
 
-		$page_title = (empty($task['page_title']) ? $task['title'] : $task['page_title']);
+		$page_title = empty($task['page_title']) ? $task['title'] : $task['page_title'];
 
 		if (!empty($room['title'])) {
 			$page_title .= ' - ' . $room['title'];
 		}
 
 		$mid = m('member')->getMid();
-		$_W['shopshare'] = array('title' => $share_title, 'link' => mobileUrl('seckill', array('roomid' => $roomid, 'mid' => $mid), true), 'imgUrl' => tomedia($task['share_icon']), 'desc' => $share_desc);
+		$share_icon = empty($room['share_icon']) ? $task['share_icon'] : $room['share_icon'];
+
+		if (empty($share_icon)) {
+			$share_icon = $_W['shopset']['share']['icon'];
+		}
+
+		$_W['shopshare'] = array('title' => $share_title, 'link' => mobileUrl('seckill', array('roomid' => $roomid, 'mid' => $mid), true), 'imgUrl' => tomedia($share_icon), 'desc' => $share_desc);
 		$plugin_diypage = p('diypage');
 
 		if ($plugin_diypage) {
@@ -261,13 +274,16 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$end = $nexttime['time'] - 1;
 			$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 		}
-		else {
+		else if (empty($task['overtimes'])) {
 			$endtime = strtotime(date('Y-m-d 23:59:59'));
+		}
+		else {
+			$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
 		}
 
 		$time['endtime'] = $endtime;
 		$time['starttime'] = $starttime;
-		if (($starttime <= $currenttime) && ($currenttime <= $endtime)) {
+		if ($starttime <= $currenttime && $currenttime <= $endtime) {
 			$time['status'] = 0;
 		}
 		else if ($currenttime < $starttime) {
@@ -279,18 +295,25 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 		}
 
-		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.hasoption,g.marketprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . " tg  \r\n                  left join " . tablename('ewei_shop_goods') . " g on tg.goodsid = g.id \r\n                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ";
+		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.thumb_url,g.hasoption,g.marketprice,g.productprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . ' tg  
+                  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id 
+                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ';
 		$goods = pdo_fetchall($sql, array(':taskid' => $taskid, ':roomid' => $roomid, ':uniacid' => $_W['uniacid'], ':timeid' => $time['id']));
 
 		foreach ($goods as &$g) {
+			if (p('offic')) {
+				$g['thumb_url'] = array_values(unserialize($g['thumb_url']));
+				$g['thumb'] = tomedia($g['thumb_url'][0]);
+			}
+
 			$seckillinfo = $this->model->getSeckill($g['goodsid'], 0, false);
 
 			if ($g['hasoption']) {
 				$total = 0;
 				$count = 0;
-				$options = pdo_fetchall('select tg.id,tg.goodsid,tg.optionid,tg.price,g.title,g.marketprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . '  tg  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id  where tg.timeid=:timeid and tg.taskid=:taskid and tg.timeid=:timeid  and tg.goodsid=:goodsid and  tg.uniacid =:uniacid ', array(':timeid' => $time['id'], ':taskid' => $taskid, ':goodsid' => $g['goodsid'], ':uniacid' => $_W['uniacid']));
+				$options = pdo_fetchall('select tg.id,tg.goodsid,tg.optionid,tg.price,g.title,g.marketprice,g.productprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . '  tg  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id  where tg.timeid=:timeid and tg.taskid=:taskid and tg.timeid=:timeid  and tg.goodsid=:goodsid and  tg.uniacid =:uniacid ', array(':timeid' => $time['id'], ':taskid' => $taskid, ':goodsid' => $g['goodsid'], ':uniacid' => $_W['uniacid']));
 				$price = $options[0]['price'];
-				$marketprice = $options[0]['marketprice'];
+				$productprice = $options[0]['productprice'];
 
 				foreach ($options as $option) {
 					$total += $option['total'];
@@ -299,13 +322,13 @@ class Index_EweiShopV2Page extends PluginMobilePage
 						$price = $option['price'];
 					}
 
-					if ($marketprice < $option['marketprice']) {
-						$marketprice = $option['marketprice'];
+					if ($productprice < $option['productprice']) {
+						$productprice = $option['productprice'];
 					}
 				}
 
 				$g['price'] = $price;
-				$g['marketprice'] = $marketprice;
+				$g['productprice'] = $productprice;
 				$g['total'] = $total;
 				$g['count'] = $seckillinfo['count'];
 				$g['percent'] = 100 < $seckillinfo['percent'] ? 100 : $seckillinfo['percent'];
@@ -316,14 +339,20 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 
 			$g['thumb'] = tomedia($g['thumb']);
-			$g['marketprice'] = price_format($g['marketprice']);
+			$g['productprice'] = price_format($g['productprice']);
 			$g['price'] = price_format($g['price']);
 		}
 
 		unset($g);
 		load()->func('logging');
 		logging_run($goods);
-		show_json(1, array('time' => $time, 'goods' => $goods));
+		$plugin_diypage = p('diypage');
+
+		if ($plugin_diypage) {
+			$diypage = $plugin_diypage->seckillPage($room['diypage']);
+		}
+
+		show_json(1, array('diypage' => $diypage, 'time' => $time, 'goods' => $goods));
 	}
 }
 

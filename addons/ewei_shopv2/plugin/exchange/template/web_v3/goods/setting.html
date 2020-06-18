@@ -9,7 +9,7 @@
     {/if} method="post" class="form-horizontal form-validate" novalidate="novalidate" id="setform">
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog"  style="width: 850px">
-        <div class="modal-content">
+        <div class="modal-content"> 
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     &times;
@@ -123,39 +123,7 @@
         <div class="form-group" id="shangpinadd">
             <label class="col-lg control-label">选择指定商品</label>
             <div class="col-sm-9 col-xs-12">
-                <a class="form-control" id="count" onclick="$('#myModal').modal('show')">点击选择商品</a>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-lg control-label">已选商品</label>
-            <div class="col-sm-9 col-xs-12">
-                <div class="input-group multi-audio-details container">
-                    <table class="table" style="width:600px;">
-                        <thead>
-                        <tr>
-                            <th style="width:80px;">商品名称</th>
-                            <th style="width:220px;"></th>
-                            <th>规格/库存/运费</th>
-                            <th style="width:50px;">操作</th>
-                        </tr>
-                        </thead>
-                        <tbody id="param-items" class="ui-sortable tablet">
-                        {loop $all $k $v}
-                        <tr class="multi-product-item" data-id="{$v[0]['id']}" data-name="goodsid">
-                            <input type="hidden" name="no_checkbox[]" value="{$v[0]['id']}" data="{$v[0]['id']}">
-                            <td style="width:80px;"><img src="{php echo tomedia($v[0]['thumb']);}" height="70px" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"></td><td style="width:220px;">{$v[0]['title']}</td><td><a class="btn btn-default btn-sm" data-toggle="ajaxModal" href="{php echo webUrl('exchange/goods/optionset',array('gtype'=>0,'groupid'=>$id,'id'=>$v[0]['id']));}">设置</a></td><td><a href="javascript:void(0);" class="btn btn-default btn-sm" title="删除" data-id="{$v[0]['id']}" onclick="biz.selector_new.remove(this,'goodsid')"><i class="fa fa-times"></i></a></td></tr>
-                        {/loop}
-                        {loop $hasoption $k $v}
-                        <tr class="multi-product-item" data-id="{$v[0]['id']}" data-name="goodsid">
-                            {loop $goods['option'][$v[0]['id']] $k2 $v2}
-                            <input type="hidden" name="has_checkbox[]" value="{$v[0]['id']}_{$v2}" data="{$v[0]['id']}">
-                            {/loop}
-                            <td style="width:80px;"><img src="{php echo tomedia($v[0]['thumb']);}" height="70px" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"></td><td style="width:220px;">{$v[0]['title']}</td><td><a class="btn btn-default btn-sm" data-toggle="ajaxModal" href="{php echo webUrl('exchange/goods/optionset',array('gtype'=>1,'groupid'=>$id,'id'=>$v[0]['id']));}&selected={php echo implode('_',$goods['option'][$v[0]['id']]);}">设置</a></td><td><a href="javascript:void(0);" class="btn btn-default btn-sm" title="删除" data-id="{$v['id']}" onclick="biz.selector_new.remove(this,'goodsid')"><i class="fa fa-times"></i></a></td></tr>
-                        {/loop}
-                        </tbody>
-                    </table>
-                </div>
+                {php echo tpl_goods_selector('exgoods',$setting['goods_native'],array('option'=>1,'column'=>array(array('name'=>'total','title'=>'兑换库存','default'=>'0'),array('name'=>'postage','title'=>'运费','default'=>'0'))));}
             </div>
         </div>
         <div class="form-group">
@@ -474,7 +442,7 @@
 </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function () {
+    /*$(document).ready(function () {
         var keyword = $('#keyword').val();
         var base = '{php echo webUrl("exchange/goods/selector",array("id"=>$id),1);}';
         var url = base + '&keyword='+keyword;
@@ -487,7 +455,7 @@
             htmlobj = $.ajax({url:url,async:false});
             $(".tableso").html(htmlobj.responseText);
         });
-    });
+    });*/
 
 
 </script>

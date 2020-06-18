@@ -37,9 +37,9 @@
 			<td style="width:80px;text-align: center">打印状态</td>
 		</tr>
 </table>
-		
+
 		{php $remark1=""; $remark2="";}
-		{loop $list $item}   
+		{loop $list $item}
 		{php $remark1.= !empty($item['remark'])?$item['remark'].",":""; $remark2.= !empty($item['remarksaler'])?$item['remarksaler'].",":""}
 		<table class="table table-responsive" style="table-layout: fixed; border-bottom: 1px solid #f2f2f2;  margin-bottom: 0px;">
 			<tr style="height: 0;">
@@ -64,19 +64,19 @@
 			</tr>
 			{loop $item['goods'] $k $g}
 				<!-- 此处记录数据 -->
-				<tr class="trbody print-data" 
-					data-send-status="{$item['send_status']}" 
-					data-print-goodid="{$g['id']}" 
-					data-print-total="{$g['total']}" 
-					data-print-title="{$g['title']}" 
-					data-print-option="{$g['optiontitle']}" 
-					data-print-orderid="{$item['id']}" 
-					data-print-ordersn="{$item['ordersn']}" 
-					data-print-goodssn="{$g['goodssn']}" 
-					data-print-productsn="{$g['productsn']}" 
+				<tr class="trbody print-data"
+					data-send-status="{$item['send_status']}"
+					data-print-goodid="{$g['id']}"
+					data-print-total="{$g['total']}"
+					data-print-title="{$g['title']}"
+					data-print-option="{$g['optiontitle']}"
+					data-print-orderid="{$item['id']}"
+					data-print-ordersn="{$item['ordersn']}"
+					data-print-goodssn="{$g['goodssn']}"
+					data-print-productsn="{$g['productsn']}"
 					data-print-marketprice="{php echo $g['realprice']/$g['total']}"
-					data-print-productprice="{php echo $g['price']/$g['total']}" 
-					data-print-realprice="{php echo $g['realprice']/$g['total']}" 
+					data-print-productprice="{php echo $g['price']/$g['total']}"
+					data-print-realprice="{php echo $g['realprice']/$g['total']}"
 					data-print-ordercode="{if $g['ordercode']==''}0{else}{$g['ordercode']}{/if}"
 					data-print-ordergoodid="{$g['ordergoodid']}"
 					data-print-unit="{$g['unit']}"
@@ -96,7 +96,7 @@
 								{$g['shorttitle']}
 							{/if}
 						</span>
-						
+
 						{if !empty($g['optiontitle'])}<br/>{$g['optiontitle']}{/if}
 						{if !empty($g['goodssn'])}<br/>{$g['goodssn']}{/if}
 					</td>
@@ -110,13 +110,13 @@
 							<br>
 							<span style="margin-top:5px;display:block;">{$item['dispatchname']}</span>
 						</td>
-						<td style="text-align:center" rowspan="{php echo count($item['goods'])}">￥{$item['price']} 
+						<td style="text-align:center" rowspan="{php echo count($item['goods'])}">￥{$item['price']}
 							{if $item['dispatchprice']>0}
 							<br/>(含运费:￥{php echo number_format( $item['dispatchprice'],2)})
 							{/if}
 						</td>
 						<td style="text-align:center" rowspan="{php echo count($item['goods'])}">
-							{php echo date('Y-m-d', $item['createtime'])} <br>{php echo date('H:i:s', $item['createtime'])} 
+							{php echo date('Y-m-d', $item['createtime'])} <br>{php echo date('H:i:s', $item['createtime'])}
 						</td>
 						<td style="line-height:20px;text-align:center" class="ops" rowspan="{php echo count($item['goods'])}">
 							<label class='label label-{$item['statuscss']} label-oss'>{$item['statusname']}</label>
@@ -136,14 +136,14 @@
 <input type="hidden" name="remark1" value="{$remark1}"  />
 <input type="hidden" name="remark2" value="{$remark2}"  />
 <table class="table table-responsive" style="table-layout: fixed; margin-bottom: 5px;">
-	
+
 		<tr>
 			<td style="height:10px;padding:0;border-top:none; font-size: 0;" colspan="9">&nbsp;</td>
 		</tr>
 		<tr style=";border-bottom:none;background:#fafafa;">
 			<td style="text-align:left" colspan="9"><i class="fa fa-cubes"></i> 发货信息</td>
 		</tr>
-		
+
 		<tr>
 			<td colspan="9" style="height:auto; padding: 0; border: 0;">
 				<textarea class="form-control richtext valid sendinfo" style="max-width: 100%; min-width: 100%;" rows="4" readonly="readonly">{$address['sendinfo']}</textarea>
@@ -167,10 +167,10 @@
 {template 'exhelper/esheetprint/print_tpl_template'}
 <script>
 	$(function(){
-		
+
 		// 计算发货信息
 		changeSendInfo();
-		
+
 		$("#print-esheet").click(function(){
 
             if(!isCLodop){
@@ -238,17 +238,6 @@
                 var ordercode=_tct.data("print-ordercode");
                 var ordergoodid=_tct.data("print-ordergoodid");
                 var orderid=_tct.data("print-orderid");
-//             var all_total = 0;
-//            var all_weight = 0;
-//            $("#result-order").find("input:checkbox:checked").not(".checkAll").not(".checkOrder").each(function(index) {
-//                var _this = $(this).closest(".print-data");
-//                var _goodweight = _this.data("print-weight");	// 商品重量
-//                var _total = _this.data("print-total");	// 商品数量
-//                all_total =all_total+_total;//商品总数量
-//                all_weight=all_weight+(_goodweight*1);//商品总重量
-//            });
-
-
 
                 var state = -1;
                 $.each(arr,function(i,d){
@@ -308,12 +297,14 @@
                     printarr[state].ordergoodid +=','+v.ordergoodid;
                     printarr[state].orderid +=','+v.orderid;
                     printarr[state].sendinfo+=v.sendinfo;
+                    printarr[state].all_total +=v.num;
                 }else{
                     printarr.push({
                         'ordergoodid':v.ordergoodid,
                         'sendinfo':v.sendinfo,
                         'ordercode':v.ordercode,
                         'orderid':v.orderid,
+                        'all_total':v.num
                     });
                 }
             });
@@ -334,7 +325,7 @@
                     async:false,
                     success: function(d){
                         if(d.result=="success"){
-                            LODOP.ADD_PRINT_HTML(0,0,'100%','100%',d.PrintTemplate);
+                            LODOP.ADD_PRINT_HTM(0,0,'100%','100%',d.PrintTemplate);
                             LODOP.NewPage();
 
                             $("#result-order").find("input[type=checkbox]:checked").not(".checkAll").not(".checkOrder").each(function() {
@@ -356,9 +347,9 @@
                                 }
                             })
                         }else{
-                            alert(d.resp);
+                            tip.msgbox.err(d.resp);
                             iserr=true;
-                            return;
+//                            return;
                         }
                     }
                 });
@@ -416,17 +407,17 @@
 			}
 
 			$.ajax({
-				type: 'POST', 
+				type: 'POST',
 				url: "{php echo webUrl('exhelper/esheetprint/single/getorderinfo')}",
 				data: {orderids:orderids,temp_esheetid:temp_esheetid},
-				success: function(result){           
+				success: function(result){
 					$("#modal-send").find("#main").html(result);
 					$("#modal-send").modal({backdrop: 'static', keyboard: false});
 				}
 			});
 
 		});
-		
+
 		// 修改 商品简称 回调方法
 		$("[data-toggle='ajaxEdit']").bind('valueChange',function(event,val,oldval){
 			$(".print-short").each(function(){
@@ -436,7 +427,7 @@
 				}
 			});
 		});
-		
+
 		// 判断如果收件人信息更改 则进行标记
 		$(".userinfo").find("input").change(function(){
 			$(".userinfo").data("change",1);
@@ -474,7 +465,7 @@
 				var dd = true;
 				$("input[type=checkbox]").not(".checkAll").each(function(){
 					_tS = $(this).is(":checked");
-					if(!_tS){dd = false;return;} 
+					if(!_tS){dd = false;return;}
 				});
 				if(dd){
 					$(".checkAll").prop("checked", true);
@@ -535,7 +526,7 @@
 			var d = false;
 			$("input[type=checkbox]").each(function(){
 				_tS = $(this).is(":checked");
-				if(_tS){d = true;return;} 
+				if(_tS){d = true;return;}
 			});
 			if(d){
 				// 可以打印
@@ -560,7 +551,7 @@
 		if(_thisState==2){
 			return;
 		}
-		
+
 		var state = 0;
 		$(".sendtable").find("input[data-send-state=1]").each(function(){
 			if($(this).val()==''){
@@ -584,21 +575,21 @@
 					var expresssn = $.trim($(this).val());
 					var orderid = $(this).closest("tr").data("orderid");
 					$.ajax({
-							type: 'POST', 
+							type: 'POST',
 							url: "{php echo webUrl('exhelper/esheetprint/single/dosend')}",
 							data: {orderid:orderid,expresssn:expresssn,expresscom:expresscom,express:express},
 							dataType:'json',
 							async:false,
-							success: function(result){     
+							success: function(result){
 								if(result.result=='error'){
-									alert(result.resp);
+                                    tip.msgbox.err(result.resp);
 								}
 								if(result.result=='success'){
 									$("#dosend").text("正在执行...("+i+"/"+total+")");
-									$(".sendtable").find(".send-order[data-orderid="+orderid+"]").find("input").attr("disabled","disabled");  
+									$(".sendtable").find(".send-order[data-orderid="+orderid+"]").find("input").attr("disabled","disabled");
 									$(".sendtable").find(".send-order[data-orderid="+orderid+"]").find(".status label").removeClass("label-info").removeClass("label-danger").addClass("label-warning").text("待收货");
 									$("#result-order").find(".print-data[data-print-orderid="+orderid+"]").find(".label-oss").removeClass("label-info").removeClass("label-danger").addClass("label-warning").text("待收货");
-									$("#result-order").find(".print-data[data-print-orderid="+orderid+"]").data("send-status",0); 
+									$("#result-order").find(".print-data[data-print-orderid="+orderid+"]").data("send-status",0);
 								}
 							}
 						});
@@ -610,7 +601,7 @@
 				});
 			}
 		}
-		
+
 	}
 
 	// 保存时执行 保存收件人信息
@@ -644,8 +635,8 @@
 			}
 		$.post(url, datas, function (result) { });
 	}
-	
-	
+
+
 	// 执行遍历发货信息并重组
 	function changeSendInfo(){
 		var arr = [];
@@ -686,7 +677,6 @@
 	}
 
 </script>
-
 
 
 

@@ -70,7 +70,7 @@ if ('module' == $do) {
 	$reply = pdo_get('cover_reply', array('module' => $entry['module'], 'do' => $entry['do'], 'uniacid' => $_W['uniacid']));
 
 	if (checksubmit('submit')) {
-		$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
+		$keywords = @json_decode(safe_gpc_html(htmlspecialchars_decode($_GPC['keywords'])), true);
 		$rule = array(
 			'uniacid' => $_W['uniacid'],
 			'name' => $entry['title'],
@@ -105,7 +105,7 @@ if ('module' == $do) {
 				foreach ($keywords as $keyword) {
 					$keyword_insert = $keyword_row;
 					$keyword_insert['type'] = range_limit($keyword['type'], 1, 4);
-					$keyword_insert['content'] = $keyword['content'];
+					$keyword_insert['content'] = htmlspecialchars($keyword['content']);
 					pdo_insert('rule_keyword', $keyword_insert);
 				}
 			}

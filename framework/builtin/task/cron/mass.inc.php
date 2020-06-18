@@ -14,7 +14,9 @@ $acc = WeAccount::createByUniacid();
 if(is_error($acc)) {
 	$this->addCronLog($id, -1101, '创建公众号操作对象失败');
 }
-
+if ($data['msgtype'] == 'basic') {
+	$data['media_id'] = urlencode(emoji_unicode_decode($data['content']));
+}
 $status = $acc->fansSendAll($data['group'], $data['msgtype'], $data['media_id']);
 if(is_error($status)) {
 	table('mc_mass_record')

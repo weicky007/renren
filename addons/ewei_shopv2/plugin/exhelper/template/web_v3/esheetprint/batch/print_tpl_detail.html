@@ -251,7 +251,7 @@
 
              var state = -1;
                 $.each(arr,function(i,d){
-                    if(d.id===printGid && d.option===printOption && d.ordercode===ordercode){
+                    if(d.id===printGid && d.option===printOption && d.ordercode===ordercode && orderid==d.orderid ){
                         state = i;
                         return false;
                     }
@@ -279,7 +279,6 @@
                     });
                 }
             });
-
             //组装商品详情
             goodsarr=[];
             $.each(arr,function(k,i){
@@ -321,6 +320,7 @@
                     printarr[state].ordergoodid +=','+v.ordergoodid;
                     printarr[state].orderid +=','+v.orderid;
                     printarr[state].sendinfo+=v.sendinfo;
+                    printarr[state].all_total +=v.num;
                 }else{
                     printarr.push({
                         'ordergoodid':v.ordergoodid,
@@ -332,11 +332,11 @@
                         'ProvinceName': v.ProvinceName,
                         'CityName': v.CityName,
                         'ExpAreaName': v.ExpAreaName,
-                        'Address': v.Address
+                        'Address': v.Address,
+						'all_total':v.num
                     });
                 }
             });
-
             var iserr=false;
             var PrintTemplate='';
             $.each(printarr, function (i, p) {
@@ -352,7 +352,7 @@
                     async:false,
                     success: function(d){
                         if(d.result=="success"){
-                            LODOP.ADD_PRINT_HTML(0,0,'100%','100%',d.PrintTemplate);
+                            LODOP.ADD_PRINT_HTM(0,0,'100%','100%',d.PrintTemplate);
                             LODOP.NewPage();
 
                             $("#result-order").find("input[type=checkbox]:checked").not(".checkAll").not(".checkOrder").each(function() {
@@ -375,9 +375,9 @@
                             })
 
                         }else{
-                            alert(d.resp);
+                            tip.msgbox.err(d.resp);
                             iserr=true;
-                            return;
+//                            return;
                         }
                     }
                 });
@@ -655,7 +655,7 @@
                     dataType:'json',
                     success: function(result){
                         if(result.result=='error'){
-                            alert(result.resp);
+                            tip.msgbox.err(d.resp);
                         }
                     }
                 });
@@ -706,7 +706,7 @@
                         async:false,
                         success: function(result){
                             if(result.result=='error'){
-                                alert(result.resp);
+                                tip.msgbox.err(result.resp);
                             }
                             if(result.result=='success'){
                                 $("#dosend").text("正在执行...("+i+"/"+total+")");
@@ -805,91 +805,7 @@
             _this.find(".sendinfo").val(sendInfo);
         });
     }
-
-    function changeOrderPrintInfo(type){
-        // 遍历已选中的商品
-        var arr = [];
-        $("#result-order").find("input[type=checkbox]:checked").not(".checkAll").not(".checkOrder").each(function(){
-            var _this = $(this).closest(".print-data");
-            var orderid = _this.data("print-orderid");
-            var goodid = _this.data("print-goodid");
-            arr.push({
-                orderid: orderid,
-                ordergoodid: goodid
-            });
-        });
-        // 修改订单信息
-        $.ajax({
-            type: 'POST',
-            url: "{php echo webUrl('exhelper/print/batch/changestate')}",
-            data: {arr:arr, type:type},
-            dataType: 'json',
-            success: function(d){
-                if(d.result == 'success'){
-                    $("#result-order").find("input[type=checkbox]:checked").not(".checkAll").not(".checkOrder").each(function(){
-                        var _this = $(this).closest(".print-data");
-                        var _table = $(this).closest(".table");
-                        if(type==1){
-                            // 快递单打印
-                            // 修改商品打印状态
-                            var print_state = _this.find(".print-state-express");
-                            var print_state_num = print_state.data("state")+1;
-                            print_state.text("快递单x"+print_state_num).data("state",print_state_num);
-                            // 修改 订单打印状态
-                            var _order = _table.find(".order-print-state-express");
-                            if (d.orderprintstate == 1) {
-                                _order.text("快递单部分打印");
-                            } else if (d.orderprintstate == 2) {
-                                _order.text("快递单打印完成");
-                            }
-                        }
-                        else if(type==2){
-                            // 发货单打印
-                            // 修改商品打印状态
-                            var print_state = _this.find(".print-state-invoice");
-                            var print_state_num = print_state.data("state")+1;
-                            print_state.text("发货单x"+print_state_num).data("state",print_state_num);
-                            // 修改 订单打印状态
-                            var _order = _table.find(".order-print-state-invoice");
-                            if (d.orderprintstate == 1) {
-                                _order.text("发货单部分打印");
-                            } else if (d.orderprintstate == 2) {
-                                _order.text("发货单打印完成");
-                            }
-                        }
-                    });
-                }else{
-                    alert(d.resp);
-                }
-            }
-        });
-    }
-
-//    function autonum(){
-//        var indexval = $(".sendtable").find("input:first");
-//        var val = $.trim(indexval.val());
-//        if(val==''){
-//            indexval.focus();
-//            return;
-//        }
-//        var num =val.replace(/[^0-9]/,'') ;
-//        var eng = val.replace(num,'');
-//        $.ajax({
-//            url: "{php echo webUrl('util/autonum')}",
-//            data: {num: num ,len: $(".sendtable").find(":input[data-send-state=1]").length -1},
-//            type: "POST",
-//            dataType:"json",
-//            success: function(arr){
-//                for(var i in arr){
-//                    $(".sendtable").find(":input[data-send-state=1]:eq(" + i + ")").val(eng+ arr[i] );
-//                }
-//            }
-//        })
-//    }
-
-
 </script>
-
 
 
 

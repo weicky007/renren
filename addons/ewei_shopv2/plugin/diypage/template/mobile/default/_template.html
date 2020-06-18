@@ -28,7 +28,7 @@
     <%/if%>
 </script>
 
-
+<!--轮播图-->
 <script type="text/html" id="tpl_show_banner">
     <%if data%>
         <div class='fui-swipe'>
@@ -213,7 +213,7 @@
                                         <%/if%>
                                     <%/if%>
                                     <%if item.bargain>0%>
-                                    <span class="buy" style="background-color: <%style.buybtncolor%>;">砍</span>
+                                    <span class="buy bargain-btn" style="background-color: <%style.buybtncolor%>;">砍</span>
                                     <%/if%>
                                 </div>
                             <%/if%>
@@ -306,7 +306,6 @@
         <%/each%>
     </div>
 </script>
-
 <script type="text/html" id="tpl_show_bindmobile">
     <div class="fui-cell-group fui-cell-click" style="margin-top: <%style.margintop%>px; background-color: <%style.background%>;">
         <a class="fui-cell" href="<%params.linkurl%>" data-nocache="true">

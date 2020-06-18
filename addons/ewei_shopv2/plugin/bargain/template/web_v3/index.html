@@ -1,9 +1,9 @@
 {template '_header'}
-    <div class="page-header">
+    <div class="page-header" style="height: 95px">
             当前位置：<span class="text-primary">砍价中</span>
             <!--<span class='label label-success' style="background-color: #18a689">-->
             <!--</span>-->
-
+        <span class='help-block' style="color: #f00">注意：砍价活动目前只支持小程序端</span>
     </div>
     <div class="page-content">
         <form action="" method="post" class="form-horizontal form-search" role="form">
@@ -17,7 +17,7 @@
                 </span>
                 <div class=" col-sm-6 pull-right">
                     <div class="input-group">
-                        <input type="text" class="input-sm form-control" name="search" value="" placeholder="商品名称"> <span class="input-group-btn">
+                        <input type="text" class="input-sm form-control" name="search"  value="{$_GPC['search']}" placeholder="商品名称" > <span class="input-group-btn">
                         <button class="btn btn-primary" type="submit" style="float: left"> 搜索</button> </span>
                     </div>
                 </div>

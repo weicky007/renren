@@ -3,6 +3,9 @@
 <style type="text/css">
     .sns-content-info{max-height:4rem;line-height: 1rem;overflow: hidden;}
     .sns-card-show{padding:0 0.5rem 0.5rem;height:1.5rem;display: block;font-style: normal;color:#0290be;font-size:0.7rem;}
+    .image-remove {
+        z-index: 2!important;
+    }
 </style>
 <div class='fui-page fui-page-current  fui-page-current sns-board-page'>
 
@@ -11,7 +14,7 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">{php echo m('plugin')->getName('sns')}</div>
+        <div class="title">{if empty($this->merch_user)}{$_W['shopset']['shop']['name']}{else}{php echo $this->merch_user['merchname']}{/if}</div>
         <div class="fui-header-right"></div>
     </div>
     {/if}
@@ -212,6 +215,14 @@
 <!--投诉end-->
 
 <script language='javascript'>
+    function isIphoneX(){
+        return /iphone/gi.test(navigator.userAgent) && (screen.height == 812 && screen.width == 375)
+    }
+    $(function(){
+        if( isIphoneX() ) {
+            $('.btn-add-post').css('bottom', '4.25rem');
+        }
+    });
     require(['../addons/ewei_shopv2/plugin/sns/static/js/board.js'], function (modal) {
         modal.init({
             bid: {$board['id']}
@@ -222,4 +233,3 @@
 </script>
 {php $this->footerMenus()}
 {template '_footer'}
-

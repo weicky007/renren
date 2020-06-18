@@ -205,7 +205,7 @@ if ('post' == $do) {
 			}
 		}
 		if (checksubmit('submit')) {
-			$keywords = @json_decode(htmlspecialchars_decode($_GPC['keywords']), true);
+			$keywords = @json_decode(safe_gpc_html(htmlspecialchars_decode($_GPC['keywords'])), true);
 
 			if (empty($keywords)) {
 				itoast('必须填写有效的触发关键字.');
@@ -297,7 +297,7 @@ if ('post' == $do) {
 		$setting = $setting['default_message'] ? $setting['default_message'] : array();
 		if (checksubmit('submit')) {
 			$rule_id = intval(trim(htmlspecialchars_decode($_GPC['reply']['reply_keyword']), '"'));
-			$module = trim(htmlspecialchars_decode($_GPC['reply']['reply_module']), '"');
+			$module = trim(safe_gpc_html(htmlspecialchars_decode($_GPC['reply']['reply_module'])), '"');
 			if ((empty($rule_id) && empty($module)) || '0' === $_GPC['status']) {
 				$setting[$type] = array('type' => '', 'module' => $module, 'keyword' => $rule_id);
 				uni_setting_save('default_message', $setting);

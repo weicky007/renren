@@ -180,7 +180,7 @@ define(['jquery.ui'], function (ui) {
                 return
             }
             modal.advs.data[itemid] = {
-                imgurl: '../addons/ewei_shopv2/plugin/diypage/static/images/default/menu-1.png',
+                imgurl: '../addons/ewei_shopv2/plugin/diypage/static/images/default/adv-1.jpg',
                 linkurl: '',
                 iconclass: 'icon-home',
                 text: '菜单文字'

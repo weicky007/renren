@@ -4,13 +4,17 @@
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
-error_reporting(0);
 load()->model('module');
 
-$dos = array('list');
-if (!in_array($do, array('list', 'check_receive'))) {
+$dos = array('list', 'check_receive', 'templates', 'modules');
+if (!in_array($do, $dos)) {
+	if ($_W['isajax']) {
+		iajax(-1, 'Access Denied');
+	}
 	exit('Access Denied');
 }
+$keyword = safe_gpc_string($_GPC['keyword']);
+$account_type_sign = safe_gpc_string($_GPC['account_type_sign']);
 
 if ('check_receive' == $do) {
 	$module_name = trim($_GPC['module_name']);
@@ -39,11 +43,6 @@ if ('list' == $do) {
 		foreach ($_W['account']['modules'] as $m) {
 			if (is_array($_W['account']['modules'][$m['name']]['handles']) && in_array($_COOKIE['special_reply_type'], $_W['account']['modules'][$m['name']]['handles'])) {
 				$enable_modules[$m['name']] = $m;
-				if (file_exists(IA_ROOT . '/addons/' . $m['name'] . '/icon-custom.jpg')) {
-					$enable_modules[$m['name']]['icon'] = tomedia(IA_ROOT . '/addons/' . $m['name'] . '/icon-custom.jpg');
-				} else {
-					$enable_modules[$m['name']]['icon'] = tomedia(IA_ROOT . '/addons/' . $m['name'] . '/icon.jpg');
-				}
 			}
 		}
 		setcookie('special_reply_type', '', time() - 3600);
@@ -51,34 +50,122 @@ if ('list' == $do) {
 		$installedmodulelist = uni_modules();
 		foreach ($installedmodulelist as $k => $value) {
 			$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
-		}
-		foreach ($installedmodulelist as $name => $module) {
-			if ($module['issystem']) {
-				$path = '/framework/builtin/' . $module['name'];
-			} else {
-				$path = '../addons/' . $module['name'];
-			}
-			$cion = $path . '/icon-custom.jpg';
-			if (!file_exists($cion)) {
-				$cion = $path . '/icon.jpg';
-				if (!file_exists($cion)) {
-					$cion = './resource/images/nopic-small.jpg';
-				}
-			}
-			$module['icon'] = $cion;
-			if (1 == $module['enabled']) {
-				$enable_modules[$name] = $module;
-			} else {
-				$unenable_modules[$name] = $module;
+			if (1 == $value['enabled']) {
+				$enable_modules[$k] = $value;
 			}
 		}
 	}
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 21;
 	$current_module_list = array_slice($enable_modules, ($pindex - 1) * $psize, $psize);
+	if ($_W['isw7_request']) {
+		$message = array(
+			'total' => count($enable_modules),
+			'page' => $pindex,
+			'page_size' => $psize,
+			'list' => $current_module_list
+		);
+		iajax(0, $message);
+	}
+
 	$result = array(
 		'items' => $current_module_list,
 		'pager' => pagination(count($enable_modules), $pindex, $psize, '', array('before' => '2', 'after' => '3', 'ajaxcallback' => 'null')),
 	);
 	iajax(0, $result);
+}
+
+if ('templates' == $do) {
+	$page = max(1, intval($_GPC['page']));
+	$page_size = 6;
+	$templates_table = table('modules');
+	if (!empty($keyword)) {
+		$templates_table->where('title LIKE', "%{$keyword}%");
+	}
+	$templates = $templates_table->select(array('mid', 'name', 'title'))->where('application_type', APPLICATION_TYPE_TEMPLATES)->page($page, $page_size)->getall();
+	if (!empty($templates)) {
+		foreach ($templates as $key => $template) {
+						$templates[$key]['id'] = $template['mid'];
+			$templates[$key]['logo'] = $_W['siteroot'] . 'app/themes/' . $template['name'] . '/preview.jpg';
+		}
+	}
+	$total = $templates_table->getLastQueryTotal();
+	$message = array(
+		'keyword' => $keyword,
+		'page' => $page,
+		'page_size' => $page_size,
+		'total' => $total,
+		'list' => $templates
+	);
+	iajax(0, $message);
+}
+
+if ('modules' == $do) {
+	$modules = user_modules($_W['uid']);
+	if (empty($modules)) {
+		$message = array(
+			'total' => 0,
+			'page' => 1,
+			'page_size' => 10,
+			'keyword' => $keyword,
+			'account_type_sign' => $account_type_sign,
+			'list' => array()
+		);
+		iajax(0, $message);
+	}
+
+	if (!empty($keyword)) {
+		foreach($modules as $k => $module) {
+			if (!strstr($module['title'], $keyword)) {
+				unset($modules[$k]);
+			}
+		}
+	}
+	$module_list = array();
+	if (!empty($account_type_sign)) {
+		foreach ($modules as $k => $module) {
+			if (1 == $module['issystem'] || MODULE_SUPPORT_ACCOUNT != $module[$account_type_sign . '_support']) {
+				unset($modules[$k]);
+				continue;
+			}
+			$module_list[] = array(
+				'id' => $module['mid'],
+				'name' => $module['name'],
+				'title' => $module['title'],
+				'logo' => $module['logo'],
+				'support' => $account_type_sign,
+			);
+		}
+	} else {
+		$module_support_type = module_support_type();
+		foreach ($modules as $name => $module) {
+			foreach ($module_support_type as $support => $info) {
+				if (MODULE_SUPPORT_SYSTEMWELCOME_NAME == $support) {
+					continue;
+				}
+				if ($module[$support] == $info['support']) {
+					$module_list[] = array(
+						'id' => $module['mid'],
+						'name' => $module['name'],
+						'title' => $module['title'],
+						'logo' => $module['logo'],
+						'support' => $info['type'],
+					);
+				}
+			}
+		}
+	}
+	$pindex = max(1, intval($_GPC['page']));
+	$psize = 10;
+	$current_module_list = array_slice($module_list, ($pindex - 1) * $psize, $psize);
+	
+	$message = array(
+		'total' => count($module_list),
+		'page' => $pindex,
+		'page_size' => $psize,
+		'keyword' => $keyword,
+		'account_type_sign' => $account_type_sign,
+		'list' => $current_module_list
+	);
+	iajax(0, $message);
 }

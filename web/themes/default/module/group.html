@@ -42,7 +42,7 @@
 								<div class="support-list">
 									{if is_array($module['group_support'])}
 									{loop $module['group_support'] $support}
-									<i class="wi wi-{if $support == 'phoneapp'}app{else}{$support}{/if}"></i>
+									<i class="wi wi-{if $support == 'phoneapp'}app{elseif $support == 'welcome'}system-welcome{else}{$support}{/if}"></i>
 									{/loop}
 									{/if}
 								</div>

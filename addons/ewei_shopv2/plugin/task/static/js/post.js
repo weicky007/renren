@@ -238,7 +238,10 @@ define(['biz'], function (biz) {
         //设置任务类型名字
         if (model.task.id){
             $(".taskname").text(model.task.type_name);
-            $("input[name='type']").val(model.task.type_key);
+            $("input[name='type']").val(model.task.type_key); 
+            if (model.task.type_key =='child_agent') {
+                $("#see").show();
+            }
             //设置任务需求样式
             model.require();
         }

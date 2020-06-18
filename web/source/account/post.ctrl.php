@@ -14,15 +14,21 @@ load()->func('file');
 $uniacid = intval($_GPC['uniacid']);
 if (empty($uniacid)) {
 	$url = url('account/manage', array('account_type' => ACCOUNT_TYPE));
+	if ($_W['isajax']) {
+		iajax(-1, '请选择要编辑的' . ACCOUNT_TYPE_NAME);
+	}
 	itoast('请选择要编辑的' . ACCOUNT_TYPE_NAME, $url, 'error');
 }
-$defaultaccount = uni_account_default($uniacid);
+$defaultaccount = uni_fetch($uniacid);
 if (!$defaultaccount) {
+	if ($_W['isajax']) {
+		iajax(-1, '无效的acid');
+	}
 	itoast('无效的acid', url('account/manage'), 'error');
 }
 $acid = $defaultaccount['acid']; 
 $state = permission_account_user_role($_W['uid'], $uniacid);
-$dos = array('base', 'sms', 'modules_tpl', 'operators');
+$dos = array('base', 'sms', 'modules_tpl', 'edit_modules_tpl', 'operators');
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if ($role_permission || $_W['isajax']) {
 	$do = in_array($do, $dos) ? $do : 'base';
@@ -36,9 +42,6 @@ if ($role_permission || $_W['isajax']) {
 } else {
 	itoast('您是该公众号的操作员，无权限操作！', url('account/manage'), 'error');
 }
-
-$headimgsrc = tomedia('headimg_' . $acid . '.jpg');
-$qrcodeimgsrc = tomedia('qrcode_' . $acid . '.jpg');
 $account = account_fetch($acid);
 $_W['breadcrumb'] = $account['name'];
 if ('base' == $do) {
@@ -47,21 +50,21 @@ if ('base' == $do) {
 	}
 	if ($_W['ispost'] && $_W['isajax']) {
 		if (!empty($_GPC['type'])) {
-			$type = trim($_GPC['type']);
+			$type = safe_gpc_string($_GPC['type']);
 		} else {
-			iajax(40035, '参数错误！', '');
+			iajax(-1, '参数错误！', '');
 		}
 		$request_data = safe_gpc_string(trim($_GPC['request_data']));
 		switch ($type) {
 			case 'qrcodeimgsrc':
 			case 'headimgsrc':
+				$imgsrc = safe_gpc_path($request_data);
 				$image_type = array(
-					'qrcodeimgsrc' => ATTACHMENT_ROOT . 'qrcode_' . $acid . '.jpg',
-					'headimgsrc' => ATTACHMENT_ROOT . 'headimg_' . $acid . '.jpg',
+					'qrcodeimgsrc' => 'qrcode',
+					'headimgsrc' => 'logo',
 				);
-				$imgsrc = safe_gpc_path($_GPC['imgsrc']);
 				if (file_is_image($imgsrc)) {
-					$result = utility_image_rename($imgsrc, $image_type[$type]);
+					$result = table('uni_account')->where('uniacid', $uniacid)->fill($image_type[$type], $imgsrc)->save();
 				} else {
 					$result = '';
 				}
@@ -94,12 +97,12 @@ if ('base' == $do) {
 					}
 				}
 				if ($account['key'] == $request_data) {
-					iajax(0, '修改成功！');
+					iajax(0, '修改成功！', referer());
 				}
 				$data = array('key' => $request_data); break;
 			case 'secret':
 				if ($account['secret'] == $request_data) {
-					iajax(0, '修改成功！');
+					iajax(0, '修改成功！', referer());
 				}
 				$data = array('secret' => $request_data); break;
 			case 'token':
@@ -150,7 +153,7 @@ if ('base' == $do) {
 				
 					$store_create_account_info = table('site_store_create_account')->getByUniacid($uniacid);
 				
-				if (user_is_founder($_W['uid'], true)) {
+				if ($_W['isadmin']) {
 					$endtime = 1 != $_GPC['endtype'] ? $endtime : 0;
 					
 						if (!empty($store_create_account_info)) {
@@ -195,13 +198,13 @@ if ('base' == $do) {
 			cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 			cache_delete(cache_system_key('accesstoken', array('uniacid' => $uniacid)));
 			cache_delete(cache_system_key('statistics', array('uniacid' => $uniacid)));
-			iajax(0, '修改成功！', '');
+			iajax(0, '修改成功！', referer());
 		} else {
 			iajax(1, '修改失败！', '');
 		}
 	}
 
-	if(!user_is_founder($_W['uid'], true)){
+	if(!$_W['isadmin']){
 		$owner_id = pdo_getcolumn('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
 		$user_endtime = user_end_time($owner_id);
 	}
@@ -227,7 +230,7 @@ if ('base' == $do) {
 		}
 	}
 	$account['start'] = date('Y-m-d', $account['starttime']);
-	if ($_W['uid'] == $account['create_uid'] || user_is_founder($_W['uid'], true)) {
+	if ($_W['uid'] == $account['create_uid'] || $_W['isadmin']) {
 		$account['createtime'] = $account['createtime'] > 0 ? date('Y-m-d', $account['createtime']) : '';
 	} else {
 		$account['createtime'] = '';
@@ -249,11 +252,20 @@ if ('base' == $do) {
 	$account['attachment_limit'] = intval($attachment_limit);
 	$account['switchurl_full'] = $_W['siteroot'] . 'web/' . ltrim($account['switchurl'], './');
     $account['endtime'] = strlen($account['endtime']) == 10 ? $account['endtime'] : time();
+	$account['headimgsrc'] = $account['logo'];
+	$account['qrcodeimgsrc'] = $account['qrcode'];
+	$account['switchurl_full'] = $_W['siteroot'] . 'web/' . ltrim($account['switchurl'], './');
+	$account['siteurl'] = $account['type_sign'] != WXAPP_TYPE_SIGN ? $_W['siteroot'] : str_replace('http://', 'https://', $_W['siteroot']);
+	$account['service_url'] = $account['siteurl'] . 'api.php?id=' . $account['acid'];
 	$account['type_class'] = $account_all_type_sign[$account['type_sign']]['icon'];
+    	$account['owner_endtime'] = $user_endtime;
+    	$account['support_version'] = $account->supportVersion;
 	$uniaccount = array();
 	$uniaccount = pdo_get('uni_account', array('uniacid' => $uniacid));
 	
 		$account_api = uni_site_store_buy_goods($uniacid, STORE_TYPE_API);
+		$account['renewurl'] = url('site/entry/goodsbuyer', array('direct' => 1, 'm' => 'store', 'type' => $account_all_type[$account['type']]['store_type_renew']));
+		$account['renewurl_full'] = $_W['siteroot'] . 'web/' . ltrim($account['renewurl'], './');
 	
 	if ($_W['isajax']) {
 		iajax(0, $account);
@@ -262,127 +274,116 @@ if ('base' == $do) {
 	}
 }
 
-
-if ('modules_tpl' == $do) {
+if ('edit_modules_tpl' == $do) {
 	$owner = $account->owner;
-	if ($_W['isajax'] && $_W['ispost'] && ($role_permission)) {
-		if ('group' == $_GPC['type']) {
-			$groups = $_GPC['groupdata'];
-			if (!empty($groups)) {
-								pdo_delete('uni_account_group', array('uniacid' => $uniacid));
-				$group = pdo_get('users_group', array('id' => $owner['groupid']));
-				$group['package'] = (array) iunserializer($group['package']);
-				$group['package'] = array_unique($group['package']);
-				foreach ($groups as $packageid) {
-					if (!empty($packageid) && !in_array($packageid, $group['package'])) {
-						pdo_insert('uni_account_group', array(
-							'uniacid' => $uniacid,
-							'groupid' => $packageid,
-						));
-					}
+	if (!$role_permission) {
+		iajax(-1, '无权限');
+	}
+	if ('group' == $_GPC['type']) {
+		$groups = safe_gpc_array($_GPC['groupdata']);
+		if (!empty($groups)) {
+						pdo_delete('uni_account_group', array('uniacid' => $uniacid));
+			$group = pdo_get('users_group', array('id' => $owner['groupid']));
+			$group['package'] = (array) iunserializer($group['package']);
+			$group['package'] = array_unique($group['package']);
+			foreach ($groups as $packageid) {
+				if (!empty($packageid) && !in_array($packageid, $group['package'])) {
+					pdo_insert('uni_account_group', array(
+						'uniacid' => $uniacid,
+						'groupid' => $packageid,
+					));
 				}
-				cache_build_account_modules($uniacid);
-				cache_build_account($uniacid);
-
-				iajax(0, '修改成功！', '');
-			} else {
-				pdo_delete('uni_account_group', array('uniacid' => $uniacid));
-				cache_build_account_modules($uniacid);
-				cache_build_account($uniacid);
-				iajax(0, '修改成功！', '');
-			}
-		}
-
-		if ('extend' == $_GPC['type']) {
-						$module = safe_gpc_array($_GPC['module']);
-			$tpl = safe_gpc_array($_GPC['tpl']);
-			if (!empty($module) || !empty($tpl)) {
-				$data = array(
-					'modules' => array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array()),
-					'templates' => empty($tpl) ? '' : iserializer($tpl),
-					'uniacid' => $uniacid,
-					'name' => '',
-				);
-				switch ($defaultaccount['type']) {
-					case ACCOUNT_TYPE_OFFCIAL_NORMAL:
-					case ACCOUNT_TYPE_OFFCIAL_AUTH:
-						$data['modules']['modules'] = $module;
-						break;
-					case ACCOUNT_TYPE_APP_NORMAL:
-					case ACCOUNT_TYPE_APP_AUTH:
-					case ACCOUNT_TYPE_WXAPP_WORK:
-						$data['modules']['wxapp'] = $module;
-						break;
-					case ACCOUNT_TYPE_WEBAPP_NORMAL:
-						$data['modules']['webapp'] = $module;
-						break;
-					case ACCOUNT_TYPE_XZAPP_NORMAL:
-					case ACCOUNT_TYPE_XZAPP_AUTH:
-						$data['modules']['xzapp'] = $module;
-						break;
-					case ACCOUNT_TYPE_PHONEAPP_NORMAL:
-						$data['modules']['phoneapp'] = $module;
-						break;
-					case ACCOUNT_TYPE_ALIAPP_NORMAL:
-						$data['modules']['aliapp'] = $module;
-						break;
-				}
-				$data['modules'] = iserializer($data['modules']);
-				$uni_groups_modules_old = array_keys(uni_modules_by_uniacid($uniacid));
-				$id = pdo_fetchcolumn('SELECT id FROM ' . tablename('uni_group') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
-				if (empty($id)) {
-					pdo_insert('uni_group', $data);
-				} else {
-					pdo_update('uni_group', $data, array('id' => $id));
-				}
-			} else {
-				$uni_groups_modules_old = array_keys(uni_modules_by_uniacid($uniacid));
-				pdo_delete('uni_group', array('uniacid' => $uniacid));
 			}
 			cache_build_account_modules($uniacid);
 			cache_build_account($uniacid);
-
+			
+			iajax(0, '修改成功！', '');
+		} else {
+			pdo_delete('uni_account_group', array('uniacid' => $uniacid));
+			cache_build_account_modules($uniacid);
+			cache_build_account($uniacid);
 			iajax(0, '修改成功！', '');
 		}
-		
-			if ('store_endtime' == $_GPC['type'] && user_is_founder($_W['uid']) && !user_is_vice_founder()) {
-				$order_id = intval($_GPC['order_id']);
-				$new_endtime = safe_gpc_string($_GPC['new_time']);
-				if (empty($order_id)) {
-					iajax(-1, '参数错误！');
-				}
-				$condition = array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'id' => $order_id);
-				$order_exist = pdo_get('site_store_order', $condition);
-				if (!empty($order_exist)) {
-					pdo_update('site_store_order', array('endtime' => strtotime($new_endtime)), $condition);
-				} else {
-					iajax(-1, '您未购买该权限组！');
-				}
-				iajax(0, '修改成功！', referer());
-			}
-		
-
-		iajax(40035, '参数错误！', '');
 	}
+	
+	if ('extend' == $_GPC['type']) {
+				$module = safe_gpc_array($_GPC['module']);
+		if (!empty($module)) {
+			$data = array(
+				'modules' => array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array()),
+				'uniacid' => $uniacid,
+			);
+			switch ($defaultaccount['type']) {
+				case ACCOUNT_TYPE_OFFCIAL_NORMAL:
+				case ACCOUNT_TYPE_OFFCIAL_AUTH:
+					$data['modules']['modules'] = $module;
+					break;
+				case ACCOUNT_TYPE_APP_NORMAL:
+				case ACCOUNT_TYPE_APP_AUTH:
+				case ACCOUNT_TYPE_WXAPP_WORK:
+					$data['modules']['wxapp'] = $module;
+					break;
+				case ACCOUNT_TYPE_WEBAPP_NORMAL:
+					$data['modules']['webapp'] = $module;
+					break;
+				case ACCOUNT_TYPE_XZAPP_NORMAL:
+				case ACCOUNT_TYPE_XZAPP_AUTH:
+					$data['modules']['xzapp'] = $module;
+					break;
+				case ACCOUNT_TYPE_PHONEAPP_NORMAL:
+					$data['modules']['phoneapp'] = $module;
+					break;
+				case ACCOUNT_TYPE_ALIAPP_NORMAL:
+					$data['modules']['aliapp'] = $module;
+					break;
+			}
+			$data['modules'] = iserializer($data['modules']);
+			$uni_groups_modules_old = array_keys(uni_modules_by_uniacid($uniacid));
+			$id = pdo_fetchcolumn('SELECT id FROM ' . tablename('uni_account_extra_modules') . ' WHERE uniacid = :uniacid', array(':uniacid' => $uniacid));
+			if (empty($id)) {
+				pdo_insert('uni_account_extra_modules', $data);
+			} else {
+				pdo_update('uni_account_extra_modules', $data, array('id' => $id));
+			}
+		} else {
+			$uni_groups_modules_old = array_keys(uni_modules_by_uniacid($uniacid));
+			pdo_delete('uni_account_extra_modules', array('uniacid' => $uniacid));
+		}
+		cache_build_account_modules($uniacid);
+		cache_build_account($uniacid);
+		
+		iajax(0, '修改成功！', '');
+	}
+	
+		if ('store_endtime' == $_GPC['type'] && $_W['isfounder'] && !user_is_vice_founder()) {
+			$order_id = intval($_GPC['order_id']);
+			$new_endtime = safe_gpc_string($_GPC['new_time']);
+			if (empty($order_id)) {
+				iajax(-1, '参数错误！');
+			}
+			$condition = array('uniacid' => $uniacid, 'type' => STORE_ORDER_FINISH,  'id' => $order_id);
+			$order_exist = pdo_get('site_store_order', $condition);
+			if (!empty($order_exist)) {
+				pdo_update('site_store_order', array('endtime' => strtotime($new_endtime)), $condition);
+			} else {
+				iajax(-1, '您未购买该权限组！');
+			}
+			iajax(0, '修改成功！', referer());
+		}
+	
+	
+	iajax(-1, '参数错误！', '');
+}
 
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	if (in_array($_W['uid'], $founders)) {
+if ('modules_tpl' == $do) {
+	$owner = $account->owner;
+	$owner['is_admin'] = user_is_founder($owner['uid'], true);
+	if ($_W['isadmin']) {
 		$uni_groups = uni_groups();
 	}
 	$modules = user_modules($_W['uid']);
-	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
-
 		$modules_tpl = array();
-
-	if (in_array($owner['uid'], $founders)) {
-		$modules_tpl[] = array(
-			'id' => -1,
-			'name' => '所有服务',
-			'modules' => array(array('name' => 'all', 'title' => '所有模块')),
-			'templates' => array(array('name' => 'all', 'title' => '所有模板')),
-			'type' => 'default',
-		);
-	} else {
+	if (!$owner['is_admin']) {
 		if (ACCOUNT_MANAGE_GROUP_VICE_FOUNDER == $owner['founder_groupid']) {
 			$owner['group'] = pdo_get('users_founder_group', array('id' => $owner['groupid']), array('id', 'name', 'package'));
 		} else {
@@ -398,11 +399,12 @@ if ('modules_tpl' == $do) {
 						'name' => '所有服务',
 						'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 						'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+						'modules_all' => array(array('name' => 'all', 'title' => '所有模板')),
 						'type' => 'default',
 					);
 				} elseif (0 == $package_value) {
 				} else {
-					$defaultmodule = current(uni_groups(array($package_value)));
+					$defaultmodule = current(uni_groups(array($package_value), $account->typeSign));
 					$defaultmodule['type'] = 'default';
 					$modules_tpl[] = $defaultmodule;
 				}
@@ -412,7 +414,7 @@ if ('modules_tpl' == $do) {
 				$users_extra_group_table = table('users_extra_group');
 		$extra_groups = $users_extra_group_table->getUniGroupsByUid($owner['uid']);
 		if (!empty($extra_groups)) {
-			$extra_uni_groups = uni_groups(array_keys($extra_groups));
+			$extra_uni_groups = uni_groups(array_keys($extra_groups), $account->typeSign);
 			foreach ($extra_uni_groups as $extra_group_val) {
 				$extra_group_val['type'] = 'extend';
 				$modules_tpl[] = $extra_group_val;
@@ -449,17 +451,18 @@ if ('modules_tpl' == $do) {
 					'name' => '所有服务',
 					'modules' => array(array('name' => 'all', 'title' => '所有模块')),
 					'templates' => array(array('name' => 'all', 'title' => '所有模板')),
+					'modules_all' => array(array('name' => 'all', 'title' => '所有模板')),
 					'type' => 'extend', 				));
 				break;
 			} elseif (0 != $extendpackage_val['groupid']) {
-				$ex_module = current(uni_groups(array($extendpackage_val['groupid'])));
+				$ex_module = current(uni_groups(array($extendpackage_val['groupid']), $account->typeSign));
 				if (!empty($ex_module)) {
 					$extend['groups'][] = $ex_module;
 				}
 			}
 		}
 	}
-		$extend_uni_group = pdo_get('uni_group', array('uniacid' => $uniacid));
+		$extend_uni_group = pdo_get('uni_account_extra_modules', array('uniacid' => $uniacid));
 	if (!empty($extend_uni_group)) {
 		$extend_uni_group['modules'] = iunserializer($extend_uni_group['modules']);
 		if (is_array($extend_uni_group['modules'])) {
@@ -480,19 +483,17 @@ if ('modules_tpl' == $do) {
 				}
 			}
 		}
-		$extend_uni_group['templates'] = iunserializer($extend_uni_group['templates']);
-		if (!empty($extend_uni_group['templates'])) {
-			$extend['templates'] = pdo_getall('site_templates', array('id' => $extend_uni_group['templates']), array('id', 'name', 'title'));
+	}
+	$can_modify = false;
+		$urls = array();
+	if (ACCOUNT_MANAGE_NAME_FOUNDER == $_W['highest_role'] && !$owner['is_admin'] || ACCOUNT_MANAGE_NAME_VICE_FOUNDER == $_W['highest_role'] && $owner['uid'] != $_W['uid']) {
+		$can_modify = true;
+		if ($owner['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER) {
+			$urls['edit_owner_group'] = url('founder/edit/edit_modules_tpl', array('uid' => $owner['uid']), true);
+		} else {
+			$urls['edit_owner_group'] = url('user/edit/edit_modules_tpl', array('uid'=>$owner['uid']), true);
 		}
 	}
-
-	$canmodify = false;
-	
-		if (ACCOUNT_MANAGE_NAME_FOUNDER == $_W['role'] && !in_array($owner['uid'], $founders) || ACCOUNT_MANAGE_NAME_VICE_FOUNDER == $_W['role'] && $owner['uid'] != $_W['uid']) {
-			$canmodify = true;
-		}
-	
-	
 
 	
 				$type_info = uni_account_type(intval($_GPC['account_type']));
@@ -529,6 +530,18 @@ if ('modules_tpl' == $do) {
 		}
 		unset($group);
 	
+
+	if ($_W['isajax']) {
+		$message = array(
+			'owner' => array('is_admin' => $owner['is_admin'], 'groupname' => $owner['group']['name']),
+			'can_modify' => $can_modify,
+			'modules_tpl' => $modules_tpl,
+			'user_extend_modules' => $user_extend_modules,
+			'extend' => $extend,
+			'urls' => $urls,
+		);
+		iajax(0, $message);
+	}
 	template('account/manage-modules-tpl');
 }
 
@@ -536,28 +549,45 @@ if ('operators' == $do) {
 	$page = max(1, intval($_GPC['page']));
 	$username = safe_gpc_string($_GPC['username']);
 	$page_size = 15;
-	$clerks = array();
 	$total = 0;
 
 	$permission_table = table('users_permission');
 	$permission_table->searchWithPage($page, $page_size);
-	$clerks = $permission_table->getClerkPermissionList($uniacid, 0, $username);
-	if (!empty($clerks)) {
-		$total = $permission_table->getLastQueryTotal();
-		$modules_info = array();
-		foreach ($clerks as $k => $clerk) {
-			$modules_info[$clerk['type']] = module_fetch($clerk['type']);
-			$clerks[$k]['permission'] = explode('|', $clerk['permission']);
-
-			if (empty($modules_info[$clerk['type']]['main_module'])) {
-				$clerks[$k]['main_module'] = '';
-				$clerks[$k]['permission_module'] = $clerk['type'];
-			} else {
-				$clerks[$k]['main_module'] = $clerks[$k]['permission_module'] = $modules_info[$clerk['type']]['main_module'];
+	$list = $permission_table->getClerkPermissionList($uniacid, 0, $username);
+	$total = $permission_table->getLastQueryTotal();
+	if (!empty($list)) {
+		foreach ($list as $k => $clerk) {
+			$modules_info = module_fetch($clerk['type']);
+			if (empty($modules_info)) {
+				continue;
 			}
+			$list[$k]['module_name'] = $modules_info['title'];
+			if ($clerk['permission'] == 'all') {
+				$list[$k]['permission'] = '所有';
+			} else {
+				$list[$k]['permission'] = count(explode('|', $clerk['permission'])) . '项';
+			}
+
+			if (empty($modules_info['main_module'])) {
+				$list[$k]['can_delete'] = true;
+			} else {
+				$list[$k]['can_delete'] = false;
+			}
+			$clerk_userinfo = user_single($clerk['uid']);
+			$list[$k]['username'] = $clerk_userinfo['username'];
+			$list[$k]['permission_setting_url'] = url('module/display/switch', array('module_name' => $clerk['type'], 'uniacid' => $clerk['uniacid'], 'redirect' => urlencode(url('module/permission/post', array('uid' => $clerk['uid'], 'm' => $clerk['type'], 'uniacid' => $clerk['uniacid']))) ));
 		}
-		$users_info = pdo_getall('users', array('uid' => array_column($clerks, 'uid')), array('uid', 'username'), 'uid');
 	}
+	
 	$pager = pagination($total, $page, $page_size);
+	if ($_W['isajax']) {
+		$message = array(
+			'list' => $list,
+			'total' => $total,
+			'page' => $page,
+			'page_size' => $page_size,
+		);
+		iajax(0, $message);
+	}
 	template('account/manage-operatoers');
 }

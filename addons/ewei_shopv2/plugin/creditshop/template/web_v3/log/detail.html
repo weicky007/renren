@@ -22,7 +22,7 @@
         <div class="form-group">
             <label class="col-lg control-label">商品</label>
             <div class="col-sm-9 col-xs-12">
-                <img src="{php echo tomedia($goods['thumb'])}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" /> {$goods['title']}
+                <img src="{php echo tomedia($goods['thumb'])}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" /> {$goods['title']} <span class="label label-danger">x {$log['goods_num']} 件</span>
             </div>
         </div>
         {if $log['optionid']}
@@ -36,7 +36,10 @@
         <div class="form-group">
             <label class="col-lg control-label">粉丝</label>
                 <div class="col-sm-9 col-xs-12">
-                <img src="{$member['avatar']}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/> {$member['nickname']}
+                <img src="{$member['avatar']}" style="width:30px;height:30px;padding:1px;border:1px solid #ccc" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"/>
+                    <a href="{php echo webUrl('member/list/detail',array('id'=>$member['id']))}" target='_blank' class="text-primary">
+                        {$member['nickname']}
+                    </a>
             </div>
         </div>
         <div class="form-group">
@@ -44,7 +47,8 @@
             <div class="col-sm-9 col-xs-12">
                 <div class='form-control-static'>
                 {if $goods['credit']>0}-{$goods['credit']}积分<br/>{/if}
-                {if $goods['money'] > 0} -{php echo number_format($goods['money'],2)}现金<br />{/if}
+                {if $goods['money'] > 0} -{php echo number_format($goods['money'] + $log['dispatch'],2)}现金
+                    {if $log['dispatch']>0}（含运费:{php echo number_format($log['dispatch'],2)}）{/if}<br />{/if}
                 <!--{if $log['dispatch'] > 0}{/if}-->
                 </div>
             </div>
@@ -168,9 +172,22 @@
                             <div class='form-control-static'>
                                 <label class="col-lg label-weight">兑换人：</label>{$log['realname']} / {$log['mobile']}
                             </div>
+                            {if !empty($verifys)}
+                            {loop $verifys $item}
                             <div class='form-control-static'>
-                                <label class="col-lg label-weight">兑换门店：</label>{$store['storename']} / {$store['address']}
+                                {if $item['verifier']=='system'}
+                                <label class="col-lg label-weight">兑换门店：</label> 系统兑换
+                                {else}
+                                <label class="col-lg label-weight">兑换门店：</label>{$item['storename']} / {$item['address']} / {if !empty($item['realname'])}{$item['realname']}{else}{$item['nickname']}{/if} / {$item['mobile']}
+                                {/if}
                             </div>
+                            {/loop}
+                            {/if}
+                            {if !empty($item['verifytime'])}
+                            <div class='form-control-static'>
+                                <label class="col-lg label-weight">核销时间：</label>{php echo date('Y-m-d H:i:s',$item['verifytime'])}
+                            </div>
+                            {/if}
                         </div>
                     </div>
 
@@ -185,7 +202,7 @@
                                 <label class="col-lg label-weight">收件人：</label>{$address['realname']} / {$address['mobile']}
                             </div>
                             <div class='form-control-static'>
-                                <label class="col-lg label-weight">收货地址：</label>{$address['province']}{$address['city']}{$address['area']} {$address['address']}
+                                <label class="col-lg label-weight">收货地址：</label>{$address['province']}-{$address['city']}-{$address['area']}-{$address['street']} -{$address['address']}
                             </div>
                         </div>
                     </div>

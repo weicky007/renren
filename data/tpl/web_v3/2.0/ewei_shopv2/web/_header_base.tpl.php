@@ -5,15 +5,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php  if(!empty($copyright) && !empty($copyright['title'])) { ?><?php  echo $copyright['title'];?><?php  } ?>-悟空社区 5kym.cn</title>
+        <title><?php  if(!empty($copyright) && !empty($copyright['title'])) { ?><?php  echo $copyright['title'];?><?php  } ?></title>
         <link rel="shortcut icon" href="<?php  echo $_W['siteroot'];?><?php  echo $_W['config']['upload']['attachdir'];?>/<?php  if(!empty($_W['setting']['copyright']['icon'])) { ?><?php  echo $_W['setting']['copyright']['icon'];?><?php  } else { ?>images/global/wechat.jpg<?php  } ?>" />
-        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
         <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
         <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/animate.css" rel="stylesheet">
         <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/v3.css?v=4.1.0" rel="stylesheet">
-        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/common_v3.css?v=2.0.0" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/v3/iconfont.css?v=2016070717">
+        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/common_v3.css?v=3.0.1" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/v3/iconfont.css?v=20181126">
         <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/iconfont.css?v=2016070717">
+        <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/wxiconx/iconfont.css?v=2016070717">
+        <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_244637_dkvlqrgjbde1m7vi.css">-->
         <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/v3/iconfont.js"></script>
 
         <script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
@@ -47,6 +49,14 @@
         <script type="text/javascript" src="./resource/js/app/common.min.js?v=20170802"></script>
         <script type="text/javascript">if(util){util.clip = function(){}}</script>
         <?php  } ?>
+        <!-- 兼容微擎1.6 -->
+        <!-- 兼容微擎1.6 -->
+        <?php  if(IMS_VERSION >= '1.7.2') { ?>
+        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/we7.common172.css?v=1.0.0" rel="stylesheet">
+        <?php  } else if(IMS_VERSION >= '1.6.9') { ?>
+        <link href="<?php  echo EWEI_SHOPV2_LOCAL?>static/css/we7.common169.css?v=1.0.0" rel="stylesheet">
+        <?php  } ?>
+
 
 
         <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/js/require.js"></script>
@@ -82,4 +92,3 @@
     </head>
 
     <body>
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

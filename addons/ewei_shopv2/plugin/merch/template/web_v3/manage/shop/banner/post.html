@@ -39,7 +39,7 @@
             <label class="col-lg control-label">广告图片</label>
             <div class="col-sm-9 col-xs-12">
                 {ife 'shop.banner' $item}
-                    {php echo tpl_form_field_image2('thumb', $item['thumb'])}
+                    {php echo tpl_form_field_image2('thumb', $item['thumb'],'',array('dest_dir'=>'merch/'.$_W['merchid']))}
                     <span class='help-block'>建议尺寸:640 * 350 , 请将所有广告图片尺寸保持一致</span>
                 {else}
                     {if !empty($item['thumb'])}

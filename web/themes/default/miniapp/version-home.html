@@ -57,17 +57,17 @@
 				</li>
 				
 			</ul>
-			<a href="./index.php?c=article&a=notice" class="color-default more">更多</a>
+			<a href="./index.php?c=article&a=notice-show" class="color-default more">更多</a>
 		</div>
 		<div class="panel-body">
 			<div class="tab-content" >
 				<div class="tab-pane active"  id="notice">
 					<ul class="list-group notice-statistics">
-						<li class="list-group-item" ng-repeat="notice in notices" ng-if="notices && notices.length">
+						<li class="list-group-item" ng-repeat="notice in notices" ng-if="notices">
 							<a ng-href="{{notice.url}}" class="text-over" target="_blank" ng-style="{'color': notice.style.color, 'font-weight': notice.style.bold ? 'bold' : 'normal'}" ng-bind="notice.title"></a>
 							<span class="pull-right color-gray" ng-bind="notice.createtime"></span>
 						</li>
-						<div class="we7-empty-block" ng-if="!notices.length"> 
+						<div class="we7-empty-block" ng-if="!notices">
 							暂无公告
 						</div>
 					</ul>

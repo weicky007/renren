@@ -53,6 +53,10 @@ if ('save_setting' == $do) {
 	} else {
 		setting_save($thirdlogin, 'thirdlogin');
 	}
+
+	if ($_W['isajax']) {
+		iajax(0, '更新设置成功！');
+	}
 	itoast('更新设置成功！', referer(), 'success');
 }
 
@@ -82,6 +86,16 @@ if ('display' == $do) {
 	}
 	if (empty($bind)) {
 		$bind = array('name' => '无', 'id' => 'null');
+	}
+	if ($_W['isajax']) {
+		$message = array(
+			'binds' => $binds,
+			'bind' => $bind,
+			'thirdlogin' => $thirdlogin,
+			'siteroot_parse_array' => $siteroot_parse_array,
+			'redirect_url' => $_W['siteroot'] . 'web/index.php',
+		);
+		iajax(0, $message);
 	}
 }
 template('system/thirdlogin');

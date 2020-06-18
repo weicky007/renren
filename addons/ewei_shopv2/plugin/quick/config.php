@@ -1,5 +1,4 @@
 <?php
-echo "\r\n";
 
 if (!defined('IN_IA')) {
 	exit('Access Denied');
@@ -15,21 +14,10 @@ return array(
 		'plugincom' => 1,
 		'icon'      => 'page',
 		'items'     => array(
-			array(
-				'title' => '购买页面',
-				'items' => array(
-					array('title' => '全部页面', 'route' => 'pages', 'route_must' => 1),
-					array('title' => '新建页面', 'route' => 'pages.add')
-					)
-				),
-			array(
-				'title' => '公用设置',
-				'items' => array(
-					array('title' => '幻灯片', 'route' => 'adv')
-					)
-				)
-			)
+			array('title' => '购买页面', 'route' => 'pages'),
+			array('title' => '幻灯片设置', 'route' => 'adv')
 		)
-	);
+	)
+);
 
 ?>

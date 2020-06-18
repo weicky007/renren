@@ -40,11 +40,26 @@
     </div>
     <div class="form-group" >
         <label for="" class="form-label col-sm-2">价格</label>
-        <div class="form-controls col-sm-3">
+        <div class="col-sm-10 form-controls">
             <div class="input-group we7-margin-bottom-sm" ng-repeat="(key, item) in prices" ng-show="item.checked && !item.disabled">
                 <span class="input-group-addon">{{we7TypeDefault[key]}}</span>
-                <input type="text" ng-model="item.price" class="form-control">
-                <span class="input-group-addon">元 / 月</span>
+                <input type="text" ng-model="item.price" class="form-control " min="0" name="price">
+                <span class="input-group-addon">元 / </span>
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span ng-if="item.unit == 'day'">日</span>
+                        <span ng-if="item.unit == 'week'">周</span>
+                        <span ng-if="item.unit == 'month'">月</span>
+                        <span ng-if="item.unit == 'year'">年</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" style="min-width: 60px;">
+                        <li><a href="#" ng-click="changeUnit(item, 'day')">日</a></li>
+                        <li><a href="#" ng-click="changeUnit(item, 'week')">周</a></li>
+                        <li><a href="#" ng-click="changeUnit(item, 'month')">月</a></li>
+                        <li><a href="#" ng-click="changeUnit(item, 'year')">年</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

@@ -25,7 +25,7 @@ input[type=checkbox].team-check{vertical-align:middle;margin:0 4px 0 0;}
             <div class="col-sm-6">
                 <div class="btn-group btn-group-sm">
 
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </div>
             </div>
             <div class="col-sm-6 pull-right">
@@ -118,6 +118,16 @@ input[type=checkbox].team-check{vertical-align:middle;margin:0 4px 0 0;}
                                         <i class='icow icow-chakan-copy'></i>
                              </span>
                             </a>
+                            {if $row['success'] == 1}
+                            {ifp 'groups.team.cancel_group'}
+
+                            <a data-toggle="ajaxPost" href="{php echo webUrl('groups/team/cancel_group', array('id' => $row['teamid']))}" data-confirm="确认取消成团吗？" class="btn  btn-op btn-operation">
+                             <span data-toggle="tooltip" data-placement="top" title="" data-original-title="取消成团">
+                                        <i class='fa fa-group'></i>
+                             </span>
+                            </a>
+                            {/if}
+                            {/if}
                             {if $row['success'] == 0}
                             {ifp 'groups.team.group'}
                             <br /><a class="btn btn-primary btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/team/group', array('id' => $row['teamid']))}" data-confirm="确认立即成团吗？">立即成团</a>

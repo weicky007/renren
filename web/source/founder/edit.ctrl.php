@@ -14,16 +14,25 @@ $do = in_array($do, $dos) ? $do : 'edit_base';
 $uid = intval($_GPC['uid']);
 $user = user_single($uid);
 if (empty($user)) {
+	if ($_W['isajax']) {
+		iajax(-1, '访问错误, 未找到该操作员.');
+	}
 	itoast('访问错误, 未找到该操作员.', url('user/display'), 'error');
 } else {
 	if (1 == $user['status']) {
+		if ($_W['isajax']) {
+			iajax(-1, '访问错误，该用户未审核通过，请先审核通过再修改！');
+		}
 		itoast('访问错误，该用户未审核通过，请先审核通过再修改！', url('user/display/check_display'), 'error');
 	}
 	if (3 == $user['status']) {
+		if ($_W['isajax']) {
+			iajax(-1, '访问错误，该用户已被禁用，请先启用再修改！');
+		}
 		itoast('访问错误，该用户已被禁用，请先启用再修改！', url('user/display/recycle_display'), 'error');
 	}
 }
-$founders = explode(',', $_W['config']['setting']['founder']);
+
 $profile = pdo_get('users_profile', array('uid' => $uid));
 if (!empty($profile)) {
 	$profile['avatar'] = tomedia($profile['avatar']);
@@ -39,31 +48,21 @@ if ('edit_base' == $do) {
 	$user['end'] = 0 == $user['end'] ? '永久' : $user['end'];
 	$user['url'] = user_invite_register_url($uid);
 	$profile = user_detail_formate($profile);
+	$extra_fields = user_available_extra_fields();
+	if ($_W['isajax']) {
+		$result = array(
+			'user' => $user,
+			'profile' => $profile,
+			'extra_fileds' => $extra_fields
+		);
+		iajax(0, $result);
+	}
 	template('user/edit-base');
 }
 
 if ('edit_modules_tpl' == $do) {
-	if ($_W['isajax'] && $_W['ispost']) {
-		if (intval($_GPC['groupid']) == $user['groupid']) {
-			iajax(2, '未做更改！');
-		}
-		if (!empty($_GPC['type']) && !empty($_GPC['groupid'])) {
-			$data['uid'] = $uid;
-			$data[$_GPC['type']] = intval($_GPC['groupid']);
-			if (user_update($data)) {
-				$group_info = user_founder_group_detail_info($_GPC['groupid']);
-				iajax(0, $group_info, '');
-			} else {
-				iajax(1, '更改失败！', '');
-			}
-		} else {
-			iajax(-1, '参数错误！', '');
-		}
-	}
-
 	$modules = user_modules($_W['uid']);
-	$templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
-
+	$templates = table('modules')->getAllTemplates();
 	$groups = user_founder_group();
 	$group_info = user_founder_group_detail_info($user['groupid']);
 
@@ -71,7 +70,7 @@ if ('edit_modules_tpl' == $do) {
 	$users_extra_template_table = table('users_extra_templates');
 	$user_extend_templates_ids = array_keys($users_extra_template_table->getExtraTemplatesIdsByUid($_GPC['uid']));
 	if (!empty($user_extend_templates_ids)) {
-		$extend['templates'] = pdo_getall('site_templates', array('id' => $user_extend_templates_ids), array('id', 'name', 'title'));
+		$extend['templates'] = table('modules')->getAllTemplateByIds($user_extend_templates_ids);
 	}
 
 	if (!empty($templates) && !empty($user_extend_templates_ids)) {
@@ -133,6 +132,16 @@ if ('edit_modules_tpl' == $do) {
 		}
 		unset($user_module_info);
 	}
+
+	if ($_W['isajax']) {
+		$message = array(
+			'user_groups' => $group_info,
+			'user_extra_groups' => $user_extra_groups,
+			'extend' => $extend,
+		);
+		iajax(0, $message);
+	}
+
 	template('user/edit-modules-tpl');
 }
 
@@ -145,10 +154,21 @@ if ('edit_account' == $do) {
 				continue;
 			}
 			foreach ($accounts as $uniacid => $account) {
-				$account['type_name'] = $account_type;
-				$account_list[$uniacid] = $account;
+				$account_list[$uniacid] = array(
+					'logo' => $account['logo'],
+					'type_sign' => $account['type_sign'],
+					'name' => $account['name'],
+					'role' => $account['role'],
+					'manageurl' => $account['manageurl'],
+					'roleurl' => $account['roleurl'],
+				);
 			}
 		}
+	}
+	if ($_W['isajax']) {
+		iajax(0, array(
+			'account_list' => $account_list,
+		));
 	}
 	template('user/edit-account');
 }

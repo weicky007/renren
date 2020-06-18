@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,54 +12,64 @@ class WebPage extends Page
 			$this->init();
 		}
 
-		m('system')->set_version();
+		$GLOBALS['_W']['shopversion'] = 1;
 	}
 
 	private function init()
 	{
 		global $_W;
-		if (($_W['role'] != 'manager') && ($_W['role'] != 'founder') && ($_W['routes'] != 'shop')) {
+		if ($_W['role'] != 'manager' && $_W['role'] != 'founder' && $_W['routes'] != 'shop') {
 			$perm = cv($_W['routes']);
-			$perm_type = com('perm')->getLogTypes(true);
-			$perm_type_value = array();
 
-			foreach ($perm_type as $val) {
-				$perm_type_value[] = $val['value'];
-			}
+			if (com('perm')) {
+				$perm_type = com('perm')->getLogTypes(true);
+				$perm_type_value = array();
 
-			$is_xxx = com('perm')->check_xxx($_W['routes']);
-
-			if ($is_xxx) {
-				if (!$perm) {
-					foreach ($is_xxx as $item) {
-						if (in_array($item, $perm_type_value)) {
-							$this->message('你没有相应的权限查看');
-						}
-					}
+				foreach ($perm_type as $val) {
+					$perm_type_value[] = $val['value'];
 				}
-			}
-			else {
-				if (strexists($_W['routes'], 'edit')) {
-					if (!cv($_W['routes'])) {
-						$view = str_replace('edit', 'view', $_W['routes']);
-						$perm_view = cv($view);
+
+				$is_xxx = com('perm')->check_xxx($_W['routes']);
+
+				if ($is_xxx) {
+					if (!$perm) {
+						if (!is_array($is_xxx)) {
+							if (in_array($is_xxx, $perm_type_value)) {
+								$this->message('你没有相应的权限查看');
+							}
+						}
+						else {
+							foreach ($is_xxx as $item) {
+								if (in_array($item, $perm_type_value)) {
+									$this->message('你没有相应的权限查看');
+								}
+							}
+						}
 					}
 				}
 				else {
-					$main = $_W['routes'] . '.main';
-					$perm_main = cv($main);
-					if (!$perm_main && in_array($main, $perm_type_value)) {
-						$this->message('你没有相应的权限查看');
-					}
-					else {
-						if (!$perm && in_array($_W['routes'], $perm_type_value)) {
-							$this->message('你没有相应的权限查看');
+					if (strexists($_W['routes'], 'edit')) {
+						if (!cv($_W['routes'])) {
+							$view = str_replace('edit', 'view', $_W['routes']);
+							$perm_view = cv($view);
 						}
 					}
-				}
+					else {
+						$main = $_W['routes'] . '.main';
+						$perm_main = cv($main);
+						if (!$perm_main && in_array($main, $perm_type_value)) {
+							$this->message('你没有相应的权限查看');
+						}
+						else {
+							if (!$perm && in_array($_W['routes'], $perm_type_value)) {
+								$this->message('你没有相应的权限查看');
+							}
+						}
+					}
 
-				if (isset($perm_view) && !$perm_view) {
-					$this->message('你没有相应的权限查看');
+					if (isset($perm_view) && !$perm_view) {
+						$this->message('你没有相应的权限查看');
+					}
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 {template '_header'}
-<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css" />
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css?v=2018530" />
 <style type="text/css">
 .order_goods_img img {border: 1px solid rgb(215, 215, 215); border-image: none; width: 60px; height: 60px; display: block;}
 .order_goods_price i {font-size: 9px;}
@@ -73,25 +73,18 @@
 					</div>
 					<div class="fui-list-inner">
 						<div class="lynn_order_list_title"><%order.title%></div>
-						<div class="lynn_order_list_subtitle"></div>
+						<div class="lynn_order_list_subtitle">{$order['option_name']}</div>
+						<%if order.more_spec =='1'%><div class="lynn_order_list_subtitle"><%order.option_name%></div><%/if%>
+						<%if order.is_ladder =='1'%><div class="lynn_order_list_subtitle"><%order.ladder_num%>人团</div><%/if%>
 					</div>
 					<div class='fui-list-angle'>
 						<span class='marketprice text-danger'>¥ <%order.groupsprice%></span>/<%if order.units%><%order.goodsnum%><%order.units%><%else%>1件<%/if%><br/>
 						x1
 					</div>
-					<div style="position: absolute;right: 4rem;top:3px;width:3rem;height: 3rem;z-index: 999;">
-						<%if order.itemnum >= order.groupnum%>
-						<img  alt="" width="100%" height="100%" src="/addons/ewei_shopv2/plugin/groups/template/mobile/default/images/success.png"/>
-						<%else%>
-						<%if order.success < 0%>
-						<img  alt="" width="100%" height="100%" src="/addons/ewei_shopv2/plugin/groups/template/mobile/default/images/fail.png"/>
-						<%/if%>
-						<%/if%>
-					</div>
 				</div>
 				<div class='lynn_order_price'>
 					<span class='status'>
-						运费: <span class='text-danger'>¥ <%order.freight%></span>元, 共 <span class='text-danger'>1</span> 个商品
+						共 <span class='text-danger'>1</span> 个商品
 						总额: <span class='text-danger'>¥ <%order.amount%></span>元
 					</span>
 				</div>

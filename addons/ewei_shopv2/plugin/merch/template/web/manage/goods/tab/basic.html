@@ -210,6 +210,16 @@
     </div>
 </div>
 
+    {if p('app')}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">首图视频</label>
+        <div class="col-sm-9 col-xs-12">
+            {php echo tpl_form_field_video2('video', $item['video'], array('disabled'=>!cv('goods.edit'), 'network'=>true, 'placeholder'=>'请选择视频'))}
+            <div class='form-control-static'>设置后商品详情首图默认显示视频，目前仅支持小程序</div>
+        </div>
+    </div>
+    {/if}
+
 <div class="form-group">
     <label class="col-sm-2 control-label">已出售数</label>
     <div class="col-sm-6 col-xs-12">
@@ -218,7 +228,6 @@
             <input type="text" name="sales" id="sales" class="form-control" value="{$item['sales']}" />
             <span class="input-group-addon">件</span>
         </div>
-        <span class="help-block">物品虚拟出售数，会员下单此数据就增加, 无论是否支付</span>
         {else}
         <div class='form-control-static'>{$item['sales']} 件</div>
         {/if}
@@ -341,3 +350,4 @@
         $('.multi-img-details').sortable();
     })
 </script>
+<!--NDAwMDA5NzgyNw==-->

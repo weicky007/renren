@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -29,8 +30,8 @@ class Log_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 
 		$commissioncount = pdo_fetchcolumn('select sum(commission) from ' . tablename('ewei_shop_commission_apply') . ' where mid=:mid and uniacid=:uniacid and status>-1 limit 1', array(':mid' => $member['id'], ':uniacid' => $_W['uniacid']));
-		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_apply') . ' where 1 ' . $condition . ' order by id desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_commission_apply') . ' where 1 ' . $condition, $params);
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_apply') . (' where 1 ' . $condition . ' order by id desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_commission_apply') . (' where 1 ' . $condition), $params);
 
 		foreach ($list as &$row) {
 			if ($row['status'] == 1) {
@@ -74,7 +75,7 @@ class Log_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 
 		$orderids = iunserializer($apply['orderids']);
-		if (!is_array($orderids) || (count($orderids) <= 0)) {
+		if (!is_array($orderids) || count($orderids) <= 0) {
 			$this->message('未找到订单信息!', '', 'error');
 		}
 
@@ -98,7 +99,7 @@ class Log_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 
 		$orderids = iunserializer($apply['orderids']);
-		if (!is_array($orderids) || (count($orderids) <= 0)) {
+		if (!is_array($orderids) || count($orderids) <= 0) {
 			show_json(0, array('message' => '未找到订单信息!'));
 		}
 
@@ -108,7 +109,7 @@ class Log_EweiShopV2Page extends CommissionMobileLoginPage
 			$ids[] = $o['orderid'];
 		}
 
-		$list = pdo_fetchall('select o.id,o.agentid, o.ordersn,o.price,o.goodsprice, o.dispatchprice,o.createtime, o.paytype from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid ' . ' where  o.id in ( ' . implode(',', $ids) . ' ) LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize);
+		$list = pdo_fetchall('select o.id,o.agentid, o.ordersn,o.price,o.goodsprice, o.dispatchprice,o.createtime, o.paytype from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid ' . ' where  o.id in ( ' . implode(',', $ids) . ' ) LIMIT ' . ($pindex - 1) * $psize . ',' . $psize);
 		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid ' . ' where  o.id in ( ' . implode(',', $ids) . ' ) ');
 		$totalcommission = 0;
 		$totalpay = 0;

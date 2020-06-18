@@ -1,12 +1,12 @@
 {template '_header'}
 <div class="page-header" style="margin-bottom:0">
-    当前位置：<span class="text-primary">{if $id>0}编辑商品兑换任务{else}添加商品兑换任务{/if}</span>
+    当前位置：<span class="text-primary">{if $id>0}编辑余额兑换任务{else}添加余额兑换任务{/if}</span>
 </div>
 <div class="page-content">
 <div class="form-group" style="padding: 30px 10px 0"></div>
     {if !empty($id)}
     <ul id="myTab" class="nav nav-tabs">
-        <li class="active"><a href="#home" data-toggle="tab">{if $id>0}编辑商品兑换{else}添加商品兑换{/if}</a></li>
+        <li class="active"><a href="#home" data-toggle="tab">{if $id>0}编辑余额兑换{else}添加余额兑换{/if}</a></li>
         <li><a href="#message" data-toggle="tab">消息通知</a></li>
         <li><a href="#zhuangxiu" data-toggle="tab">页面设置</a></li>
     </ul>

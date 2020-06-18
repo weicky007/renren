@@ -21,11 +21,7 @@ if (in_array($action, array('permission', 'manage-account', 'welcome', 'link-acc
 	}
 }
 if (in_array($action, array('manage-system', 'expire'))) {
-	if (!empty($_GPC['support']) && 'welcome_support' == $_GPC['support']) {
-		define('FRAME', 'system');
-	} else {
-		define('FRAME', 'module_manage');
-	}
+	define('FRAME', 'module_manage');
 }
 if (in_array($action, array('group'))) {
 	define('FRAME', 'permission');

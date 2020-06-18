@@ -7,6 +7,7 @@
 
 <div class="page-header">
     当前位置：<span class="text-primary">{$applytitle}提现申请</span>
+    <span>发送总数:  <span class='text-danger'>{$total}</span> {if $status == 3}发送总金额:  <span class='text-danger'>{$realmoney_total}</span>{/if}</span>
 </div>
 
 <div class="page-content">
@@ -20,7 +21,7 @@
         <div class="page-toolbar m-b-sm m-t-sm">
             <div class="col-sm-6">
                 <div class='input-group'   >
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
 
                 </div>
             </div>
@@ -52,7 +53,7 @@
                     <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"/>
                     <span class="input-group-btn">
                         <button class="btn  btn-primary" type="submit"> 搜索</button>
-                           {ifp 'commission.agent.export'}
+                           {ifp 'commission.apply.export'}
                                 <button type="submit" name="export" value="1" class="btn btn-success ">导出</button>
                                 {/if}
                     </span>
@@ -135,14 +136,15 @@
                              {if $status==-1}<br/>无效时间: <br/>{php echo date('Y-m-d',$row['invalidtime'])}<br/>{php echo date('H:i',$row['invalidtime'])}{/if}
 
                                 " data-html="true" data-trigger="hover">{/if}
-                {if $status>=1}
-                {php echo date('Y-m-d',$row['applytime'])} {php echo date('H:i',$row['applytime'])}
-                {elseif $status>=2}
-                {php echo date('Y-m-d',$row['checktime'])} {php echo date('H:i',$row['applytime'])}
+
+                {if $status==-1}
+                    {php echo date('Y-m-d',$row['invalidtime'])} {php echo date('H:i',$row['invalidtime'])}
                 {elseif $status>=3}
-                {php echo date('Y-m-d',$row['paytime'])} {php echo date('H:i',$row['paytime'])}
-                {elseif $status==-1}
-                {php echo date('Y-m-d',$row['invalidtime'])} {php echo date('H:i',$row['invalidtime'])}
+                    {php echo date('Y-m-d',$row['paytime'])} {php echo date('H:i',$row['paytime'])}
+                {elseif $status>=2}
+                    {php echo date('Y-m-d',$row['checktime'])} {php echo date('H:i',$row['applytime'])}
+                {elseif $status>=1}
+                    {php echo date('Y-m-d',$row['applytime'])} {php echo date('H:i',$row['applytime'])}
                 {/if}
                 {if $row['status']!=1}<i class="fa fa-question-circle"></i></a>{/if}
             </td>

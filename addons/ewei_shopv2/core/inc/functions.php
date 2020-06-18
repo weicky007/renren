@@ -1,4 +1,92 @@
 <?php
+
+function regSdk($debug = false)
+{
+	global $_W;
+
+	if (defined('HEADER')) {
+		echo '';
+		return NULL;
+	}
+
+	$sysinfo = array(
+		'uniacid'   => $_W['uniacid'],
+		'acid'      => $_W['acid'],
+		'siteroot'  => $_W['siteroot'],
+		'siteurl'   => $_W['siteurl'],
+		'attachurl' => $_W['attachurl'],
+		'cookie'    => array('pre' => $_W['config']['cookie']['pre'])
+	);
+
+	if (!empty($_W['acid'])) {
+		$sysinfo['acid'] = $_W['acid'];
+	}
+
+	if (!empty($_W['openid'])) {
+		$sysinfo['openid'] = $_W['openid'];
+	}
+
+	if (defined('MODULE_URL')) {
+		$sysinfo['MODULE_URL'] = MODULE_URL;
+	}
+
+	$sysinfo = json_encode($sysinfo);
+	$jssdkconfig = json_encode($_W['account']['jssdkconfig']);
+	$debug = $debug ? 'true' : 'false';
+	$script = '
+<!--<script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>-->
+<script type="text/javascript"> 
+	window.sysinfo = window.sysinfo || ' . $sysinfo . ' || {};
+	
+	// jssdk config 对象
+	jssdkconfig = ' . $jssdkconfig . ' || {};
+	
+	// 是否启用调试
+	jssdkconfig.debug = ' . $debug . ';
+	
+	jssdkconfig.jsApiList = [
+		\'checkJsApi\',
+		\'onMenuShareTimeline\',
+		\'onMenuShareAppMessage\',
+		\'onMenuShareQQ\',
+		\'onMenuShareWeibo\',
+		\'hideMenuItems\',
+		\'showMenuItems\',
+		\'hideAllNonBaseMenuItem\',
+		\'showAllNonBaseMenuItem\',
+		\'translateVoice\',
+		\'startRecord\',
+		\'stopRecord\',
+		\'onRecordEnd\',
+		\'playVoice\',
+		\'pauseVoice\',
+		\'stopVoice\',
+		\'uploadVoice\',
+		\'downloadVoice\',
+		\'chooseImage\',
+		\'previewImage\',
+		\'uploadImage\',
+		\'downloadImage\',
+		\'getNetworkType\',
+		\'openLocation\',
+		\'getLocation\',
+		\'hideOptionMenu\',
+		\'showOptionMenu\',
+		\'closeWindow\',
+		\'scanQRCode\',
+		\'chooseWXPay\',
+		\'openProductSpecificView\',
+		\'addCard\',
+		\'chooseCard\',
+		\'openCard\'
+	];
+	
+	wx.config(jssdkconfig);
+	
+</script>';
+	echo $script;
+}
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -120,20 +208,31 @@ if (!function_exists('p')) {
 			return false;
 		}
 
-		require_once EWEI_SHOPV2_CORE . 'inc/plugin_model.php';
-		require_once $model;
-		$class_name = ucfirst($name) . 'Model';
-		$_plugins[$name] = new $class_name($name);
-		if (com_run('perm::check_plugin', $name) || ($name == 'grant') || ($name == 'qpay')) {
-			if ($name == 'seckill') {
-				if (!function_exists('redis') || is_error(redis())) {
-					return false;
+		$return_instance = false;
+		if ($name == 'grant' || $name == 'qpay') {
+			$return_instance = true;
+		}
+		else {
+			if (com_perm_check_plugin($name)) {
+				if ($name == 'seckill') {
+					if (!function_exists('redis') || is_error(redis())) {
+						return false;
+					}
 				}
-			}
 
+				$return_instance = true;
+			}
+		}
+
+		if ($return_instance) {
+			require_once EWEI_SHOPV2_CORE . 'inc/plugin_model.php';
+			require_once $model;
+			$class_name = ucfirst($name) . 'Model';
+			$_plugins[$name] = new $class_name($name);
 			return $_plugins[$name];
 		}
 
+		$_plugins[$name] = false;
 		return false;
 	}
 }
@@ -147,6 +246,15 @@ if (!function_exists('com')) {
 			return $_coms[$name];
 		}
 
+		if ($name == 'qiniu') {
+			$data = m('cache')->getArray('qiniu', 'global');
+
+			if (empty($data['upload'])) {
+				$_coms[$name] = false;
+				return $_coms[$name];
+			}
+		}
+
 		$model = EWEI_SHOPV2_CORE . 'com/' . strtolower($name) . '.php';
 
 		if (!is_file($model)) {
@@ -158,12 +266,304 @@ if (!function_exists('com')) {
 		$class_name = ucfirst($name) . '_EweiShopV2ComModel';
 		$_coms[$name] = new $class_name($name);
 
-		if ($name == 'perm') {
+		if (com_perm_check_com($name)) {
 			return $_coms[$name];
 		}
 
-		if (com('perm')->check_com($name)) {
-			return $_coms[$name];
+		$_coms[$name] = false;
+		return $_coms[$name];
+	}
+}
+
+if (!function_exists('com_perm_getPermset')) {
+	function com_perm_getPermset()
+	{
+		$path = IA_ROOT . '/addons/ewei_shopv2/data/global';
+		$permset = intval(m('cache')->getString('permset', 'global'));
+		if (empty($permset) && is_file($path . '/perm.cache')) {
+			$permset = authcode(file_get_contents($path . '/perm.cache'), 'DECODE', 'global');
+		}
+
+		return $permset;
+	}
+}
+
+if (!function_exists('com_perm_isopen')) {
+	function com_perm_isopen($pluginname = '', $iscom = false)
+	{
+		if (empty($pluginname)) {
+			return false;
+		}
+
+		$plugins = m('plugin')->getAll($iscom);
+		$plugins_name = array();
+
+		foreach ($plugins as $val) {
+			$plugins_name[] = $val['identity'];
+		}
+
+		if (in_array($pluginname, $plugins_name)) {
+			foreach ($plugins as $plugin) {
+				if ($plugin['identity'] == strtolower($pluginname)) {
+					if (empty($plugin['status'])) {
+						return false;
+					}
+				}
+			}
+		}
+		else {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+if (!function_exists('com_perm_check_plugin')) {
+	function com_perm_check_plugin($pluginname = '')
+	{
+		global $_W;
+		global $_GPC;
+		$permset = com_perm_getPermset();
+
+		if (empty($permset)) {
+			return true;
+		}
+
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$owner = account_owner($_W['uniacid']);
+		if ($_W['role'] == 'founder' || empty($_W['role'])) {
+			if (in_array($owner['uid'], $founders)) {
+				return true;
+			}
+		}
+
+		if ($pluginname == 'grant' && $_W['role'] == 'founder') {
+			return true;
+		}
+
+		if (in_array($owner['uid'], $founders)) {
+			static $userids = array();
+
+			if (!isset($userids['uniacid_' . $_W['uniacid']])) {
+				$userids = pdo_fetchall('select * from ' . tablename('uni_account_users') . '  where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']), 'uid');
+				$userids['uniacid_' . $_W['uniacid']] = array_keys($userids);
+			}
+
+			if (in_array($_W['uid'], $userids['uniacid_' . $_W['uniacid']]) && $_W['role'] == 'manager') {
+				return true;
+			}
+		}
+
+		$isopen = com_perm_isopen($pluginname);
+
+		if (!$isopen) {
+			return false;
+		}
+
+		$allow = true;
+		$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid LIMIT 1', array(':uniacid' => $_W['uniacid']));
+		$ac_perm = pdo_fetch('select  plugins from ' . tablename('ewei_shop_perm_plugin') . ' where acid=:acid limit 1', array(':acid' => $acid));
+
+		if (!empty($ac_perm)) {
+			$allow_plugins = explode(',', $ac_perm['plugins']);
+
+			if (!in_array($pluginname, $allow_plugins)) {
+				$filename = '../addons/ewei_shopv2/core/model/grant.php';
+
+				if (file_exists($filename)) {
+					$check = m('grant')->checkplugin($pluginname);
+
+					if (!$check) {
+						$allow = false;
+					}
+				}
+				else if (p('grant')) {
+					$check = p('grant')->checkplugin($pluginname);
+
+					if (!$check) {
+						$allow = false;
+					}
+				}
+				else {
+					$allow = false;
+				}
+			}
+		}
+		else {
+			load()->model('account');
+			load()->model('user');
+			$allow = true;
+			$filename = '../addons/ewei_shopv2/core/model/grant.php';
+
+			if (in_array($owner['uid'], $founders)) {
+				if (file_exists($filename)) {
+					$allow = m('grant')->checkplugin($pluginname);
+				}
+				else if (p('grant')) {
+					$allow = p('grant')->checkplugin($pluginname);
+				}
+				else {
+					$allow = false;
+				}
+			}
+			else if (file_exists($filename)) {
+				$allow = m('grant')->checkplugin($pluginname);
+			}
+			else if (p('grant')) {
+				$allow = p('grant')->checkplugin($pluginname);
+			}
+			else {
+				$allow = false;
+			}
+		}
+
+		if (!$allow) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+if (!function_exists('com_perm_check_com')) {
+	function com_perm_check_com($comname)
+	{
+		global $_W;
+		global $_GPC;
+		$permset = com_perm_getPermset();
+
+		if (empty($permset)) {
+			return true;
+		}
+
+		$founders = explode(',', $_W['config']['setting']['founder']);
+		$owner = account_owner($_W['uniacid']);
+
+		if ($_W['role'] == 'founder') {
+			if (in_array($owner['uid'], $founders)) {
+				return true;
+			}
+		}
+
+		if (empty($_W['role'])) {
+			return true;
+		}
+
+		if (in_array($owner['uid'], $founders)) {
+			static $userids = array();
+
+			if (!isset($userids['uniacid_' . $_W['uniacid']])) {
+				$userids = pdo_fetchall('select * from ' . tablename('uni_account_users') . '  where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']), 'uid');
+				$userids['uniacid_' . $_W['uniacid']] = array_keys($userids);
+			}
+
+			if (in_array($_W['uid'], $userids['uniacid_' . $_W['uniacid']]) && $_W['role'] == 'manager') {
+				return true;
+			}
+		}
+
+		$isopen = com_perm_isopen($comname, true);
+
+		if (!$isopen) {
+			return false;
+		}
+
+		$allow = true;
+		$acid = pdo_fetchcolumn('SELECT acid FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid LIMIT 1', array(':uniacid' => $_W['uniacid']));
+		$ac_perm = pdo_fetch('select  coms from ' . tablename('ewei_shop_perm_plugin') . ' where acid=:acid limit 1', array(':acid' => $acid));
+
+		if (!empty($ac_perm)) {
+			$allow_coms = explode(',', $ac_perm['coms']);
+
+			if (!in_array($comname, $allow_coms)) {
+				$allow_plugins = explode(',', $ac_perm['coms']);
+
+				if (!in_array($comname, $allow_plugins)) {
+					$filename = '../addons/ewei_shopv2/core/model/grant.php';
+
+					if (file_exists($filename)) {
+						$allow = m('grant')->checkplugin($comname);
+					}
+					else if (p('grant')) {
+						$allow = p('grant')->checkplugin($comname);
+					}
+					else {
+						$allow = false;
+					}
+				}
+			}
+		}
+		else {
+			load()->model('account');
+
+			if (in_array($owner['uid'], $founders)) {
+				$allow = true;
+				$filename = '../addons/ewei_shopv2/core/model/grant.php';
+
+				if (file_exists($filename)) {
+					$allow = m('grant')->checkplugin($comname);
+				}
+				else {
+					if (p('grant')) {
+						$allow = p('grant')->checkplugin($comname);
+					}
+				}
+			}
+			else {
+				$filename = '../addons/ewei_shopv2/core/model/grant.php';
+
+				if (file_exists($filename)) {
+					$allow = m('grant')->checkplugin($comname);
+				}
+				else if (p('grant')) {
+					$allow = p('grant')->checkplugin($comname);
+				}
+				else {
+					$allow = false;
+				}
+			}
+		}
+
+		if (!$allow) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+if (!function_exists('check_operator_perm')) {
+	function check_operator_perm($pluginname = '')
+	{
+		global $_W;
+		global $_GPC;
+		$uid = empty($_W['uid']) ? $_W['user']['uid'] : $_W['uid'];
+
+		if (empty($uid)) {
+			return false;
+		}
+
+		if (empty($_W['role']) || $_W['role'] != 'operator') {
+			return true;
+		}
+
+		$user_perms = array();
+		$role_perms = array();
+		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_perm_user') . ' WHERE uid =:uid and deleted=0 and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':uid' => $uid));
+
+		if (!empty($item)) {
+			$role = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_perm_role') . ' WHERE id =:id and deleted=0 and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $item['roleid']));
+
+			if (!empty($role)) {
+				$role_perms = explode(',', $role['perms2']);
+			}
+
+			$user_perms = explode(',', $item['perms2']);
+		}
+
+		if (in_array($pluginname, $role_perms) || in_array($pluginname, $user_perms)) {
+			return true;
 		}
 
 		return false;
@@ -321,7 +721,7 @@ if (!function_exists('is_weixin')) {
 			return true;
 		}
 
-		if (empty($_SERVER['HTTP_USER_AGENT']) || ((strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false) && (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') === false))) {
+		if (empty($_SERVER['HTTP_USER_AGENT']) || strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false && strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') === false) {
 			return false;
 		}
 
@@ -329,40 +729,51 @@ if (!function_exists('is_weixin')) {
 	}
 }
 
-if (!function_exists('is_h5app')) {
-	function is_h5app()
+if( !function_exists("is_h5app") ) 
+{
+	function is_h5app() 
 	{
-		if (!empty($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'CK 2.0')) {
+		if( !empty($_SERVER["HTTP_USER_AGENT"]) && strpos($_SERVER["HTTP_USER_AGENT"], "Html5Plus") ) 
+		{
 			return true;
 		}
-
 		return false;
 	}
 }
-
-if (!function_exists('is_ios')) {
-	function is_ios()
+if( !function_exists("is_ios") ) 
+{
+	function is_ios() 
 	{
-		if (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') || strpos($_SERVER['HTTP_USER_AGENT'], 'iPad')) {
+		if( strpos($_SERVER["HTTP_USER_AGENT"], "iPhone") || strpos($_SERVER["HTTP_USER_AGENT"], "iPad") ) 
+		{
 			return true;
 		}
-
 		return false;
 	}
 }
-
-if (!function_exists('is_mobile')) {
-	function is_mobile()
+if( !function_exists("is_android") ) 
+{
+	function is_android() 
 	{
-		$useragent = $_SERVER['HTTP_USER_AGENT'];
-		if (preg_match('/(android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $useragent) || preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\\-(n|u)|c55\\/|capi|ccwa|cdm\\-|cell|chtm|cldc|cmd\\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\\-s|devi|dica|dmob|do(c|p)o|ds(12|\\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\\-|_)|g1 u|g560|gene|gf\\-5|g\\-mo|go(\\.w|od)|gr(ad|un)|haie|hcit|hd\\-(m|p|t)|hei\\-|hi(pt|ta)|hp( i|ip)|hs\\-c|ht(c(\\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\\-(20|go|ma)|i230|iac( |\\-|\\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\\/)|klon|kpt |kwc\\-|kyo(c|k)|le(no|xi)|lg( g|\\/(k|l|u)|50|54|\\-[a-w])|libw|lynx|m1\\-w|m3ga|m50\\/|ma(te|ui|xo)|mc(01|21|ca)|m\\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\\-2|po(ck|rt|se)|prox|psio|pt\\-g|qa\\-a|qc(07|12|21|32|60|\\-[2-7]|i\\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\\-|oo|p\\-)|sdk\\/|se(c(\\-|0|1)|47|mc|nd|ri)|sgh\\-|shar|sie(\\-|m)|sk\\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\\-|v\\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\\-|tdg\\-|tel(i|m)|tim\\-|t\\-mo|to(pl|sh)|ts(70|m\\-|m3|m5)|tx\\-9|up(\\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\\-|your|zeto|zte\\-/i', substr($useragent, 0, 4))) {
+		if( strpos(strtolower($_SERVER['HTTP_USER_AGENT']), 'android') ) 
+		{
 			return true;
 		}
-
 		return false;
 	}
 }
-
+if( !function_exists("is_mobile") ) 
+{
+	function is_mobile() 
+	{
+		$useragent = $_SERVER["HTTP_USER_AGENT"];
+		if( preg_match("/(android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i", $useragent) || preg_match("/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\\-(n|u)|c55\\/|capi|ccwa|cdm\\-|cell|chtm|cldc|cmd\\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\\-s|devi|dica|dmob|do(c|p)o|ds(12|\\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\\-|_)|g1 u|g560|gene|gf\\-5|g\\-mo|go(\\.w|od)|gr(ad|un)|haie|hcit|hd\\-(m|p|t)|hei\\-|hi(pt|ta)|hp( i|ip)|hs\\-c|ht(c(\\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\\-(20|go|ma)|i230|iac( |\\-|\\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\\/)|klon|kpt |kwc\\-|kyo(c|k)|le(no|xi)|lg( g|\\/(k|l|u)|50|54|\\-[a-w])|libw|lynx|m1\\-w|m3ga|m50\\/|ma(te|ui|xo)|mc(01|21|ca)|m\\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\\-2|po(ck|rt|se)|prox|psio|pt\\-g|qa\\-a|qc(07|12|21|32|60|\\-[2-7]|i\\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\\-|oo|p\\-)|sdk\\/|se(c(\\-|0|1)|47|mc|nd|ri)|sgh\\-|shar|sie(\\-|m)|sk\\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\\-|v\\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\\-|tdg\\-|tel(i|m)|tim\\-|t\\-mo|to(pl|sh)|ts(70|m\\-|m3|m5)|tx\\-9|up(\\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\\-|your|zeto|zte\\-/i", substr($useragent, 0, 4)) ) 
+		{
+			return true;
+		}
+		return false;
+	}
+}
 if (!function_exists('b64_encode')) {
 	function b64_encode($obj)
 	{
@@ -437,7 +848,7 @@ if (!function_exists('rc')) {
 		$domain = trim(preg_replace('/http(s)?:\\/\\//', '', rtrim($_W['siteroot'], '/')));
 		$ip = gethostbyname($_SERVER['HTTP_HOST']);
 		$setting = setting_load('site');
-		$id = (isset($setting['site']['key']) ? $setting['site']['key'] : '0');
+		$id = isset($setting['site']['key']) ? $setting['site']['key'] : '0';
 		$auth = get_auth();
 		load()->func('communication');
 		$resp = ihttp_request(EWEI_SHOPV2_AUTH_URL, array('ip' => $ip, 'id' => $id, 'code' => $auth['code'], 'domain' => $domain, 'plugin' => $plugin), NULL, 1);
@@ -464,14 +875,14 @@ if (!function_exists('url_script')) {
 			$url = $_SERVER['PHP_SELF'];
 		}
 		else {
-			if (isset($_SERVER['ORIG_SCRIPT_NAME']) && (basename($_SERVER['ORIG_SCRIPT_NAME']) === $script_name)) {
+			if (isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME']) === $script_name) {
 				$url = $_SERVER['ORIG_SCRIPT_NAME'];
 			}
 			else if (($pos = strpos($_SERVER['PHP_SELF'], '/' . $script_name)) !== false) {
 				$url = substr($_SERVER['SCRIPT_NAME'], 0, $pos) . '/' . $script_name;
 			}
 			else {
-				if (isset($_SERVER['DOCUMENT_ROOT']) && (strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0)) {
+				if (isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0) {
 					$url = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME']));
 				}
 			}
@@ -492,7 +903,7 @@ if (!function_exists('shop_template_compile')) {
 		}
 
 		$content = shop_template_parse(file_get_contents($from), $inmodule);
-		if ((IMS_FAMILY == 'x') && !preg_match('/(footer|header|account\\/welcome|login|register)+/', $from)) {
+		if (IMS_FAMILY == 'x' && !preg_match('/(footer|header|account\\/welcome|login|register)+/', $from)) {
 			$content = str_replace('微擎', '系统', $content);
 		}
 
@@ -622,6 +1033,10 @@ if (!function_exists('template_parse_app')) {
 if (!function_exists('ce')) {
 	function ce($permtype = '', $item = NULL)
 	{
+		if (!com('perm')) {
+			return true;
+		}
+
 		$perm = com_run('perm::check_edit', $permtype, $item);
 		return $perm;
 	}
@@ -630,6 +1045,18 @@ if (!function_exists('ce')) {
 if (!function_exists('cv')) {
 	function cv($permtypes = '')
 	{
+		if (!com('perm')) {
+			$arr = explode('.', $permtypes);
+
+			if ($arr[0] == 'sale') {
+				if (!com_perm_check_com('sale') && !com_perm_check_com('coupon') && !com_perm_check_com('wxcard')) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		$perm = com_run('perm::check_perm', $permtypes);
 		return $perm;
 	}
@@ -720,39 +1147,99 @@ if (!function_exists('tpl_selector')) {
 		}
 
 		$options['value'] = isset($options['value']) ? $options['value'] : $titles;
-		$readonly = ($options['readonly'] ? 'readonly' : '');
-		$required = ($options['required'] ? ' data-rule-required="true"' : '');
-		$callback = (!empty($options['callback']) ? ', ' . $options['callback'] : '');
-		$id = ($options['multi'] ? $name . '[]' : $name);
-		$html = '<div id=\'' . $name . "_selector' class='selector'\r\n                     data-type=\"" . $options['type'] . "\"\r\n                     data-key=\"" . $options['key'] . "\"\r\n                     data-text=\"" . $options['text'] . "\"\r\n                     data-thumb=\"" . $options['thumb'] . "\"\r\n                     data-multi=\"" . $options['multi'] . "\"\r\n                     data-callback=\"" . $options['callback'] . "\"\r\n                     data-url=\"" . $options['url'] . "\"\r\n                     data-nokeywords=\"" . $options['nokeywords'] . "\"\r\n                  data-autosearch=\"" . $options['autosearch'] . "\"\r\n\r\n                 >";
+		$readonly = $options['readonly'] ? 'readonly' : '';
+		$required = $options['required'] ? ' data-rule-required="true"' : '';
+		$callback = !empty($options['callback']) ? ', ' . $options['callback'] : '';
+		$id = $options['multi'] ? $name . '[]' : $name;
+		$html = '<div id=\'' . $name . '_selector\' class=\'selector\'
+                     data-type="' . $options['type'] . '"
+                     data-key="' . $options['key'] . '"
+                     data-text="' . $options['text'] . '"
+                     data-thumb="' . $options['thumb'] . '"
+                     data-multi="' . $options['multi'] . '"
+                     data-callback="' . $options['callback'] . '"
+                     data-url="' . $options['url'] . '"
+                     data-nokeywords="' . $options['nokeywords'] . '"
+                  data-autosearch="' . $options['autosearch'] . '"
 
-		if ($options['input']) {
-			$html .= '<div class=\'input-group\'>' . '<input type=\'text\' id=\'' . $name . '_text\' name=\'' . $name . '_text\'  value=\'' . $options['value'] . '\' class=\'form-control text\'  ' . $readonly . '  ' . $required . '/>' . '<div class=\'input-group-btn\'>';
+                 >';
+		if ($options['text'] == 'nickname' && $options['value'] != '') {
+			$optionsValue = &$options['value'];
+			$optionsValue = preg_replace('#[\'|"]#', '', $options['value']);
+			unset($optionsValue);
 		}
 
-		$html .= '<button class=\'btn btn-primary\' type=\'button\' onclick=\'biz.selector.select(' . json_encode($options) . ');\'>' . $options['buttontext'] . '</button>';
+		if ($options['input']) {
+			$html .= '<div class=\'input-group\'>' . ('<input type=\'text\' id=\'' . $name . '_text\' name=\'' . $name . '_text\'  value=\'' . $options['value'] . '\' class=\'form-control text\'  ' . $readonly . '  ' . $required . '/>') . '<div class=\'input-group-btn\'>';
+		}
+
+		$html .= '<button class=\'btn btn-primary\' type=\'button\' onclick=\'biz.selector.select(' . json_encode($options, JSON_HEX_APOS) . (');\'>' . $options['buttontext'] . '</button>');
 
 		if ($options['input']) {
 			$html .= '</div>';
 			$html .= '</div>';
 		}
 
-		$show = ($options['preview'] ? '' : ' style=\'display:none\'');
+		$show = $options['preview'] ? '' : ' style=\'display:none\'';
 
 		if ($options['type'] == 'image') {
 			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>';
 		}
 		else if ($options['type'] == 'coupon') {
-			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . ">\r\n                        <table class='table'>\r\n                            <thead>\r\n                            <tr>\r\n                                <th style='width:100px;'>优惠券名称</th>\r\n                                <th style='width:200px;'></th>\r\n                                <th>优惠券总数</th>\r\n                                <th>每人限领数量</th>\r\n                                <th style='width:80px;'>操作</th>\r\n                            </tr>\r\n                            </thead>\r\n                            <tbody class='ui-sortable container'>";
+			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . '>
+                        <table class=\'table\'>
+                            <thead>
+                            <tr>
+                                <th style=\'width:100px;\'>优惠券名称</th>
+                                <th style=\'width:200px;\'></th>
+                                <th>优惠券总数</th>
+                                <th>每人限领数量</th>
+                                <th style=\'width:80px;\'>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody class=\'ui-sortable container\'>';
 		}
 		else if ($options['type'] == 'coupon_cp') {
-			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . ">\r\n                        <table class='table'>\r\n                            <thead>\r\n                            <tr>\r\n                                <th style='width:100px;'>优惠券名称</th>\r\n                                <th style='width:200px;'></th>\r\n                                <th></th>\r\n                                <th></th>\r\n                                <th style='width:80px;'>操作</th>\r\n                            </tr>\r\n                            </thead>\r\n                            <tbody id='param-items' class='ui-sortable container'>";
+			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . '>
+                        <table class=\'table\'>
+                            <thead>
+                            <tr>
+                                <th style=\'width:100px;\'>优惠券名称</th>
+                                <th style=\'width:200px;\'></th>
+                                <th></th>
+                                <th></th>
+                                <th style=\'width:80px;\'>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id=\'param-items\' class=\'ui-sortable container\'>';
 		}
 		else if ($options['type'] == 'coupon_share') {
-			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . ">\r\n                        <table class='table'>\r\n                            <thead>\r\n                            <tr>\r\n                                <th style='width:100px;'>优惠券名称</th>\r\n                                <th style='width:200px;'></th>\r\n                                <th></th>\r\n                                <th>每人领取数量</th>\r\n                                <th style='width:80px;'>操作</th>\r\n                            </tr>\r\n                            </thead>\r\n                            <tbody id='param-items' class='ui-sortable container'>";
+			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . '>
+                        <table class=\'table\'>
+                            <thead>
+                            <tr>
+                                <th style=\'width:100px;\'>优惠券名称</th>
+                                <th style=\'width:200px;\'></th>
+                                <th></th>
+                                <th>每人领取数量</th>
+                                <th style=\'width:80px;\'>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id=\'param-items\' class=\'ui-sortable container\'>';
 		}
 		else if ($options['type'] == 'coupon_shares') {
-			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . ">\r\n                        <table class='table'>\r\n                            <thead>\r\n                            <tr>\r\n                                <th style='width:100px;'>优惠券名称</th>\r\n                                <th style='width:200px;'></th>\r\n                                <th></th>\r\n                                <th>每人领取数量</th>\r\n                                <th style='width:80px;'>操作</th>\r\n                            </tr>\r\n                            </thead>\r\n                            <tbody id='param-items' class='ui-sortable container'>";
+			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . '>
+                        <table class=\'table\'>
+                            <thead>
+                            <tr>
+                                <th style=\'width:100px;\'>优惠券名称</th>
+                                <th style=\'width:200px;\'></th>
+                                <th></th>
+                                <th>每人领取数量</th>
+                                <th style=\'width:80px;\'>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id=\'param-items\' class=\'ui-sortable container\'>';
 		}
 		else {
 			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>';
@@ -760,22 +1247,108 @@ if (!function_exists('tpl_selector')) {
 
 		foreach ($options['items'] as $item) {
 			if ($options['type'] == 'image') {
-				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . "'>\r\n                                      <img class='img-responsive img-thumbnail' src='" . tomedia($item[$options['thumb']]) . "' onerror='this.src=\"../addons/ewei_shopv2/static/images/nopic.png\"'>\r\n                                      <div class='img-nickname'>" . $item[$options['text']] . "</div>\r\n                                     <input type='hidden' value='" . $item[$options['key']] . '\' name=\'' . $id . "'>\r\n                                     <em onclick='biz.selector.remove(this,\"" . $name . "\")'  class='close'>×</em>\r\n                            <div style='clear:both;'></div>\r\n                         </div>";
+				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>
+                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . ('\' onerror=\'this.src="../addons/ewei_shopv2/static/images/nopic.png"\' style=\'width:100px;height:100px;\'>
+                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>
+                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
+                                     <em onclick=\'biz.selector.remove(this,"' . $name . '")\'  class=\'close\'>×</em>
+                            <div style=\'clear:both;\'></div>
+                         </div>');
 			}
 			else if ($options['type'] == 'coupon') {
-				$html .= "\r\n                <tr class='multi-product-item' data-" . $options['key'] . '=\'' . $item[$options['key']] . "'>\r\n                    <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                    <input type='hidden' value='" . $item[$options['key']] . "' name='couponid[]'>\r\n                    <td style='width:80px;'>\r\n                        <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px'>\r\n                    </td>\r\n                    <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                    <td>\r\n                        <input class='form-control valid' type='text' value='" . $item['coupontotal'] . '\' name=\'coupontotal' . $item[$options['key']] . "'>\r\n                    </td>\r\n                    <td>\r\n                        <input class='form-control valid' type='text' value='" . $item['couponlimit'] . '\' name=\'couponlimit' . $item[$options['key']] . "'>\r\n                    </td>\r\n                    <td>\r\n                        <button class='btn btn-default' onclick='biz.selector.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                    </td>\r\n                </tr>\r\n                ";
+				$html .= '
+                <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\'>
+                    <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                    <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'couponid[]\'>
+                    <td style=\'width:80px;\'>
+                        <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\'>
+                    </td>
+                    <td style=\'width:220px;\'>
+                    ' . $item[$options['text']]);
+
+				if (!empty($item['merchname'])) {
+					$html .= '<br /><label class=\'label label-info\'>[' . $item['merchname'] . ']</label>';
+				}
+
+				$html .= '</td>
+                    <td>
+                        <input class=\'form-control valid\' type=\'text\' value=\'' . $item['coupontotal'] . '\' name=\'coupontotal' . $item[$options['key']] . '\'>
+                    </td>
+                    <td>
+                        <input class=\'form-control valid\' type=\'text\' value=\'' . $item['couponlimit'] . '\' name=\'couponlimit' . $item[$options['key']] . '\'>
+                    </td>
+                    <td>
+                        <button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                    </td>
+                </tr>
+                ';
 			}
 			else if ($options['type'] == 'coupon_cp') {
-				$html .= "\r\n                    <tr class='multi-product-item setticket' data-" . $options['key'] . '=\'' . $item[$options['key']] . "'>\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                        <input type='hidden' value='" . $item[$options['key']] . "' name='couponid[]'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px'>\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>\r\n                        </td>\r\n                        <td>\r\n                        </td>\r\n                        <td>\r\n                            <button class='btn btn-default' onclick='biz.selector.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                        </td>\r\n                    </tr>\r\n                    ";
+				$html .= '
+                    <tr class=\'multi-product-item setticket\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\'>
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                        <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'couponid[]\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\'>
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                        </td>
+                    </tr>
+                    ');
 			}
 			else if ($options['type'] == 'coupon_share') {
-				$html .= "\r\n                    <tr class='multi-product-item shareticket' data-" . $options['key'] . '=\'' . $item[$options['key']] . "'>\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                        <input type='hidden' value='" . $item[$options['key']] . "' name='couponid[]'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px'>\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>\r\n                        </td>\r\n                        <td>\r\n                            <input class='form-control valid' type='text' value='" . $item['couponnum' . $item['id']] . '\' name=\'couponnum' . $item[$options['key']] . "'>\r\n                        </td>\r\n                        <td>\r\n                            <button class='btn btn-default' onclick='biz.selector.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                        </td>\r\n                    </tr>\r\n                    ";
+				$html .= '
+                    <tr class=\'multi-product-item shareticket\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\'>
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                        <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'couponid[]\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\'>
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>
+                        </td>
+                        <td>
+                            <input class=\'form-control valid\' type=\'text\' value=\'' . $item['couponnum' . $item['id']] . '\' name=\'couponnum' . $item[$options['key']] . '\'>
+                        </td>
+                        <td>
+                            <button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                        </td>
+                    </tr>
+                    ');
 			}
 			else if ($options['type'] == 'coupon_shares') {
-				$html .= "\r\n                    <tr class='multi-product-item sharesticket' data-" . $options['key'] . '=\'' . $item[$options['key']] . "'>\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                        <input type='hidden' value='" . $item[$options['key']] . "' name='couponids[]'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px'>\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>\r\n                        </td>\r\n                        <td>\r\n                            <input class='form-control valid' type='text' value='" . $item['couponsnum' . $item['id']] . '\' name=\'couponsnum' . $item[$options['key']] . "'>\r\n                        </td>\r\n                        <td>\r\n                            <button class='btn btn-default' onclick='biz.selector.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                        </td>\r\n                    </tr>\r\n                    ";
+				$html .= '
+                    <tr class=\'multi-product-item sharesticket\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\'>
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                        <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'couponids[]\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\'>
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>
+                        </td>
+                        <td>
+                            <input class=\'form-control valid\' type=\'text\' value=\'' . $item['couponsnum' . $item['id']] . '\' name=\'couponsnum' . $item[$options['key']] . '\'>
+                        </td>
+                        <td>
+                            <button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                        </td>
+                    </tr>
+                    ');
 			}
 			else {
-				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['key']] . "' >\r\n                       <div class='input-group'>\r\n                       <input type='text' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                       <input type='hidden'  value='" . $item[$options['key']] . '\' name=\'' . $id . "'>\r\n                       <div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                       </div></div></div>";
+				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' >
+                       <div class=\'input-group\'>
+                       <input type=\'text\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
+                       <div class=\'input-group-btn\'><button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                       </div></div></div>';
 			}
 		}
 
@@ -844,36 +1417,84 @@ if (!function_exists('tpl_selector_new')) {
 		}
 
 		$options['value'] = isset($options['value']) ? $options['value'] : $titles;
-		$readonly = ($options['readonly'] ? 'readonly' : '');
-		$required = ($options['required'] ? ' data-rule-required="true"' : '');
-		$callback = (!empty($options['callback']) ? ', ' . $options['callback'] : '');
-		$id = ($options['multi'] ? $name . '[]' : $name);
-		$html = '<div id=\'' . $name . "_selector' class='selector'\r\n                     data-type=\"" . $options['type'] . "\"\r\n                     data-key=\"" . $options['key'] . "\"\r\n                     data-text=\"" . $options['text'] . "\"\r\n                     data-thumb=\"" . $options['thumb'] . "\"\r\n                     data-multi=\"" . $options['multi'] . "\"\r\n                     data-callback=\"" . $options['callback'] . "\"\r\n                     data-url=\"" . $options['url'] . "\",\r\n                     data-nokeywords=\"" . $options['nokeywords'] . "\" \r\n                     data-autosearch=\"" . $options['autosearch'] . "\"\r\n                     data-optionurl=\"" . $options['optionurl'] . "\"\r\n                     data-selectorid=\"" . $options['selectorid'] . "\"\r\n \r\n                 >";
+		$readonly = $options['readonly'] ? 'readonly' : '';
+		$required = $options['required'] ? ' data-rule-required="true"' : '';
+		$callback = !empty($options['callback']) ? ', ' . $options['callback'] : '';
+		$id = $options['multi'] ? $name . '[]' : $name;
+		$html = '<div id=\'' . $name . '_selector\' class=\'selector\'
+                     data-type="' . $options['type'] . '"
+                     data-key="' . $options['key'] . '"
+                     data-text="' . $options['text'] . '"
+                     data-thumb="' . $options['thumb'] . '"
+                     data-multi="' . $options['multi'] . '"
+                     data-callback="' . $options['callback'] . '"
+                     data-url="' . $options['url'] . '",
+                     data-nokeywords="' . $options['nokeywords'] . '" 
+                     data-autosearch="' . $options['autosearch'] . '"
+                     data-optionurl="' . $options['optionurl'] . '"
+                     data-selectorid="' . $options['selectorid'] . '"
+ 
+                 >';
 
 		if ($options['input']) {
-			$html .= '<div class=\'input-group\'>' . '<input type=\'text\' id=\'' . $name . '_text\' name=\'' . $name . '_text\'  value=\'' . $options['value'] . '\' class=\'form-control text\'  ' . $readonly . '  ' . $required . '/>' . '<div class=\'input-group-btn\'>';
+			$html .= '<div class=\'input-group\'>' . ('<input type=\'text\' id=\'' . $name . '_text\' name=\'' . $name . '_text\'  value=\'' . $options['value'] . '\' class=\'form-control text\'  ' . $readonly . '  ' . $required . '/>') . '<div class=\'input-group-btn\'>';
 		}
 
-		$html .= '<button class=\'btn btn-primary\' type=\'button\' onclick=\'biz.selector_new.select(' . json_encode($options) . ');\'>' . $options['buttontext'] . '</button>';
+		$html .= '<button class=\'btn btn-primary\' type=\'button\' onclick=\'biz.selector_new.select(' . json_encode($options) . (');\'>' . $options['buttontext'] . '</button>');
 
 		if ($options['input']) {
 			$html .= '</div>';
 			$html .= '</div>';
 		}
 
-		$show = ($options['preview'] ? '' : ' style=\'display:none\'');
+		$show = $options['preview'] ? '' : ' style=\'display:none\'';
 
 		if ($options['type'] == 'image') {
-			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . ">\r\n                    <div id='param-items" . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>
+                    <div id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
 		}
 		else if ($options['type'] == 'product') {
-			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . ">\r\n<table class='table' style='width:600px;'>\r\n                    <thead>\r\n                        <tr>\r\n                            <th style='width:80px;'>商品名称</th>\r\n                            <th style='width:220px;'></th>\r\n                            <th>价格/分销佣金</th>\r\n                            <th style='width:50px;'>操作</th>\r\n                        </tr>\r\n                    </thead>\r\n                    <tbody id='param-items" . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>
+<table class=\'table\' style=\'width:600px;\'>
+                    <thead>
+                        <tr>
+                            <th style=\'width:80px;\'>商品名称</th>
+                            <th style=\'width:220px;\'></th>
+                            <th>价格/分销佣金</th>
+                            <th style=\'width:50px;\'>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+		}
+		else if ($options['type'] == 'card') {
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>
+<table class=\'table\' style=\'width:600px;\'>
+                    <thead>
+                        <tr>
+                            <th style=\'width:80px;\'>商品名称</th>
+                            <th ></th>
+                            <th style=\'width:50px;\'>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
 		}
 		else if ($options['type'] == 'fullback') {
-			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . ">\r\n<table class='table' style='width:600px;'>\r\n                    <tbody id='param-items" . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>
+<table class=\'table\' style=\'width:600px;\'>
+                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
 		}
 		else if ($options['type'] == 'live') {
-			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . ">\r\n<table class='table' style='width:600px;'>\r\n                    <thead>\r\n                        <tr>\r\n                            <th style='width:80px;'>商品名称</th>\r\n                            <th style='width:220px;'></th>\r\n                            <th>直播间价格</th>\r\n                            <th style='width:50px;'>操作</th>\r\n                        </tr>\r\n                    </thead>\r\n                    <tbody id='param-items" . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>
+<table class=\'table\' style=\'width:600px;\'>
+                    <thead>
+                        <tr>
+                            <th style=\'width:80px;\'>商品名称</th>
+                            <th style=\'width:220px;\'></th>
+                            <th>直播间价格</th>
+                            <th style=\'width:50px;\'>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
 		}
 		else {
 			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>';
@@ -881,7 +1502,33 @@ if (!function_exists('tpl_selector_new')) {
 
 		foreach ($options['items'] as $item) {
 			if ($options['type'] == 'image') {
-				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . "'>\r\n                                      <img class='img-responsive img-thumbnail' src='" . tomedia($item[$options['thumb']]) . "' >\r\n                                      <div class='img-nickname'>" . $item[$options['text']] . "</div>\r\n                                     <input type='hidden' value='" . $item[$options['key']] . '\' name=\'' . $id . "'>\r\n                                     <em onclick='biz.selector_new.remove(this,\"" . $name . "\")'  class='close'>×</em>\r\n                         </div>";
+				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>
+                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . ('\' >
+                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>
+                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
+                                     <em onclick=\'biz.selector_new.remove(this,"' . $name . '")\'  class=\'close\'>×</em>
+                         </div>');
+			}
+			else if ($options['type'] == 'card') {
+				if ($item['optiontitle']) {
+					$optiontitle = $item['optiontitle'][0]['title'] . '...';
+				}
+				else {
+					$optiontitle = '&yen;' . $item['packageprice'];
+				}
+
+				$html .= '
+                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['id'] . '\' >
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '<input type=\'hidden\' id=\'packagegoods') . $item['id'] . '\' value=\'' . $item['option'] . '\' name=\'packagegoods[' . $item['id'] . (']\'></td>
+                        
+                        <td><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>
+                        <i class=\'fa fa-times\'></i></a></td>
+                    </tr>');
 			}
 			else if ($options['type'] == 'product') {
 				if ($item['optiontitle']) {
@@ -891,31 +1538,55 @@ if (!function_exists('tpl_selector_new')) {
 					$optiontitle = '&yen;' . $item['packageprice'];
 				}
 
-				$html .= "\r\n                    <tr class='multi-product-item' data-" . $options['key'] . '=\'' . $item['goodsid'] . "' >\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                       <input type='hidden'  value='" . $item['goodsid'] . '\' name=\'' . $id . "'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px' onerror=\"this.src='../addons/ewei_shopv2/static/images/nopic.png'\">\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>";
-				$optionurl = (empty($options['optionurl']) ? 'sale/package/hasoption' : str_replace('.', '/', $options['optionurl']));
+				$html .= '
+                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['goodsid'] . '\' >
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>');
+				$optionurl = empty($options['optionurl']) ? 'sale/package/hasoption' : str_replace('.', '/', $options['optionurl']);
 
 				if ($item['optiontitle']) {
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['goodsid'] . '\'>' . $optiontitle . "</a>\r\n                            <input type='hidden' id='" . $options['selectorid'] . 'packagegoods' . $item['goodsid'] . '\' value=\'' . $item['option'] . '\' name=\'' . $options['selectorid'] . 'packagegoods[' . $item['goodsid'] . ']\'>';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . ('\' id=\'' . $options['selectorid'] . 'optiontitle') . $item['goodsid'] . '\'>' . $optiontitle . ('</a>
+                            <input type=\'hidden\' id=\'' . $options['selectorid'] . 'packagegoods') . $item['goodsid'] . '\' value=\'' . $item['option'] . ('\' name=\'' . $options['selectorid'] . 'packagegoods[') . $item['goodsid'] . ']\'>';
 
 					foreach ($item['optiontitle'] as $option) {
-						$total = (isset($option['total']) ? ',' . $option['total'] : '');
-						$maxbuy = (isset($option['maxbuy']) ? ',' . $option['maxbuy'] : '');
-						$totalmaxbuy = (isset($option['totalmaxbuy']) ? ',' . $option['totalmaxbuy'] : '');
-						$html .= '<input type=\'hidden\' value=\'' . $option['packageprice'] . ',' . $option['commission1'] . ',' . $option['commission2'] . ',' . $option['commission3'] . $total . $maxbuy . $totalmaxbuy . "'\r\n                        name='" . $options['selectorid'] . 'packagegoodsoption' . $option['optionid'] . '\' >';
+						$total = isset($option['total']) ? ',' . $option['total'] : '';
+						$maxbuy = isset($option['maxbuy']) ? ',' . $option['maxbuy'] : '';
+						$totalmaxbuy = isset($option['totalmaxbuy']) ? ',' . $option['totalmaxbuy'] : '';
+						$html .= '<input type=\'hidden\' value=\'' . $option['packageprice'] . ',' . $option['commission1'] . ',' . $option['commission2'] . ',' . $option['commission3'] . ($total . $maxbuy . $totalmaxbuy . '\'
+                        name=\'' . $options['selectorid'] . 'packagegoodsoption') . $option['optionid'] . '\' >';
 					}
 				}
 				else {
-					$total = (isset($item['total']) ? ',' . $item['total'] : '');
-					$maxbuy = (isset($item['maxbuy']) ? ',' . $item['maxbuy'] : '');
-					$totalmaxbuy = (isset($item['totalmaxbuy']) ? ',' . $item['totalmaxbuy'] : '');
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['goodsid'] . '\'>&yen;' . $item['packageprice'] . "</a>\r\n                            <input type='hidden' id='" . $options['selectorid'] . 'packagegoods' . $item['goodsid'] . '\' value=\'\' name=\'' . $options['selectorid'] . 'packagegoods[' . $item['goodsid'] . "]'>\r\n                    <input type='hidden' value='" . $item['packageprice'] . ',' . $item['commission1'] . ',' . $item['commission2'] . ',' . $item['commission3'] . $total . $maxbuy . $totalmaxbuy . '\' name=\'' . $options['selectorid'] . 'packgoods' . $item['goodsid'] . '\' >';
+					$total = isset($item['total']) ? ',' . $item['total'] : '';
+					$maxbuy = isset($item['maxbuy']) ? ',' . $item['maxbuy'] : '';
+					$totalmaxbuy = isset($item['totalmaxbuy']) ? ',' . $item['totalmaxbuy'] : '';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'pid' => $item['pid'], 'selectorid' => $options['selectorid'])) . ('\' id=\'' . $options['selectorid'] . 'optiontitle') . $item['goodsid'] . '\'>&yen;' . $item['packageprice'] . ('</a>
+                            <input type=\'hidden\' id=\'' . $options['selectorid'] . 'packagegoods') . $item['goodsid'] . ('\' value=\'\' name=\'' . $options['selectorid'] . 'packagegoods[') . $item['goodsid'] . ']\'>
+                    <input type=\'hidden\' value=\'' . $item['packageprice'] . ',' . $item['commission1'] . ',' . $item['commission2'] . ',' . $item['commission3'] . ($total . $maxbuy . $totalmaxbuy . '\' name=\'' . $options['selectorid'] . 'packgoods') . $item['goodsid'] . '\' >';
 				}
 
-				$html .= "\r\n                        </td>\r\n                        <td><a href='javascript:void(0);' class='btn btn-default btn-sm' onclick='biz.selector_new.remove(this,\"" . $name . "\")' title='删除'>\r\n                        <i class='fa fa-times'></i></a></td>\r\n                    </tr>";
+				$html .= '
+                        </td>
+                        <td><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>
+                        <i class=\'fa fa-times\'></i></a></td>
+                    </tr>';
 			}
 			else if ($options['type'] == 'fullback') {
-				$html .= "\r\n                    <tr class='multi-product-item' data-" . $options['key'] . '=\'' . $item['goodsid'] . "' >\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                       <input type='hidden'  value='" . $item['goodsid'] . '\' name=\'' . $id . "'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px' onerror=\"this.src='../addons/ewei_shopv2/static/images/nopic.png'\">\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>";
-				$optionurl = (empty($options['optionurl']) ? 'sale/fullback/hasoption' : str_replace('.', '/', $options['optionurl']));
+				$html .= '
+                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['goodsid'] . '\' >
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>');
+				$optionurl = empty($options['optionurl']) ? 'sale/fullback/hasoption' : str_replace('.', '/', $options['optionurl']);
 
 				if (0 < $item['hasoption']) {
 					if ($item['type'] == 0) {
@@ -925,10 +1596,12 @@ if (!function_exists('tpl_selector_new')) {
 						$opcontent = $item['minallfullbackallratio'] . '% ~ ' . $item['maxallfullbackallratio'] . '%';
 					}
 
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . '\' id=\'optiontitle' . $item['goodsid'] . '\'>' . $opcontent . "</a>\r\n                            <input type='hidden' id='fullbackgoods" . $item['goodsid'] . '\' value=\'' . $item['optionid'] . '\' name=\'fullbackgoods[' . $item['goodsid'] . ']\'>';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . '\' id=\'optiontitle' . $item['goodsid'] . '\'>' . $opcontent . '</a>
+                            <input type=\'hidden\' id=\'fullbackgoods' . $item['goodsid'] . '\' value=\'' . $item['optionid'] . '\' name=\'fullbackgoods[' . $item['goodsid'] . ']\'>';
 
 					foreach ($item['option'] as $option) {
-						$html .= '<input type=\'hidden\' value=\'' . $option['allfullbackprice'] . ',' . $option['fullbackprice'] . ',' . $option['allfullbackratio'] . ',' . $option['fullbackratio'] . ',' . $option['day'] . "'\r\n                        name='fullbackgoodsoption" . $option['id'] . '\' >';
+						$html .= '<input type=\'hidden\' value=\'' . $option['allfullbackprice'] . ',' . $option['fullbackprice'] . ',' . $option['allfullbackratio'] . ',' . $option['fullbackratio'] . ',' . $option['day'] . '\'
+                        name=\'fullbackgoodsoption' . $option['id'] . '\' >';
 					}
 				}
 				else {
@@ -939,18 +1612,33 @@ if (!function_exists('tpl_selector_new')) {
 						$content = $item['minallfullbackallratio'] . '%';
 					}
 
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['goodsid'] . '\'>' . $content . "</a>\r\n                            <input type='hidden' id='fullbackgoods" . $item['goodsid'] . '\' value=\'\' name=\'fullbackgoods[' . $item['goodsid'] . "]'>\r\n                    <input type='hidden' value='" . $item['minallfullbackallprice'] . ',' . $item['fullbackprice'] . ',' . $item['minallfullbackallratio'] . ',' . $item['fullbackratio'] . ',' . $item['day'] . '\' name=\'goods' . $item['goodsid'] . '\' >';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . ('\' id=\'' . $options['selectorid'] . 'optiontitle') . $item['goodsid'] . '\'>' . $content . '</a>
+                            <input type=\'hidden\' id=\'fullbackgoods' . $item['goodsid'] . '\' value=\'\' name=\'fullbackgoods[' . $item['goodsid'] . ']\'>
+                    <input type=\'hidden\' value=\'' . $item['minallfullbackallprice'] . ',' . $item['fullbackprice'] . ',' . $item['minallfullbackallratio'] . ',' . $item['fullbackratio'] . ',' . $item['day'] . '\' name=\'goods' . $item['goodsid'] . '\' >';
 				}
 
-				$html .= "\r\n                        </td>\r\n                        <td style='text-align: right;'><a href='javascript:void(0);' class='btn btn-default btn-sm' onclick='biz.selector_new.remove(this,\"" . $name . "\")' title='删除'>\r\n                        <i class='fa fa-times'></i></a></td>\r\n                    </tr>";
+				$html .= '
+                        </td>
+                        <td style=\'text-align: right;\'><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>
+                        <i class=\'fa fa-times\'></i></a></td>
+                    </tr>';
 			}
 			else if ($options['type'] == 'live') {
-				$html .= "\r\n                    <tr class='multi-product-item' data-" . $options['key'] . '=\'' . $item['id'] . "' >\r\n                        <input type='hidden' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                       <input type='hidden'  value='" . $item['id'] . '\' name=\'' . $id . "'>\r\n                        <td style='width:80px;'>\r\n                            <img src='" . tomedia($item[$options['thumb']]) . "' style='width:70px;border:1px solid #ccc;padding:1px' onerror=\"this.src='../addons/ewei_shopv2/static/images/nopic.png'\">\r\n                        </td>\r\n                        <td style='width:220px;'>" . $item[$options['text']] . "</td>\r\n                        <td>";
-				$optionurl = (empty($options['optionurl']) ? 'live/room/hasoption' : str_replace('.', '/', $options['optionurl']));
+				$html .= '
+                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['id'] . '\' >
+                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item['id'] . '\' name=\'' . $id . '\'>
+                        <td style=\'width:80px;\'>
+                            <img src=\'' . tomedia($item[$options['thumb']]) . ('\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">
+                        </td>
+                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>
+                        <td>');
+				$optionurl = empty($options['optionurl']) ? 'live/room/hasoption' : str_replace('.', '/', $options['optionurl']);
 
 				if (0 < $item['hasoption']) {
 					$opcontent = '&yen;' . $item['minliveprice'] . ' ~ &yen;' . $item['maxliveprice'];
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['liveid'])) . '\' id=\'optiontitle' . $item['id'] . '\'>' . $opcontent . "</a>\r\n                            <input type='hidden' id='livegoods" . $item['id'] . '\' value=\'' . $item['optionid'] . '\' name=\'livegoods[' . $item['id'] . ']\'>';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['liveid'])) . '\' id=\'optiontitle' . $item['id'] . '\'>' . $opcontent . '</a>
+                            <input type=\'hidden\' id=\'livegoods' . $item['id'] . '\' value=\'' . $item['optionid'] . '\' name=\'livegoods[' . $item['id'] . ']\'>';
 
 					foreach ($item['option'] as $option) {
 						$html .= '<input type=\'hidden\' value=\'' . $option['liveprice'] . '\' name=\'livegoodsoption' . $option['id'] . '\' >';
@@ -958,13 +1646,24 @@ if (!function_exists('tpl_selector_new')) {
 				}
 				else {
 					$content = '&yen;' . $item['liveprice'];
-					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['liveid'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['id'] . '\'>' . $content . "</a>\r\n                            <input type='hidden' id='livegoods" . $item['id'] . '\' value=\'\' name=\'livegoods[' . $item['id'] . "]'>\r\n                    <input type='hidden' value='" . $item['liveprice'] . '\' name=\'goods' . $item['id'] . '\' >';
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['liveid'])) . ('\' id=\'' . $options['selectorid'] . 'optiontitle') . $item['id'] . '\'>' . $content . '</a>
+                            <input type=\'hidden\' id=\'livegoods' . $item['id'] . '\' value=\'\' name=\'livegoods[' . $item['id'] . ']\'>
+                    <input type=\'hidden\' value=\'' . $item['liveprice'] . '\' name=\'goods' . $item['id'] . '\' >';
 				}
 
-				$html .= "\r\n                        </td>\r\n                        <td style='text-align: right;'><a href='javascript:void(0);' class='btn btn-default btn-sm' onclick='biz.selector_new.remove(this,\"" . $name . "\")' title='删除'>\r\n                        <i class='fa fa-times'></i></a></td>\r\n                    </tr>";
+				$html .= '
+                        </td>
+                        <td style=\'text-align: right;\'><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>
+                        <i class=\'fa fa-times\'></i></a></td>
+                    </tr>';
 			}
 			else {
-				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['c']] . "' >\r\n                       <div class='input-group'>\r\n                       <input type='text' class='form-control img-textname' readonly='' value='" . $item[$options['text']] . "'>\r\n                       <input type='hidden'  value='" . $item[$options['key']] . '\' name=\'' . $id . "'>\r\n                       <div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector_new.remove(this,\"" . $name . "\")' type='button'><i class='fa fa-remove'></i></button>\r\n                       </div></div></div>";
+				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['c']] . '\' >
+                       <div class=\'input-group\'>
+                       <input type=\'text\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>
+                       <input type=\'hidden\'  value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>
+                       <div class=\'input-group-btn\'><button class=\'btn btn-default\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>
+                       </div></div></div>';
 			}
 		}
 
@@ -972,29 +1671,78 @@ if (!function_exists('tpl_selector_new')) {
 			$html .= '</div>';
 		}
 
-		$html .= "</tbody>\r\n                </table></div></div>";
+		$html .= '</tbody>
+                </table></div></div>';
 		return $html;
 	}
 }
 
 if (!function_exists('tpl_daterange')) {
-	function tpl_daterange($name, $value = array(), $time = false)
+	function tpl_daterange($name, $value = array(), $time = false, $hideclose = false)
 	{
 		global $_GPC;
-		$placeholder = (isset($value['placeholder']) ? $value['placeholder'] : '');
+		$placeholder = isset($value['placeholder']) ? $value['placeholder'] : '';
 		$s = '';
 		if (empty($time) && !defined('TPL_INIT_DATERANGE_DATE')) {
-			$s = "\r\n<script type=\"text/javascript\">\r\n\trequire([\"daterangepicker\"], function(){\r\n\t\t\$(function(){\r\n\t\t\t\$(\".daterange.daterange-date\").each(function(){\r\n\t\t\t\tvar elm = this;\r\n                var container =\$(elm).parent().prev();\r\n\t\t\t\t\$(this).daterangepicker({\r\n\t\t\t\t\tformat: \"YYYY-MM-DD\"\r\n\t\t\t\t}, function(start, end){\r\n\t\t\t\t\t\$(elm).find(\".date-title\").html(start.toDateStr() + \" 至 \" + end.toDateStr());\r\n\t\t\t\t\tcontainer.find(\":input:first\").val(start.toDateTimeStr());\r\n\t\t\t\t\tcontainer.find(\":input:last\").val(end.toDateTimeStr());\r\n\t\t\t\t});\r\n\t\t\t});\r\n\t\t});\r\n\t});\r\n</script> \r\n";
+			$s = '
+<script type="text/javascript">
+    myrequire(["moment"], function(){
+        require(["daterangepicker"], function(){
+            $(function(){
+                $(".daterange.daterange-date").each(function(){
+                    var elm = this;
+                    var container =$(elm).parent().prev();
+                    $(this).daterangepicker({
+                        format: "YYYY-MM-DD"
+                    }, function(start, end){
+                        $(elm).find(".date-title").html(start.toDateStr() + " 至 " + end.toDateStr());
+                        container.find(":input:first").val(start.toDateTimeStr());
+                        container.find(":input:last").val(end.toDateTimeStr());
+                    });
+                });
+            });
+        });
+	});
+</script> 
+';
 			define('TPL_INIT_DATERANGE_DATE', true);
 		}
 
 		if (!empty($time) && !defined('TPL_INIT_DATERANGE_TIME')) {
-			$s = "\r\n<script type=\"text/javascript\">\r\n\trequire([\"daterangepicker\"], function(){\r\n\t\t\$(function(){\r\n\t\t\t\$(\".daterange.daterange-time\").each(function(){\r\n\t\t\t\tvar elm = this;\r\n                 var container =\$(elm).parent().prev();\r\n\t\t\t\t\$(this).daterangepicker({\r\n\t\t\t\t\tformat: \"YYYY-MM-DD HH:mm\",\r\n\t\t\t\t\ttimePicker: true,\r\n\t\t\t\t\ttimePicker12Hour : false,\r\n\t\t\t\t\ttimePickerIncrement: 1,\r\n\t\t\t\t\tminuteStep: 1\r\n\t\t\t\t}, function(start, end){\r\n\t\t\t\t\t\$(elm).find(\".date-title\").html(start.toDateTimeStr() + \" 至 \" + end.toDateTimeStr());\r\n\t\t\t\t\tcontainer.find(\":input:first\").val(start.toDateTimeStr());\r\n\t\t\t\t\tcontainer.find(\":input:last\").val(end.toDateTimeStr());\r\n\t\t\t\t});\r\n\t\t\t});\r\n\t\t});\r\n\t});\r\n     function clearTime(obj){\r\n              \$(obj).prev().html(\"<span class=date-title>\" + \$(obj).attr(\"placeholder\") + \"</span>\");\r\n              \$(obj).parent().prev().find(\"input\").val(\"\");\r\n    }\r\n</script>\r\n";
+			$s = '
+<script type="text/javascript">
+    myrequire(["moment"], function(){
+        require(["daterangepicker"], function(){
+            $(function(){
+                $(".daterange.daterange-time").each(function(){
+                    var elm = this;
+                     var container =$(elm).parent().prev();
+                    $(this).daterangepicker({
+                        format: "YYYY-MM-DD HH:mm",
+                        timePicker: true,
+                        timePicker12Hour : false,
+                        timePickerIncrement: 1,
+                        minuteStep: 1
+                    }, function(start, end){
+                        $(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());
+                        container.find(":input:first").val(start.toDateTimeStr());
+                        container.find(":input:last").val(end.toDateTimeStr());
+                    });
+                });
+            });
+        });
+	});
+     function clearTime(obj){
+              $(obj).prev().html("<span class=date-title>" + $(obj).attr("placeholder") + "</span>");
+              $(obj).parent().prev().find("input").val("");
+    }
+</script>
+';
 			define('TPL_INIT_DATERANGE_TIME', true);
 		}
 
 		$str = $placeholder;
-		$small = (isset($value['sm']) ? $value['sm'] : true);
+		$small = isset($value['sm']) ? $value['sm'] : true;
 		$value['starttime'] = isset($value['starttime']) ? $value['starttime'] : ($_GPC[$name]['start'] ? $_GPC[$name]['start'] : '');
 		$value['endtime'] = isset($value['endtime']) ? $value['endtime'] : ($_GPC[$name]['end'] ? $_GPC[$name]['end'] : '');
 		if ($value['starttime'] && $value['endtime']) {
@@ -1006,7 +1754,16 @@ if (!function_exists('tpl_daterange')) {
 			}
 		}
 
-		$s .= "<div style=\"float:left\">\r\n\t<input name=\"" . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . "\" />\r\n\t<input name=\"" . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . "\" />\r\n           </div>\r\n          <div class=\"btn-group " . ($small ? 'btn-group-sm' : '') . '" style="' . $value['style'] . "padding-right:0;\"  >\r\n          \r\n\t<button style=\"width:240px\" class=\"btn btn-default daterange " . (!empty($time) ? 'daterange-time' : 'daterange-date') . '"  type="button"><span class="date-title">' . $str . "</span></button>\r\n        <button class=\"btn btn-default " . ($small ? 'btn-sm' : '') . '" " type="button" onclick="clearTime(this)" placeholder="' . $placeholder . "\"><i class=\"fa fa-remove\"></i></button>\r\n         </div>\r\n\t";
+		$s .= '<div style="float:left">
+	<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />
+	<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />
+           </div>
+          <div class="btn-group ' . ($small ? 'btn-group-sm' : '') . '" style="' . $value['style'] . 'padding-right:0;"  >
+          
+	<button style="width:240px" class="btn btn-default daterange ' . (!empty($time) ? 'daterange-time' : 'daterange-date') . '"  type="button"><span class="date-title">' . $str . '</span></button>
+        <button style="' . ($hideclose ? 'display: none' : '') . '"  class="btn btn-default ' . ($small ? 'btn-sm' : '') . '" " type="button" onclick="clearTime(this)" placeholder="' . $placeholder . '"><i class="fa fa-remove"></i></button>
+         </div>
+	';
 		return $s;
 	}
 }
@@ -1168,7 +1925,7 @@ if (!function_exists('my_scandir')) {
 
 		if ($handle = opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if (($file != '..') && ($file != '.')) {
+				if ($file != '..' && $file != '.') {
 					if (is_dir($dir . '/' . $file)) {
 						my_scandir($dir . '/' . $file);
 					}
@@ -1190,7 +1947,7 @@ if (!function_exists('cut_str')) {
 			$pa = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/";
 			preg_match_all($pa, $string, $t_string);
 
-			if ($sublen < (count($t_string[0]) - $start)) {
+			if ($sublen < count($t_string[0]) - $start) {
 				return join('', array_slice($t_string[0], $start, $sublen));
 			}
 
@@ -1204,7 +1961,7 @@ if (!function_exists('cut_str')) {
 		$i = 0;
 
 		while ($i < $strlen) {
-			if (($start <= $i) && ($i < ($start + $sublen))) {
+			if ($start <= $i && $i < $start + $sublen) {
 				if (129 < ord(substr($string, $i, 1))) {
 					$tmpstr .= substr($string, $i, 2);
 				}
@@ -1228,21 +1985,57 @@ if (!function_exists('save_media')) {
 	function save_media($url, $enforceQiniu = false)
 	{
 		global $_W;
+		setting_load('remote');
+
+		if (!empty($_W['setting']['remote']['type'])) {
+			if ($_W['setting']['remote']['type'] == ATTACH_FTP) {
+				$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['ftp']['url'] . '/';
+			}
+			else if ($_W['setting']['remote']['type'] == ATTACH_OSS) {
+				$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['alioss']['url'] . '/';
+			}
+			else if ($_W['setting']['remote']['type'] == ATTACH_QINIU) {
+				$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['qiniu']['url'] . '/';
+			}
+			else {
+				if ($_W['setting']['remote']['type'] == ATTACH_COS) {
+					$_W['attachurl'] = $_W['attachurl_remote'] = $_W['setting']['remote']['cos']['url'] . '/';
+				}
+			}
+		}
+
 		static $com;
 
 		if (!$com) {
 			$com = com('qiniu');
 		}
 
-		if ($com) {
+		$qiniu = m('common')->getSysset('qiniu');
+		$data = $qiniu['user'];
+		if ($com && 0 < $data['upload']) {
 			$qiniu_url = $com->save($url, NULL, $enforceQiniu);
 			if (!empty($qiniu_url) && !is_error($qiniu_url)) {
 				return $qiniu_url;
 			}
 		}
+		else {
+			$data = m('cache')->getArray('qiniu', 'global');
+			$path = IA_ROOT . '/addons/ewei_shopv2/data/global';
+			if (empty($data['upload']) && is_file($path . '/qiniu.cache')) {
+				$data_authcode = authcode(file_get_contents($path . '/qiniu.cache'), 'DECODE', 'global');
+				$data = json_decode($data_authcode, true);
+			}
+
+			if ($com && 0 < $data['upload']) {
+				$qiniu_url = $com->save($url, $data, $enforceQiniu);
+				if (!empty($qiniu_url) && !is_error($qiniu_url)) {
+					return $qiniu_url;
+				}
+			}
+		}
 
 		$ext = strrchr($url, '.');
-		if (($ext != '.jpeg') && ($ext != '.gif') && ($ext != '.jpg') && ($ext != '.png')) {
+		if ($ext != '.jpeg' && $ext != '.gif' && $ext != '.jpg' && $ext != '.png') {
 			return $url;
 		}
 
@@ -1258,6 +2051,15 @@ if (!function_exists('save_media')) {
 			}
 		}
 
+		if (strexists($url, $_W['siteroot']) && !strexists($url, '/addons/')) {
+			$urls = parse_url($url);
+			$url = substr($urls['path'], strpos($urls['path'], 'images'));
+
+			if (file_exists(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/' . $url)) {
+				return $url;
+			}
+		}
+
 		return $url;
 	}
 }
@@ -1265,35 +2067,93 @@ if (!function_exists('save_media')) {
 if (!function_exists('tpl_form_field_category_3level')) {
 	function tpl_form_field_category_3level($name, $parents, $children, $parentid, $childid, $thirdid)
 	{
-		$html = "\r\n<script type=\"text/javascript\">\r\n\twindow._" . $name . ' = ' . json_encode($children) . ";\r\n</script>";
+		$html = '
+<script type="text/javascript">
+	window._' . $name . ' = ' . json_encode($children) . ';
+</script>';
 
 		if (!defined('TPL_INIT_CATEGORY_THIRD')) {
-			$html .= "\t\r\n<script type=\"text/javascript\">\r\n\t  function renderCategoryThird(obj, name){\r\n\t\tvar index = obj.options[obj.selectedIndex].value;\r\n\t\trequire(['jquery', 'util'], function(\$, u){\r\n\t\t\t\$selectChild = \$('#'+name+'_child');\r\n                                                      \$selectThird = \$('#'+name+'_third');\r\n\t\t\tvar html = '<option value=\"0\">请选择二级分类</option>';\r\n                                                      var html1 = '<option value=\"0\">请选择三级分类</option>';\r\n\t\t\tif (!window['_'+name] || !window['_'+name][index]) {\r\n\t\t\t\t\$selectChild.html(html); \r\n                                                                        \$selectThird.html(html1);\r\n\t\t\t\treturn false;\r\n\t\t\t}\r\n\t\t\tfor(var i=0; i< window['_'+name][index].length; i++){\r\n\t\t\t\thtml += '<option value=\"'+window['_'+name][index][i]['id']+'\">'+window['_'+name][index][i]['name']+'</option>';\r\n\t\t\t}\r\n\t\t\t\$selectChild.html(html);\r\n                                                    \$selectThird.html(html1);\r\n\t\t});\r\n\t}\r\n        function renderCategoryThird1(obj, name){\r\n\t\tvar index = obj.options[obj.selectedIndex].value;\r\n\t\trequire(['jquery', 'util'], function(\$, u){\r\n\t\t\t\$selectChild = \$('#'+name+'_third');\r\n\t\t\tvar html = '<option value=\"0\">请选择三级分类</option>';\r\n\t\t\tif (!window['_'+name] || !window['_'+name][index]) {\r\n\t\t\t\t\$selectChild.html(html);\r\n\t\t\t\treturn false;\r\n\t\t\t}\r\n\t\t\tfor(var i=0; i< window['_'+name][index].length; i++){\r\n\t\t\t\thtml += '<option value=\"'+window['_'+name][index][i]['id']+'\">'+window['_'+name][index][i]['name']+'</option>';\r\n\t\t\t}\r\n\t\t\t\$selectChild.html(html);\r\n\t\t});\r\n\t}\r\n</script>\r\n\t\t\t";
+			$html .= '	
+<script type="text/javascript">
+	  function renderCategoryThird(obj, name){
+		var index = obj.options[obj.selectedIndex].value;
+		require([\'jquery\', \'util\'], function($, u){
+			$selectChild = $(\'#\'+name+\'_child\');
+                                                      $selectThird = $(\'#\'+name+\'_third\');
+			var html = \'<option value="0">请选择二级分类</option>\';
+                                                      var html1 = \'<option value="0">请选择三级分类</option>\';
+			if (!window[\'_\'+name] || !window[\'_\'+name][index]) {
+				$selectChild.html(html); 
+                                                                        $selectThird.html(html1);
+				return false;
+			}
+			for(var i=0; i< window[\'_\'+name][index].length; i++){
+				html += \'<option value="\'+window[\'_\'+name][index][i][\'id\']+\'">\'+window[\'_\'+name][index][i][\'name\']+\'</option>\';
+			}
+			$selectChild.html(html);
+                                                    $selectThird.html(html1);
+		});
+	}
+        function renderCategoryThird1(obj, name){
+		var index = obj.options[obj.selectedIndex].value;
+		require([\'jquery\', \'util\'], function($, u){
+			$selectChild = $(\'#\'+name+\'_third\');
+			var html = \'<option value="0">请选择三级分类</option>\';
+			if (!window[\'_\'+name] || !window[\'_\'+name][index]) {
+				$selectChild.html(html);
+				return false;
+			}
+			for(var i=0; i< window[\'_\'+name][index].length; i++){
+				html += \'<option value="\'+window[\'_\'+name][index][i][\'id\']+\'">\'+window[\'_\'+name][index][i][\'name\']+\'</option>\';
+			}
+			$selectChild.html(html);
+		});
+	}
+</script>
+			';
 			define('TPL_INIT_CATEGORY_THIRD', true);
 		}
 
-		$html .= "<div class=\"row row-fix tpl-category-container\">\r\n\t<div class=\"col-xs-12 col-sm-4 col-md-4 col-lg-4\">\r\n\t\t<select class=\"form-control tpl-category-parent\" id=\"" . $name . '_parent" name="' . $name . '[parentid]" onchange="renderCategoryThird(this,\'' . $name . "')\">\r\n\t\t\t<option value=\"0\">请选择一级分类</option>";
+		$html .= '<div class="row row-fix tpl-category-container">
+	<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+		<select class="form-control tpl-category-parent" id="' . $name . '_parent" name="' . $name . '[parentid]" onchange="renderCategoryThird(this,\'' . $name . '\')">
+			<option value="0">请选择一级分类</option>';
 		$ops = '';
 
 		foreach ($parents as $row) {
-			$html .= "\r\n\t\t\t<option value=\"" . $row['id'] . '" ' . ($row['id'] == $parentid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+			$html .= '
+			<option value="' . $row['id'] . '" ' . ($row['id'] == $parentid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
 		}
 
-		$html .= "\r\n\t\t</select>\r\n\t</div>\r\n\t<div class=\"col-xs-12 col-sm-4 col-md-4 col-lg-4\">\r\n\t\t<select class=\"form-control tpl-category-child\" id=\"" . $name . '_child" name="' . $name . '[childid]" onchange="renderCategoryThird1(this,\'' . $name . "')\">\r\n\t\t\t<option value=\"0\">请选择二级分类</option>";
+		$html .= '
+		</select>
+	</div>
+	<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+		<select class="form-control tpl-category-child" id="' . $name . '_child" name="' . $name . '[childid]" onchange="renderCategoryThird1(this,\'' . $name . '\')">
+			<option value="0">请选择二级分类</option>';
 		if (!empty($parentid) && !empty($children[$parentid])) {
 			foreach ($children[$parentid] as $row) {
-				$html .= "\r\n\t\t\t<option value=\"" . $row['id'] . '"' . ($row['id'] == $childid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+				$html .= '
+			<option value="' . $row['id'] . '"' . ($row['id'] == $childid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
 			}
 		}
 
-		$html .= "\r\n\t\t</select> \r\n\t</div> \r\n                  <div class=\"col-xs-12 col-sm-4 col-md-4 col-lg-4\">\r\n\t\t<select class=\"form-control tpl-category-child\" id=\"" . $name . '_third" name="' . $name . "[thirdid]\">\r\n\t\t\t<option value=\"0\">请选择三级分类</option>";
+		$html .= '
+		</select> 
+	</div> 
+                  <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+		<select class="form-control tpl-category-child" id="' . $name . '_third" name="' . $name . '[thirdid]">
+			<option value="0">请选择三级分类</option>';
 		if (!empty($childid) && !empty($children[$childid])) {
 			foreach ($children[$childid] as $row) {
-				$html .= "\r\n\t\t\t<option value=\"" . $row['id'] . '"' . ($row['id'] == $thirdid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
+				$html .= '
+			<option value="' . $row['id'] . '"' . ($row['id'] == $thirdid ? 'selected="selected"' : '') . '>' . $row['name'] . '</option>';
 			}
 		}
 
-		$html .= "</select>\r\n\t</div>\r\n</div>";
+		$html .= '</select>
+	</div>
+</div>';
 		return $html;
 	}
 }
@@ -1332,7 +2192,16 @@ if (!function_exists('array_column')) {
 if (!function_exists('is_utf8')) {
 	function is_utf8($str)
 	{
-		return preg_match("%^(?:\r\n            [\\x09\\x0A\\x0D\\x20-\\x7E]              # ASCII\r\n            | [\\xC2-\\xDF][\\x80-\\xBF]             # non-overlong 2-byte\r\n            | \\xE0[\\xA0-\\xBF][\\x80-\\xBF]         # excluding overlongs\r\n            | [\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]{2}  # straight 3-byte\r\n            | \\xED[\\x80-\\x9F][\\x80-\\xBF]         # excluding surrogates\r\n            | \\xF0[\\x90-\\xBF][\\x80-\\xBF]{2}      # planes 1-3\r\n            | [\\xF1-\\xF3][\\x80-\\xBF]{3}          # planes 4-15\r\n            | \\xF4[\\x80-\\x8F][\\x80-\\xBF]{2}      # plane 16\r\n            )*\$%xs", $str);
+		return preg_match('%^(?:
+            [\\x09\\x0A\\x0D\\x20-\\x7E]              # ASCII
+            | [\\xC2-\\xDF][\\x80-\\xBF]             # non-overlong 2-byte
+            | \\xE0[\\xA0-\\xBF][\\x80-\\xBF]         # excluding overlongs
+            | [\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]{2}  # straight 3-byte
+            | \\xED[\\x80-\\x9F][\\x80-\\xBF]         # excluding surrogates
+            | \\xF0[\\x90-\\xBF][\\x80-\\xBF]{2}      # planes 1-3
+            | [\\xF1-\\xF3][\\x80-\\xBF]{3}          # planes 4-15
+            | \\xF4[\\x80-\\x8F][\\x80-\\xBF]{2}      # plane 16
+            )*$%xs', $str);
 	}
 }
 
@@ -1345,7 +2214,7 @@ if (!function_exists('price_format')) {
 			$price = $prices[0];
 		}
 		else {
-			if (isset($prices[1][1]) && ($prices[1][1] <= 0)) {
+			if (isset($prices[1][1]) && $prices[1][1] <= 0) {
 				$price = $prices[0] . '.' . $prices[1][0];
 			}
 		}
@@ -1357,7 +2226,7 @@ if (!function_exists('price_format')) {
 if (!function_exists('createRedPack')) {
 	function createRedPack($money, $sum, $min = 0.01)
 	{
-		if (($money / $sum) < $min) {
+		if ($money / $sum < $min) {
 			return false;
 		}
 
@@ -1366,7 +2235,7 @@ if (!function_exists('createRedPack')) {
 		$i = 0;
 
 		while ($i < $sum) {
-			if (($money / $sum) == 0.01) {
+			if ($money / $sum == 0.01) {
 				array_push($array_money, 0.01);
 				continue;
 			}
@@ -1378,9 +2247,9 @@ if (!function_exists('createRedPack')) {
 			}
 
 			$r = lcg_value();
-			$max = ($_leftMoneyPackage['remainMoney'] / $_leftMoneyPackage['remainSize']) * 2;
+			$max = $_leftMoneyPackage['remainMoney'] / $_leftMoneyPackage['remainSize'] * 2;
 			$tem_money = $r * $max;
-			$tem_money = ($tem_money <= $min ? 0.01 : $tem_money);
+			$tem_money = $tem_money <= $min ? 0.01 : $tem_money;
 			$tem_money = floor($tem_money * 100) / 100;
 			--$_leftMoneyPackage['remainSize'];
 			$_leftMoneyPackage['remainMoney'] -= $tem_money;
@@ -1403,11 +2272,11 @@ if (!function_exists('redis')) {
 				return error(-1, 'PHP 未安装 redis 扩展');
 			}
 
-			if (!isset($_W['config']['setting']['redis'])) {
+			if (!isset($_W['config']['setting']['redis']) && !isset($_W['config']['setting']['ewei_shop_redis'])) {
 				return error(-1, '未配置 redis, 请检查 data/config.php 中参数设置');
 			}
 
-			$config = $_W['config']['setting']['redis'];
+			$config = isset($_W['config']['setting']['ewei_shop_redis']) ? $_W['config']['setting']['ewei_shop_redis'] : $_W['config']['setting']['redis'];
 
 			if (empty($config['server'])) {
 				$config['server'] = '127.0.0.1';
@@ -1471,7 +2340,7 @@ if (!function_exists('logg')) {
 	function logg($name, $data)
 	{
 		global $_W;
-		$data = (is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : $data);
+		$data = is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : $data;
 		file_put_contents(IA_ROOT . '/' . $name, $data);
 	}
 }
@@ -1479,7 +2348,7 @@ if (!function_exists('logg')) {
 if (!function_exists('is_wxerror')) {
 	function is_wxerror($data)
 	{
-		if (!is_array($data) || !array_key_exists('errcode', $data) || (array_key_exists('errcode', $data) && ($data['errcode'] == 0))) {
+		if (!is_array($data) || !array_key_exists('errcode', $data) || array_key_exists('errcode', $data) && $data['errcode'] == 0) {
 			return false;
 		}
 
@@ -1546,12 +2415,54 @@ if (!function_exists('tpl_form_field_image2')) {
 		$s = '';
 
 		if (!defined('TPL_INIT_IMAGE')) {
-			$s = "\r\n\t\t<script type=\"text/javascript\">\r\n\t\t\tfunction showImageDialog(elm, opts, options) {\r\n\t\t\t\trequire([\"util\"], function(util){\r\n\t\t\t\t\tvar btn = \$(elm);\r\n\t\t\t\t\tvar ipt = btn.parent().prev();\r\n\t\t\t\t\tvar val = ipt.val();\r\n\t\t\t\t\tvar img = ipt.parent().next().children();\r\n\t\t\t\t\toptions = " . str_replace('"', '\'', json_encode($options)) . ";\r\n\t\t\t\t\tutil.image(val, function(url){\r\n\t\t\t\t\t\tif(url.url){\r\n\t\t\t\t\t\t\tif(img.length > 0){\r\n\t\t\t\t\t\t\t\timg.get(0).src = url.url;\r\n\t\t\t\t\t\t\t\timg.closest(\".input-group\").show();\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\tipt.val(url.attachment);\r\n\t\t\t\t\t\t\tipt.attr(\"filename\",url.filename);\r\n\t\t\t\t\t\t\tipt.attr(\"url\",url.url);\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t\tif(url.media_id){\r\n\t\t\t\t\t\t\tif(img.length > 0){\r\n\t\t\t\t\t\t\t\timg.get(0).src = \"\";\r\n\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\tipt.val(url.media_id);\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t}, options);\r\n\t\t\t\t});\r\n\t\t\t}\r\n\t\t\tfunction deleteImage(elm){\r\n\t\t\t\trequire([\"jquery\"], function(\$){\r\n\t\t\t\t\t\$(elm).prev().attr(\"src\", \"../addons/ewei_shopv2/static/images/default-pic.jpg\");\r\n\t\t\t\t\t\$(elm).parent().prev().find(\"input\").val(\"\");\r\n\t\t\t\t});\r\n\t\t\t}\r\n\t\t</script>";
+			$s = '
+		<script type="text/javascript">
+			function showImageDialog(elm, opts, options) {
+				require(["util"], function(util){
+					var btn = $(elm);
+					var ipt = btn.parent().prev();
+					var val = ipt.val();
+					var img = ipt.parent().next().children();
+					options = ' . str_replace('"', '\'', json_encode($options)) . ';
+					util.image(val, function(url){
+						if(url.url){
+							if(img.length > 0){
+								img.get(0).src = url.url;
+								img.closest(".input-group").show();
+							}
+							ipt.val(url.attachment);
+							ipt.attr("filename",url.filename);
+							ipt.attr("url",url.url);
+						}
+						if(url.media_id){
+							if(img.length > 0){
+								img.get(0).src = "";
+							}
+							ipt.val(url.media_id);
+						}
+					}, options);
+				});
+			}
+			function deleteImage(elm){
+				require(["jquery"], function($){
+					$(elm).prev().attr("src", "../addons/ewei_shopv2/static/images/default-pic.jpg");
+					$(elm).parent().prev().find("input").val("");
+				});
+			}
+		</script>';
 			define('TPL_INIT_IMAGE', true);
 		}
 
-		$s .= "\r\n\t\t<div class=\"input-group " . $options['class_extra'] . "\">\r\n\t\t\t<input type=\"text\" name=\"" . $name . '" value="' . $value . '"' . ($options['extras']['text'] ? $options['extras']['text'] : '') . " class=\"form-control\" autocomplete=\"off\">\r\n\t\t\t<span class=\"input-group-btn\">\r\n\t\t\t\t<button class=\"btn btn-primary\" type=\"button\" onclick=\"showImageDialog(this);\">选择图片</button>\r\n\t\t\t</span>\r\n\t\t</div>";
-		$s .= '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;"><img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . ($options['extras']['image'] ? $options['extras']['image'] : '') . " width=\"150\" />\r\n                <em class=\"close\" style=\"position:absolute; top: 0px; right: -14px;\" title=\"删除这张图片\" onclick=\"deleteImage(this)\">×</em>\r\n            </div>";
+		$s .= '
+		<div class="input-group ' . $options['class_extra'] . '">
+			<input type="text" name="' . $name . '" value="' . $value . '"' . ($options['extras']['text'] ? $options['extras']['text'] : '') . ' class="form-control" autocomplete="off">
+			<span class="input-group-btn">
+				<button class="btn btn-primary" type="button" onclick="showImageDialog(this);">选择图片</button>
+			</span>
+		</div>';
+		$s .= '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;"><img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . ($options['extras']['image'] ? $options['extras']['image'] : '') . ' width="150" />
+                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>
+            </div>';
 		return $s;
 	}
 }
@@ -1572,14 +2483,41 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 		$s = '';
 
 		if (!defined('TPL_INIT_MULTI_IMAGE')) {
-			$s = "\r\n<script type=\"text/javascript\">\r\n\tfunction uploadMultiImage(elm) {\r\n\t\tvar name = \$(elm).next().val();\r\n\t\tutil.image( \"\", function(urls){\r\n\t\t\t\$.each(urls, function(idx, url){\r\n\t\t\t\t\$(elm).parent().parent().next().append('<div class=\"multi-item\"><img onerror=\"this.src=\\'../addons/ewei_shopv2/static/images/nopic.png\\'; this.title=\\'图片未找到.\\'\" src=\"'+url.url+'\" class=\"img-responsive img-thumbnail\"><input type=\"hidden\" name=\"'+name+'[]\" value=\"'+url.attachment+'\"><em class=\"close\" title=\"删除这张图片\" onclick=\"deleteMultiImage(this)\">×</em></div>');\r\n\t\t\t});\r\n\t\t}, " . json_encode($options) . ");\r\n\t}\r\n\tfunction deleteMultiImage(elm){\r\n\t\trequire([\"jquery\"], function(\$){\r\n\t\t\t\$(elm).parent().remove();\r\n\t\t});\r\n\t}\r\n</script>";
+			$s = '
+<script type="text/javascript">
+	function uploadMultiImage(elm) {
+		var name = $(elm).next().val();
+		util.image( "", function(urls){
+			$.each(urls, function(idx, url){
+				$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'../addons/ewei_shopv2/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.attachment+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em></div>\');
+			});
+		}, ' . json_encode($options) . ');
+	}
+	function deleteMultiImage(elm){
+		require(["jquery"], function($){
+			$(elm).parent().remove();
+		});
+	}
+</script>';
 			define('TPL_INIT_MULTI_IMAGE', true);
 		}
 
-		$s .= "<div class=\"input-group\">\r\n\t<input type=\"text\" class=\"form-control\" readonly=\"readonly\" value=\"\" placeholder=\"批量上传图片\" autocomplete=\"off\">\r\n\t<span class=\"input-group-btn\">\r\n\t\t<button class=\"btn btn-primary\" type=\"button\" onclick=\"uploadMultiImage(this);\">选择图片</button>\r\n\t\t<input type=\"hidden\" value=\"" . $name . "\" />\r\n\t</span>\r\n</div>\r\n<div class=\"input-group multi-img-details\">";
-		if (is_array($value) && (0 < count($value))) {
+		$s .= '<div class="input-group">
+	<input type="text" class="form-control" readonly="readonly" value="" placeholder="批量上传图片" autocomplete="off">
+	<span class="input-group-btn">
+		<button class="btn btn-primary" type="button" onclick="uploadMultiImage(this);">选择图片</button>
+		<input type="hidden" value="' . $name . '" />
+	</span>
+</div>
+<div class="input-group multi-img-details">';
+		if (is_array($value) && 0 < count($value)) {
 			foreach ($value as $row) {
-				$s .= "\r\n<div class=\"multi-item\">\r\n\t<img src=\"" . tomedia($row) . "\" onerror=\"this.src='../addons/ewei_shopv2/static/images/nopic.png'; this.title='图片未找到.'\" class=\"img-responsive img-thumbnail\">\r\n\t<input type=\"hidden\" name=\"" . $name . '[]" value="' . $row . "\" >\r\n\t<em class=\"close\" title=\"删除这张图片\" onclick=\"deleteMultiImage(this)\">×</em>\r\n</div>";
+				$s .= '
+<div class="multi-item">
+	<img src="' . tomedia($row) . '" onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">
+	<input type="hidden" name="' . $name . '[]" value="' . $row . '" >
+	<em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em>
+</div>';
 			}
 		}
 
@@ -1588,15 +2526,14 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 	}
 }
 
-if (!(function_exists('tpl_form_field_video2'))) {
+if (!function_exists('tpl_form_field_video2')) {
 	function tpl_form_field_video2($name, $value = '', $options = array())
 	{
-		$options['btntext'] = ((!(empty($options['btntext'])) ? $options['btntext'] : '选择视频'));
+		$options['btntext'] = !empty($options['btntext']) ? $options['btntext'] : '选择视频';
 
 		if ($options['disabled']) {
 			$options['readonly'] = true;
 		}
-
 
 		$html = '';
 		$html .= '<div class="input-group"';
@@ -1605,28 +2542,24 @@ if (!(function_exists('tpl_form_field_video2'))) {
 			$html .= ' style="width: 100%;"';
 		}
 
-
 		$html .= '><input class="form-control" id="select-video-' . $name . '" name="' . $name . '" value="' . $value . '" placeholder="' . $options['placeholder'] . '"';
 
 		if ($options['readonly']) {
 			$html .= ' readonly="readonly"';
 		}
 
-
 		$html .= '/>';
 
-		if (!($options['disabled'])) {
+		if (!$options['disabled']) {
 			$html .= '<span class="input-group-addon btn btn-primary" data-toggle="selectVideo" data-input="#select-video-' . $name . '" data-network="' . $options['network'] . '">' . $options['btntext'] . '</span>';
 		}
-
 
 		$html .= '</div>';
 		$html .= '<div class="input-group"><div class="multi-item" style="display: block" title="预览视频" data-toggle="previewVideo" data-input="#select-video-' . $name . '"><div class="img-responsive img-thumbnail img-video" style="width: 100px; height: 100px; position: relative; text-align: center; cursor: pointer;" src=""><i class="fa fa-play-circle" style="font-size: 60px; line-height: 90px; color: #999;"></i></div>';
 
-		if (!($options['disabled'])) {
+		if (!$options['disabled']) {
 			$html .= '<em class="close" title="移除视频" data-toggle="previewVideoDel" data-element="#select-video-' . $name . '">×</em>';
 		}
-
 
 		$html .= '</div></div>';
 		return $html;
@@ -1660,7 +2593,7 @@ if (!function_exists('pagination2')) {
 
 		if (!empty($total)) {
 			$pdata['tcount'] = $total;
-			$pdata['tpage'] = empty($pageSize) || ($pageSize < 0) ? 1 : ceil($total / $pageSize);
+			$pdata['tpage'] = empty($pageSize) || $pageSize < 0 ? 1 : ceil($total / $pageSize);
 
 			if (1 < $pdata['tpage']) {
 				$html .= '<ul class="pagination pagination-centered">';
@@ -1709,20 +2642,20 @@ if (!function_exists('pagination2')) {
 					$html .= '<li><a ' . $pdata['paa'] . ' class="pager-nav">&laquo;上一页</a></li>';
 				}
 
-				if (!$context['before'] && ($context['before'] != 0)) {
+				if (!$context['before'] && $context['before'] != 0) {
 					$context['before'] = 3;
 				}
 
-				if (!$context['after'] && ($context['after'] != 0)) {
+				if (!$context['after'] && $context['after'] != 0) {
 					$context['after'] = 2;
 				}
 
-				if (($context['after'] != 0) && ($context['before'] != 0)) {
+				if ($context['after'] != 0 && $context['before'] != 0) {
 					$range = array();
 					$range['start'] = max(1, $pdata['cindex'] - $context['before']);
 					$range['end'] = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
 
-					if (($range['end'] - $range['start']) < ($context['before'] + $context['after'])) {
+					if ($range['end'] - $range['start'] < $context['before'] + $context['after']) {
 						$range['end'] = min($pdata['tpage'], $range['start'] + $context['before'] + $context['after']);
 						$range['start'] = max(1, $range['end'] - $context['before'] - $context['after']);
 					}
@@ -1741,7 +2674,7 @@ if (!function_exists('pagination2')) {
 							$aa = 'href="?' . http_build_query($_GET) . '"';
 						}
 
-						$html .= ($i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : '<li><a ' . $aa . '>' . $i . '</a></li>');
+						$html .= $i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : '<li><a ' . $aa . '>' . $i . '</a></li>';
 						++$i;
 					}
 				}
@@ -1754,11 +2687,20 @@ if (!function_exists('pagination2')) {
 				$html .= '</ul>';
 
 				if (5 < $pdata['tpage']) {
-					$html .= '<ul class="pagination pagination-centered">';
-					$html .= '<li><span class=\'input\' style=\'margin-right: 0;\'><input value=\'' . $pdata['cindex'] . '\' type=\'tel\'/></span></li>';
-					$html .= '<li><a ' . $pdata['jump'] . ' class="pager-nav pager-nav-jump">跳转</a></li>';
-					$html .= '</ul>';
-					$html .= '<script>$(function() {$(".pagination .input input").bind("input propertychange", function() {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href");elm.attr("href", href+val)}).on("keydown", function(e) {if (e.keyCode == "13") {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href"); location.href=href+val;}});})</script>';
+					if ($context['isajax']) {
+						$html .= '<ul class="pagination pagination-centered">';
+						$html .= '<li><span class=\'input\' style=\'margin-right: 0;\'><input id=\'go\' value=\'' . $pdata['cindex'] . '\' type=\'tel\'/></span></li>';
+						$html .= '<li><a  href=\'javascript:;\' onclick=\'ajaxPage()\'  class="pager-nav pager-nav-jump">跳转</a></li>';
+						$html .= '</ul>';
+						$html .= '<script>function ajaxPage(){var numPage = $("#go").val();' . $callbackfunc . '("' . $url . '",numPage,this)}</script>';
+					}
+					else {
+						$html .= '<ul class="pagination pagination-centered">';
+						$html .= '<li><span class=\'input\' style=\'margin-right: 0;\'><input value=\'' . $pdata['cindex'] . '\' type=\'tel\'/></span></li>';
+						$html .= '<li><a ' . $pdata['jump'] . ' class="pager-nav pager-nav-jump">跳转</a></li>';
+						$html .= '</ul>';
+						$html .= '<script>$(function() {$(".pagination .input input").bind("input propertychange", function() {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href");elm.attr("href", href+val)}).on("keydown", function(e) {if (e.keyCode == "13") {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href"); location.href=href+val;}});})</script>';
+					}
 				}
 			}
 		}
@@ -1767,67 +2709,128 @@ if (!function_exists('pagination2')) {
 		return $html;
 	}
 }
-if (!(function_exists('tpl_form_field_eweishop_daterange'))) {
+
+if (!function_exists('tpl_form_field_eweishop_daterange')) {
 	function tpl_form_field_eweishop_daterange($name, $value = array(), $time = false)
 	{
 		$s = '';
-		if (empty($time) && !(defined('TPL_INIT_DATERANGE_DATE'))) {
-			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'myrequire(["daterangepicker"], function(){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-date").each(function(){' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\t" . 'startDate: $(elm).prev().prev().val(),' . "\r\n\t\t\t\t\t" . 'endDate: $(elm).prev().val(),' . "\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD"' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateStr() + " 至 " + end.toDateStr());' . "\r\n\t\t\t\t\t" . '$(elm).prev().prev().val(start.toDateStr());' . "\r\n\t\t\t\t\t" . '$(elm).prev().val(end.toDateStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '</script>' . "\r\n";
+		if (empty($time) && !defined('TPL_INIT_DATERANGE_DATE')) {
+			$s = '
+<script type="text/javascript">
+    myrequire(["moment"], function(){
+        myrequire(["daterangepicker"], function(){
+            $(function(){
+                $(".daterange.daterange-date").each(function(){
+                    var elm = this;
+                    $(this).daterangepicker({
+                        startDate: $(elm).prev().prev().val(),
+                        endDate: $(elm).prev().val(),
+                        format: "YYYY-MM-DD"
+                    }, function(start, end){
+                        $(elm).find(".date-title").html(start.toDateStr() + " 至 " + end.toDateStr());
+                        $(elm).prev().prev().val(start.toDateStr());
+                        $(elm).prev().val(end.toDateStr());
+                    });
+                });
+            });
+        });
+	});
+</script>
+';
 			define('TPL_INIT_DATERANGE_DATE', true);
 		}
 
-
-		if (!(empty($time)) && !(defined('TPL_INIT_DATERANGE_TIME'))) {
-			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'myrequire(["daterangepicker"], function(){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-time").each(function(){' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\t" . 'startDate: $(elm).prev().prev().val(),' . "\r\n\t\t\t\t\t" . 'endDate: $(elm).prev().val(),' . "\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD HH:mm",' . "\r\n\t\t\t\t\t" . 'timePicker: true,' . "\r\n\t\t\t\t\t" . 'timePicker12Hour : false,' . "\r\n\t\t\t\t\t" . 'timePickerIncrement: 1,' . "\r\n\t\t\t\t\t" . 'minuteStep: 1' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());' . "\r\n\t\t\t\t\t" . '$(elm).prev().prev().val(start.toDateTimeStr());' . "\r\n\t\t\t\t\t" . '$(elm).prev().val(end.toDateTimeStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '</script>' . "\r\n";
+		if (!empty($time) && !defined('TPL_INIT_DATERANGE_TIME')) {
+			$s = '
+<script type="text/javascript">
+    myrequire(["moment"], function(){
+        myrequire(["daterangepicker"], function(){
+            $(function(){
+                $(".daterange.daterange-time").each(function(){
+                    var elm = this;
+                    $(this).daterangepicker({
+                        startDate: $(elm).prev().prev().val(),
+                        endDate: $(elm).prev().val(),
+                        format: "YYYY-MM-DD HH:mm",
+                        timePicker: true,
+                        timePicker12Hour : false,
+                        timePickerIncrement: 1,
+                        minuteStep: 1
+                    }, function(start, end){
+                        $(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());
+                        $(elm).prev().prev().val(start.toDateTimeStr());
+                        $(elm).prev().val(end.toDateTimeStr());
+                    });
+                });
+            });
+        });
+	});
+</script>
+';
 			define('TPL_INIT_DATERANGE_TIME', true);
 		}
 
-
-		if (($value['starttime'] !== false) && ($value['start'] !== false)) {
+		if ($value['starttime'] !== false && $value['start'] !== false) {
 			if ($value['start']) {
-				$value['starttime'] = ((empty($time) ? date('Y-m-d', strtotime($value['start'])) : date('Y-m-d H:i', strtotime($value['start']))));
+				$value['starttime'] = empty($time) ? date('Y-m-d', strtotime($value['start'])) : date('Y-m-d H:i', strtotime($value['start']));
 			}
 
-
-			$value['starttime'] = ((empty($value['starttime']) ? ((empty($time) ? date('Y-m-d') : date('Y-m-d H:i'))) : $value['starttime']));
+			$value['starttime'] = empty($value['starttime']) ? (empty($time) ? date('Y-m-d') : date('Y-m-d H:i')) : $value['starttime'];
 		}
-		 else {
+		else {
 			$value['starttime'] = '请选择';
 		}
 
-		if (($value['endtime'] !== false) && ($value['end'] !== false)) {
+		if ($value['endtime'] !== false && $value['end'] !== false) {
 			if ($value['end']) {
-				$value['endtime'] = ((empty($time) ? date('Y-m-d', strtotime($value['end'])) : date('Y-m-d H:i', strtotime($value['end']))));
+				$value['endtime'] = empty($time) ? date('Y-m-d', strtotime($value['end'])) : date('Y-m-d H:i', strtotime($value['end']));
 			}
 
-
-			$value['endtime'] = ((empty($value['endtime']) ? $value['starttime'] : $value['endtime']));
+			$value['endtime'] = empty($value['endtime']) ? $value['starttime'] : $value['endtime'];
 		}
-		 else {
+		else {
 			$value['endtime'] = '请选择';
 		}
 
-		$s .= "\r\n\t" . '<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />' . "\r\n\t" . '<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />' . "\r\n\t" . '<button class="btn btn-default daterange ' . ((!(empty($time)) ? 'daterange-time' : 'daterange-date')) . '" type="button"><span class="date-title">' . $value['starttime'] . ' 至 ' . $value['endtime'] . '</span> <i class="fa fa-calendar"></i></button>' . "\r\n\t";
+		$s .= '
+	<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />
+	<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />
+	<button class="btn btn-default daterange ' . (!empty($time) ? 'daterange-time' : 'daterange-date') . '" type="button"><span class="date-title">' . $value['starttime'] . ' 至 ' . $value['endtime'] . '</span> <i class="fa fa-calendar"></i></button>
+	';
 		return $s;
 	}
 }
 
-if (!(function_exists('tpl_form_field_eweishop_date'))) {
+if (!function_exists('tpl_form_field_eweishop_date')) {
 	function tpl_form_field_eweishop_date($name, $value = '', $withtime = false)
 	{
 		$s = '';
-		$withtime = ((empty($withtime) ? false : true));
+		$withtime = empty($withtime) ? false : true;
 
-		if (!(empty($value))) {
-			$value = ((strexists($value, '-') ? strtotime($value) : $value));
+		if (!empty($value)) {
+			$value = strexists($value, '-') ? strtotime($value) : $value;
 		}
-		 else {
+		else {
 			$value = TIMESTAMP;
 		}
 
-		$value = (($withtime ? date('Y-m-d H:i:s', $value) : date('Y-m-d', $value)));
+		$value = $withtime ? date('Y-m-d H:i:s', $value) : date('Y-m-d', $value);
 		$s .= '<input type="text" name="' . $name . '"  value="' . $value . '" placeholder="请选择日期时间" readonly="readonly" class="datetimepicker form-control" style="padding-left:12px;" />';
-		$s .= "\r\n\t\t" . '<script type="text/javascript">' . "\r\n\t\t\t" . 'myrequire(["datetimepicker"], function(){' . "\r\n\t\t\t\t\t" . 'var option = {' . "\r\n\t\t\t\t\t\t" . 'lang : "zh",' . "\r\n\t\t\t\t\t\t" . 'step : 5,' . "\r\n\t\t\t\t\t\t" . 'timepicker : ' . ((!(empty($withtime)) ? 'true' : 'false')) . ',' . "\r\n\t\t\t\t\t\t" . 'closeOnDateSelect : true,' . "\r\n\t\t\t\t\t\t" . 'format : "Y-m-d' . ((!(empty($withtime)) ? ' H:i"' : '"')) . "\r\n\t\t\t\t\t" . '};' . "\r\n\t\t\t\t" . '$(".datetimepicker[name = \'' . $name . '\']").datetimepicker(option);' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '</script>';
+		$s .= '
+		<script type="text/javascript">
+		    myrequire(["moment"], function(){
+                myrequire(["datetimepicker"], function(){
+                        var option = {
+                            lang : "zh",
+                            step : 5,
+                            timepicker : ' . (!empty($withtime) ? 'true' : 'false') . ',
+                            closeOnDateSelect : true,
+                            format : "Y-m-d' . (!empty($withtime) ? ' H:i"' : '"') . '
+                        };
+                    $(".datetimepicker[name = \'' . $name . '\']").datetimepicker(option);
+                });
+            });
+		</script>';
 		return $s;
 	}
 }
@@ -1873,7 +2876,7 @@ if (!function_exists('tpl_form_field_editor')) {
 	}
 }
 
-if (!(function_exists('tpl_form_field_textarea'))) {
+if (!function_exists('tpl_form_field_textarea')) {
 	function tpl_form_field_textarea($params = array(), $callback = NULL)
 	{
 		$html = '<span class="form-editor-group">';
@@ -1884,25 +2887,21 @@ if (!(function_exists('tpl_form_field_textarea'))) {
 		$html .= '<span class="input-group form-editor-edit">';
 		$html .= '<textarea class="form-control" name="' . $params['name'] . '" style="height:auto;" rows="' . $params['rows'] . '"';
 
-		if (!(empty($params['placeholder']))) {
+		if (!empty($params['placeholder'])) {
 			$html .= 'placeholder="' . $params['placeholder'] . '"';
 		}
 
-
-		if (!(empty($params['id']))) {
+		if (!empty($params['id'])) {
 			$html .= 'id="' . $params['id'] . '"';
 		}
 
-
-		if (!(empty($params['data-rule-required'])) || !(empty($params['required']))) {
+		if (!empty($params['data-rule-required']) || !empty($params['required'])) {
 			$html .= ' data-rule-required="true"';
 		}
 
-
-		if (!(empty($params['data-msg-required']))) {
+		if (!empty($params['data-msg-required'])) {
 			$html .= ' data-msg-required="' . $params['data-msg-required'] . '"';
 		}
-
 
 		$html .= '>' . $params['value'] . '</textarea><span class="input-group-btn">';
 		$html .= '<span class="btn btn-default form-editor-finish"';
@@ -1910,7 +2909,6 @@ if (!(function_exists('tpl_form_field_textarea'))) {
 		if ($callback) {
 			$html .= 'data-callback="' . $callback . '"';
 		}
-
 
 		$html .= '><i class="icow icow-wancheng"></i></span>';
 		$html .= '</span>';
@@ -1925,22 +2923,46 @@ if (!function_exists('tpl_form_field_position')) {
 		$s = '';
 
 		if (!defined('TPL_INIT_COORDINATE')) {
-			$s .= "<script type=\"text/javascript\">\r\n                    function showCoordinate(elm) {\r\n                        \r\n                            var val = {};\r\n                            val.lng = parseFloat(\$(elm).parent().prev().prev().find(\":text\").val());\r\n                            val.lat = parseFloat(\$(elm).parent().prev().find(\":text\").val());\r\n                            val = biz.BdMapToTxMap(val.lat,val.lng);\r\n                            biz.map(val, function(r){\r\n                                var address_label = \$(\"#address_label\");\r\n                                if (address_label.length>0)\r\n                                {\r\n                                    address_label.val(r.label);\r\n                                }\r\n                                r = biz.TxMapToBdMap(r.lat,r.lng);\r\n                                \$(elm).parent().prev().prev().find(\":text\").val(r.lng);\r\n                                \$(elm).parent().prev().find(\":text\").val(r.lat);\r\n                            },\"" . EWEI_SHOPV2_URL . 'template/web/util/area/map.html' . "\");\r\n    }\r\n    \r\n                </script>";
+			$s .= '<script type="text/javascript">
+                    function showCoordinate(elm) {
+                        
+                            var val = {};
+                            val.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());
+                            val.lat = parseFloat($(elm).parent().prev().find(":text").val());
+                            val = biz.BdMapToTxMap(val.lat,val.lng);
+                            biz.map(val, function(r){
+                                var address_label = $("#address_label");
+                                if (address_label.length>0)
+                                {
+                                    address_label.val(r.label);
+                                }
+                                r = biz.TxMapToBdMap(r.lat,r.lng);
+                                $(elm).parent().prev().prev().find(":text").val(r.lng);
+                                $(elm).parent().prev().find(":text").val(r.lat);
+                            },"' . EWEI_SHOPV2_URL . 'template/web/util/area/map.html' . '");
+    }
+    
+                </script>';
 			define('TPL_INIT_COORDINATE', true);
 		}
 
-		$s .= "\r\n            <div class=\"row row-fix\">\r\n                <div class=\"col-xs-4 col-sm-4\">\r\n                    <input type=\"text\" name=\"" . $field . '[lng]" value="' . $value['lng'] . "\" placeholder=\"地理经度\"  class=\"form-control\" />\r\n                </div>\r\n                <div class=\"col-xs-4 col-sm-4\">\r\n                    <input type=\"text\" name=\"" . $field . '[lat]" value="' . $value['lat'] . "\" placeholder=\"地理纬度\"  class=\"form-control\" />\r\n                </div>\r\n                <div class=\"col-xs-4 col-sm-4\">\r\n                    <button onclick=\"showCoordinate(this);\" class=\"btn btn-default\" type=\"button\">选择坐标</button>\r\n                </div>\r\n            </div>";
+		$s .= '
+            <div class="row row-fix">
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="' . $field . '[lng]" value="' . $value['lng'] . '" placeholder="地理经度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <input type="text" name="' . $field . '[lat]" value="' . $value['lat'] . '" placeholder="地理纬度"  class="form-control" />
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>
+                </div>
+            </div>';
 		return $s;
 	}
 }
 
-if (!(function_exists('tpl_goods_selector'))) {
-	/**
-     * @param $name 名字
-     * @param string $data 数据
-     * @param string $option 设置选项
-     * @param string $where 商品表where条件
-     */
+if (!function_exists('tpl_goods_selector')) {
 	function tpl_goods_selector($name, $data_gs = '', $option = array())
 	{
 		global $_W;
@@ -1949,408 +2971,104 @@ if (!(function_exists('tpl_goods_selector'))) {
 		if (is_array($data_gs)) {
 			$data_gs = json_encode($data_gs);
 		}
-		 else {
+		else {
 			json_decode($data_gs);
-			if ((json_last_error() != JSON_ERROR_NONE) || empty($data_gs)) {
+			if (json_last_error() != JSON_ERROR_NONE || empty($data_gs)) {
 				$data_gs = '{}';
 			}
+		}
 
+		$ophtml = '';
+
+		if (!empty($option['ophtml'])) {
+			$ophtml = $option['ophtml'];
 		}
 
 		$name_id = 'goods_selector_' . $name;
-		$data_arr = json_decode($data_gs, 1);
+
+		if (!empty($option['url'])) {
+			$post_url = $option['url'];
+		}
+
+		if (!empty($option['merchid'])) {
+			$_merchid = $option['merchid'];
+		}
+
+		$_type = '';
+
+		if (!empty($option['type'])) {
+			$_type = $option['type'];
+		}
+
+		$data = json_decode($data_gs, 1);
+		$data_arr = array();
+
+		foreach ($data as $value) {
+			$data_arr[$value['id']] = $value;
+
+			if (!empty($value['options'])) {
+				$data_arr[$value['id']]['options'] = array();
+
+				foreach ($value['options'] as $op) {
+					$data_arr[$value['id']]['options'][$op['id']] = $op;
+				}
+			}
+		}
+
+		$data_gs = json_encode($data_arr);
+
+		if (empty($data_arr)) {
+			$data_gs = '{}';
+		}
+
 		$path = IA_ROOT . '/addons/ewei_shopv2/template/web_v3/util/tpl_goods_selector.html';
 		include $path;
 		$_W['goods_selector_js'] = 1;
 	}
 }
 
-
-function auth_user($siteid, $domain) {
-
-    $ret = cloud_upgrade('user', array('website' => $siteid,'domain'=> $domain));
-
-    return $ret;
-
-}
-
-
-
-function auth_checkauth($auth){
-
-    $ret = cloud_upgrade('checkauth', array('code' => $auth['code']));
-
-    return $ret;
-
-}
-
-
-
-function auth_grant($data){
-
-    $ret = cloud_upgrade('grant', $data);
-
-    return $ret;
-
-}
-
-
-
-function auth_check($auth,$version,$release){
-
-    $ret = cloud_upgrade('check', array('version' => $version,'release' => $release,'code' => $auth['code']));
-
-    return $ret;
-
-}
-
-
-
-function auth_download($auth,$path){
-
-    $ret = cloud_upgrade('download', array('path' => $path,'code' => $auth['code']));
-
-    return $ret;
-
-}
-
-
-
-function auth_downaddress($auth){
-
-    $ret = cloud_upgrade('downaddress', array('code' => $auth['code']));
-
-    return $ret;
-
-}
-
-
-
-function auth_upaddress($auth,$data){
-
-    $ret = cloud_upgrade('upaddress', array('code' => $auth['code'],'data' => $data));
-
-    return $ret;
-
-}
-
-
-
-function cloud_upgrade($type, $post_data = array(), $timeout = 60)
-{
-    global $_W;
-    load()->func('communication');
-    $domain = trim(preg_replace("/http(s)?:\/\//", "", rtrim($_W['siteroot'],"/")));
-    $extra['CURLOPT_REFERER'] = $domain;	
-	$ip= getIP();
-    $post_data['type'] = $type;
-    $post_data['module'] = $_W['current_module']['name'];
-    $resp = ihttp_request("http://cloud.010xr.com/api.php", $post_data, $extra, $ip, $timeout);
-    $ret  = @json_decode($resp['content'], true);
-    return $ret;
-}
-
-
-
-
-
-$GLOBALS['_W']['config']['db']['tablepre'] = empty($GLOBALS['_W']['config']['db']['tablepre']) ? $GLOBALS['_W']['config']['db']['master']['tablepre'] : $GLOBALS['_W']['config']['db']['tablepre'];
-
-function db_table_schema_ab($db, $tablename = '') {
-	$result = $db->fetch("SHOW TABLE STATUS LIKE '" . trim($db->tablename($tablename), '`') . "'");
-	if(empty($result) || empty($result['Create_time'])) {
-		return array();
+if (!function_exists('get_wxpay_sign')) {
+	function get_wxpay_sign($data, $key)
+	{
+		$data = array_filter($data);
+		ksort($data);
+		$string_a = http_build_query($data);
+		$string_a = urldecode($string_a);
+		$string_sign_temp = $string_a . '&key=' . $key;
+		$sign = md5($string_sign_temp);
+		$result = strtoupper($sign);
+		return $result;
 	}
-	$ret['tablename'] = $result['Name'];
-	$ret['charset'] = $result['Collation'];
-	$ret['engine'] = $result['Engine'];
-	$ret['increment'] = $result['Auto_increment'];
-	$result = $db->fetchall("SHOW FULL COLUMNS FROM " . $db->tablename($tablename));
-	foreach($result as $value) {
-		$temp = array();
-		$type = explode(" ", $value['Type'], 2);
-		$temp['name'] = $value['Field'];
-		$pieces = explode('(', $type[0], 2);
-		$temp['type'] = $pieces[0];
-		$temp['length'] = rtrim($pieces[1], ')');
-		$temp['null'] = $value['Null'] != 'NO';
-										$temp['signed'] = empty($type[1]);
-		$temp['increment'] = $value['Extra'] == 'auto_increment';
-		$ret['fields'][$value['Field']] = $temp;
-	}
-	$result = $db->fetchall("SHOW INDEX FROM " . $db->tablename($tablename));
-	foreach($result as $value) {
-$ret['indexes'][$value['Key_name']]['name'] = $value['Key_name'];
-
-		$ret['indexes'][$value['Key_name']]['type'] = ($value['Key_name'] == 'PRIMARY') ? 'primary' : ($value['Non_unique'] == 0 ? 'unique' : ($value['Index_type'] == 'FULLTEXT'?"FULLTEXT":"index"));
-		$ret['indexes'][$value['Key_name']]['fields'][] = $value['Column_name'];
-		if(!empty($value['Sub_part'])){
-			$ret['indexes'][$value['Key_name']]['length'] = $value['Sub_part'];
-		}
-	}
-	return $ret;
 }
 
+if (!function_exists('redis_getarr')) {
+	function redis_getarr($key)
+	{
+		$open_redis = function_exists('redis') && !is_error(redis());
+		if ($open_redis && !empty($key)) {
+			$redis = redis();
+			$data = $redis->get($key);
 
-
-function db_table_serialize_ab($db, $dbname) {
-	$tables = $db->fetchall('SHOW TABLES');
-	if (empty($tables)) {
-		return '';
-	}
-	$struct = array();
-	foreach ($tables as $value) {
-		$structs[] = db_table_schema_ab($db, substr($value['Tables_in_' . $dbname], strpos($value['Tables_in_' . $dbname], '_') + 1));
-	}
-	return iserializer($structs);
-}
-
-
-function db_table_create_sqll_ab($schema) {
-	$pieces = explode('_', $schema['charset']);
-	$charset = $pieces[0];
-	$engine = $schema['engine'];
-	$schema['tablename'] = str_replace('ims_', $GLOBALS['_W']['config']['db']['tablepre'], $schema['tablename']);
-	$sql = "CREATE TABLE IF NOT EXISTS `{$schema['tablename']}` (\n";
-	foreach ($schema['fields'] as $value) {
-		$piece = _db_build_field_sql_ab($value);
-		$sql .= "`{$value['name']}` {$piece},\n";
-	}
-	foreach ($schema['indexes'] as $value) {
-		$fields = implode('`,`', $value['fields']);
-	
-		if($value['type'] == 'index') {
-			if(!empty($value['length'])){
-				$sql .= "KEY `{$value['name']}` (`{$fields}`({$value['length']})),\n";
-			}else{
-				$sql .= "KEY `{$value['name']}` (`{$fields}`),\n";
-			}
-			
-		}
-		if($value['type'] == 'unique') {
-			$sql .= "UNIQUE KEY `{$value['name']}` (`{$fields}`),\n";
-		}
-		if($value['type'] == 'primary') {
-			$sql .= "PRIMARY KEY (`{$fields}`),\n";
-		}
-		if($value['type'] == 'FULLTEXT') {
-			$sql .= "FULLTEXT KEY `{$value['name']}` (`{$fields}`),\n";
-		}
-	}
-	
-	$sql = rtrim($sql);
-	$sql = rtrim($sql, ',');
-	
-	$sql .= "\n) ENGINE=$engine DEFAULT CHARSET=$charset;\n\n";
-	return $sql;
-}
-
-
-function db_schema_comparel_ab($table1, $table2) {
-	$table1['charset'] == $table2['charset'] ? '' : $ret['diffs']['charset'] = true;
-	
-	$fields1 = array_keys($table1['fields']);
-	$fields2 = array_keys($table2['fields']);
-	$diffs = array_diff($fields1, $fields2);
-	if(!empty($diffs)) {
-		$ret['fields']['greater'] = array_values($diffs);
-	}
-	$diffs = array_diff($fields2, $fields1);
-	if(!empty($diffs)) {
-		$ret['fields']['less'] = array_values($diffs);
-	}
-	$diffs = array();
-	$intersects = array_intersect($fields1, $fields2);
-	if(!empty($intersects)) {
-		foreach($intersects as $field) {
-			if($table1['fields'][$field] != $table2['fields'][$field]) {
-				$diffs[] = $field;
+			if (!empty($data)) {
+				$data = json_decode($data, true);
+				return $data;
 			}
 		}
-	}
-	if(!empty($diffs)) {
-		$ret['fields']['diff'] = array_values($diffs);
-	}
 
-	$indexes1 = array_keys($table1['indexes']);
-	$indexes2 = array_keys($table2['indexes']);
-	$diffs = array_diff($indexes1, $indexes2);
-	if(!empty($diffs)) {
-		$ret['indexes']['greater'] = array_values($diffs);
+		return false;
 	}
-	$diffs = array_diff($indexes2, $indexes1);
-	if(!empty($diffs)) {
-		$ret['indexes']['less'] = array_values($diffs);
-	}
-	$diffs = array();
-	$intersects = array_intersect($indexes1, $indexes2);
-	if(!empty($intersects)) {
-		foreach($intersects as $index) {
-			if($table1['indexes'][$index] != $table2['indexes'][$index]) {
-				$diffs[] = $index;
-			}
-		}
-	}
-	if(!empty($diffs)) {
-		$ret['indexes']['diff'] = array_values($diffs);
-	}
-
-	return $ret;
 }
 
-function db_table_fix_sql_ab($schema1, $schema2, $strict = false) {
-	if(empty($schema1)) {
-		return array(db_table_create_sqll_ab($schema2));
-	}
-	$diff = $result = db_schema_comparel_ab($schema1, $schema2);
-	if(!empty($diff['diffs']['tablename'])) {
-		return array(db_table_create_sqll_ab($schema2));
-	}
-	$sqls = array();
-	if(!empty($diff['diffs']['engine'])) {
-		$sqls[] = "ALTER TABLE `{$schema1['tablename']}` ENGINE = {$schema2['engine']}";
-	}
-
-	if(!empty($diff['diffs']['charset'])) {
-		$pieces = explode('_', $schema2['charset']);
-		$charset = $pieces[0];
-		$sqls[] = "ALTER TABLE `{$schema1['tablename']}` DEFAULT CHARSET = {$charset}";
-	}
-
-	if(!empty($diff['fields'])) {
-		if(!empty($diff['fields']['less'])) {
-			foreach($diff['fields']['less'] as $fieldname) {
-				$field = $schema2['fields'][$fieldname];
-				$piece = _db_build_field_sql_ab($field);
-				if(!empty($field['rename']) && !empty($schema1['fields'][$field['rename']])) {
-					$sql = "ALTER TABLE `{$schema1['tablename']}` CHANGE `{$field['rename']}` `{$field['name']}` {$piece}";
-					unset($schema1['fields'][$field['rename']]);
-				} else {
-					if($field['position']) {
-						$pos = ' ' . $field['position'];
-					}
-					$sql = "ALTER TABLE `{$schema1['tablename']}` ADD `{$field['name']}` {$piece}{$pos}";
-				}
-								$primary = array();
-				$isincrement = array();
-				if (strexists($sql, 'AUTO_INCREMENT')) {
-					$isincrement = $field;
-					$sql =  str_replace('AUTO_INCREMENT', '', $sql);
-					foreach ($schema1['fields'] as $field) {
-						if ($field['increment'] == 1) {
-							$primary = $field;
-							break;
-						} 
-					}
-					if (!empty($primary)) {
-						$piece = _db_build_field_sql_ab($primary);
-						if (!empty($piece)) {
-							$piece = str_replace('AUTO_INCREMENT', '', $piece);
-						}
-						$sqls[] = "ALTER TABLE `{$schema1['tablename']}` CHANGE `{$primary['name']}` `{$primary['name']}` {$piece}";
-					}
-				}
-				$sqls[] = $sql;
-			}
-		}
-		if(!empty($diff['fields']['diff'])) {
-			foreach($diff['fields']['diff'] as $fieldname) {
-				$field = $schema2['fields'][$fieldname];
-				$piece = _db_build_field_sql_ab($field);
-				if(!empty($schema1['fields'][$fieldname])) {
-					$sqls[] = "ALTER TABLE `{$schema1['tablename']}` CHANGE `{$field['name']}` `{$field['name']}` {$piece}";
-				}
-			}
-		}
-		if($strict && !empty($diff['fields']['greater'])) {
-			foreach($diff['fields']['greater'] as $fieldname) {
-				if(!empty($schema1['fields'][$fieldname])) {
-					$sqls[] = "ALTER TABLE `{$schema1['tablename']}` DROP `{$fieldname}`";
-				}
-			}
+if (!function_exists('redis_setarr')) {
+	function redis_setarr($key, $data, $timeout = 60)
+	{
+		$open_redis = function_exists('redis') && !is_error(redis());
+		if ($open_redis && !empty($key) && !empty($data)) {
+			$redis = redis();
+			$data = json_encode($data);
+			$redis->set($key, $data, $timeout);
 		}
 	}
-
-	if(!empty($diff['indexes'])) {
-		
-		if(!empty($diff['indexes']['less'])) {
-			foreach($diff['indexes']['less'] as $indexname) {
-				$index = $schema2['indexes'][$indexname];
-				$piece = _db_build_index_sql_ab($index);
-				$sqls[] = "ALTER TABLE `{$schema1['tablename']}` ADD {$piece}";
-			}
-		}
-		if(!empty($diff['indexes']['diff'])) {
-			foreach($diff['indexes']['diff'] as $indexname) {
-				$index = $schema2['indexes'][$indexname];
-				
-				$piece = _db_build_index_sql_ab($index);
-				
-				$sqls[] = "ALTER TABLE `{$schema1['tablename']}` DROP ".($indexname == 'PRIMARY' ? " PRIMARY KEY " :($index['type']=="FULLTEXT"? "FULLTEXT ":"INDEX {$indexname}" )).", ADD {$piece}";
-			}
-			 
-		}
-		if($strict && !empty($diff['indexes']['greater'])) {
-			foreach($diff['indexes']['greater'] as $indexname) {
-				$sqls[] = "ALTER TABLE `{$schema1['tablename']}` DROP `{$indexname}`";
-			}
-		}
-	}
-	if (!empty($isincrement)) {
-		$piece = _db_build_field_sql_ab($isincrement);
-		$sqls[] = "ALTER TABLE `{$schema1['tablename']}` CHANGE `{$isincrement['name']}` `{$isincrement['name']}` {$piece}";
-	}
-	return $sqls;
 }
 
-function _db_build_index_sql_ab($index) {
-	$piece = '';
-	$fields = implode('`,`', $index['fields']);
-	
-	
-	if($index['type'] == 'index') {
-		if(!empty($index['length'])){
-				$piece .= "KEY `{$index['name']}` (`{$fields}`({$index['length']}))";
-			}else{
-				$piece .= "KEY `{$index['name']}` (`{$fields}`)";
-			}
-		//$piece .= " INDEX `{$index['name']}` (`{$fields}`)";
-	}
-	if($index['type'] == 'unique') {
-		$piece .= "UNIQUE `{$index['name']}` (`{$fields}`)";
-	}
-	if($index['type'] == 'primary') {
-		$piece .= "PRIMARY KEY (`{$fields}`)";
-	}
-	if($value['type'] == 'FULLTEXT') {
-			$$piece .= "FULLTEXT KEY `{$index['name']}` (`{$fields[0]}`)";
-	}
-	return $piece;
-}
-
-function _db_build_field_sql_ab($field) {
-	if(!empty($field['length'])) {
-		$length = "({$field['length']})";
-	} else {
-		$length = '';
-	}
-
-	$signed  = empty($field['signed']) ? ' unsigned' : '';
-	if(empty($field['null'])) {
-		$null = ' NOT NULL';
-	} else {
-		$null = '';
-	}
-	if(isset($field['default'])) {
-		$default = " DEFAULT '" . $field['default'] . "'";
-	} else {
-		$default = '';
-	}
-	if($field['increment']) {
-		$increment = ' AUTO_INCREMENT';
-	} else {
-		$increment = '';
-	}
-	return "{$field['type']}{$length}{$signed}{$null}{$default}{$increment}";
-}
 ?>

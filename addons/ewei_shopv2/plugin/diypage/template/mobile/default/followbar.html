@@ -1,6 +1,7 @@
-	<div class="fui-list follow_topbar" style="background: {$diyfollowbar['style']['background']}">
+	<div class="fui-list" style="background: {$diyfollowbar['style']['background']};display: none">
+		<i class="close icon icon-guanbi1" data-value="follow" style="font-size: 1rem;margin-right: 0.7rem"></i>
 	   	<div class="fui-list-media">
-	   		<img class="{$diyfollowbar['params']['iconstyle']}" src="{$diyfollowbar['logo']}">
+	   		<img class="{$diyfollowbar['params']['iconstyle']}" src="{$diyfollowbar['logo']}" onerror="this.src='../addons/ewei_shopv2/static/images/followbarimg.png'">
 	   	</div>
 	    <div class="fui-list-inner">
 	    	<div class="text" style="color: {$diyfollowbar['style']['textcolor']};">{$diyfollowbar['text']}</div>
@@ -13,7 +14,7 @@
 	{if !empty($diyfollowbar['qrcode'])}
 		<div class="follow_hidden" style="display: none;">
 			<div class="verify-pop">
-				<div class="close"><i class="icon icon-roundclose"></i></div>
+				<div class="close" ><i class="icon icon-roundclose"></i></div>
 				<div class="qrcode" style="height: 250px;">
 					<img class="qrimg" src="" />
 				</div>
@@ -40,6 +41,7 @@
    						}
    					});
    					follow_container.show();
+					$('.verify-pop').removeClass('follow_topbar')
    					$('.verify-pop').find('.close').unbind('click').click(function () {
 		        		follow_container.close();
 		        	});
@@ -49,7 +51,53 @@
    				}
    				return;
    			});
-   		});
+			$('.close').click(function(){
+				var tmpkey = $(this).data('value');
+				if (tmpkey == 'follow')
+				{
+					$(this).parent().css({display:'none'}).removeClass('fui-list follow_topbar');
+					cookie.set('close_followbar',tmpkey);
+				}else if (tmpkey == 'startadv')
+				{
+					$(this).parent().css({display:'none'}).removeClass('fui-list follow_topbar');
+					cookie.set('startadv',tmpkey);
+
+				}
+
+			});
+			var cookie = {
+				set:function(key,val,time){//设置cookie方法
+					var date=new Date(); //获取当前时间
+					document.cookie=key + "=" + val ;  //设置cookie
+				},
+				get:function(key){
+					/*获取cookie参数*/
+					var getCookie = document.cookie.replace(/[ ]/g,"");
+					var arrCookie = getCookie.split(";");
+					var tips;
+					for(var i=0;i<arrCookie.length;i++){
+						var arr=arrCookie[i].split("=");
+						if(key==arr[0]){
+							tips=arr[1];
+							break;
+						}
+					}
+					return tips;
+				}
+			};
+			if(cookie.get('close_followbar') == 'follow'){
+				$("[class='close icon icon-guanbi1']").parent().css({display:'none'}).removeClass('fui-list follow_topbar');
+			}else{
+				$("[class='close icon icon-guanbi1").parent().css({display:'flex'}).addClass('fui-list follow_topbar');
+			}
+			if (cookie.get('startadv') == 'startadv')
+			{
+				$("[class='fui-startadv default']").parent().css({display:'none'}).removeClass('fui-list follow_topbar');
+			}else
+			{
+				$("[class='fui-startadv default']").parent().css({display:'flex'}).removeClass('fui-list follow_topbar');
+
+			}
+		});
    	</script>
    	
-

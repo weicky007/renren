@@ -205,7 +205,8 @@ function cloud_build($nocache = false) {
 /*
 	$pars['method'] = 'application.build4';
 	$pars['file'] = 'application.build';
-	$ret = cloud_api('site/build/index', $pars, array('nocache' => $nocache));
+	$extra = $nocache ? array('nocache' => $nocache) : array();
+	$ret = cloud_api('site/build/index', $pars, $extra);
 	if (is_error($ret)) {
 		return $ret;
 	}
@@ -253,47 +254,41 @@ function cloud_build($nocache = false) {
 			}
 		}
 		$schemas = array();
-			if(!empty($ret['schemas'])) {
-				load()->func('db');
-				foreach($ret['schemas'] as $remote) {
-					$name = substr($remote['tablename'], 4);
-					$local = db_table_schema(pdo(), $name);
-					unset($remote['increment']);
-					unset($local['increment']);
-					if(empty($local)) {
+		if(!empty($ret['schemas'])) {
+			load()->func('db');
+			foreach($ret['schemas'] as $remote) {
+				$name = substr($remote['tablename'], 4);
+				$local = db_table_schema(pdo(), $name);
+				unset($remote['increment']);
+				unset($local['increment']);
+				if(empty($local)) {
+					$schemas[] = $remote;
+				} else {
+					$sqls = db_table_fix_sql($local, $remote);
+					if(!empty($sqls)) {
 						$schemas[] = $remote;
-					} else {
-						$sqls = db_table_fix_sql($local, $remote);
-						if(!empty($sqls)) {
-							$schemas[] = $remote;
-						}
 					}
 				}
 			}
-			$ret['schemas'] = $schemas;
 		}
+		$ret['schemas'] = $schemas;
+	}
 
-		if (IMS_FAMILY != $ret['family']) {
-			$update_version_success = setting_upgrade_version($ret['family'], IMS_VERSION, IMS_RELEASE_DATE);
-			if (empty($update_version_success)) {
-				message('切换版本失败，请修改 /framework/version.inc.php 文件权限为 User 可写或是 777', 'refresh', 'error');
-			} else {
-				message('更新系统正在为您自动切换版本', 'refresh');
-			}
+	if (IMS_FAMILY != $ret['family']) {
+		$update_version_success = setting_upgrade_version($ret['family'], IMS_VERSION, IMS_RELEASE_DATE);
+		if (empty($update_version_success)) {
+			message('切换版本失败，请修改 /framework/version.inc.php 文件权限为 User 可写或是 777', 'refresh', 'error');
+		} else {
+			message('更新系统正在为您自动切换版本', 'refresh');
 		}
-		$ret['upgrade'] = false;
-		if(!empty($ret['files']) || !empty($ret['schemas']) || !empty($ret['scripts'])) {
-			$ret['upgrade'] = true;
-		}
-		$upgrade = array();
-		$upgrade['upgrade'] = $ret['upgrade'];
-		$upgrade['data'] = $ret;
-		$upgrade['lastupdate'] = TIMESTAMP;
-		cache_write(cache_system_key('upgrade'), $upgrade);
+	}
+	$ret['upgrade'] = false;
+	if(!empty($ret['files']) || !empty($ret['schemas']) || !empty($ret['scripts'])) {
+		$ret['upgrade'] = true;
+	}
 
 	return $ret;
 */
-
     return null;
 }
 
@@ -548,7 +543,7 @@ function cloud_m_upgradeinfo($modulename) {
 			$ret['new_branch'] = true;
 			}
 		$branch['id'] = intval($branch['id']);
-		$branch['version']['description'] = preg_replace('/\n/', '<br/>', $branch['version']['description']);
+		$branch['version']['description'] = preg_replace('/\n/', '<br/>', htmlspecialchars_decode($branch['version']['description']));
 		$branch['displayorder'] = intval($branch['displayorder']);
 		$branch['day'] = intval(date('d', $branch['version']['createtime']));
 		$branch['month'] = date('Y.m', $branch['version']['createtime']);
@@ -784,6 +779,7 @@ function cloud_extra_module() {
 			unset($result[$install_module['name']]);
 		}
 	}
+	$result = array_slice($result, 0, 100, true);
 	foreach($recycle as $recycle_module) {
 		if (empty($result[$recycle_module['name']])) {
 			$result[$recycle_module['name']] = array(

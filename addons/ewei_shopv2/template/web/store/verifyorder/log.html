@@ -1,6 +1,6 @@
 {template '_header'}
 <div class="page-heading"> <h2>商品订单核销记录</h2> </div>
-<form action="./index.php" method="get" class="form-horizontal" role="form" id="form1">
+<form action="./index.php" method="get" class="form-horizontal" role="form" id="search">
     <input type="hidden" name="c" value="site" />
     <input type="hidden" name="a" value="entry" />
     <input type="hidden" name="m" value="ewei_shopv2" />
@@ -13,7 +13,7 @@
             </div>
             <div class='input-group input-group-sm'   >
 
-                <select name='searchtime'  class='form-control  input-sm select-md'   style="width:85px;padding:0 5px;"  >
+                <select name='searchtime'  id="searchtime"  class='form-control  input-sm select-md'   style="width:85px;padding:0 5px;"   >
                     <option value=''>不按时间</option>
                     <option value='create' {if $_GPC['searchtime']=='create'}selected{/if}>下单时间</option>
                     <option value='pay' {if $_GPC['searchtime']=='pay'}selected{/if}>付款时间</option>
@@ -25,14 +25,16 @@
 
             </div>
         </div>
-        <select name='searchtype'  class='form-control  input-sm select-md'    >
-            {if p('newstore')}
-                <option value='all' {if $_GPC['searchtype']=='all'}selected{/if}>全部类型</option>
-                <option value='store' {if $_GPC['searchtype']=='store'}selected{/if}>门店核销订单</option>
-                <option value='trade' {if $_GPC['searchtype']=='trade'}selected{/if}>门店预约订单</option>
-            {/if}
-            <option value='mall' {if $_GPC['searchtype']=='mall'}selected{/if}>商城订单</option>
-        </select>
+        {if p('newstore')}
+            <select name='searchtype'  class='form-control  input-sm select-md'    >
+                    <option value='all' {if $_GPC['searchtype']=='all'}selected{/if}>全部类型</option>
+                    <option value='store' {if $_GPC['searchtype']=='store'}selected{/if}>门店核销订单</option>
+                    <option value='trade' {if $_GPC['searchtype']=='trade'}selected{/if}>门店预约订单</option>
+                <option value='mall' {if $_GPC['searchtype']=='mall'}selected{/if}>商城订单</option>
+            </select>
+        {else}
+            <input type="hidden" name="searchtype" value="mall" />
+        {/if}
         <select name='searchfield'  class='form-control  input-sm select-md'    >
             <option value='ordersn' {if $_GPC['searchfield']=='ordersn'}selected{/if}>订单号</option>
             <option value='saler' {if $_GPC['searchfield']=='saler'}selected{/if}>核销员</option>
@@ -45,10 +47,10 @@
             <option value='goodssn' {if $_GPC['searchfield']=='goodssn'}selected{/if}>商品编码</option>
         </select>
         <div class="input-group " >
-            <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词" />
+            <input type="text" class="form-control input-sm"  name="keyword" id="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词" />
                 <span class="input-group-btn">
-                <button class="btn btn-sm btn-primary" type="submit"> 搜索</button>
-                     <button type="submit" name="export" value="1" class="btn btn-success btn-sm">导出</button>
+                 <button type="button" data-export="0" class="btn btn-sm btn-primary btn-submit"> 搜索</button>
+                 <button type="button" data-export="1" class="btn btn-success btn-sm btn-submit" >导出</button>
             </span>
         </div>
     </div>
@@ -282,5 +284,29 @@
     </div>
 </div>
 {/if}
+
+<script>
+    //没有选中时间段不能导出
+    $(function () {
+        $('.btn-submit').click(function () {
+            var e = $(this).data('export');
+            if(e==1 ){
+                if($('#keyword').val() !='' ){
+                    $('#export').val(1);
+                    $('#search').submit();
+                }else if($('#searchtime').val()!=''){
+                    $('#export').val(1);
+                    $('#search').submit();
+                }else{
+                    tip.msgbox.err('请先选择时间段!');
+                    return;
+                }
+            }else{
+                $('#export').val(0);
+                $('#search').submit();
+            }
+        })
+    })
+</script>
 
 {template '_footer'}

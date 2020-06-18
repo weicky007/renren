@@ -22,25 +22,22 @@
 				<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 			</div>
 		</div>
-		<!-- <label for="" class="col-sm-1 control-label" style="width: 50px;">用户组</label>
-		<div class="input-controls col-sm-3">
-			<select name="groupid" class="we7-select form-control">
-				<option value="" selected="selected">不限</option>
-				{loop $user_groups $group}
-				<option value="{$group['id']}"{if $group['id'] == $_GPC['groupid']} selected="selected"{/if}>{$group['name']}</option>
-				{/loop}
-			</select>
-		</div> -->
 	</form>
 	{if $_GPC['type'] == 'display' || $_GPC['type'] == ''}<a href="{url 'user/create/post'}" class="btn btn-primary">+添加用户</a>{/if}
 </div>
-<table class="table we7-table table-hover table-manage vertical-middle" id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+<div  id="js-users-display" ng-controller="UsersDisplay" ng-cloak>
+<table class="table we7-table table-hover table-manage vertical-middle">
+	<col width="100px">
 	<col width="90px"/>
 	<col width="150px">
 	<col width="200px"/>
 	<col width="130px"/>
 	<col width=""/>
 	<tr>
+		<th class="we7-form">
+			<input type="checkbox" we7-check-all="1" id="uid-all" ng-model="checkAllStatus" ng-change="checkAll()" class="">
+			<label for="uid-all"></label>
+		</th>
 		<th></th>
 		<th class="text-left">用户名</th>
 		<th>注册时间</th>
@@ -49,6 +46,10 @@
 		<th class="text-right">操作</th>
 	</tr>
 	<tr ng-repeat="user in users" ng-if="users">
+		<td class="we7-form table-action-td" >
+			<input type="checkbox" we7-check-all="1" id="{{'uid-' + user.uid}}" class="" ng-model="user['checked']"  ng-change="checkItem(user['checked'])">
+			<label for="{{'uid-' + user.uid}}">&nbsp;</label>
+		</td>
 		<td class="td-link">
 			<a ng-href="{{links.edit}}uid={{user.uid}}">
 				<img ng-src="{{user.avatar}}" alt="" class="img-responsive icon"/>
@@ -84,18 +85,28 @@
 			</div>
 		</td>
 	</tr>
-	<tr style="height: 52px;"></tr>
 	<tr ng-if="!users">
 		<td colspan="100" >
 			<div class="we7-empty-block">暂无数据</div>	
 		</td>
 	</tr>
+	<tr style="height: 52px;"></tr>
 </table>
-
-<div class="text-right pager-pagination-float">
-	{$pager}
+<div class="we7-form" style="margin-left: 14px; " >
+	<span ng-show="type == 'display' || type == 'clerk' || type == 'recycle'">
+		<input type="checkbox" we7-check-all="1" id="uid-all1" ng-model="checkAllStatus" ng-change="checkAll()" class="">
+		<label for="uid-all1">全选</label>
+		<span class="we7-margin-left">已选择{{checkNum}}个</span>
+		<button href="javascript:;" ng-disabled="!checkNum" class="btn btn-default we7-margin-left" ng-click="postAction('recycle_restore')" ng-if="type == 'recycle'">启用</button>
+		<button href="javascript:;" ng-disabled="!checkNum" class="btn btn-default we7-margin-left-sm" ng-click="postAction('recycle_delete')" ng-if="type == 'recycle'">删除</button>
+		<button href="javascript:;" ng-disabled="!checkNum" class="btn btn-default we7-margin-left" ng-click="postAction('recycle')" ng-if="type == 'display' || type == 'clerk'">禁用</button>
+	</span>
+	<span class="pager-total">共{php echo $total}个</span>
+	<div class="pull-right">
+		{$pager}
+	</div>
 </div>
-<span class="pager-total">共{php echo $total}个</span>
+</div>
 
 <script type="text/javascript">
 	$(function(){

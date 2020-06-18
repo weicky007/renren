@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Recharge_EweiShopV2Page extends AppMobilePage
 {
 	public function main()
@@ -14,7 +14,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 		$set = $_W['shopset'];
 
 		if (!empty($set['trade']['closerecharge'])) {
-			app_error(AppError::$SystemError, '系统未开启充值!');
+			return app_error(AppError::$SystemError, '系统未开启充值!');
 		}
 
 		if (empty($set['trade']['minimumcharge'])) {
@@ -45,7 +45,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 		}
 
 		$acts = com_run('sale::getRechargeActivity');
-		app_json(array('credit' => $credit, 'wechat' => $wechat, 'alipay' => $alipay, 'acts' => $acts, 'coupons' => $this->getrecouponlist(), 'minimumcharge' => $minimumcharge));
+		return app_json(array('credit' => $credit, 'wechat' => $wechat, 'alipay' => $alipay, 'acts' => $acts, 'coupons' => $this->getrecouponlist(), 'minimumcharge' => $minimumcharge));
 	}
 
 	public function submit()
@@ -64,18 +64,19 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 		$money = round($_GPC['money'], 2);
 
 		if ($money <= 0) {
-			app_error(AppError::$MemberRechargeError, '充值金额必须大于0!');
+			return app_error(AppError::$MemberRechargeError, '充值金额必须大于0!');
 		}
 
-		if (($money < $minimumcharge) && (0 < $minimumcharge)) {
-			app_error(AppError::$MemberRechargeError, '最低充值金额为' . $minimumcharge . '元!');
+		if ($money < $minimumcharge && 0 < $minimumcharge) {
+			return app_error(AppError::$MemberRechargeError, '最低充值金额为' . $minimumcharge . '元!');
 		}
 
 		if (empty($money)) {
-			app_error(AppError::$MemberRechargeError, '请填写充值金额!');
+			return app_error(AppError::$MemberRechargeError, '请填写充值金额!');
 		}
 
-		pdo_delete('ewei_shop_member_log', array('openid' => $_W['openid'], 'status' => 0, 'type' => 0, 'uniacid' => $_W['uniacid']));
+		$sql = 'DELETE FROM ' . tablename('ewei_shop_member_log') . (' WHERE openid= \'' . $_W['openid'] . '\' AND status = 0 AND uniacid = ' . $_W['uniacid'] . ' AND createtime < (unix_timestamp()-86400)');
+		pdo_fetch($sql);
 		$logno = m('common')->createNO('member_log', 'logno', 'RC');
 		$log = array('uniacid' => $_W['uniacid'], 'logno' => $logno, 'title' => $set['shop']['name'] . '会员充值', 'openid' => $_W['openid'], 'money' => $money, 'type' => 0, 'createtime' => time(), 'status' => 0, 'couponid' => intval($_GPC['couponid']));
 		pdo_insert('ewei_shop_member_log', $log);
@@ -101,37 +102,36 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 				}
 			}
 			else {
-				app_error(AppError::$MemberRechargeError, '未开启微信支付!');
+				return app_error(AppError::$MemberRechargeError, '未开启微信支付!');
 			}
 
 			if (!$wechat['success']) {
-				app_error(AppError::$MemberRechargeError, '微信支付参数错误!');
+				return app_error(AppError::$MemberRechargeError, '微信支付参数错误!');
 			}
 
-			app_json(array('wechat' => $wechat, 'logid' => $logid));
+			return app_json(array('wechat' => $wechat, 'logid' => $logid));
 		}
-		else {
-			if ($type == 'alipay') {
-				$sec = m('common')->getSec();
-				$sec = iunserializer($sec['sec']);
-				$alipay_config = $sec['nativeapp']['alipay'];
-				$alipay = array('success' => false);
-				if (!empty($set['pay']['nativeapp_alipay']) && !$this->iswxapp) {
-					$params = array('out_trade_no' => $log['logno'], 'total_amount' => $money, 'subject' => $log['title'], 'body' => $_W['uniacid'] . ':1:NATIVEAPP');
 
-					if (!empty($alipay_config)) {
-						$alipay = $this->model->alipay_build($params, $alipay_config);
-					}
-				}
-				else {
-					app_error(AppError::$MemberRechargeError, '未开启支付宝支付!');
-				}
+		if ($type == 'alipay') {
+			$sec = m('common')->getSec();
+			$sec = iunserializer($sec['sec']);
+			$alipay_config = $sec['nativeapp']['alipay'];
+			$alipay = array('success' => false);
+			if (!empty($set['pay']['nativeapp_alipay']) && !$this->iswxapp) {
+				$params = array('out_trade_no' => $log['logno'], 'total_amount' => $money, 'subject' => $log['title'], 'body' => $_W['uniacid'] . ':1:NATIVEAPP');
 
-				app_json(array('alipay' => $alipay, 'logid' => $logid));
+				if (!empty($alipay_config)) {
+					$alipay = $this->model->alipay_build($params, $alipay_config);
+				}
 			}
+			else {
+				return app_error(AppError::$MemberRechargeError, '未开启支付宝支付!');
+			}
+
+			return app_json(array('alipay' => $alipay, 'logid' => $logid));
 		}
 
-		app_error(AppError::$MemberRechargeError, '未找到支付方式');
+		return app_error(AppError::$MemberRechargeError, '未找到支付方式');
 	}
 
 	public function wechat_complete()
@@ -150,20 +150,11 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 			$payquery = $this->model->isWeixinPay($log['logno'], $log['money']);
 
 			if (!is_error($payquery)) {
-				if (empty($log['status'])) {
-					pdo_update('ewei_shop_member_log', array('status' => 1, 'rechargetype' => 'wechat', 'apppay' => is_h5app() ? 1 : 0), array('id' => $logid));
-					m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, $_W['shopset']['shop']['name'] . '会员充值:wechatcomplete:credit2:' . $log['money']));
-					m('member')->setRechargeCredit($log['openid'], $log['money']);
-					com_run('sale::setRechargeActivity', $log);
-					com_run('coupon::useRechargeCoupon', $log);
-					m('notice')->sendMemberLogMessage($logid);
-				}
-
-				app_json();
+				return app_json();
 			}
 		}
 
-		app_error(AppError::$MemberRechargeError, '找不到充值订单!');
+		return app_error(AppError::$MemberRechargeError, '找不到充值订单!');
 	}
 
 	public function alipay_complete()
@@ -173,7 +164,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 		$alidata = $_GPC['alidata'];
 
 		if (empty($alidata)) {
-			app_error(AppError::$ParamsError, '支付宝返回数据错误');
+			return app_error(AppError::$ParamsError, '支付宝返回数据错误');
 		}
 
 		$logid = intval($_GPC['logid']);
@@ -190,7 +181,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 			$public_key = $sec['nativeapp']['alipay']['public_key'];
 
 			if (empty($public_key)) {
-				app_error(AppError::$MemberRechargeError, '支付宝公钥为空');
+				return app_error(AppError::$MemberRechargeError, '支付宝公钥为空');
 			}
 
 			$alidata = htmlspecialchars_decode($alidata);
@@ -210,11 +201,11 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 					m('notice')->sendMemberLogMessage($logid);
 				}
 
-				app_json();
+				return app_json();
 			}
 		}
 
-		app_error(AppError::$MemberRechargeError, '找不到充值订单!');
+		return app_error(AppError::$MemberRechargeError, '找不到充值订单!');
 	}
 
 	public function getstatus()
@@ -240,7 +231,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 		$sql = 'select d.id,d.couponid,d.gettime,c.timelimit,c.coupontype,c.timedays,c.timestart,c.timeend,c.thumb,c.couponname,c.enough,c.backtype,c.deduct,c.discount,c.backmoney,c.backcredit,c.backredpack,c.bgcolor,c.thumb,c.merchid,c.tagtitle,c.settitlecolor,c.titlecolor from ' . tablename('ewei_shop_coupon_data') . ' d';
 		$sql .= ' left join ' . tablename('ewei_shop_coupon') . ' c on d.couponid = c.id';
 		$sql .= ' where d.openid=:openid and d.uniacid=:uniacid and coupontype=1';
-		$sql .= ' and (   (c.timelimit = 0 and ( c.timedays=0 or c.timedays*86400 + d.gettime >=unix_timestamp() ) )  or  (c.timelimit =1 and c.timeend>=' . $time . ')) and  d.used =0 ';
+		$sql .= ' and (   (c.timelimit = 0 and ( c.timedays=0 or c.timedays*86400 + d.gettime >=' . $time . ' ) )  or  (c.timelimit =1 and c.timeend>=' . $time . ')) and  d.used =0 ';
 		$sql .= ' order by d.gettime desc  ';
 		$coupons = set_medias(pdo_fetchall($sql, array(':openid' => $openid, ':uniacid' => $_W['uniacid'])), 'thumb');
 
@@ -263,15 +254,15 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 					$tagtitle = '充值返现券';
 				}
 
-				if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+				if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 					$title2 = $title2 . '送' . $row['backmoney'] . '元余额';
 				}
 
-				if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+				if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 					$title2 = $title2 . '送' . $row['backcredit'] . '积分';
 				}
 
-				if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+				if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 					$title2 = $title2 . '送' . $row['backredpack'] . '元红包';
 				}
 			}

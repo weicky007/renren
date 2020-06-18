@@ -16,7 +16,6 @@ permission_check_account_user('platform_site_style');
 $site_multi_table = table('site_multi');
 $site_styles_table = table('site_styles');
 $site_styles_vars_table = table('site_styles_vars');
-$site_templates_table = table('site_templates');
 
 if ('template' == $do) {
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
@@ -35,20 +34,10 @@ if ('template' == $do) {
 	foreach ($templates as $k => $v) {
 		if (!empty($keyword)) {
 			if (false !== strpos($v['title'], $keyword)) {
-				$stylesResult[$k] = array(
-					'templateid' => $v['id'],
-					'name' => $v['name'],
-					'title' => $v['title'],
-					'type' => $v['type'],
-				);
+				$stylesResult[$k] = $v;
 			}
 		} else {
-			$stylesResult[$k] = array(
-				'templateid' => $v['id'],
-				'name' => $v['name'],
-				'title' => $v['title'],
-				'type' => $v['type'],
-			);
+			$stylesResult[$k] = $v;
 			foreach ($styles as $style_val) {
 				if ($v['id'] == $style_val['templateid']) {
 					unset($stylesResult[$k]);
@@ -56,6 +45,7 @@ if ('template' == $do) {
 			}
 		}
 	}
+
 	$templates_id = array_keys($templates);
 	foreach ($styles as $v) {
 				if (!in_array($v['templateid'], $templates_id)) {
@@ -63,10 +53,11 @@ if ('template' == $do) {
 		}
 		$stylesResult[] = array(
 			'styleid' => $v['id'],
-			'templateid' => $v['templateid'],
+			'mid' => $v['templateid'],
 			'name' => $templates[$v['templateid']]['name'],
 			'title' => $v['name'],
 			'type' => $templates[$v['templateid']]['type'],
+			'logo' => $_W['siteroot'].'app/themes/'.$templates[$v['templateid']]['name'].'/preview.jpg'
 		);
 	}
 	if (!empty($_GPC['type']) && 'all' != $_GPC['type']) {
@@ -155,7 +146,7 @@ if ('designer' == $do) {
 		itoast('抱歉，风格不存在或是已经被删除！', '', 'error');
 	}
 	$templateid = $style['templateid'];
-	$template = $site_templates_table->getById($templateid);
+	$template = table('modules')->getTemplateById($templateid);
 	if (empty($template)) {
 		itoast('抱歉，模板不存在或是已经被删除！', '', 'error');
 	}
@@ -268,7 +259,7 @@ if ('designer' == $do) {
 }
 
 if ('module' == $do) {
-		if (empty($_W['isfounder'])) {
+	if (empty($_W['isfounder'])) {
 		itoast('您无权进行该操作！', '', '');
 	}
 	$setting = uni_setting($_W['uniacid'], array('default_site'));
@@ -354,7 +345,7 @@ if ('copy' == $do) {
 		itoast('抱歉，风格不存在或是已经被删除！', '', 'error');
 	}
 	$templateid = $style['templateid'];
-	$template = $site_templates_table->getById($templateid);
+	$template = table('modules')->getTemplateById($templateid);
 	if (empty($template)) {
 		itoast('抱歉，模板不存在或是已经被删除！', '', 'error');
 	}

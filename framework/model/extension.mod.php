@@ -79,6 +79,7 @@ function ext_module_convert($manifest) {
 		'function' => $manifest['bindings']['function'],
 		'permissions' => $manifest['permissions'],
 		'issystem' => 0,
+		'application_type' => 1
 	);
 }
 
@@ -283,23 +284,6 @@ function _ext_module_manifest_entries($elm) {
 }
 
 
-function ext_module_checkupdate($modulename) {
-	$manifest = ext_module_manifest($modulename);
-	if (!empty($manifest) && is_array($manifest)) {
-		$version = $manifest['application']['version'];
-		load()->model('module');
-		$module = module_fetch($modulename);
-		if (version_compare($version, $module['version']) == '1') {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		return false;
-	}
-}
-
-
 function ext_module_bindings() {
 	static $bindings = array(
 		'cover' => array(
@@ -402,6 +386,24 @@ function ext_module_clean($modulename, $is_clean_rule = false) {
 				}
 				if ($update) {
 					pdo_update('uni_group', array('modules' => iserializer($modules)), array('id' => $group['id']));
+				}
+			}
+		}
+	}
+	$uni_account_extra_modules = table('uni_account_extra_modules')->getall();
+	if (!empty($uni_account_extra_modules)) {
+		foreach ($uni_account_extra_modules as $group) {
+			$update = false;
+			$modules = (array)iunserializer($group['modules']);
+			if (!empty($modules)) {
+				foreach ($modules as $type => $value) {
+					if (!empty($value) && in_array($modulename, $value)) {
+						$modules[$type] = array_diff($modules[$type], array($modulename));
+						$update = true;
+					}
+				}
+				if ($update) {
+					pdo_update('uni_account_extra_modules', array('modules' => iserializer($modules)), array('id' => $group['id']));
 				}
 			}
 		}
@@ -640,26 +642,6 @@ function ext_file_check($module_name, $manifest) {
 		!file_exists($module_path . 'site.php')) {
 		return error(1, '模块缺失文件，请检查模块文件中site.php, processor.php, module.php, receiver.php 文件是否存在！');
 	}
-	return true;
-}
-
-
-function ext_module_uninstall($modulename, $is_clean_rule = false) {
-	global $_W;
-	$modulename = trim($modulename);
-	if (empty($modulename)) {
-		return error(1, '模块已经被卸载或是不存在！');
-	}
-	$module = module_fetch($modulename, false);
-	if (empty($module)) {
-		return error(1, '模块已经被卸载或是不存在！');
-	}
-	if (!empty($module['issystem'])) {
-		return error(1, '系统模块不能卸载！');
-	}
-
-	ext_module_clean($modulename, $is_clean_rule);
-	ext_execute_uninstall_script($modulename);
 	return true;
 }
 

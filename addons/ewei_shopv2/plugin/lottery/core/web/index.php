@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,8 +21,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery') . ' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_lottery') . ' where 1 ' . $condition . ' ', $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery') . (' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_lottery') . (' where 1 ' . $condition . ' '), $params);
 		$pager = pagination2($total, $pindex, $psize);
 
 		foreach ($list as $key => $value) {
@@ -51,7 +52,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if (p('task')) {
 			$condition = ' AND `status`=1 AND is_delete = 0 AND uniacid= ' . $_W['uniacid'];
-			$tasklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_task_poster') . ' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT 15');
+			$tasklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_task_poster') . (' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT 15'));
 		}
 
 		if ($id) {
@@ -69,13 +70,22 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$endtime = $item['end_time'];
 		}
 
+		if (empty($item['award_start']) || empty($item['award_end'])) {
+			$award_starttime = time();
+			$award_endtime = strtotime(date('Y-m-d H:i', $award_starttime) . '+30 days');
+		}
+		else {
+			$award_starttime = $item['award_start'];
+			$award_endtime = $item['award_end'];
+		}
+
 		if ($_W['ispost']) {
 			$itemCount = count(json_decode(htmlspecialchars_decode(trim($_GPC['reward_data']))));
-			if ((intval($_GPC['lottery_type']) == 3) && ($itemCount != 8) && !empty($itemCount)) {
+			if (intval($_GPC['lottery_type']) == 3 && $itemCount != 8 && !empty($itemCount)) {
 				show_json(0, '九宫格奖项必须为8个');
 			}
 			else {
-				if ((intval($_GPC['lottery_type']) == 1) && ($itemCount < 5) && !empty($itemCount)) {
+				if (intval($_GPC['lottery_type']) == 1 && $itemCount < 5 && !empty($itemCount)) {
 					show_json(0, '大转盘奖项不得少于5个');
 				}
 			}
@@ -86,12 +96,16 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$data['lottery_icon'] = trim($_GPC['lottery_icon']);
 			$data['lottery_banner'] = trim($_GPC['lottery_banner']);
 			$data['lottery_days'] = intval($_GPC['lottery_days']) * 24 * 3600;
-			$data['lottery_cannot'] = trim($_GPC['lottery_cannot']);
+			$data['lottery_cannot'] = trim(str_replace(array('', '
+', '
+'), '', $_GPC['lottery_cannot']));
 			$data['start_time'] = strtotime($_GPC['time']['start']);
 			$data['end_time'] = strtotime($_GPC['time']['end']);
 			$data['is_goods'] = $_GPC['is_goods'];
 			$data['lottery_type'] = intval($_GPC['lottery_type']);
 			$data['addtime'] = time();
+			$data['award_start'] = strtotime($_GPC['award_time']['start']);
+			$data['award_end'] = strtotime($_GPC['award_time']['end']);
 			$taskTypeIsExist = intval($this->taskTypeIsExist(intval($_GPC['task_type']), $id));
 
 			if (!empty($taskTypeIsExist)) {
@@ -102,8 +116,22 @@ class Index_EweiShopV2Page extends PluginWebPage
 				$pay_money = $_GPC['pay_money'];
 				$pay_num = $_GPC['pay_num'];
 				$pay_type = $_GPC['pay_type'];
+
+				if (empty($pay_type)) {
+					show_json(0, '请选择消费场景');
+				}
+				else if (count($pay_type) == 2) {
+					$pay_type = 0;
+				}
+				else if ($pay_type[0] == '1') {
+					$pay_type = 1;
+				}
+				else {
+					$pay_type = 2;
+				}
+
 				$data['task_type'] = 1;
-				$data['task_data'] = array('pay_money' => floatval($pay_money), 'pay_num' => intval($pay_num), 'pay_type' => intval($pay_type));
+				$data['task_data'] = array('pay_money' => floatval($pay_money), 'pay_num' => intval($pay_num), 'pay_type' => $pay_type);
 			}
 			else if ($_GPC['task_type'] == 2) {
 				$sign_day = intval($_GPC['sign_day']);
@@ -246,10 +274,10 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$posters = pdo_fetchall('SELECT lottery_id,lottery_title FROM ' . tablename('ewei_shop_lottery') . ' WHERE lottery_id in ( ' . $id . ' ) and uniacid=' . $_W['uniacid']);
+		$posters = pdo_fetchall('SELECT lottery_id,lottery_title FROM ' . tablename('ewei_shop_lottery') . (' WHERE lottery_id in ( ' . $id . ' ) and uniacid=') . $_W['uniacid']);
 
 		foreach ($posters as $poster) {
 			pdo_update('ewei_shop_lottery', array('is_delete' => 1), array('lottery_id' => $poster['lottery_id'], 'uniacid' => $_W['uniacid']));

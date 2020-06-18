@@ -130,7 +130,7 @@
                         var downloadname = md5+'.xls';
                         var href = '../addons/ewei_shopv2/data/qrcode/{$_W["uniacid"]}/exchange/'+md5+'.xls';
                         $("#down").html('<a class="btn btn-success btn-sm" download="'+downloadname+'" href="'+href+'">下载生成的兑换码</a>');
-                        var delstr ='<a class="btn btn-danger" id="deltxt" value="'+dir_pre+'" onclick="deltxt()">删除兑换码</a>';
+                        var delstr ='<br><a class="btn btn-danger" id="deltxt" value="'+md5+'" onclick="deltxt()">删除兑换码</a> <a class="btn btn-warning" data-dismiss="modal"> 关闭</a>';
                         $("#del").html(delstr);
                         $(".row1").hide();
                         $(".row2").show();
@@ -138,7 +138,7 @@
                         var downloadname = md5+'.zip';
                         var href = '../addons/ewei_shopv2/data/qrcode/{$_W["uniacid"]}/exchange/'+md5+'.zip';
                         $("#down").html('<a class="btn btn-success btn-sm" download="'+downloadname+'" href="'+href+'">下载生成的二维码</a>');
-                        var delstr ='<a class="btn btn-danger" id="delzip" value="'+md5+'" onclick="delzip()">删除压缩包</a>';
+                        var delstr ='<br><a class="btn btn-danger" id="delzip" value="'+md5+'" onclick="delzip()">删除压缩包</a> <a class="btn btn-warning" data-dismiss="modal"> 关闭</a>';
                         $("#del").html(delstr);
                         $(".row1").hide();
                         $(".row2").show();
@@ -199,3 +199,4 @@
     }
 </script>
 
+<!--4000097827-->

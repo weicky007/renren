@@ -246,14 +246,14 @@ function cache_build_frame_menu() {
 	if (!empty($system_menu) && is_array($system_menu)) {
 		$system_displayoder = 1;
 		foreach ($system_menu as $menu_name => $menu) {
-			$system_menu[$menu_name]['is_system'] = true;
-			$system_menu[$menu_name]['is_display'] = !empty($system_menu_db[$menu_name]['is_display']) ? true : ((isset($system_menu[$menu_name]['is_display']) && empty($system_menu[$menu_name]['is_display']) || !empty($system_menu_db[$menu_name])) ? false : true);
+			$system_menu[$menu_name]['is_system'] = 1;
+			$system_menu[$menu_name]['is_display'] = !empty($system_menu_db[$menu_name]['is_display']) ? 1 : ((isset($system_menu[$menu_name]['is_display']) && empty($system_menu[$menu_name]['is_display']) || !empty($system_menu_db[$menu_name])) ? 0 : 1);
 			$system_menu[$menu_name]['displayorder'] = !empty($system_menu_db[$menu_name]) ? intval($system_menu_db[$menu_name]['displayorder']) : ++$system_displayoder;
 			if ($_W['role'] == ACCOUNT_MANAGE_NAME_EXPIRED && $menu_name != 'store' && $menu_name != 'system') {
-				$system_menu[$menu_name]['is_display'] = false;
+				$system_menu[$menu_name]['is_display'] = 0;
 			}
 			if ($menu_name == 'appmarket') {
-				$system_menu[$menu_name]['is_display'] = true;
+				$system_menu[$menu_name]['is_display'] = 1;
 			}
 			foreach ($menu['section'] as $section_name => $section) {
 				$displayorder = max(count($section['menu']), 1);
@@ -320,7 +320,7 @@ function cache_build_frame_menu() {
 					$system_menu[$menu['permission_name']]['url'] = $menu['url'];
 				}
 								$menu['blank'] = true;
-				$system_menu[$menu['permission_name']]['is_display'] = $menu['is_display'] == 0 ? false : true;
+				$system_menu[$menu['permission_name']]['is_display'] = $menu['is_display'] == 0 ? 0 : 1;
 			}
 		}
 		$system_menu = iarray_sort($system_menu, 'displayorder', 'asc');
@@ -486,7 +486,7 @@ function cache_build_proxy_wechatpay_account() {
 	global $_W;
 	load()->model('account');
 	$account_table = table('account');
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		$uniaccounts = pdo_getall('account', array('type IN ' => array(ACCOUNT_TYPE_OFFCIAL_NORMAL, ACCOUNT_TYPE_OFFCIAL_AUTH)));
 	} else {
 		$uniaccounts = $account_table->userOwnedAccount($_W['uid']);
@@ -528,8 +528,12 @@ function cache_build_module_info($module_name) {
 }
 
 
-function cache_build_uni_group($group_id = 0) {
-	cache_delete(cache_system_key('uni_groups', array('groupids' => $group_id)));
+function cache_build_uni_group() {
+	$uni_group_cache_key = cache_system_key('uni_groups', array());
+	$cache_keys = cache_search($uni_group_cache_key);
+	foreach ($cache_keys as $cache_key => $cache_value) {
+		cache_delete($cache_key);
+	}
 }
 
 

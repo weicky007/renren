@@ -9,8 +9,9 @@ load()->model('module');
 load()->model('miniapp');
 load()->model('phoneapp');
 load()->model('user');
+load()->classs('wxapp.platform');
 
-$dos = array('display', 'save_account', 'check_params', 'get_user_info', 'load_groups');
+$dos = array('display', 'save_account', 'check_params', 'get_user_info', 'load_groups', 'get_authurl');
 $do = in_array($do, $dos) ? $do : 'display';
 
 $sign = safe_gpc_string($_GPC['sign']);
@@ -18,6 +19,7 @@ if (empty($account_all_type_sign[$sign])) {
 	$error_msg = '所需创建的账号类型不存在, 请重试.';
 	empty($_W['isajax']) ? message($error_msg, '', 'error') : iajax(-1, $error_msg);
 }
+
 if ('load_groups' == $do) {
 	$group_keys = array();
 	if (user_is_vice_founder($_W['uid'])) {
@@ -33,15 +35,13 @@ if ('load_groups' == $do) {
 	}
 	iajax(0, $unigroups);
 }
+
 if ('get_user_info' == $do) {
-	if (!user_is_founder($_W['uid'])) {
+	if (!$_W['isfounder']) {
 		iajax(-1, '非法请求数据！');
 	}
+
 	$uid = intval($_GPC['uid'][0]);
-	$sign = trim($_GPC['sign']);
-	if (empty($account_all_type_sign[$sign])) {
-		iajax(-1, '参数有误');
-	}
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
 		iajax(-1, '用户不存在或是已经被删除', '');
@@ -83,8 +83,32 @@ if ('display' == $do) {
 			$modules[$k]['support'] = $sign . '_support';
 		}
 	}
-	if (in_array($sign, array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
-		$templates = pdo_fetchall('SELECT * FROM ' . tablename('site_templates'));
+	if ($_W['isajax']) {
+		$data = array(
+			'modules' => $modules,
+		);
+		iajax(0, $data);
+	}
+
+}
+
+if ('get_authurl' == $do) {
+	if (empty($_W['setting']['platform']['authstate'])) {
+		iajax(-1, '请先开启微信开放平台');
+	} else {
+		if ('account' == $sign) {
+			$account_platform = new WeixinPlatform();
+		}
+		if ('wxapp' == $sign) {
+			$account_platform = new WxappPlatform();
+		}
+		$preauthcode = $account_platform->getPreauthCode();
+		if (is_error($preauthcode)) {
+			iajax(-1, $preauthcode['message']);
+		}
+		$authurl = sprintf(ACCOUNT_PLATFORM_API_LOGIN, $this->appid,
+				$preauthcode, urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=account&a=auth&do=forward'), ACCOUNT_PLATFORM_API_LOGIN_ACCOUNT);
+		iajax(0, $authurl);
 	}
 }
 
@@ -102,7 +126,7 @@ if ('save_account' == $do || 'check_params' == $do) {
 		}
 		$check_uniacname = table('account')->searchWithTitle($post['name'])->searchWithType($create_account_type)->searchAccountList();
 		if (!empty($check_uniacname)) {
-			iajax(-1, "该名称'{$sign_title}'已经存在");
+			iajax(-1, "该名称'{$post['name']}'已经存在");
 		}
 				if (in_array($sign, array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
 			$appid = safe_gpc_string($_GPC['key']);
@@ -117,7 +141,7 @@ if ('save_account' == $do || 'check_params' == $do) {
 		}
 	}
 	if (empty($post['step']) || 'account_modules' == $post['step']) {
-		if (user_is_founder($_W['uid'])) {			if (!empty($post['owner_uid']) && !user_is_founder($post['owner_uid'], true)) {
+		if ($_W['isfounder']) {			if (!empty($post['owner_uid']) && !user_is_founder($post['owner_uid'], true)) {
 				$create_account_info = permission_user_account_num($post['owner_uid']);
 				if ($create_account_info[$sign . '_limit'] <= 0) {
 					iajax(-1, '您所设置的主管理员所在的用户组可添加的公众号数量已达上限，请选择其他人做主管理员！');
@@ -125,6 +149,10 @@ if ('save_account' == $do || 'check_params' == $do) {
 			}
 		}
 	}
+	if ('check_params' == $do) {
+		iajax(0);
+	}
+	
 	if (empty($post['step'])) {
 		if (in_array($sign, array(PHONEAPP_TYPE_SIGN, WXAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN, BAIDUAPP_TYPE_SIGN, TOUTIAOAPP_TYPE_SIGN))) {
 			if (!preg_match('/^[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$/', $post['version'])) {
@@ -132,12 +160,12 @@ if ('save_account' == $do || 'check_params' == $do) {
 			}
 		}
 	}
-	if ('check_params' == $do) {
-		iajax(0);
-	}
 }
 
 if ('save_account' == $do) {
+	if (!uni_account_can_create($sign)) {
+		iajax(-1, '平台账号数量超过限制，请删除无用的平台账号或联系网站创始人购买！');
+	}
 		if (in_array($sign, array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN, PHONEAPP_TYPE_SIGN))) {
 		pdo_insert('uni_account', array(
 			'groupid' => 0,
@@ -146,6 +174,7 @@ if ('save_account' == $do) {
 			'description' => $post['description'],
 			'title_initial' => get_first_pinyin($post['name']),
 			'createtime' => TIMESTAMP,
+			'create_uid' => intval($_W['uid']),
 		));
 		$uniacid = pdo_insertid();
 		if (empty($uniacid)) {
@@ -180,16 +209,17 @@ if ('save_account' == $do) {
 			}
 		}
 				if (empty($_W['isfounder'])) {
-			uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
+			uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 		}
 		cache_build_account_modules($uniacid);
 		
-				if (user_is_vice_founder()) {
-					uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				}
-				if (!empty($_W['user']['owner_uid'])) {
-					uni_user_account_role($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
-				}
+			if (user_is_vice_founder()) {
+				uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+			}
+			if (!empty($_W['user']['owner_uid'])) {
+				uni_account_user_role_insert($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+			}
+		
 
 				if (in_array($sign, array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
 			pdo_insert('mc_groups', array('uniacid' => $uniacid, 'title' => '默认会员组', 'isdefault' => 1));
@@ -214,10 +244,10 @@ if ('save_account' == $do) {
 					array('uniacid' => $uniacid)
 				);
 			}
-						$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
+						$template = table('modules')->getTemplateByName('default');
 			pdo_insert('site_styles', array(
 				'uniacid' => $uniacid,
-				'templateid' => $template['id'],
+				'templateid' => $template['mid'],
 				'name' => $template['title'] . '_' . random(4),
 			));
 			$styleid = pdo_insertid();
@@ -268,19 +298,20 @@ if ('save_account' == $do) {
 		}
 	}
 
-		if (user_is_founder($_W['uid'])) {
+		if ($_W['isfounder']) {
 		if (!empty($post['owner_uid'])) {
 			$owner = pdo_get('uni_account_users', array('uniacid' => $uniacid, 'role' => 'owner'));
 			if (!empty($owner)) {
 				pdo_update('uni_account_users', array('uid' => $post['owner_uid']), array('uniacid' => $uniacid, 'role' => 'owner'));
 			} else {
-				uni_user_account_role($uniacid, $post['owner_uid'], ACCOUNT_MANAGE_NAME_OWNER);
+				uni_account_user_role_insert($uniacid, $post['owner_uid'], ACCOUNT_MANAGE_NAME_OWNER);
 			}
 			
 				$user_vice_id = pdo_getcolumn('users', array('uid' => $post['owner_uid']), 'owner_uid');
 				if ($_W['user']['founder_groupid'] != ACCOUNT_MANAGE_GROUP_VICE_FOUNDER && !empty($user_vice_id)) {
-					uni_user_account_role($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+					uni_account_user_role_insert($uniacid, $user_vice_id, ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 				}
+			
 		}
 
 		if (!empty($_GPC['endtime'])) {
@@ -291,10 +322,9 @@ if ('save_account' == $do) {
 					$account_end_time = $user_end_time;
 				}
 			}
-		} else {
-			$account_end_time = 0;
+			pdo_update('account', array('endtime' => $account_end_time), array('uniacid' => $uniacid));
 		}
-		pdo_update('account', array('endtime' => $account_end_time), array('uniacid' => $uniacid));
+
 
 				if (!empty($_GPC['groups'])) {
 			foreach ($_GPC['groups'] as $group_id) {
@@ -304,19 +334,16 @@ if ('save_account' == $do) {
 				}
 			}
 		}
-				if (!empty($_GPC['modules']) || !empty($_GPC['templates'])) {
-			$templates = safe_gpc_array($_GPC['templates']);
+				if (!empty($_GPC['modules'])) {
 			$modules = safe_gpc_array($_GPC['modules']);
 			$data = array(
 				'modules' => array('modules' => array(), 'wxapp' => array(), 'webapp' => array(), 'xzapp' => array(), 'phoneapp' => array()),
-				'templates' => iserializer($templates),
 				'uniacid' => $uniacid,
-				'name' => '',
 			);
 			$group_sign = 'account' == $sign ? 'modules' : $sign;
 			$data['modules'][$group_sign] = $modules;
 			$data['modules'] = iserializer($data['modules']);
-			pdo_insert('uni_group', $data);
+			pdo_insert('uni_account_extra_modules', $data);
 		}
 		cache_delete(cache_system_key('uniaccount', array('uniacid' => $uniacid)));
 		cache_delete(cache_system_key('unimodules', array('uniacid' => $uniacid, 'enabled' => 1)));
@@ -339,10 +366,16 @@ if ('save_account' == $do) {
 		$next_url = '';
 	} else {
 		$next_url = url('account/display/switch', array('uniacid' => $uniacid, 'type' => $create_account_type));
-		iajax(0, '创建成功', $next_url);
 	}
+	if ($_W['isw7_request']) {
+		if (in_array($sign, array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN))) {
+			$next_url = url('account/display/switch', array('uniacid' => $uniacid, 'type' => $create_account_type), true);
+		}
+	}
+
 	if (!empty($next_url)) {
-		iajax(0, '', $next_url);
+		$result = array('next_url' => $next_url, 'uniacid' => $uniacid);
+		iajax(0, $result, $next_url);
 	}
 
 		if (in_array($sign, array(PHONEAPP_TYPE_SIGN, WXAPP_TYPE_SIGN, ALIAPP_TYPE_SIGN, BAIDUAPP_TYPE_SIGN, TOUTIAOAPP_TYPE_SIGN))) {
@@ -375,7 +408,12 @@ if ('save_account' == $do) {
 			iajax(-1, '版本创建失败');
 		} else {
 			cache_delete(cache_system_key('user_accounts', array('type' => $sign, 'uid' => $_W['uid'])));
-			iajax(0, '创建成功', url('account/display/switch', array('uniacid' => $uniacid, 'version_id' => $version_id, 'type' => $create_account_type)));
+			$next_url = url('account/display/switch', array('uniacid' => $uniacid, 'version_id' => $version_id, 'type' => $create_account_type), true);
+			if ($_W['isw7_request']) {
+				$result = array('next_url' => $next_url, 'uniacid' => $uniacid);
+				iajax(0, $result);
+			}
+			iajax(0, '创建成功', $next_url);
 		}
 	}
 }

@@ -10,12 +10,12 @@
         </div>
         <div class="title">任务中心</div>
         <div class="fui-header-right">
-            <a href="{php echo mobileUrl('')}">商城首页</a>
+            <!--<a href="{php echo mobileUrl('')}">商城首页</a>-->
         </div>
     </div>
-    <div class="fui-content">
-        <div class="taskhead" style="background: url({php echo tomedia($set);}) no-repeat;">
-            <img src="{$info['avatar']}" alt="" />
+    <div class="fui-content navbar" style="padding-bottom: 0;">
+        <div class="taskhead" style="background: url({php echo tomedia($set);}) no-repeat;background-size: 100%;">
+            <img src="{php echo tomedia($info['avatar'])}" alt="" />
             <div class="title">{$info['nickname']}</div>
         </div>
         <div class="tasktabs">
@@ -46,11 +46,23 @@
                         {if !empty($li['reward']['redpacket'])}<i class="iconfont icon-hongbao"></i>{/if}
                         {if !empty($li['reward']['goods'])}<i class="iconfont icon-shangpin"></i>{/if}
                         {if !empty($li['reward']['coupon'])}<i class="iconfont icon-youhuiquan"></i>{/if}
+                        {if !empty($li['info']['getmesg'])}
+                        <br>
+                            <span>奖励商品库存不足</span>
+                        {/if}
+                        {if !empty($li['getinfo']['getmesg'])}
+                        <br>
+                            <span>购买商品库存不足</span>
+                        {/if}
                     </div>
                 </a>
                 <div class="task-list-right">
                     {if empty($li['task_demand'])}
-                        <a class="pickit" data-id="{$li['id']}">做任务</a>
+                        {if $li['info']['enough'] && $li['getinfo']['enough']}
+                            <a class="pickit" data-id="{$li['id']}">做任务</a>
+                        {else}
+                            <a class="message" data-id="{$li['id']}">无法领取</a>
+                        {/if}
                     {/if}
                     {if !empty($li['task_demand']) && $li['task_demand'] > $li['task_progress']}
                         <div class="progress">
@@ -76,4 +88,5 @@
         model.init();
     });
 </script>
+{php $this->footerMenus()}
 {template '_footer'}

@@ -39,7 +39,7 @@
                     <option value="" {if empty($_GPC['searchtime'])}selected{/if}>不按日期</option>
                     <option value="1" {if !empty($_GPC['searchtime'])}selected{/if}>搜索日期</option>
                 </select>
-                {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)), false);}
+                {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)), false);}
             </div>
         </div>
     </div>

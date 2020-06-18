@@ -44,9 +44,9 @@
                     <label class="col-lg control-label">所属角色</label>
                     <div class="col-sm-9 col-xs-12">
                          {ife 'perm.user' $item}
-                        <input type='hidden' id='userid' name='roleid' value="{$role['id']}" />
+                        <input type='hidden' id='userid' name='roleid' value="{$item['roleid']}" />
                         <div class='input-group'>
-                            <input type="text" name="user" maxlength="30" value="{$role['rolename']}" id="user" class="form-control" readonly required/>
+                            <input type="text" name="user" maxlength="30" value="{$item['rolename']}" id="user" class="form-control" readonly required/>
                             <div class='input-group-btn'>
                                 <button class="btn btn-default" type="button" onclick="popwin = $('#modal-module-menus1').modal();">选择角色</button>
                                 <button class="btn btn-danger" type="button" onclick="$('#userid').val('');$('#user').val('');">清除选择</button>

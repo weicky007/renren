@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,7 +10,7 @@ class QuickModel extends PluginModel
 	{
 	}
 
-	public function update($data)
+	public function update($data, $page = array())
 	{
 		global $_W;
 
@@ -31,8 +32,8 @@ class QuickModel extends PluginModel
 
 		foreach ($data['datas'] as $index => $item) {
 			if ($item['datatype'] == 0) {
-				$item_ids = (!empty($item['goodsids']) ? $item['goodsids'] : array());
-				if (empty($item_ids) && (0 < count($item['data']))) {
+				$item_ids = !empty($item['goodsids']) ? $item['goodsids'] : array();
+				if (empty($item_ids) && 0 < count($item['data'])) {
 					$data['datas'][$index]['goodsids'] = $item_ids = $this->getGids($item['data']);
 				}
 
@@ -59,21 +60,21 @@ class QuickModel extends PluginModel
 
 		if (!empty($goodsids)) {
 			$goodsids = implode(',', $goodsids);
-			$allGoods = pdo_fetchall('SELECT id, title, subtitle, minprice, total, sales FROM' . tablename('ewei_shop_goods') . ' WHERE uniacid=:uniacid AND id in(' . $goodsids . ') AND `deleted`=0 AND `status`=1', array(':uniacid' => $_W['uniacid']), 'id');
+			$allGoods = pdo_fetchall('SELECT id, title, subtitle, minprice, total, sales FROM' . tablename('ewei_shop_goods') . (' WHERE uniacid=:uniacid AND id in(' . $goodsids . ') AND `deleted`=0 AND `status`=1'), array(':uniacid' => $_W['uniacid']), 'id');
 		}
 
 		$cateids = array_filter($cateids);
 
 		if (!empty($cateids)) {
 			$cateids = implode(',', $cateids);
-			$allCates = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_category') . ' WHERE uniacid=:uniacid AND id in(' . $cateids . ') AND enabled=1', array(':uniacid' => $_W['uniacid']), 'id');
+			$allCates = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_category') . (' WHERE uniacid=:uniacid AND id in(' . $cateids . ') AND enabled=1'), array(':uniacid' => $_W['uniacid']), 'id');
 		}
 
 		$groupids = array_filter($groupids);
 
 		if (!empty($groupids)) {
 			$groupids = implode(',', $groupids);
-			$allGroups = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_goods_group') . ' WHERE uniacid=:uniacid AND id in(' . $groupids . ') AND enabled=1', array(':uniacid' => $_W['uniacid']), 'id');
+			$allGroups = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_goods_group') . (' WHERE uniacid=:uniacid AND id in(' . $groupids . ') AND enabled=1'), array(':uniacid' => $_W['uniacid']), 'id');
 		}
 
 		foreach ($data['datas'] as $index => &$item) {
@@ -106,6 +107,11 @@ class QuickModel extends PluginModel
 		}
 
 		unset($item);
+
+		if (!empty($page)) {
+			$data['title'] = $page['title'];
+		}
+
 		return json_encode($data);
 	}
 
@@ -175,7 +181,7 @@ class QuickModel extends PluginModel
 				}
 			}
 			else {
-				if (($data['showadv'] == 2) && !empty($data['advs'])) {
+				if ($data['showadv'] == 2 && !empty($data['advs'])) {
 					$returnData['advs'] = array();
 
 					foreach ($data['advs'] as $advitem) {
@@ -192,7 +198,7 @@ class QuickModel extends PluginModel
 			if (!empty($data['datas'])) {
 				foreach ($data['datas'] as $index => $d) {
 					$orderby = '';
-					if (($d['datatype'] == 0) || ($d['datatype'] == 2)) {
+					if ($d['datatype'] == 0 || $d['datatype'] == 2) {
 						if ($d['goodssort'] == 1) {
 							$orderby = ' sales desc, displayorder desc';
 						}
@@ -206,8 +212,15 @@ class QuickModel extends PluginModel
 						}
 					}
 
-					if (($d['datatype'] == 1) && !empty($d['cateid'])) {
-						$pagesize = (!empty($d['goodsnum']) ? $d['goodsnum'] : 5);
+					if ($d['datatype'] == 2 && !empty($d['groupid'])) {
+						$group = pdo_fetch('select * from ' . tablename('ewei_shop_goods_group') . ' where id=:id and uniacid=:uniacid and enabled=1 limit 1 ', array(':id' => $d['groupid'], ':uniacid' => $_W['uniacid']));
+						if (!empty($group) && !empty($group['goodsids'])) {
+							$d['goodsids'] = $group['goodsids'];
+						}
+					}
+
+					if ($d['datatype'] == 1 && !empty($d['cateid'])) {
+						$pagesize = !empty($d['goodsnum']) ? $d['goodsnum'] : 5;
 						$goodslist = $this->getList(array('cate' => $d['cateid'], 'order' => $orderby, 'pagesize' => $pagesize, 'page' => 1));
 						$d['data'] = $goodslist['list'];
 					}
@@ -229,7 +242,7 @@ class QuickModel extends PluginModel
 			$returnData['datas'] = $newDatas;
 
 			if ($returnData['style']['notice'] == 1) {
-				$limit = (!empty($returnData['style']['noticenum']) ? $returnData['style']['noticenum'] : 5);
+				$limit = !empty($returnData['style']['noticenum']) ? $returnData['style']['noticenum'] : 5;
 
 				if (0 < $merchid) {
 					$returnData['notices'] = pdo_fetchall('SELECT id, title FROM' . tablename('ewei_shop_merch_notice') . 'WHERE uniacid=:uniacid AND status=1 AND merchid=:merchid LIMIT ' . $limit, array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
@@ -239,7 +252,7 @@ class QuickModel extends PluginModel
 				}
 			}
 			else {
-				if (($returnData['style']['notice'] == 2) && !empty($data['notices'])) {
+				if ($returnData['style']['notice'] == 2 && !empty($data['notices'])) {
 					$returnData['notices'] = $data['notices'];
 				}
 			}
@@ -262,28 +275,31 @@ class QuickModel extends PluginModel
 		return pdo_fetch('SELECT * FROM' . tablename('ewei_shop_quick') . 'WHERE id=:id AND uniacid=:uniacid AND status=1 LIMIT 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 	}
 
-	public function getPageList($merch = false)
+	public function getPageList($merch = false, $type = 0, $condition = '', $params = array())
 	{
 		global $_W;
-		$condition = ' uniacid=:uniacid ';
-		$params = array(':uniacid' => $_W['uniacid']);
+		$condition .= ' uniacid=:uniacid ';
+		$params[':uniacid'] = $_W['uniacid'];
+		$condition .= ' AND type=:type';
 
 		if (!empty($merch)) {
 			$condition .= ' AND merchid=:merchid ';
 			$params[':merchid'] = $merch;
 		}
 
+		$params[':type'] = $type;
 		return pdo_fetchall('SELECT id, title, status FROM' . tablename('ewei_shop_quick') . 'WHERE ' . $condition . ' ORDER BY createtime DESC', $params);
 	}
 
 	public function getList($args)
 	{
 		global $_W;
-		$page = (!empty($args['page']) ? intval($args['page']) : 1);
-		$pagesize = (!empty($args['pagesize']) ? intval($args['pagesize']) : 10);
+		$page = !empty($args['page']) ? intval($args['page']) : 1;
+		$merchid = !empty($args['merchid']) ? intval($args['merchid']) : 0;
+		$pagesize = !empty($args['pagesize']) ? intval($args['pagesize']) : 10;
 		$displayorder = 'displayorder';
-		$order = (!empty($args['order']) ? $args['order'] : ' ' . $displayorder . ' desc,createtime desc');
-		$orderby = (empty($args['order']) ? '' : (!empty($args['by']) ? $args['by'] : ''));
+		$order = !empty($args['order']) ? $args['order'] : ' ' . $displayorder . ' desc,createtime desc';
+		$orderby = empty($args['order']) ? '' : (!empty($args['by']) ? $args['by'] : '');
 		$merch_plugin = p('merch');
 		$merch_data = m('common')->getPluginset('merch');
 		if ($merch_plugin && $merch_data['is_openmerch']) {
@@ -293,7 +309,7 @@ class QuickModel extends PluginModel
 			$is_openmerch = 0;
 		}
 
-		$condition = ' and `uniacid` = :uniacid AND `deleted` = 0 and status=1 and bargain=0 and `type`!=4 ';
+		$condition = ' and `uniacid` = :uniacid AND `deleted` = 0 and status=1 and bargain=0 and `type`<>4 and `type`<>9 ';
 		$params = array(':uniacid' => $_W['uniacid']);
 
 		if (!empty($merchid)) {
@@ -307,7 +323,7 @@ class QuickModel extends PluginModel
 			$condition .= ' and `checked` = 0';
 		}
 
-		$ids = (!empty($args['ids']) ? trim($args['ids']) : '');
+		$ids = !empty($args['ids']) ? trim($args['ids']) : '';
 
 		if (!empty($ids)) {
 			$condition .= ' and id in ( ' . $ids . ')';
@@ -357,8 +373,8 @@ class QuickModel extends PluginModel
 			$condition .= ' and   ifnull(showgroups,\'\')=\'\' ';
 		}
 
-		$sql = 'SELECT id,title,subtitle,thumb,minprice,marketprice,sales,salesreal,total,bargain,`type`,ispresell,presellend,preselltimeend,hasoption,total,maxbuy,minbuy,usermaxbuy,isverify,cannotrefund,diyformtype,diyformid FROM ' . tablename('ewei_shop_goods') . ' where 1 ' . $condition . ' ORDER BY ' . $order . ' ' . $orderby . ' LIMIT ' . (($page - 1) * $pagesize) . ',' . $pagesize;
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_goods') . ' where 1 ' . $condition . ' ', $params);
+		$sql = 'SELECT id,title,subtitle,thumb,minprice,marketprice,sales,salesreal,total,bargain,`type`,ispresell,presellend,preselltimeend,hasoption,total,maxbuy,minbuy,usermaxbuy,isverify,cannotrefund,diyformtype,diyformid,showsales,showtotal FROM ' . tablename('ewei_shop_goods') . (' where 1 ' . $condition . ' ORDER BY ' . $order . ' ' . $orderby . ' LIMIT ') . ($page - 1) * $pagesize . ',' . $pagesize;
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_goods') . (' where 1 ' . $condition . ' '), $params);
 		$list = pdo_fetchall($sql, $params);
 		$list = set_medias($list, 'thumb');
 		if (!empty($list) && is_array($list)) {
@@ -402,10 +418,21 @@ class QuickModel extends PluginModel
 				}
 
 				$g['totalmaxbuy'] = $totalmaxbuy;
-				$g['cannotbuy'] = empty($totalmaxbuy) ? '超出最高购买数量' : '';
+				if (empty($totalmaxbuy) && $g['total'] != '0') {
+					$g['cannotbuy'] = '超出最高购买数量';
+				}
+				else {
+					if (empty($totalmaxbuy) && $g['total'] == '0') {
+						$g['cannotbuy'] = '该商品已售罄';
+					}
+					else {
+						$g['cannotbuy'] = '';
+					}
+				}
+
 				$g['unit'] = empty($g['unit']) ? '件' : $g['unit'];
 				$g['num'] = 0;
-				if ((0 < $g['ispresell']) && (((0 < $g['presellend']) && (time() < $g['preselltimeend'])) || ($g['preselltimeend'] == 0))) {
+				if (0 < $g['ispresell'] && (0 < $g['presellend'] && time() < $g['preselltimeend'] || $g['preselltimeend'] == 0)) {
 					$g['gotodetail'] = 1;
 					$g['presell'] = 1;
 				}
@@ -420,7 +447,7 @@ class QuickModel extends PluginModel
 				}
 
 				$g['canAddCart'] = true;
-				if (($g['isverify'] == 2) || ($g['type'] == 2) || ($g['type'] == 3) || ($g['type'] == 20) || !empty($g['cannotrefund'])) {
+				if ($g['isverify'] == 2 || $g['type'] == 2 || $g['type'] == 3 || $g['type'] == 20 || $g['type'] == 5) {
 					$g['canAddCart'] = false;
 				}
 
@@ -496,7 +523,7 @@ class QuickModel extends PluginModel
 		$total = 0;
 		$totalprice = 0;
 		$ischeckall = true;
-		$tablename = (empty($pageid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart');
+		$tablename = empty($pageid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart';
 
 		if (!empty($pageid)) {
 			$condition .= ' and quickid=:quickid';
@@ -508,7 +535,7 @@ class QuickModel extends PluginModel
 		$list = pdo_fetchall($sql, $params);
 
 		foreach ($list as &$g) {
-			if ((0 < $g['ispresell']) && (($g['preselltimeend'] == 0) || (time() < $g['preselltimeend']))) {
+			if (0 < $g['ispresell'] && ($g['preselltimeend'] == 0 || time() < $g['preselltimeend'])) {
 				$g['marketprice'] = 0 < intval($g['hasoption']) ? $g['presellprice'] : $g['gpprice'];
 			}
 
@@ -531,7 +558,7 @@ class QuickModel extends PluginModel
 				$prices = m('order')->getGoodsDiscountPrice($g, $level, 1);
 				$total += $g['total'];
 				$g['marketprice'] = $g['ggprice'] = $prices['price'];
-				if ($seckillinfo && ($seckillinfo['status'] == 0)) {
+				if ($seckillinfo && $seckillinfo['status'] == 0) {
 					$seckilllast = 0;
 
 					if (0 < $seckillinfo['maxbuy']) {
@@ -544,7 +571,7 @@ class QuickModel extends PluginModel
 						$normal = 0;
 					}
 
-					$totalprice += ($seckillinfo['price'] * $seckilllast) + ($g['marketprice'] * $normal);
+					$totalprice += $seckillinfo['price'] * $seckilllast + $g['marketprice'] * $normal;
 					$g['seckillmaxbuy'] = $seckillinfo['maxbuy'];
 					$g['seckillselfcount'] = $seckillinfo['selfcount'];
 					$g['seckillprice'] = $seckillinfo['price'];
@@ -557,7 +584,7 @@ class QuickModel extends PluginModel
 			}
 
 			$totalmaxbuy = $g['stock'];
-			if ($seckillinfo && ($seckillinfo['status'] == 0)) {
+			if ($seckillinfo && $seckillinfo['status'] == 0) {
 				if ($g['seckilllast'] < $totalmaxbuy) {
 					$totalmaxbuy = $g['seckilllast'];
 				}

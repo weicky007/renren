@@ -193,13 +193,9 @@ class XzappAccount extends WeAccount {
 			exit;
 		}
 
-		$str = '';
-		if (uni_is_multi_acid()) {
-			$str = "&j={$_W['acid']}";
-		}
 		$oauth_type = $_GPC['scope'];
 		$oauth_url = uni_account_oauth_host();
-		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}&c=auth&a=oauth&scope=" . $oauth_type;
 		$callback = urlencode($url);
 		$oauth_info = $this->getOauthAccessToken($code, $callback);
 		$user_info_url = "https://openapi.baidu.com/rest/2.0/cambrian/sns/userinfo?access_token={$oauth_info['token']}&openid={$oauth_info['openid']}";

@@ -1,6 +1,6 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 20191214152815 WE7.CC
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 
@@ -30,5 +30,5 @@ if (!empty($host)) {
 if($_W['os'] == 'mobile' && (!empty($_GPC['i']) || !empty($_SERVER['QUERY_STRING']))) {
 	header('Location: ' . $_W['siteroot'] . 'app/index.php?' . $_SERVER['QUERY_STRING']);
 } else {
-	header('Location: ' . $_W['siteroot'] . 'web/index.php?' . (!empty($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : 'c=account&a=display'));
+	header('Location: ' . $_W['siteroot'] . 'web/index.php' . (!empty($_SERVER['QUERY_STRING']) ? ('?' . $_SERVER['QUERY_STRING']) : ''));
 }

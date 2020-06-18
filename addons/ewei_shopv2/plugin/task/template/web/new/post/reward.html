@@ -5,22 +5,22 @@
     }
 </style>
     <div class="form-group">
-        <label class="col-sm-2 control-label">商城积分</label>
+        <label class="col-sm-2 control-label">{$tradeSet['credittext']}</label>
         <div class="col-sm-9 col-xs-12">
             <div class="input-group">
                 <span class="input-group-addon">奖励</span>
                 <input type="text" name="rewardcredit" class="form-control" value="{$reward['credit']}">
-                <span class="input-group-addon">个 积分</span>
+                <span class="input-group-addon"> {$tradeSet['credittext']}</span>
             </div>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">商城余额</label>
+        <label class="col-sm-2 control-label">{$tradeSet['moneytext']}</label>
         <div class="col-sm-9 col-xs-12">
             <div class="input-group">
                 <span class="input-group-addon">奖励</span>
                 <input type="text" name="rewardbalance" class="form-control" value="{$reward['balance']}">
-                <span class="input-group-addon">元 余额</span>
+                <span class="input-group-addon"> {$tradeSet['moneytext']}</span>
             </div>
         </div>
     </div>
@@ -47,8 +47,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">特价商品</label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_goods_selector('rewardgoods',$task['native_data'],array('condition'=>' and deleted = 0 and status = 1 and total>0','option'=>false,'column'=>array(array('title'=>'现价','name'=>'price'),array('title'=>'数量','name'=>'num'),array('title'=>'商品别名','name'=>'title'))));}
+            {php echo tpl_goods_selector('rewardgoods',$task['native_data'],array('condition'=>' and deleted = 0 and status = 1 and total>0','option'=>false,'column'=>array(array('title'=>'现价','name'=>'price'),array('title'=>'奖励数量','name'=>'num'),array('title'=>'商品别名','name'=>'title'))));}
         </div>
     </div>
-
 

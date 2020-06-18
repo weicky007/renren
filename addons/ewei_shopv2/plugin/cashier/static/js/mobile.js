@@ -114,7 +114,8 @@ define(['core'], function (core) {
                                 if (/iphone|ipad|ipod/.test(ua)) {
                                     location.href = rjson.result.code_url
                                 } else if (/android/.test(ua)) {
-                                    $("#ali").prop('src', rjson.result.code_url);
+                                    // $("#ali").prop('src', rjson.result.code_url);
+                                    location.href = rjson.result.code_url;
                                     var settime = setInterval(function () {
                                         core.json('cashier/pay/orderquery', {
                                             orderid: rjson.result.out_trade_no,

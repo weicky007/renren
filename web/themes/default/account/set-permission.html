@@ -2,18 +2,11 @@
 <ol class="breadcrumb we7-breadcrumb">
 	<li><a href="javascript:;" onclick="javascript:history.go(-1);"><i class="wi wi-back-circle"></i> 权限设置</a></li>
 </ol>
-<form class="form-horizontal form we7-form" action="" method="post">
+<form class="form-horizontal form we7-form" action="{php echo url('account/post-user/save_permission', array('uniacid' => $uniacid, 'uid' => $uid))}" method="post">
 
 
 	<table class="table we7-table table-hover we7-form account-and-wxapp">
 	{loop $menus $name $sections}
-		{if $name == XZAPP_TYPE_SIGN || $name == WEBAPP_TYPE_SIGN}
-			{php $menu_name = ACCOUNT_TYPE_SIGN}
-		{elseif $name == ALIAPP_TYPE_SIGN || $name == BAIDUAPP_TYPE_SIGN || $name == TOUTIAOAPP_TYPE_SIGN}
-			{php $menu_name = WXAPP_TYPE_SIGN}
-		{else}
-			{php $menu_name = $name}
-		{/if}
 		{if $sections['section'] && $name == $account_type_menu}
 			<div>{$account['type_name']}<span class="color-default font-sm"></span>
 			</div>
@@ -88,10 +81,9 @@
 				</th>
 			</tr>
 		</thead>
-		<tbody class="module_select system-select-box">
+		<tbody class="module_select">
 			{php $i=1;}
 			{loop $module $k $m}
-				{if !empty($m['issystem'])}{php continue;}{/if}
 				{if $i%4 == 1 || $i == 1}<tr>{/if}
 					<td  class="text-left vertical-middle" style="overflow:inherit;width:25%">
 						<div class="dropdown system-select-dropdown">
@@ -173,7 +165,7 @@ $(function(){
 					html = _html + '<ul>' + html + '</ul>';
 					_this.next().html(html);
 				} else {
-					_this.next().html('<div class="text-center">无子权限</div>');
+					_this.next().html('<div class="text-center">' + data.message.message + '</div>');
 				}
 			}, 'json');
 		}
@@ -237,6 +229,9 @@ $(function(){
 function selectall(obj, a){
 	$('.'+a+' input:checkbox').each(function() {
 		$(this)[0].checked = obj.checked ? true : false;
+	});
+	$('.'+a+' input[name$="_select"]').each(function() {
+		$(this)[0].value = obj.checked ? 1 : 0;
 	});
 }
 //当已经全选时，默认全选按钮选中

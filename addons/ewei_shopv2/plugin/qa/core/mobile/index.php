@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,7 +23,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 				if (!empty($commset['level'])) {
 					$member = m('member')->getMember($_W['openid']);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) {
+					if (!empty($member) && $member['status'] == 1 && $member['isagent'] == 1) {
 						$_W['shopshare']['link'] = mobileUrl('qa', array('mid' => $member['id']), true);
 					}
 					else {
@@ -57,13 +58,13 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		}
 
 		if (!empty($keyword)) {
-			$condition .= ' AND (q.title like \'%' . $keyword . '%\') or (q.keywords like \'%' . $keyword . '%\') ';
+			$condition .= ' AND ((q.title like \'%' . $keyword . '%\') or (q.keywords like \'%' . $keyword . '%\')) ';
 		}
 
 		$params = array(':uniacid' => $_W['uniacid']);
-		$sql = 'SELECT q.*, c.name as catename FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . ' `c` on c.id=q.cate and c.uniacid=q.uniacid where  1 and ' . $condition . ' ORDER BY q.displayorder DESC,q.id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT q.*, c.name as catename FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . (' `c` on c.id=q.cate and c.uniacid=q.uniacid where  1 and ' . $condition . ' ORDER BY q.displayorder DESC,q.id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . ' c on c.id=q.cate and c.uniacid=q.uniacid where  1 and ' . $condition . ' ', $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . (' c on c.id=q.cate and c.uniacid=q.uniacid where  1 and ' . $condition . ' '), $params);
 
 		if (!empty($total)) {
 			foreach ($list as &$item) {
@@ -106,7 +107,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 				if (!empty($commset['level'])) {
 					$member = m('member')->getMember($_W['openid']);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) {
+					if (!empty($member) && $member['status'] == 1 && $member['isagent'] == 1) {
 						$_W['shopshare']['link'] = mobileUrl('qa/detail', array('id' => $item['id'], 'mid' => $member['id']), true);
 					}
 					else {
@@ -144,7 +145,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 				if (!empty($commset['level'])) {
 					$member = m('member')->getMember($_W['openid']);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) {
+					if (!empty($member) && $member['status'] == 1 && $member['isagent'] == 1) {
 						$_W['shopshare']['link'] = mobileUrl('qa/question', array('cate' => $cate, 'mid' => $member['id']), true);
 					}
 					else {
@@ -179,7 +180,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 				if (!empty($commset['level'])) {
 					$member = m('member')->getMember($_W['openid']);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) {
+					if (!empty($member) && $member['status'] == 1 && $member['isagent'] == 1) {
 						$_W['shopshare']['link'] = mobileUrl('qa/category', array('mid' => $member['id']), true);
 					}
 					else {

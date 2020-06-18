@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,12 +25,12 @@ class Qrcode_EweiShopV2Page extends Base_EweiShopV2Page
 		$infourl = '';
 		$set = $this->set;
 		if (!empty($set['closed_qrcode']) && !intval($_GPC['goodsid'])) {
-			app_error(AppError::$CommissionQrcodeNoOpen);
+			return app_error(AppError::$CommissionQrcodeNoOpen);
 		}
 
 		if (empty($set['become_reg'])) {
 			if (empty($member['realname'])) {
-				app_error(AppError::$CommissionNoUserInfo);
+				return app_error(AppError::$CommissionNoUserInfo);
 			}
 		}
 
@@ -87,12 +87,12 @@ class Qrcode_EweiShopV2Page extends Base_EweiShopV2Page
 				}
 			}
 
-			app_json(array('img' => $img));
+			return app_json(array('img' => $img));
 		}
 
 		$set['qrcode_content'] = htmlspecialchars_decode($set['qrcode_content'], ENT_QUOTES);
 		$set_res = array('texts' => $set['texts'], 'qrcode' => $set['qrcode'], 'qrcode_title' => $set['qrcode_title'], 'become_child' => $set['become_child'], 'qrcode_content' => $set['qrcode_content'], 'qrcode_remark' => $set['qrcode_remark']);
-		app_json(array('qrcode_title' => empty($set['qrcode']) || (!empty($set['qrcode']) && empty($set['qrcode_title'])) ? '如何赚钱' : $set['qrcode_title'], 'qrcode_remark' => empty($set['qrcode']) || (!empty($set['qrcode']) && empty($set['qrcode_remark'])), 'set' => $set_res));
+		return app_json(array('qrcode_title' => empty($set['qrcode']) || !empty($set['qrcode']) && empty($set['qrcode_title']) ? '如何赚钱' : $set['qrcode_title'], 'qrcode_remark' => empty($set['qrcode']) || !empty($set['qrcode']) && empty($set['qrcode_remark']), 'set' => $set_res));
 	}
 }
 

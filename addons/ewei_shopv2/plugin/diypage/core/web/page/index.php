@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,7 +16,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$tid_member = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=9 limit 1');
-		$tid_commission = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=10 limit 1');
+		$tid_commission = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=15 order by id desc limit 1');
 		$tid_detail = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=11 limit 1');
 		$tid_seckill = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=12 limit 1');
 		$tid_creditshop = pdo_fetchcolumn('select id from' . tablename('ewei_shop_diypage_template') . ' where tplid=13 limit 1');
@@ -34,7 +35,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$result = m('common')->keyExist($keyword);
 
 			if (!empty($result)) {
-				if ($result['name'] != ('ewei_shopv2:diypage:' . $id)) {
+				if ($result['name'] != 'ewei_shopv2:diypage:' . $id) {
 					show_json(0);
 				}
 			}
@@ -61,7 +62,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 				$pagetype = 'diy';
 			}
 			else {
-				if ((1 < $page['type']) && ($page['type'] < 99)) {
+				if (1 < $page['type'] && $page['type'] < 99) {
 					$pagetype = 'sys';
 				}
 				else {

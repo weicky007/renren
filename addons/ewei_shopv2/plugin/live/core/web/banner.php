@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,8 +25,8 @@ class Banner_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_live_adv') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_live_adv') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_live_adv') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_live_adv') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -73,10 +74,10 @@ class Banner_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_live_adv', array('id' => $item['id']));
@@ -97,10 +98,10 @@ class Banner_EweiShopV2Page extends PluginWebPage
 		$enabled = intval($_GPC['enabled']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_live_adv', array('enabled' => $enabled), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -118,10 +119,10 @@ class Banner_EweiShopV2Page extends PluginWebPage
 		$value = intval($_GPC['value']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_live_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_live_adv', array('displayorder' => $value), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));

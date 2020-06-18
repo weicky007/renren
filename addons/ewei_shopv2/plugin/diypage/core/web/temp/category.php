@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,7 +19,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and name like \'%' . $keyword . '%\' ';
 		}
 
-		$list = pdo_fetchall('select id, `name` from ' . tablename('ewei_shop_diypage_template_category') . ' where 1 ' . $condition . ' order by id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select id, `name` from ' . tablename('ewei_shop_diypage_template_category') . ' where 1 ' . $condition . ' order by id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diypage_template_category') . ' where merch=:merch and uniacid=:uniacid ', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();

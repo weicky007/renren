@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,10 +11,12 @@ if (!class_exists('ArticleModel')) {
 		{
 			global $_W;
 			global $_GPC;
-			if (empty($aid) || empty($shareid) || empty($myid) || ($shareid == $myid)) {
+			if (empty($aid) || empty($shareid) || empty($myid) || $shareid == $myid) {
 				return NULL;
 			}
 
+			$credittext = empty($_W['shopset']['trade']['credittext']) ? '积分' : $_W['shopset']['trade']['credittext'];
+			$moneytext = empty($_W['shopset']['trade']['moneytext']) ? '余额' : $_W['shopset']['trade']['moneytext'];
 			$article = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article') . ' WHERE id=:aid and article_state=1 and uniacid=:uniacid limit 1 ', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 
 			if (empty($article)) {
@@ -36,7 +39,7 @@ if (!class_exists('ArticleModel')) {
 				$givemoney = floatval($article['article_rule_money2']);
 			}
 
-			if (!empty($article['article_hasendtime']) && ($article['article_endtime'] < time())) {
+			if (!empty($article['article_hasendtime']) && $article['article_endtime'] < time()) {
 				return NULL;
 			}
 
@@ -75,7 +78,7 @@ if (!class_exists('ArticleModel')) {
 				return NULL;
 			}
 
-			if ((0 < $article['article_rule_credittotal']) || (0 < $article['article_rule_moneytotal'])) {
+			if (0 < $article['article_rule_credittotal'] || 0 < $article['article_rule_moneytotal']) {
 				$creditlast = 0;
 				$moneylast = 0;
 				$firstreads = pdo_fetchcolumn('select count(distinct click_user) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
@@ -84,7 +87,7 @@ if (!class_exists('ArticleModel')) {
 
 				if (0 < $article['article_rule_credittotal']) {
 					if (!empty($article['article_advance'])) {
-						$creditlast = $article['article_rule_credittotal'] - (($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_creditm']) - ($secreads * $article['article_rule_creditm2']);
+						$creditlast = $article['article_rule_credittotal'] - ($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_creditm'] - $secreads * $article['article_rule_creditm2'];
 					}
 					else {
 						$creditout = pdo_fetchcolumn('select sum(add_credit) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
@@ -94,7 +97,7 @@ if (!class_exists('ArticleModel')) {
 
 				if (0 < $article['article_rule_moneytotal']) {
 					if (!empty($article['article_advance'])) {
-						$moneylast = $article['article_rule_moneytotal'] - (($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_moneym']) - ($secreads * $article['article_rule_moneym2']);
+						$moneylast = $article['article_rule_moneytotal'] - ($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_moneym'] - $secreads * $article['article_rule_moneym2'];
 					}
 					else {
 						$moneyout = pdo_fetchcolumn('select sum(add_money) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
@@ -102,8 +105,8 @@ if (!class_exists('ArticleModel')) {
 					}
 				}
 
-				($creditlast <= 0) && ($creditlast = 0);
-				($moneylast <= 0) && ($moneylast = 0);
+				$creditlast <= 0 && ($creditlast = 0);
+				$moneylast <= 0 && ($moneylast = 0);
 
 				if ($creditlast <= 0) {
 					$givecredit = 0;
@@ -125,31 +128,44 @@ if (!class_exists('ArticleModel')) {
 				m('member')->setCredit($profile['openid'], 'credit2', $givemoney, array(0, $shopset['name'] . ' 文章营销奖励余额'));
 			}
 
-			if ((0 < $givecredit) || (0 < $givemoney)) {
+			if (0 < $givecredit || 0 < $givemoney) {
 				$article_sys = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article_sys') . ' WHERE uniacid=:uniacid limit 1 ', array(':uniacid' => $_W['uniacid']));
 				$detailurl = mobileUrl('member', NULL, true);
 				$p = '';
 
 				if (0 < $givecredit) {
-					$p .= $givecredit . '个积分、';
-				}
+					$p .= $givecredit . ('个' . $credittext);
 
-				if (0 < $givemoney) {
-					$p .= $givemoney . '元余额';
-				}
-
-				$msg = array(
-					'first'    => array('value' => '您的奖励已到帐！', 'color' => '#4a5077'),
-					'keyword1' => array('title' => '任务名称', 'value' => '分享得奖励', 'color' => '#4a5077'),
-					'keyword2' => array('title' => '通知类型', 'value' => '用户通过您的分享进入文章《' . $article['article_title'] . '》，系统奖励您' . $p . '。', 'color' => '#4a5077'),
-					'remark'   => array('value' => '奖励已发放成功，请到会员中心查看。', 'color' => '#4a5077')
-					);
-
-				if (!empty($article_sys['article_message'])) {
-					m('message')->sendTplNotice($profile['openid'], $article_sys['article_message'], $msg, $detailurl);
+					if (0 < $givemoney) {
+						$p .= '、' . $givemoney . ('元' . $moneytext);
+					}
 				}
 				else {
-					m('message')->sendCustomNotice($profile['openid'], $msg, $detailurl);
+					if (0 < $givemoney) {
+						$p .= $givemoney . ('元' . $moneytext);
+					}
+				}
+
+				$datas = array(
+					array('name' => '昵称', 'value' => $profile['nickname']),
+					array('name' => '任务名称', 'value' => '分享得奖励'),
+					array('name' => '通知类型', 'value' => '用户通过您的分享进入文章《' . $article['article_title'] . '》，系统奖励您' . $p . '。'),
+					array('name' => '完成时间', 'value' => date('Y-m-d H:i', time())),
+					array('name' => '备注', 'value' => '奖励已发放成功，请到会员中心查看。')
+				);
+				$remark = '
+<a href=\'' . $detailurl . '\'>点击进入查看奖励详情</a>';
+				$text = '亲爱的[昵称]，用户通过您的分享进入文章《' . $article['article_title'] . '》，系统奖励您' . $p . '。' . $remark;
+				$message = array(
+					'first'    => array('value' => '您的奖励已到帐！', 'color' => '#4a5077'),
+					'keyword2' => array('title' => '处理进度', 'value' => '分享得奖励', 'color' => '#4a5077'),
+					'keyword3' => array('title' => '处理内容', 'value' => '用户通过您的分享进入文章《' . $article['article_title'] . '》，系统奖励您' . $p . '。', 'color' => '#4a5077'),
+					'keyword1' => array('title' => '业务类型', 'value' => '会员通知', 'color' => '#000000'),
+					'remark'   => array('value' => '奖励已发放成功，请到会员中心查看。', 'color' => '#4a5077')
+				);
+
+				if (empty($article_sys['article_close_advanced'])) {
+					m('notice')->sendNotice(array('openid' => $profile['openid'], 'tag' => 'article', 'default' => $message, 'cusdefault' => $text, 'url' => $detailurl, 'datas' => $datas, 'plugin' => 'article'));
 				}
 			}
 		}
@@ -186,15 +202,15 @@ if (!class_exists('ArticleModel')) {
 		public function perms()
 		{
 			return array(
-	'article' => array(
-		'text'     => $this->getName(),
-		'isplugin' => true,
-		'child'    => array(
-			'cate' => array('text' => '分类设置', 'addcate' => '添加分类-log', 'editcate' => '编辑分类-log', 'delcate' => '删除分类-log'),
-			'page' => array('text' => '文章设置', 'add' => '添加文章-log', 'edit' => '修改文章-log', 'delete' => '删除文章-log', 'showdata' => '查看数据统计', 'otherset' => '其他设置', 'report' => '举报记录')
-			)
-		)
-	);
+				'article' => array(
+					'text'     => $this->getName(),
+					'isplugin' => true,
+					'child'    => array(
+						'cate' => array('text' => '分类设置', 'addcate' => '添加分类-log', 'editcate' => '编辑分类-log', 'delcate' => '删除分类-log'),
+						'page' => array('text' => '文章设置', 'add' => '添加文章-log', 'edit' => '修改文章-log', 'delete' => '删除文章-log', 'showdata' => '查看数据统计', 'otherset' => '其他设置', 'report' => '举报记录')
+					)
+				)
+			);
 		}
 	}
 }

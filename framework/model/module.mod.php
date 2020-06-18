@@ -367,10 +367,12 @@ function module_fetch($name, $enabled = true) {
 		$module_info['isdisplay'] = 1;
 
 		$module_info['logo'] = tomedia($module_info['logo']);
+		$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview.jpg', '', true);
 		if (file_exists(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg')) {
 			$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview-custom.jpg', '', true);
-		} else {
-			$module_info['preview'] = tomedia(IA_ROOT . '/addons/' . $module_info['name'] . '/preview.jpg', '', true);
+		}
+		if (APPLICATION_TYPE_TEMPLATES == $module_info['application_type']) {
+			$module_info['preview'] = tomedia(IA_ROOT . '/app/themes/' . $module_info['name'] . '/preview-custom.jpg', '', true);
 		}
 		$module_info['main_module'] = pdo_getcolumn ('modules_plugin', array ('name' => $module_info['name']), 'main_module');
 		if (!empty($module_info['main_module'])) {
@@ -539,15 +541,15 @@ function module_status($module) {
 
 function module_exist_in_account($module_name, $uniacid) {
 	global $_W;
+	load()->model('user');
 	$result = false;
 	$module_name = trim($module_name);
 	$uniacid = intval($uniacid);
 	if (empty($module_name) || empty($uniacid)) {
 		return $result;
 	}
-	$founders = explode(',', $_W['config']['setting']['founder']);
 	$owner_uid = pdo_getcolumn('uni_account_users',  array('uniacid' => $uniacid, 'role' => 'owner'), 'uid');
-	if (!empty($owner_uid) && !in_array($owner_uid, $founders)) {
+	if (!empty($owner_uid) && !user_is_founder($owner_uid, true)) {
 		if (IMS_FAMILY == 'x') {
 			$account_info = uni_fetch($uniacid);
 			if (in_array($account_info['type'], array(ACCOUNT_TYPE_APP_NORMAL, ACCOUNT_TYPE_APP_AUTH))) {
@@ -938,6 +940,7 @@ function module_upgrade_info($modulelist = array()) {
 		$manifest['system_shutdown_delay_time'] = $manifest_cloud['system_shutdown_delay_time'];
 		$manifest['can_update'] = $manifest_cloud['can_update'];
 		$manifest['service_expiretime'] = empty($manifest_cloud['service_expiretime']) ? 0 : $manifest_cloud['service_expiretime'];
+		$manifest['application_type'] = APPLICATION_TYPE_MODULE;
 		$manifest_cloud_list[$modulename] = $manifest;
 	}
 }
@@ -959,7 +962,13 @@ function module_upgrade_info($modulelist = array()) {
 		if (!empty($pirate_apps) && in_array($modulename, $pirate_apps)) {
 			$module_upgrade_data['is_ban'] = 1;
 		}
-		$manifest = ext_module_manifest($modulename);
+		if (APPLICATION_TYPE_TEMPLATES == $module['application_type']) {
+			$module_upgrade_data['application_type'] = APPLICATION_TYPE_TEMPLATES;
+			$manifest = ext_template_manifest($modulename, false);
+		} else {
+			$module_upgrade_data['application_type'] = APPLICATION_TYPE_MODULE;
+			$manifest = ext_module_manifest($modulename);
+		}
 
 		if (!empty($manifest)) {
 			$module_upgrade_data['install_status'] = MODULE_LOCAL_INSTALL;
@@ -991,7 +1000,7 @@ function module_upgrade_info($modulelist = array()) {
 			continue;
 		}
 
-		if (!empty($manifest['branches'])) {
+		if (!empty($manifest['branches']) && $manifest['application_type'] == APPLICATION_TYPE_MODULE) {
 			foreach ($manifest['branches'] as &$branch) {
 				if ($branch['displayorder'] > $manifest['site_branch']['displayorder'] || ($branch['displayorder'] == $manifest['site_branch']['displayorder'] && $manifest['site_branch']['id'] < intval($branch['id']))) {
 					$module_upgrade_data['has_new_branch'] = 1;
@@ -1002,8 +1011,8 @@ function module_upgrade_info($modulelist = array()) {
 		if (!empty($manifest['system_shutdown'])) {
 			$result[$modulename]['system_shutdown'] = $manifest['system_shutdown'];
 			$result[$modulename]['system_shutdown_delay_time'] = date('Y-m-d', $manifest['system_shutdown_delay_time']);
-			$result[$modulename]['can_update'] = $manifest['can_update'] ? 1 : 0;
 		}
+		$result[$modulename]['can_update'] = $manifest['can_update'] ? 1 : 0;
 		if (!empty($manifest['service_expiretime'])) {
 			$result[$modulename]['service_expiretime'] = date('Y-m-d H:i:s', $manifest['service_expiretime']);
 			if ($manifest['service_expiretime'] < time()) {
@@ -1059,6 +1068,7 @@ function module_upgrade_info($modulelist = array()) {
 		foreach ($manifest_cloud_list as $modulename => $manifest) {
 			$module_upgrade_data = array(
 				'name' => $modulename,
+				'application_type' => $manifest['application_type'],
 				'has_new_version' => 0,
 				'has_new_branch' => 0,
 				'install_status' => MODULE_CLOUD_UNINSTALL,
@@ -1153,8 +1163,8 @@ function module_add_to_uni_group($module, $uni_group_id, $support) {
 	}
 	$update_data = $uni_group['modules'];
 
-		$key = str_replace('_support', '', $support);
-		$key = $key == 'account' ? 'modules' : $key;
+	$key = str_replace('_support', '', $support);
+	$key = $key == 'account' ? 'modules' : $key;
 	if (!in_array($module['name'], $update_data[$key])) {
 		$update_data[$key][] = $module['name'];
 	}
@@ -1169,6 +1179,7 @@ function module_recycle($modulename, $type, $support) {
 	$all_support = array_keys($module_support_types);
 
 		if ($type == MODULE_RECYCLE_INSTALL_DISABLED) {
+		table('system_welcome_binddomain')->where(array('module_name' => $modulename))->delete();
 		$uni_modules_table = table('uni_modules');
 		$uni_accounts = $uni_modules_table->where('module_name', $modulename)->getall('uniacid');
 		if (!empty($uni_accounts)) {

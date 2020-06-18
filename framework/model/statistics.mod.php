@@ -230,6 +230,9 @@ function stat_mc_member() {
 	$account_type = uni_account_type();
 	foreach ($members as $member) {
 		foreach ($account_type as $type => $type_info) {
+			if (!isset($result[$type_info['type_sign']])) {
+				$result[$type_info['type_sign']] = 0;
+			}
 			if ($member['type'] == $type) {
 				$result[$type_info['type_sign']] += 1;
 			}
@@ -237,7 +240,7 @@ function stat_mc_member() {
 	}
 	foreach ($result as $key => &$item) {
 		if ('total' != $key) {
-			$item = round($item/$result['total'] * 100, 2) . '%';
+			$item = round($item/$result['total'] * 100, 2);
 		}
 	}
 	return $result;
@@ -267,7 +270,7 @@ function stat_module() {
 	}
 	foreach ($result as $key => $item) {
 		if ('total' != $key) {
-			$result[$key] = round($item/$result['total'] * 100, 2) . '%';
+			$result[$key] = round($item/$result['total'] * 100, 2);
 		}
 	}
 	return $result;

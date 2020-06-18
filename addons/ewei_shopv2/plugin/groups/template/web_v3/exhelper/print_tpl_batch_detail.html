@@ -135,6 +135,9 @@
 							<span class="print-data-province" data-value="{$item['address']['province']}">{$item['address']['province']}</span>
 							<span class="print-data-city" data-value="{$item['address']['city']}">{$item['address']['city']}</span>
 							<span class="print-data-area" data-value="{$item['address']['area']}">{$item['address']['area']}</span>
+							{if $item['address']['street']}
+							<span class="print-data-street" data-value="{$item['address']['street']}">{$item['address']['street']}</span>
+							{/if}
 							<span class="print-data-address" data-value="{$item['address']['address']}">{$item['address']['address']}</span>
 							<a href="javascript:;" class="print-edit-btn" data-state="e">编辑</a>
 						{elseif $item['dispatchtype']==1}
@@ -146,6 +149,7 @@
 							<span class="print-data-province" data-value=""></span>
 							<span class="print-data-city" data-value=""></span>
 							<span class="print-data-area" data-value=""></span>
+							<span class="print-data-street" data-value=""></span>
 							<span class="print-data-address" data-value="{$item['address']['address']}">{$item['address']['address']}</span>
 						{/if}
 					</td>
@@ -265,6 +269,7 @@
 						'province':$(this).find(".print-data-province").data("value"),
 						'city':$(this).find(".print-data-city").data("value"),
 						'area':$(this).find(".print-data-area").data("value"),
+                        'street':$(this).find(".print-data-street").data("value"),
 						'address':$(this).find(".print-data-address").data("value"),
 						'expremark1':$.trim($(this).find(".remark1").text()),
 						'expremark2':$.trim($(this).find(".remark2").text())
@@ -292,6 +297,10 @@
 					this.items = this.items.replace("province",dd.province);
 					this.items = this.items.replace("city",dd.city);
 					this.items = this.items.replace("area",dd.area);
+                    if(dd.street==undefined){
+                        dd.street="";
+                    }
+                    this.items = this.items.replace("street",dd.street);
 					this.items = this.items.replace("address",dd.address);
 					this.items = this.items.replace("shopname",printTemp.shopname);
 					this.items = this.items.replace("expremark1",dd.expremark1);
@@ -609,6 +618,7 @@
 			var e_province = _this.find(".print-data-province");
 			var e_city = _this.find(".print-data-city");
 			var e_area = _this.find(".print-data-area");
+            var e_street = _this.find(".print-data-street");
 			var e_address = _this.find(".print-data-address");
 			
 			var old_realname = e_realname.data("value");
@@ -616,6 +626,7 @@
 			var old_province = e_province.data("value");
 			var old_city = e_city.data("value");
 			var old_area = e_area.data("value");
+            var old_street = e_street.data("value");
 			var old_address = e_address.data("value");
 			
 			if(state=='e'){
@@ -625,6 +636,7 @@
 				e_province.html("<input type='text' value='"+e_province.text()+"' style='width:60px;'>");
 				e_city.html("<input type='text' value='"+e_city.text()+"' style='width:60px;'>");
 				e_area.html("<input type='text' value='"+e_area.text()+"' style='width:60px;'>");
+                e_street.html("<input type='text' value='"+e_street.text()+"' style='width:90px;'>");
 				e_address.html("<input type='text' value='"+e_address.text()+"' style='width:160px;'>");
 			}
 			else if (state=='s'){
@@ -635,6 +647,7 @@
 				var val_province = e_province.children().val();
 				var val_city = e_city.children().val();
 				var val_area = e_area.children().val();
+                var val_street = e_street.children().val();
 				var val_address = e_address.children().val();
 				
 				var ordersns = [];
@@ -646,6 +659,7 @@
 					e_province.html(val_province).data("value",val_province);
 					e_city.html(val_city).data("value",val_city);
 					e_area.html(val_area).data("value",val_area);
+					e_street.html(val_street).data("value",val_street);
 					e_address.html(val_address).data("value",val_address);
 					ordersn = $(this).closest(".trfold").prev().data("print-ordersn");
 					ordersns.push(ordersn);
@@ -659,6 +673,7 @@
 							province:val_province,
 							city:val_city,
 							area:val_area,
+                            street:val_street,
 							address:val_address,
 							ordersns:ordersns
 						},
@@ -765,6 +780,7 @@
 				province: $.trim($("input[name=province]").val()),
 				city: $.trim($("input[name=city]").val()),
 				area: $.trim($("input[name=area]").val()),
+            	street: $.trim($("input[name=street]").val()),
 				address: $.trim($("input[name=address]").val()),
 				ordersns: ordersns
 			}
@@ -896,7 +912,6 @@
 	
 	
 </script>
-
 
 
 

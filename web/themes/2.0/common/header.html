@@ -100,11 +100,11 @@
 		</div>
 		<div class="skin-2__content main">
 			{if !defined('IN_MESSAGE')}
-            {if $frames['dimension'] == 3 && in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp','site', 'webapp', 'phoneapp', 'xzapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show', 'notice-news'))}
+				{if $frames['dimension'] == 3 && in_array(FRAME, array('account', 'system', 'advertisement', 'wxapp', 'site', 'webapp', 'phoneapp', 'xzapp')) && !in_array($_GPC['a'], array('news-show', 'notice-show', 'notice-news'))}
 				<div class="skin-2__sub">
 					<div class="sub-top">
 						<!-- 模块信息 -->
-						{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service', 'apply')) || defined('IN_MODULE')}
+						{if !empty($_GPC['m']) && !in_array($_GPC['m'], array('keyword', 'special', 'welcome', 'default', 'userapi', 'service', 'apply')) || defined('IN_MODULE') && IN_MODULE != ''}
 						<div class="apply-fixed-top">
 							{template 'common/header-module'}
 						</div>

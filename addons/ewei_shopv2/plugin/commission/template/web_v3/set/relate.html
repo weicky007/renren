@@ -15,6 +15,18 @@
                     {/if}
                 </div>
                </div>
+
+            <div class="form-group">
+                <label class="col-lg control-label">我的邀请码</label>
+                <div class="col-sm-9 col-xs-12">
+                    {ifp 'commission.set.edit'}
+                        <label class="radio-inline"><input type="radio"  name="data[hideicode]" value="0" {if empty($data['hideicode'])}checked="checked"{/if} /> 开启</label>
+                        <label class="radio-inline"><input type="radio"  name="data[hideicode]" value="1" {if !empty($data['hideicode'])}checked="checked"{/if} /> 关闭</label>
+                    {else}
+                        {if empty($data['hideicode'])}开启{else}关闭{/if}
+                    {/if}
+                </div>
+            </div>
 	    
     <div class="form-group-title">分销资格设置</div>
 		
@@ -135,7 +147,7 @@
                     {else}
                     {$data['no_commission_url']}
                     {/if}
-                    <span class="help-block">自定义非分销商点击分销中心链接 ; 如果不填写 则走默认;</span>
+                    <span class="help-block">自定义非分销商点击分销中心链接 ; 如果不填写 则走默认;<span class="text text-danger">（小程序暂未支持）</span></span>
                 </div>
             </div>
         

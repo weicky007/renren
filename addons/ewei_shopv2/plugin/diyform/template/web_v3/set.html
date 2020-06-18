@@ -195,6 +195,70 @@
     </div>
     {/if}
 
+    {if p('dividend')}
+    <div class="form-group">
+        <label class="col-lg control-label">团队分红申请资料</label>
+
+
+        <div class="col-sm-9 col-xs-12">
+            {ifp 'diyform.set.edit'}
+            <label class="radio radio-inline" style="float: left;">
+                <input type="radio" value="1" name="setdata[dividend_diyform_open]" {if $set['dividend_diyform_open'] == 1}checked{/if}> 启用
+            </label>
+            <label class="radio radio-inline" style="float: left;">
+                <input type="radio" value="0" name="setdata[dividend_diyform_open]" {if empty($set['dividend_diyform_open'])}checked{/if}> 关闭
+            </label>
+            <select id="dividend_diyform" name="setdata[dividend_diyform]" class="form-control" style="width:167px; float: left;margin-left:10px;">
+                <option value="0" {if $set['dividend_diyform']==0}selected{/if}>--选择自定义表单--</option>
+                {loop $form_list $key $value}
+                <option value="{$value['id']}" {if $set['dividend_diyform']==$value['id']}selected{/if}>{$value['title']}</option>
+                {/loop}
+            </select>
+
+            {else}
+            <div class="form-control-static">
+                {if $set['dividend_diyform_open'] == 1}
+                开启 -   {loop $form_list $key $value}{if $set['dividend_diyform']==$value['id']}{$value['title']}{/if}{/loop}
+                {else}
+                关闭
+                {/if}
+            </div>
+            {/if}
+        </div>
+    </div>
+    {/if}
+
+    {if p('groups')}
+    <div class="form-group">
+        <label class="col-lg control-label">拼团下单</label>
+        <div class="col-sm-9 col-xs-12">
+            {ifp 'diyform.set.edit'}
+            <label class="radio radio-inline" style="float: left;">
+                <input type="radio" value="1" name="setdata[groups_diyform_open]" {if $set['groups_diyform_open'] == 1}checked{/if}> 启用
+            </label>
+            <label class="radio radio-inline" style="float: left;">
+                <input type="radio" value="0" name="setdata[groups_diyform_open]" {if empty($set['groups_diyform_open'])}checked{/if}> 关闭
+            </label>
+            <select id="groups_diyform" name="setdata[groups_diyform]" class="form-control" style="width:167px; float: left;margin-left:10px;">
+                <option value="0" {if $set['groups_diyform']==0}selected{/if}>--选择自定义表单--</option>
+                {loop $form_list $key $value}
+                <option value="{$value['id']}" {if $set['groups_diyform']==$value['id']}selected{/if}>{$value['title']}</option>
+                {/loop}
+            </select>
+
+            {else}
+            <div class="form-control-static">
+                {if $set['dividend_diyform_open'] == 1}
+                开启 -   {loop $form_list $key $value}{if $set['dividend_diyform']==$value['id']}{$value['title']}{/if}{/loop}
+                {else}
+                关闭
+                {/if}
+            </div>
+            {/if}
+        </div>
+    </div>
+    {/if}
+
     {ifp 'diyform.set.edit'}
     <div class="form-group">
         <label class="col-lg control-label"></label>

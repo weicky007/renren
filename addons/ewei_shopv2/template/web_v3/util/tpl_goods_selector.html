@@ -1,7 +1,8 @@
 <div class="goods-selector" id="<?php echo $name_id;?>" data-switch="<?php echo intval($option['option']);?>">
     <textarea name="<?php echo $name;?>" class="hide goods-selector-textarea"><?php echo $data_gs;?></textarea>
     <where class="hide where"><?php echo $condition;?></where>
-    
+    <div class="hide op-html"><?php echo $ophtml;?></div>
+    <!--modal-->
     <div class="modal fade ">
         <div class="modal-dialog">
             <div class="modal-header">
@@ -12,14 +13,12 @@
             </div>
             <div class="modal-body">
                 <div class="row" style="padding:15px 0;">
-                    <div class="input-group">
-						<span class="input-group-select">
-		                    <div class="select2-container form-control select2" id="s2id_autogen1" style="width:275px;">
-                                <a href="javascript:void(0)" class="select2-choice" tabindex="-1">
-                                    <span class="select2-chosen" id="select2-chosen-2">商品分类</span>
-                                    <span class="select2-arrow" role="presentation"><b role="presentation"></b></span>
-                                </a>
-                            </div>
+                    <div class="input-group fenlei">
+						<span class="input-group-select" style="<?php if($option['type']=='group')echo 'display:none';?>">
+                            <!--商品分类-->
+                            <select name="goodsgroup" class="select2" style="width:275px;" id="cates">
+                                <option value="0">选择商品分类</option>
+                            </select>
 		                </span>
                         <input type="text" class="form-control search"	placeholder="请输入关键字">
                         <span class="input-group-btn">
@@ -38,29 +37,11 @@
             </div>
 
             <div class="modal-footer"><a href="#" class="btn btn-default">关闭</a></div>
-            <!--商品分类-->
-            <div class="select2-drop select2-display-none select2-with-searchbox select2-drop-active"
-                 style="left: 30px; width: 275px; top: 95px; bottom: auto; display: none;" id="select2-drop">
-                <ul class="select2-results" role="listbox" id="select2-results-2">
-                    <li class="select2-results-dept-0 select2-result select2-result-selectable select2-highlighted" role="presentation">
-                        <div class="select2-result-label" id="select2-result-label-41" role="option" data-id="0">
-							<span class="select2-match"></span>商品分类
-                        </div>
-                    </li>
-                    <li class="select2-results-dept-0 select2-result select2-result-selectable" role="presentation">
-                        <div class="select2-result-label" id="select2-result-label-42" role="option" data-id="12">
-							<span class="select2-match"></span>家用电器
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-
         </div>
     </div>
 
     <!--选择按钮-->
-    <a class="btn btn-default goods-selector-open" data-name="<?php echo $name;?>"><i class="fa fa-plus"></i> 选择商品</a>
+    <a class="btn btn-default goods-selector-open" data-name="<?php echo $name;?>" data-type="<?php echo $_type;?>" data-merchid="<?php echo $_merchid;?>"><i class="fa fa-plus"></i> 选择商品</a>
     <!--已选择商品-->
     <div class="goods-selector-content">
         <table class="table" style="margin-bottom: 0">
@@ -68,7 +49,7 @@
             <tr>
                 <th style="width: 60px;">商品</th>
                 <th></th>
-                <th class="width-100">库存</th>
+                <th class="width-50"></th>
                 <th class="width-200">操作</th>
             </tr>
             </thead>
@@ -78,8 +59,10 @@
         </table>
     </div>
 </div>
-<?php if(empty($_W['goods_selector_js'])){ ?>
 <style>
+    <?php if(empty($option['column']) && empty($option['option']) ){ ?>
+    #<?php echo $name_id;?> .goods-selector-op{display: none;}
+    <?php }?>
     .cancelit{
         background-color: red;
     }
@@ -319,8 +302,26 @@
         outline: 0;
     }
 </style>
-<script>myrequire(["../js/web/goods_selector"],function (model) {model.init();});</script>
+<?php if(empty($_W['goods_selector_js'])){ ?>
+<script>
+    var url = './index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=util.goods_selector.getcate';
+    <?php if(!empty($_W['merchid'])):?>
+    var url = './merchant.php?c=site&a=entry&m=ewei_shopv2&do=web&r=goods.getcate';
+    <?php endif;?>
+    myrequire(["../js/web/goods_selector"],function (model) {
+        model.init();
+        $.ajax({
+            url:url,
+            type:'get',
+            success:function (json) {
+                var htm = '<option value="0">选择商品分类</option>';
+                $('.fenlei select').html(htm);
+                $.each(json,function (i,v) {
+                    $('.fenlei select').append('<option value="'+v.id+'">'+v.name+'</option>');
+                });
+            }
+        });
+    });</script>
 <?php }?>
-
 
 

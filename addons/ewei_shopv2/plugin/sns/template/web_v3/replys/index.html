@@ -269,7 +269,7 @@
                                <br/>话题: {$row['member']['postcount']}
                                <br/>评论: {$row['member']['replycount']}
                            </td>
-                           <td class='full' style="overflow-x: hidden; width: 200px;">
+                           <td class='full' style="white-space: normal;word-wrap:break-word;width: 600px;display: block;text-align: left">
                                {if !empty($row['parent'])}
                                回复:{$row['parent']['nickname']}<br/>
                                {/if}

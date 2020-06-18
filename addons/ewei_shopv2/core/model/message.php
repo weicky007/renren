@@ -1,85 +1,119 @@
 <?php
-if (!(defined('IN_IA'))) 
+
+class Message_EweiShopV2Model
 {
-	exit('Access Denied');
-}
-class Message_EweiShopV2Model 
-{
-	public function sendTplNotice($touser, $template_id, $postdata, $url = '', $account = NULL, $miniprogram = array()) 
+	/**
+     * 模板消息通知
+     */
+	public function sendTplNotice($touser, $template_id, $postdata, $url = '', $account = NULL, $miniprogram = array())
 	{
-		if (!($account)) 
-		{
+		if (!$account) {
 			$account = m('common')->getAccount();
 		}
-		if (!($account)) 
-		{
-			return;
+
+		if (!$account) {
+			return NULL;
 		}
+
 		return $account->sendTplNotice($touser, $template_id, $postdata, $url, '#FF683F', $miniprogram);
 	}
-	public function sendCustomNotice($openid, $msg, $url = '', $account = NULL) 
+
+	public function sendCustomNotice($openid, $msg, $url = '', $account = NULL)
 	{
-		if (!($account)) 
-		{
+		if (!$account) {
 			$account = m('common')->getAccount();
 		}
-		if (!($account)) 
-		{
-			return;
+
+		if (!$account) {
+			return NULL;
 		}
+
 		$content = '';
-		if (is_array($msg)) 
-		{
-			foreach ($msg as $key => $value ) 
-			{
-				if (!(empty($value['title']))) 
-				{
-					$content .= $value['title'] . ':' . $value['value'] . "\n";
+
+		if (is_array($msg)) {
+			foreach ($msg as $key => $value) {
+				$value['value'] = empty($value['value']) ? '' : $value['value'];
+
+				if (!empty($value['title'])) {
+					$content .= $value['title'] . ':' . $value['value'] . '
+';
 				}
-				else 
-				{
-					$content .= $value['value'] . "\n";
-					if ($key == 0) 
-					{
-						$content .= "\n";
+				else {
+					$content .= $value['value'] . '
+';
+
+					if ($key == 0) {
+						$content .= '
+';
 					}
 				}
 			}
 		}
-		else 
-		{
-			$content = $msg;
+		else {
+			$content = addslashes($msg);
 		}
-		if (!(empty($url))) 
-		{
+
+		if (!empty($url)) {
 			$content .= '<a href=\'' . $url . '\'>点击查看详情</a>';
 		}
-		return $account->sendCustomNotice(array( 'touser' => $openid, 'msgtype' => 'text', 'text' => array('content' => urlencode($content)) ));
+
+		return $account->sendCustomNotice(array(
+			'touser'  => $openid,
+			'msgtype' => 'text',
+			'text'    => array('content' => urlencode($content))
+		));
 	}
-	public function sendImage($openid, $mediaid) 
+
+	/**
+     * 发送图片
+     * @param type $openid
+     * @param type $mediaid
+     * @return type 
+     */
+	public function sendImage($openid, $mediaid)
 	{
 		$account = m('common')->getAccount();
-		return $account->sendCustomNotice(array( 'touser' => $openid, 'msgtype' => 'image', 'image' => array('media_id' => $mediaid) ));
+		return $account->sendCustomNotice(array(
+			'touser'  => $openid,
+			'msgtype' => 'image',
+			'image'   => array('media_id' => $mediaid)
+		));
 	}
-	public function sendNews($openid, $articles, $account = NULL) 
+
+	public function sendNews($openid, $articles, $account = NULL)
 	{
-		if (!($account)) 
-		{
+		if (!$account) {
 			$account = m('common')->getAccount();
 		}
-		return $account->sendCustomNotice(array( 'touser' => $openid, 'msgtype' => 'news', 'news' => array('articles' => $articles) ));
+
+		return $account->sendCustomNotice(array(
+			'touser'  => $openid,
+			'msgtype' => 'news',
+			'news'    => array('articles' => $articles)
+		));
 	}
-	public function sendTexts($openid, $content, $url = '', $account = NULL) 
+
+	public function sendTexts($openid, $content, $url = '', $account = NULL)
 	{
-		if (!($account)) 
-		{
+		if (!$account) {
 			$account = m('common')->getAccount();
 		}
-		if (!(empty($url))) 
-		{
-			$content .= "\n" . '<a href=\'' . $url . '\'>点击查看详情</a>';
+
+		if (!empty($url)) {
+			$content .= '
+<a href=\'' . $url . '\'>点击查看详情</a>';
 		}
-		return $account->sendCustomNotice(array( 'touser' => $openid, 'msgtype' => 'text', 'text' => array('content' => urlencode($content)) ));
+
+		return $account->sendCustomNotice(array(
+			'touser'  => $openid,
+			'msgtype' => 'text',
+			'text'    => array('content' => urlencode($content))
+		));
 	}
 }
+
+if (!defined('IN_IA')) {
+	exit('Access Denied');
+}
+
 ?>

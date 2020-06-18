@@ -1,5 +1,10 @@
 {php $no_left=true}
 
+<link href="https://vjs.zencdn.net/7.4.1/video-js.css" rel="stylesheet">
+<script src='https://vjs.zencdn.net/7.4.1/video.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.15.0/videojs-contrib-hls.min.js"
+        type="text/javascript"></script>
+
 {template '_header'}
 
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/live/static/css/console.css">
@@ -25,7 +30,25 @@
         <div class="col-sm-5">
             <div class="panel-video">
                 <div class="online stop"><span class="status">未开播</span> | 显示人数: <span id="showOnline">0</span></div>
-                <iframe style="border: 0; overflow: hidden; width: 100%; height: 100%;" src="{$url}"></iframe>
+                <div>
+                    <video id="myVideo" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" data-setup='{}'
+                           style='width: 600px;height: 450px;'>
+                        <source id="source"
+                                src="{$url}"
+                                type="application/x-mpegURL">
+                        </source>
+                    </video>
+                </div>
+                <script>
+                    // videojs 简单使用
+                    var myVideo = new videojs('myVideo', {
+                        bigPlayButton: true,
+                        textTrackDisplay: false,
+                        posterImage: false,
+                        errorDisplay: false,
+                    })
+
+                </script>
             </div>
 
             <div class="panel panel-default panel-push">
@@ -56,38 +79,38 @@
                 </div>
                 <div class="panel-body panel-chat" data-tab="chat" style="display: block">
                     {loop $records $record}
-                        <p data-msgid="{$record['id']}">
-                            {if !empty($record['status'])}
-                                <span class="tip"><span class="text">{$record['text']}</span></span>
-                            {else}
-                                <span class="time" title="2017-06-06">[{php echo date('H:i:s', $record['sendtime'])}] </span>
-                                {if $record['mid']==$uid}
-                                    <span class="nickname self" title="点击修改昵称" data-nickname="{$record['nickname']}" data-uid="{$record['openid']}">{$record['nickname']}(我)：</span>
-                                {else}
-                                    <span class="nickname" title="点击@Ta" data-nickname="{$record['nickname']}" data-uid="{$record['mid']}">{$record['nickname']}：</span>
-                                {/if}
+                    <p data-msgid="{$record['id']}">
+                        {if !empty($record['status'])}
+                        <span class="tip"><span class="text">{$record['text']}</span></span>
+                        {else}
+                        <span class="time" title="2017-06-06">[{php echo date('H:i:s', $record['sendtime'])}] </span>
+                        {if $record['mid']==$uid}
+                        <span class="nickname self" title="点击修改昵称" data-nickname="{$record['nickname']}" data-uid="{$record['openid']}">{$record['nickname']}(我)：</span>
+                        {else}
+                        <span class="nickname" title="点击@Ta" data-nickname="{$record['nickname']}" data-uid="{$record['mid']}">{$record['nickname']}：</span>
+                        {/if}
 
-                                {if $record['type']=='goods'}
-                                    <a class="goods" href="{php echo webUrl('goods/edit', array('id'=>$record['goodsid']))}" target="_blank">
-                                        <span class="thumb"><img src="{php echo tomedia($record['goodsthumb'])}"/></span>
-                                        <span class="info">
+                        {if $record['type']=='goods'}
+                        <a class="goods" href="{php echo webUrl('goods/edit', array('id'=>$record['goodsid']))}" target="_blank">
+                            <span class="thumb"><img src="{php echo tomedia($record['goodsthumb'])}"/></span>
+                            <span class="info">
                                             <span class="title">{$record['goodstitle']}</span>
                                             <span class="price">￥{$record['goodsprice']}</span>
                                         </span>
-                                    </a>
-                                {else}
-                                    {$record['text']}
-                                    {if $record['type']=='text' || $record['type']=='image'}
-                                        {if $record['mid'] == $uid}
-                                            <a class="btn-repeal" title="删除此条消息"> 撤回</a>
-                                        {else}
-                                            <a class="btn-delete" title="删除此条消息"> 删除</a>
-                                            <a class="btn-banned" title="{if empty($record['banned'])}禁止{else}允许{/if}此用户发言" {if !empty($record['banned'])}data-banned="1"{/if}> {if empty($record['banned'])}禁言{else}解除禁言{/if}</a>
-                                        {/if}
-                                    {/if}
-                                {/if}
-                            {/if}
-                        </p>
+                        </a>
+                        {else}
+                        {$record['text']}
+                        {if $record['type']=='text' || $record['type']=='image'}
+                        {if $record['mid'] == $uid}
+                        <a class="btn-repeal" title="删除此条消息"> 撤回</a>
+                        {else}
+                        <a class="btn-delete" title="删除此条消息"> 删除</a>
+                        <a class="btn-banned" title="{if empty($record['banned'])}禁止{else}允许{/if}此用户发言" {if !empty($record['banned'])}data-banned="1"{/if}> {if empty($record['banned'])}禁言{else}解除禁言{/if}</a>
+                        {/if}
+                        {/if}
+                        {/if}
+                        {/if}
+                    </p>
                     {/loop}
                 </div>
                 <div class="panel-body panel-chat" data-tab="visitor">
@@ -150,9 +173,9 @@
                 <div class="panel-footer">
                     <div class="emoji-list">
                         {loop $emojiList $i $emojiItem}
-                            {if !empty($emojiItem)}
-                                <div class="item" title="{$emojiItem}" data-index="{$i}"></div>
-                            {/if}
+                        {if !empty($emojiItem)}
+                        <div class="item" title="{$emojiItem}" data-index="{$i}"></div>
+                        {/if}
                         {/loop}
                     </div>
                     <div class="input">
@@ -173,13 +196,13 @@
                     </div>
                     <div class="btn btn-primary disabled" id="btn-send">发送</div>
                 </div>
-                </div>
+            </div>
         </div>
 
         <div class="col-sm-12">
             <div class="panel panel-default panel-push">
                 <div class="panel-heading">推送记录(<span id="pushcount">{$push_count}</span>)
-                <span class="pull-right">
+                    <span class="pull-right">
                     <a class="label label-danger btn-push" data-action="redpack" data-toggle="tooltip" data-placement="top" data-original-title="点击推送红包"><i class="fa fa-plus"></i> 推送红包</a>
                     <a class="label label-warning btn-push" data-action="coupon" data-toggle="tooltip" data-placement="top" data-original-title="点击推送优惠券"><i class="fa fa-plus"></i> 推送优惠券</a>
                     <a class="label label-primary btn-push" data-action="link" data-toggle="tooltip" data-placement="top" data-original-title="点击推送商品"><i class="fa fa-plus"></i> 推送商品</a>
@@ -189,67 +212,67 @@
                     <p class="empty-data" {if $push_count>0}style="display: none;"{/if}>暂无推送记录</p>
 
                     <table class="table" {if $push_count<1}style="display: none"{/if}>
-                        <thead>
-                            <th style="width: 90px; text-align: center;">推送类型</th>
-                            <th>标题</th>
-                            <th style="width: 180px">推送时间</th>
-                            <th style="width: 120px;">推送数量(个/张)</th>
-                            <th style="width: 120px">剩余数量(个/张)</th>
-                            <th style="width: 100px">推送金额(元)</th>
-                            <th style="width: 100px">剩余金额(元)</th>
-                            <th style="width: 100px;">其他</th>
-                            <th style="width: 100px;"></th>
-                        </thead>
+                    <thead>
+                    <th style="width: 90px; text-align: center;">推送类型</th>
+                    <th>标题</th>
+                    <th style="width: 180px">推送时间</th>
+                    <th style="width: 120px;">推送数量(个/张)</th>
+                    <th style="width: 120px">剩余数量(个/张)</th>
+                    <th style="width: 100px">推送金额(元)</th>
+                    <th style="width: 100px">剩余金额(元)</th>
+                    <th style="width: 100px;">其他</th>
+                    <th style="width: 100px;"></th>
+                    </thead>
                     </table>
                     <div class="max350">
                         <table class="table height0" {if $push_count<1}style="display: none"{/if}>
-                            <thead>
-                                <th style="width: 90px; text-align: center;"></th>
-                                <th></th>
-                                <th style="width: 180px"></th>
-                                <th style="width: 120px;"></th>
-                                <th style="width: 120px"></th>
-                                <th style="width: 100px"></th>
-                                <th style="width: 100px"></th>
-                                <th style="width: 100px;"></th>
-                                <th style="width: 100px;"></th>
-                            </thead>
-                            <tbody>
-                                {loop $push_records $push_index $push_item}
-                                <tr data-pushid="{$push_item['time']}">
-                                    <td>
-                                        {if $push_item['type']<2}
-                                            <label class="label label-danger">红包(余额)</label>
-                                        {elseif $push_item['type']==2}
-                                            <label class="label label-warning">优惠券</label>
-                                        {/if}
-                                    </td>
-                                    <td>{$push_item['title']}</td>
-                                    <td>{php echo date('Y-m-d H:i:s', $push_item['time'])}</td>
-                                    <td>{$push_item['total']}</td>
-                                    <td class="total_remain">{$push_item['total_remain']}</td>
-                                    <td>
-                                        {if $push_item['type']<2}
-                                            {$push_item['money']}
-                                        {elseif $push_item['type']==2}-{/if}
-                                    </td>
-                                    <td class="money_remain">
-                                        {if $push_item['type']<2}
-                                            {$push_item['money_remain']}
-                                        {elseif $push_item['type']==2}-{/if}
-                                    </td>
-                                    <td>
-                                        {if $push_item['type']<2}
-                                        {php echo $push_item['type']==1? '拼手气红包': '普通红包'}
-                                        {elseif $push_item['type']==2}-{/if}
-                                    </td>
-                                    <td>
-                                        <a data-toggle="ajaxModal" href="{php echo webUrl('live/room/console_record', array('pushid'=>$push_item['time'], 'type'=>$push_item['type'], 'id'=>$id))}">领取记录</a>
-                                    </td>
-                                </tr>
-                                {/loop}
+                        <thead>
+                        <th style="width: 90px; text-align: center;"></th>
+                        <th></th>
+                        <th style="width: 180px"></th>
+                        <th style="width: 120px;"></th>
+                        <th style="width: 120px"></th>
+                        <th style="width: 100px"></th>
+                        <th style="width: 100px"></th>
+                        <th style="width: 100px;"></th>
+                        <th style="width: 100px;"></th>
+                        </thead>
+                        <tbody>
+                        {loop $push_records $push_index $push_item}
+                        <tr data-pushid="{$push_item['time']}">
+                            <td>
+                                {if $push_item['type']<2}
+                                <label class="label label-danger">红包(余额)</label>
+                                {elseif $push_item['type']==2}
+                                <label class="label label-warning">优惠券</label>
+                                {/if}
+                            </td>
+                            <td>{$push_item['title']}</td>
+                            <td>{php echo date('Y-m-d H:i:s', $push_item['time'])}</td>
+                            <td>{$push_item['total']}</td>
+                            <td class="total_remain">{$push_item['total_remain']}</td>
+                            <td>
+                                {if $push_item['type']<2}
+                                {$push_item['money']}
+                                {elseif $push_item['type']==2}-{/if}
+                            </td>
+                            <td class="money_remain">
+                                {if $push_item['type']<2}
+                                {$push_item['money_remain']}
+                                {elseif $push_item['type']==2}-{/if}
+                            </td>
+                            <td>
+                                {if $push_item['type']<2}
+                                {php echo $push_item['type']==1? '拼手气红包': '普通红包'}
+                                {elseif $push_item['type']==2}-{/if}
+                            </td>
+                            <td>
+                                <a data-toggle="ajaxModal" href="{php echo webUrl('live/room/console_record', array('pushid'=>$push_item['time'], 'type'=>$push_item['type'], 'id'=>$id))}">领取记录</a>
+                            </td>
+                        </tr>
+                        {/loop}
 
-                            </tbody>
+                        </tbody>
                         </table>
                     </div>
                 </div>
@@ -323,14 +346,14 @@
                             <div class="col-sm-10">
                                 <?php echo tpl_selector('couponid',array(
                                     'readonly'=>true,
-                                        'autosearch'=>1,
-                                        'type'=>'image',
-                                        'url'=>webUrl('sale/coupon/query', array('live'=>1)),
-                                        'text'=>'couponname',
-                                        'items'=>$coupon,
-                                        'buttontext'=>'选择优惠券',
-                                        'placeholder'=>'请选择优惠券',
-                                        'callback'=>'callbackCoupon'
+                                'autosearch'=>1,
+                                'type'=>'image',
+                                'url'=>webUrl('sale/coupon/query', array('live'=>1)),
+                                'text'=>'couponname',
+                                'items'=>$coupon,
+                                'buttontext'=>'选择优惠券',
+                                'placeholder'=>'请选择优惠券',
+                                'callback'=>'callbackCoupon'
                                 ))
                                 ?>
                                 <input type="hidden" id="coupon_value_text" />

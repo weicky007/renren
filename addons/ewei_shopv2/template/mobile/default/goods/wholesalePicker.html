@@ -4,6 +4,10 @@
 	.option-picker{
 		padding-bottom:2.25rem
 	}
+	.picker-bulk{
+		display: flex;
+		flex-direction: column;
+	}
 	.picker-bulk .header {
 		height: 4.5rem;
 		padding: 0 0.6rem 0.3rem 0.6rem;
@@ -120,7 +124,8 @@
 		padding: 0 0.15rem;
 	}
 	.picker-bulk .body {
-		max-height: 11.8rem;
+		max-height: 11.45rem;
+		flex: 1;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 	}
@@ -354,16 +359,19 @@
 							</div>
 						</div>
 					</div>
+					<div class="counts">
+						<div class="tip size2" id="again"></div>
+						<div class="inner">
+							<p  id="UnitPrice"></p>
+							<p class="countprice">总价: ￥<span id='totalprice'></span></p>
+						</div>
+					</div>
+					<%=diyformhtml%>
+
 				</div>
 			<%/if%>
 
-			<div class="counts">
-				<div class="tip size2" id="again"></div>
-				<div class="inner">
-					<p  id="UnitPrice"></p>
-					<p class="countprice">总价: ￥<span id='totalprice'></span></p>
-				</div>
-			</div>
+
 		</div>
 		<div class="fui-navbar">
 			<a href="javascript:;" class="nav-item btn cartbtn" style='display:none'>加入购物车</a>
@@ -372,3 +380,20 @@
 		</div>
 	</div>
 </script>
+
+<script type="text/html" id="followqrcode">
+	<div class="follow_hidden">
+		<div id="alert-mask"></div>
+		<div class="verify-pop">
+			<div class="close"><i class="icon icon-roundclose"></i></div>
+			<div class="qrcode" style="height: 250px;">
+				<img class="qrimg" src="" />
+			</div>
+			<div class="tip">
+				<p class="text-white">长按识别二维码关注</p>
+				<p class="text-warning" style="color: {$diyfollowbar['style']['highlight']};">{$_W['shopset']['shop']['name']}</p>
+			</div>
+		</div>
+	</div>
+</script>
+{template '_account'}

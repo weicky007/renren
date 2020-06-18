@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="深圳" code="440300">
-<county name="罗湖" code="440303">
+<city name="深圳市" code="440300">
+    <county name="市辖区" code="440301">
+        <street name="市辖区街道" code="440301001" />
+    </county>
+<county name="罗湖区" code="440303">
     <street name="桂园街道" code="440303001" />
     <street name="黄贝街道" code="440303002" />
     <street name="东门街道" code="440303003" />
@@ -13,7 +16,7 @@
     <street name="东晓街道" code="440303009" />
     <street name="清水河街道" code="440303010" />
 </county>
-<county name="福田" code="440304">
+<county name="福田区" code="440304">
     <street name="南园街道" code="440304001" />
     <street name="园岭街道" code="440304002" />
     <street name="福田街道" code="440304004" />
@@ -26,7 +29,7 @@
     <street name="华强北街道" code="440304011" />
     <street name="福田保税区" code="440304400" />
 </county>
-<county name="南山" code="440305">
+<county name="南山区" code="440305">
     <street name="南头街道" code="440305001" />
     <street name="南山街道" code="440305002" />
     <street name="沙河街道" code="440305003" />
@@ -36,7 +39,7 @@
     <street name="桃源街道" code="440305008" />
     <street name="西丽街道" code="440305009" />
 </county>
-<county name="宝安" code="440306">
+<county name="宝安区" code="440306">
     <street name="新安街道" code="440306001" />
     <street name="光明办事处" code="440306002" />
     <street name="西乡街道" code="440306003" />
@@ -51,10 +54,9 @@
     <street name="民治街道" code="440306013" />
     <street name="深圳市宝安国际机场" code="440306400" />
 </county>
-<county name="龙岗" code="440307">
+<county name="龙岗区" code="440307">
     <street name="平湖街道" code="440307003" />
     <street name="坪地街道" code="440307006" />
-    <street name="坪山街道" code="440307007" />
     <street name="坑梓街道" code="440307008" />
     <street name="葵涌街道" code="440307009" />
     <street name="大鹏街道" code="440307010" />
@@ -67,7 +69,7 @@
     <street name="横岗街道" code="440307017" />
     <street name="深圳市大工业区" code="440307401" />
 </county>
-<county name="盐田" code="440308">
+<county name="盐田区" code="440308">
     <street name="梅沙街道" code="440308001" />
     <street name="盐田街道" code="440308002" />
     <street name="沙头角街道" code="440308003" />
@@ -75,5 +77,21 @@
     <street name="市保税区（沙头角）" code="440308400" />
     <street name="市保税区（盐田港）" code="440308401" />
 </county>
+    <county name="坪山新区" code="440309">
+        <street name="坪山新区街道" code="440309001" />
+    </county>
+    <county name="光明新区" code="440310">
+        <street name="光明新区街道" code="440310001" />
+    </county>
+    <county name="龙华新区" code="440311">
+        <street name="龙华新区街道" code="440311001" />
+    </county>
+    <county name="大鹏新区" code="440312">
+        <street name="大鹏新区街道" code="440312001" />
+    </county>
+    <county name="坪山区" code="440313">
+        <street name="坪山街道" code="440313001" />
+        <street name="坑梓街道" code="440313002" />
+    </county>
 </city>
 </address>

@@ -3,7 +3,7 @@
 <div class="page-header"> 当前位置：<span class="text-primary">淘宝助手</span>  </div>
 
 <div class="page-content">
-    <div class='alert alert-danger'>尽量在服务器空闲时间来操作，会占用大量内存与带宽，在获取过程中，请不要进行任何操作!</div>
+    <div class='alert alert-danger'>每次添加的商品链接请保持在3个以内. 尽量在服务器空闲时间来操作，会占用大量内存与带宽，在获取过程中，请不要进行任何操作!<br/>由于淘宝防抓取措施，淘宝助手获取不到商品淘宝价。所以，统一用商品标价填充，如果抓取商品无标价，则统一填充0</div>
     <form id="dataform" action="" method="post" class="form-horizontal form">
 
         <div class="form-group">
@@ -15,6 +15,18 @@
                 <span class="help-block">直接输入商品链接或输入商品ID:522155891308  </span>
                 <span class="help-block">每行仅限输入一个链接或一个商品ID，可多行输入</span>
             </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label">商品来源</label>
+
+            <div class="col-sm-9">
+                <select id="from"  name='from' class="form-control" style='width:605px;'>
+                    <option value="taobao" >淘宝商品</option>
+                    <option value="tmall" >天猫商品</option>
+
+                </select>
+            </div>
+
         </div>
         <div class="form-group">
             <label class="col-lg control-label">设置分类</label>
@@ -58,16 +70,27 @@
         $("#btn_submit").val("正在获取中...").removeClass("btn-primary").attr("disabled", "true");
         urls = $("#url").val().split('\n');
         total = urls.length;
+
+        if(total>3)
+        {
+            tip.msgbox.err("单次获取的商品数量请不要超过3个,以免会影响抓取效率!");
+
+            $("#btn_submit").val("立即获取").addClass("btn-primary").removeAttr("disabled");
+            return;
+        }
+
         $("#btn_submit").val("检测到需要获取 " + total + " 个宝贝, 请等待开始....");
         fetch_next();
         return;
     }
     function fetch_next() {
         var cates =$("#cates").val();
+        var from =$("#from").val();
 
         var postdata =  {
             url: urls[len],
-            cate: cates
+            cate: cates,
+            from:from
         };
 
         $.post("{php echo webUrl('taobao/fetch')}", postdata, function (data) {
@@ -90,4 +113,3 @@
 </script>
 
 {template '_footer'}
-

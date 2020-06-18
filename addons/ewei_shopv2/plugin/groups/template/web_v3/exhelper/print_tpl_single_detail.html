@@ -17,6 +17,10 @@
 		<span style="border-left: 0; border-right: 0;" class="input-group-addon">市</span>
 		<input type="text" name="area" value="{$address['area']}" class="form-control valid">
 		<span style="border-left: 0; border-right: 0;" class="input-group-addon">区</span>
+		{if $address['street']}
+		<input type="text" name="street" value="{$address['street']}" class="form-control valid">
+		<span style="border-left: 0; border-right: 0;" class="input-group-addon">街道</span>
+		{/if}
 		<input type="text" name="address" value="{$address['address']}" class="form-control valid" style="width: 314px;">
 	</div>
 
@@ -237,6 +241,7 @@
 			var rep_province = $.trim($(":input[name=province]").val());
 			var rep_city = $.trim($(":input[name=city]").val());
 			var rep_area = $.trim($(":input[name=area]").val());
+            var rep_street = $.trim($(":input[name=street]").val());
 			var rep_address = $.trim($(":input[name=address]").val());	
 			var rep_expremark1 = $.trim($(":input[name=remark1]").val());
 			var rep_expremark2 = $.trim($(":input[name=remark2]").val());
@@ -256,6 +261,10 @@
 				this.items = this.items.replace("province",rep_province);
 				this.items = this.items.replace("city",rep_city);
 				this.items = this.items.replace("area",rep_area);
+                if(rep_street==undefined){
+                    rep_street="";
+                }
+                this.items = this.items.replace("street",rep_street);
 				this.items = this.items.replace("address",rep_address);
 				this.items = this.items.replace("ordersn",rep_ordersn);
 				this.items = this.items.replace("shopname",printTemp.shopname);
@@ -641,6 +650,7 @@
 				province: $.trim($("input[name=province]").val()),
 				city: $.trim($("input[name=city]").val()),
 				area: $.trim($("input[name=area]").val()),
+                street: $.trim($("input[name=street]").val()),
 				address: $.trim($("input[name=address]").val()),
 				ordersns: ordersns
 			}
@@ -745,7 +755,6 @@
 	
 	
 </script>
-
 
 
 

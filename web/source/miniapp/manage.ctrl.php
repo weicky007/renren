@@ -13,17 +13,26 @@ $do = in_array($do, $dos) ? $do : 'display';
 
 $uniacid = intval($_GPC['uniacid']);
 if (empty($uniacid)) {
+	if ($_W['isajax']) {
+		iajax(-1, '请选择要编辑的小程序');
+	}
 	itoast('请选择要编辑的小程序', referer(), 'error');
 }
 
 $state = permission_account_user_role($_W['uid'], $uniacid);
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if (!$role_permission) {
+	if ($_W['isajax']) {
+		iajax(-1, '无权限操作！');
+	}
 	itoast('无权限操作！', referer(), 'error');
 }
 
 $account = uni_fetch($uniacid);
 if (is_error($account) || empty($account['type'])) {
+	if ($_W['isajax']) {
+		iajax(-1, $account['message']);
+	}
 	itoast($account['message'], url('account/manage'), 'error');
 }
 
@@ -35,8 +44,8 @@ if ('display' == $do) {
 	if (!empty($version_exist)) {
 		$version_lists = miniapp_version_all($uniacid);
 		if (!empty($version_lists)) {
-			$is_account_modules = false;
 			foreach ($version_lists as &$row) {
+				$row['enter_account_url'] = url('account/display/switch', array('uniacid' => $uniacid, 'version_id' => $row['version_id']), true);
 				if (!empty($row['modules'])) {
 					$row['module']['module_info'] = current($row['modules']);
 				}
@@ -50,10 +59,6 @@ if ('display' == $do) {
 				if (empty($row['last_modules'])) {
 					$row['last_modules'] = $row['module'];
 				}
-				if (WXAPP_TYPE_SIGN == $account->typeSign && $row['type'] == WXAPP_CREATE_MODULE && !$is_account_modules) {
-					$is_account_modules = true;
-					$module_type = 'account';
-				}
 			}
 			unset($row);
 		}
@@ -61,39 +66,22 @@ if ('display' == $do) {
 		$miniapp_modules = miniapp_support_uniacid_modules($uniacid);
 
 		if ($miniapp_modules && WXAPP_TYPE_SIGN == $account->typeSign) {
-			$sysmods = module_system();
-			$account_all_type = uni_account_type();
 			foreach ($miniapp_modules as $k => $module) {
-				if (!$is_account_modules && MODULE_SUPPORT_WXAPP != $module[MODULE_SUPPORT_WXAPP_NAME]) {
+				if (MODULE_SUPPORT_WXAPP != $module[MODULE_SUPPORT_WXAPP_NAME]) {
 					unset($miniapp_modules[$k]);
-					continue;
-				}
-				if ($is_account_modules) {
-					if ('system' == $module['type'] || in_array($module['name'], $sysmods)) {
-						unset($miniapp_modules[$k]);
-						continue;
-					}
-					$continue = false;
-					foreach ($account_all_type as $account_type) {
-						if ($module_type == $account_type['type_sign'] && $module[$account_type['module_support_name']] != $account_type['module_support_value']) {
-							$continue = true;
-							break;
-						}
-					}
-					if ($continue) {
-						unset($miniapp_modules[$k]);
-						continue;
-					}
-					$module_entries = module_entries($module['name'], array('cover'));
-					if (empty($module_entries)) {
-						unset($miniapp_modules[$k]);
-						continue;
-					}
 				}
 			}
 		}
 	}
 	$_W['breadcrumb'] = $account['name'];
+	if ($_W['isajax']) {
+		$message = array(
+			'add_version_url' => url('miniapp/post', array('uniacid' => $uniacid, 'type' => $account['type']), true),
+			'list' => $version_lists,
+			'version_exist' => $version_exist ? 1 : 0,
+		);
+		iajax(0, $message);
+	}
 	template('miniapp/manage');
 }
 

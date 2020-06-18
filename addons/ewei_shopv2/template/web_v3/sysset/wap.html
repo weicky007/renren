@@ -1,4 +1,11 @@
 {template '_header'}
+<style>
+    .arg-content {
+        margin-top: 10px;
+    }
+</style>
+
+
 <div class="page-header">当前位置：<span class="text-primary">全网通设置</span></div>
 
 <div class="page-content">
@@ -70,9 +77,84 @@
                             <label class="radio-inline">
                                 <input type="radio" name="data[mustbind]" value="0" {if empty($data['mustbind'])} checked="checked"{/if} />否
                             </label>
-                            <div class="form-control-static">注意：设置强制绑定手机号后，在用户下单时将弹出提示并且无法下单</div>
+                            <div class="form-control-static">注意：设置强制绑定手机号后，在用户下单时将弹出提示并且无法下单(必须开启WAP访问)</div>
                             {else}
                             <div class='form-control-static'>{if $data['mustbind']==1}是{else}否{/if}</div>
+                            {/if}
+                        </div>
+                    </div>
+
+
+                    <div class='form-group-title'>开启强制绑定后，用户必填信息</div>
+                    <div class="form-group">
+                        <label class="col-lg control-label must">真实姓名</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.wap.edit'}
+                            <label class="radio-inline"><input type="radio" value="1" name="data[bindrealname]"  {if $data['bindrealname'] == 1}checked="true"{/if} >填写</label>
+                            <label class="radio-inline"><input type="radio" value="0" name="data[bindrealname]"  {if empty($data['bindrealname'])}checked="true"{/if}  >不填写</label>
+                            {else}
+                            <div class='form-control-static'>
+                                {if $data['realname']==0}
+                                关闭
+                                {else if $data['realname']==1}
+                                开启
+                                {/if}
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label must">出生日期</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.wap.edit'}
+                            <label class="radio-inline"><input type="radio" value="1" name="data[bindbirthday]"  {if $data['bindbirthday'] == 1}checked="true"{/if} >填写</label>
+                            <label class="radio-inline"><input type="radio" value="0" name="data[bindbirthday]"  {if empty($data['bindbirthday'])}checked="true"{/if}  >不填写</label>
+                            {else}
+                            <div class='form-control-static'>
+                                {if $data['birthday']==0}
+                                关闭
+                                {else if $data['birthday']==1}
+                                开启
+                                {/if}
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label must">身份证号</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.wap.edit'}
+                            <label class="radio-inline"><input type="radio" value="1" name="data[bindidnumber]"  {if $data['bindidnumber'] == 1}checked="true"{/if} >填写</label>
+                            <label class="radio-inline"><input type="radio" value="0" name="data[bindidnumber]"  {if empty($data['bindidnumber'])}checked="true"{/if}  >不填写</label>
+                            {else}
+                            <div class='form-control-static'>
+                                {if $data['idnumber']==0}
+                                关闭
+                                {else if $data['idnumber']==1}
+                                开启
+                                {/if}
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-lg control-label must">微信号</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.wap.edit'}
+                            <label class="radio-inline"><input type="radio" value="1" name="data[bindwechat]"  {if $data['bindwechat'] == 1}checked="true"{/if} >填写</label>
+                            <label class="radio-inline"><input type="radio" value="0" name="data[bindwechat]"  {if empty($data['bindwechat'])}checked="true"{/if}  >不填写</label>
+                            {else}
+                            <div class='form-control-static'>
+                                {if $data['mobile']==0}
+                                关闭
+                                {else if $data['mobile']==1}
+                                开启
+                                {/if}
+                            </div>
                             {/if}
                         </div>
                     </div>
@@ -203,6 +285,14 @@
                             <div class="form-control-static">勾选后请在APP后台开启相应支付插件并且配置好参数</div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg control-label must">用户协议与隐私政策</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class="radio-inline"><input type="radio" name="data[agr]" value="1" {if $data['agr'] == 1} checked{/if}> 开启</label>
+                            <label class="radio-inline"><input type="radio" name="data[agr]" value="0" {if empty($data['agr'])} checked{/if}> 关闭</label>
+                            <div class="arg-content">{php echo tpl_ueditor('content',$data['content'],array('height'=>'300'))}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane" id="tab_style_app">
@@ -280,6 +370,11 @@
     });
     $(function () {
         $("form").submit(function () {
+            var openwap = $("input[name='data[open]']:checked").val();
+             if (openwap == '0'){
+                $("form").removeAttr('stop');
+                return true;
+            }
             if(!$("#sms_reg option:selected").val()){
                 $("#sms_reg").focus();
                 tip.msgbox.err('请选择用户注册短信模板!');

@@ -46,9 +46,8 @@
 						
 						{if $leveltype==8}{if $row['downcount']>0}团队总人数满 {$row['downcount']} 个（分销商） {else}不自动升级{/if}{/if}
 						{if $leveltype==9}{if $row['downcount']>0}一级团队人数满 {$row['downcount']} 个（分销商） {else}不自动升级{/if}{/if}
-						
-						 
 						{if $leveltype==10}{if $row['commissionmoney']>0}已提现佣金总金额满 {$row['commissionmoney']} 元{else}不自动升级{/if}{/if}	 
+						{if $leveltype==11}{if $row['level']>0 && $row['goodsids'] !=''}购买指定产品{else}不自动升级{/if}{/if}
 					{else}
 					默认等级
 					{/if}
@@ -83,5 +82,4 @@
             </table>
  </div>
  {template '_footer'}
-
 

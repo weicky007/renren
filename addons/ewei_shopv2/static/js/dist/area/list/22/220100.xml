@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="长春" code="220100">
-<county name="南关" code="220102">
+<city name="长春市" code="220100">
+<county name="南关区" code="220102">
     <street name="南岭街道" code="220102001" />
     <street name="自强街道" code="220102002" />
     <street name="民康街道" code="220102003" />
@@ -22,7 +22,7 @@
     <street name="玉潭镇" code="220102172" />
     <street name="幸福乡" code="220102200" />
 </county>
-<county name="宽城" code="220103">
+<county name="宽城区" code="220103">
     <street name="新发街道" code="220103001" />
     <street name="站前街道" code="220103002" />
     <street name="南广街道" code="220103003" />
@@ -40,7 +40,7 @@
     <street name="合隆镇" code="220103171" />
     <street name="奋进乡" code="220103200" />
 </county>
-<county name="朝阳" code="220104">
+<county name="朝阳区" code="220104">
     <street name="前进街道" code="220104001" />
     <street name="桂林街道" code="220104002" />
     <street name="南湖街道" code="220104003" />
@@ -55,7 +55,7 @@
     <street name="永春镇" code="220104101" />
     <street name="双德乡" code="220104270" />
 </county>
-<county name="二道" code="220105">
+<county name="二道区" code="220105">
     <street name="东盛街道" code="220105001" />
     <street name="吉林街道" code="220105002" />
     <street name="荣光街道" code="220105003" />
@@ -69,7 +69,7 @@
     <street name="泉眼镇" code="220105174" />
     <street name="四家乡（长春莲花山生态旅游度假区省级）" code="220105270" />
 </county>
-<county name="绿园" code="220106">
+<county name="绿园区" code="220106">
     <street name="正阳街道" code="220106001" />
     <street name="春城街道" code="220106003" />
     <street name="青年街道" code="220106005" />
@@ -83,7 +83,7 @@
     <street name="长春汽车产业开发区（省级）（特殊乡镇）" code="220106170" />
     <street name="绿园经济开发区" code="220106400" />
 </county>
-<county name="双阳" code="220112">
+<county name="双阳区" code="220112">
     <street name="云山街道" code="220112001" />
     <street name="平湖街道" code="220112002" />
     <street name="奢岭街道" code="220112003" />
@@ -93,7 +93,7 @@
     <street name="鹿乡镇" code="220112102" />
     <street name="双营子回族乡（梅花鹿产业经济开发区）（省级）" code="220112270" />
 </county>
-<county name="农安" code="220122">
+<county name="农安县" code="220122">
     <street name="农安镇" code="220122100" />
     <street name="伏龙泉镇" code="220122101" />
     <street name="哈拉海镇" code="220122102" />
@@ -117,7 +117,7 @@
     <street name="小城子乡" code="220122210" />
     <street name="洼中高农场" code="220122400" />
 </county>
-<county name="九台" code="220181">
+<county name="九台市" code="220181">
     <street name="龙嘉镇" code="220105170" />
     <street name="卡伦湖镇" code="220105171" />
     <street name="东湖镇" code="220105172" />
@@ -137,7 +137,7 @@
     <street name="胡家回族乡" code="220181200" />
     <street name="莽卡满族乡" code="220181201" />
 </county>
-<county name="榆树" code="220182">
+<county name="榆树市" code="220182">
     <street name="华昌街道" code="220182001" />
     <street name="正阳街道" code="220182002" />
     <street name="培英街道" code="220182003" />
@@ -167,7 +167,7 @@
     <street name="城发乡" code="220182207" />
     <street name="环城乡" code="220182208" />
 </county>
-<county name="德惠" code="220183">
+<county name="德惠市" code="220183">
     <street name="胜利街道" code="220183001" />
     <street name="建设街道" code="220183002" />
     <street name="惠发街道" code="220183003" />
@@ -187,5 +187,30 @@
     <street name="五台乡" code="220183202" />
     <street name="朝阳乡" code="220183203" />
 </county>
+    <county name="长春经济技术开发区" code="220184">
+        <street name="临河街道办事处" code="220184001" />
+        <street name="东方广场街道办事处" code="220184002" />
+        <street name="会展街道办事处" code="220184003" />
+        <street name="世纪街道办事处" code="220184004" />
+        <street name="兴隆山镇" code="220184005" />
+    </county>
+    <county name="长春净月高新技术产业开发区" code="220185">
+        <street name="永兴街道办事处" code="220185001" />
+        <street name="净月街道办事处" code="220185002" />
+        <street name="新立城镇" code="220185003" />
+        <street name="新湖镇" code="220185004" />
+        <street name="玉潭镇" code="220185005" />
+    </county>
+    <county name="长春高新技术产业开发区" code="220186">
+        <street name="硅谷街道办事处" code="220186001" />
+        <street name="北湖街道办事处" code="220186002" />
+        <street name="奋进乡" code="220186003" />
+        <street name="双德乡" code="220186004" />
+    </county>
+    <county name="长春汽车经济技术开发区" code="220187">
+        <street name="锦程街道办事处" code="220187001" />
+        <street name="东风街道办事处" code="220187002" />
+        <street name="长春汽车经济技术开发区（特殊镇）" code="220187003" />
+    </county>
 </city>
 </address>

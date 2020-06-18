@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,11 +10,6 @@ class Posts_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$isManager = false;
-		if (($_W['role'] == 'manager') || ($_W['role'] == 'founder')) {
-			$isManager = true;
-		}
-
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$condition = ' and p.uniacid = :uniacid and p.pid=0';
@@ -46,13 +42,14 @@ class Posts_EweiShopV2Page extends PluginWebPage
 
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
-			$condition .= ' and ( p.title  like :keyword or p.avatar like :keyword )';
+			$condition .= ' and ( p.title  like :keyword or p.nickname like :keyword )';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$sql = "select p.id,p.title,p.createtime,p.content,p.images ,p.replytime, p.openid, p.nickname,p.avatar,p.isbest,p.isboardbest,p.istop,p.isboardtop,\r\n        p.checked,p.deleted,p.isadmin,b.title as boardtitle,b.logo as boardlogo " . '  from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on p.bid = b.id  and b.uniacid = p.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = p.openid and m.uniacid = p.uniacid ' . '  where 1 ' . $condition . ' ORDER BY p.replytime DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'select p.id,p.title,p.createtime,p.content,p.images ,p.replytime, p.openid, p.nickname,p.avatar,p.isbest,p.isboardbest,p.istop,p.isboardtop,
+        p.checked,p.deleted,p.isadmin,b.title as boardtitle,b.logo as boardlogo ' . '  from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on p.bid = b.id  and b.uniacid = p.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = p.openid and m.uniacid = p.uniacid ' . ('  where 1 ' . $condition . ' ORDER BY p.replytime DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on p.bid = b.id  and b.uniacid = p.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = p.openid and m.uniacid = p.uniacid ' . ' where 1 ' . $condition, $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on p.bid = b.id  and b.uniacid = p.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = p.openid and m.uniacid = p.uniacid ' . (' where 1 ' . $condition), $params);
 
 		foreach ($list as &$row) {
 			$row['replycount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where pid=:pid and deleted = 0 limit 1', array(':pid' => $row['id']));
@@ -116,7 +113,8 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$uniacid = $_W['uniacid'];
-		$item = pdo_fetch("select id,bid,title,content,images,istop,isbest,isboardtop,isboardbest,openid\r\n                from " . tablename('ewei_shop_sns_post') . ' where id = ' . $id . ' and uniacid = ' . $uniacid . ' ');
+		$item = pdo_fetch('select id,bid,title,content,images,istop,isbest,isboardtop,isboardbest,openid
+                from ' . tablename('ewei_shop_sns_post') . ' where id = ' . $id . ' and uniacid = ' . $uniacid . ' ');
 
 		if (!empty($item['images'])) {
 			$piclist = array_merge(iunserializer($item['images']));
@@ -134,7 +132,8 @@ class Posts_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 
-				$managers = pdo_fetchall('select id,nickname,openid from ' . tablename('ewei_shop_member') . "\r\n                            where openid in (" . implode(',', $openids) . ') and uniacid = ' . $uniacid . ' ');
+				$managers = pdo_fetchall('select id,nickname,openid from ' . tablename('ewei_shop_member') . '
+                            where openid in (' . implode(',', $openids) . ') and uniacid = ' . $uniacid . ' ');
 			}
 		}
 
@@ -174,11 +173,11 @@ class Posts_EweiShopV2Page extends PluginWebPage
 
 			if (is_array($_GPC['images'])) {
 				$imgcount = count($_GPC['images']);
-				if (($imagesData['imagesnum'] < $imgcount) && (0 < $imagesData['imagesnum'])) {
+				if ($imagesData['imagesnum'] < $imgcount && 0 < $imagesData['imagesnum']) {
 					show_json(0, '话题图片最多上传' . $imagesData['imagesnum'] . '张！');
 				}
 
-				if ((5 < $imgcount) && ($imagesData['imagesnum'] == 0)) {
+				if (5 < $imgcount && $imagesData['imagesnum'] == 0) {
 					show_json(0, '话题图片最多上传5张！');
 				}
 
@@ -216,14 +215,14 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$deleted = intval($_GPC['deleted']);
-		$items = pdo_fetchall('SELECT id,title,pid,openid, content FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,pid,openid, content FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = (empty($item['pid']) ? '话题' : '评论');
+			$msg = empty($item['pid']) ? '话题' : '评论';
 			$content = $this->model->replaceContent($item['content']);
 
 			if ($deleted) {
@@ -260,13 +259,13 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title,pid,openid, content,deleted FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,pid,openid, content,deleted FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = (empty($item['pid']) ? '话题' : '评论');
+			$msg = empty($item['pid']) ? '话题' : '评论';
 			$content = $this->model->replaceContent($item['content']);
 			plog('sns.posts.delete', '彻底删除' . $msg . ' ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 			pdo_delete('ewei_shop_sns_post', array('id' => $item['id']));
@@ -291,14 +290,14 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$checked = intval($_GPC['checked']);
-		$items = pdo_fetchall('SELECT id,title,content,openid, pid,bid FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,content,openid, pid,bid FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = (empty($item['pid']) ? '话题' : '评论');
+			$msg = empty($item['pid']) ? '话题' : '评论';
 			$content = $this->model->replaceContent($item['content']);
 
 			if ($checked) {
@@ -335,14 +334,14 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$all = intval($_GPC['all']);
 		$top = intval($_GPC['top']);
-		$msg = ($all ? '全站' : '版块');
-		$field = ($all ? 'istop' : 'isboardtop');
-		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) and pid=0 AND uniacid=' . $_W['uniacid']);
+		$msg = $all ? '全站' : '版块';
+		$field = $all ? 'istop' : 'isboardtop';
+		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) and pid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			$content = $this->model->replaceContent($item['content']);
@@ -350,13 +349,13 @@ class Posts_EweiShopV2Page extends PluginWebPage
 			if ($top) {
 				plog('sns.posts.edit', $msg . '置顶 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 				pdo_update('ewei_shop_sns_post', array($field => 1), array('id' => $item['id']));
-				$type = ($all ? SNS_CREDIT_TOP : SNS_CREDIT_TOP_BOARD);
+				$type = $all ? SNS_CREDIT_TOP : SNS_CREDIT_TOP_BOARD;
 				$this->model->setCredit($item['openid'], $item['id'], $type);
 			}
 			else {
 				plog('sns.posts.edit', '取消' . $msg . '置顶 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 				pdo_update('ewei_shop_sns_post', array($field => 0), array('id' => $item['id']));
-				$type = ($all ? SNS_CREDIT_TOP_CANCEL : SNS_CREDIT_TOP_BOARD_CANCEL);
+				$type = $all ? SNS_CREDIT_TOP_CANCEL : SNS_CREDIT_TOP_BOARD_CANCEL;
 				$this->model->setCredit($item['openid'], $item['id'], $type);
 			}
 		}
@@ -371,14 +370,14 @@ class Posts_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$all = intval($_GPC['all']);
 		$best = intval($_GPC['best']);
-		$msg = ($all ? '全站' : '版块');
-		$field = ($all ? 'isbest' : 'isboardbest');
-		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) and pid=0 AND uniacid=' . $_W['uniacid']);
+		$msg = $all ? '全站' : '版块';
+		$field = $all ? 'isbest' : 'isboardbest';
+		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) and pid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			$content = $this->model->replaceContent($item['content']);
@@ -386,13 +385,13 @@ class Posts_EweiShopV2Page extends PluginWebPage
 			if ($best) {
 				plog('sns.posts.edit', $msg . '精华 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 				pdo_update('ewei_shop_sns_post', array($field => 1), array('id' => $item['id']));
-				$type = ($all ? SNS_CREDIT_BEST : SNS_CREDIT_BEST_BOARD);
+				$type = $all ? SNS_CREDIT_BEST : SNS_CREDIT_BEST_BOARD;
 				$this->model->setCredit($item['openid'], $item['id'], $type);
 			}
 			else {
 				plog('sns.posts.edit', '取消' . $msg . '精华 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 				pdo_update('ewei_shop_sns_post', array($field => 0), array('id' => $item['id']));
-				$type = ($all ? SNS_CREDIT_BEST_CANCEL : SNS_CREDIT_BEST_BOARD_CANCEL);
+				$type = $all ? SNS_CREDIT_BEST_CANCEL : SNS_CREDIT_BEST_BOARD_CANCEL;
 				$this->model->setCredit($item['openid'], $item['id'], $type);
 			}
 		}

@@ -65,7 +65,7 @@
 </div>
 <div class="page-content">
     <div class="alert alert-primary">
-        请将公众平台模板消息所在行业选择为： IT科技/互联网|电子商务 --- <span class="text-danger">如果你使用高级模式则使用   <a href="{php echo webUrl('sysset/tmessage')}">模板库(点击进入)</a></span>
+        请将公众平台模板消息所在行业选择为： IT科技/互联网|电子商务 --- <span class="text-danger">如果你使用高级模式则使用   <a href="{php echo webUrl('sysset/tmessage')}">模板库(点击进入)</a>&nbsp;&nbsp;&nbsp;  <b>拼团仅支持自定义拼团类的模板消息</b></span>
     </div>
     <form action="" method="post" class="form-horizontal  form-validate" enctype="multipart/form-data" >
         <input type="hidden" value="{php echo intval($data['is_advanced'])}" name='data[is_advanced]' />
@@ -94,7 +94,7 @@
                                     <div class="col-sm-10 col-xs-12">
                                         {ifp 'groups.notice.edit'}
                                         <input type="text" name="data[groups_teamsend]" class="form-control" value="{$data['groups_teamsend']}" />
-                                        <div class="help-block">通知公众平台模板库【待办任务提醒】编号: OPENTM200806215 </div>
+                                        <div class="help-block">通知公众平台模板库【待办项目更新通知】编号: OPENTM207273120 </div>
                                         {else}
                                         <div class="form-control-static">{$data['groups_teamsend']}</div>
                                         {/if}

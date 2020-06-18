@@ -43,7 +43,6 @@
             <tr>
                 <th style="width: 70px">商品图片</th>
                 <th style="">商品信息</th>
-                <th style="width: 80px">优惠券图片</th>
                 <th style="">优惠券名称</th>
                 <th>赠送数量</th>
                 <th  style="width: 190px">活动时间</th>
@@ -61,9 +60,6 @@
                 </td>
                 <td>
                     {$item['title']}
-                </td>
-                <td>
-                    <img src="{php echo tomedia($item['cthumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
                 </td>
                 <td>
                     {$item['couponname']}
@@ -102,7 +98,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="9" style="text-align: right">
+                    <td colspan="8" style="text-align: right">
                         <span class="pull-right" style="line-height: 28px;">(共{php echo count($list)}条记录)</span>
                         {$pager}
                     </td>
@@ -119,4 +115,3 @@
     </form>
 </div>
 {template '_footer'}
-

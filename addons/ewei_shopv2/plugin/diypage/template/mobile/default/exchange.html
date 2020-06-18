@@ -36,9 +36,12 @@
             style: {
                 exbtntext: "{$diypage['exchange_input']['params']['exbtntext']}",
                 exbtn2text: "{$diypage['exchange_input']['params']['exbtn2text']}",
-            }
+            },
+            all:{$all}
         });
     });
 </script>
-
+{if !empty($startadv)}
+    {template 'diypage/startadv'}
+{/if}
 {template '_footer'}

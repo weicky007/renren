@@ -534,15 +534,16 @@ class SqlPaser {
 			} else {
 				$cleansql = self::stripSafeChar($sql);
 			}
-
-			$cleansql = preg_replace("/[^a-z0-9_\-\(\)#\*\/\"]+/is", '', strtolower($cleansql));
+			$clean_function_sql = preg_replace("/\s+/", '', strtolower($cleansql));
 			if (is_array(self::$disable['function'])) {
 				foreach (self::$disable['function'] as $fun) {
-					if (false !== strpos($cleansql, $fun . '(')) {
+					if (false !== strpos($clean_function_sql, $fun . '(')) {
 						return error(1, 'SQL中包含禁用函数 - ' . $fun);
 					}
 				}
 			}
+			
+			$cleansql = preg_replace("/[^a-z0-9_\-\(\)#\*\/\"]+/is", '', strtolower($cleansql));
 
 			if (is_array(self::$disable['action'])) {
 				foreach (self::$disable['action'] as $action) {

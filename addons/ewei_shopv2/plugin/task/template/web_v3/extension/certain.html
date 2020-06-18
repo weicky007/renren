@@ -1,3 +1,10 @@
+<style type="text/css">
+    .popover{z-index:10000;}
+    .alert{margin-top:10px;}
+    .content .table{border-collapse:collapse;border:none;}
+    .content .table tr{border-collapse: collapse;border-left:1px solid #ededed;border-right:1px solid #ededed;}
+    .content .table > tbody > tr > td{border-top:1px solid #ededed;border-left:0;border-right:0;}
+</style>
 <div class="modal-dialog" style="width: 800px">
     <div class="modal-content">
         <div class="modal-header">
@@ -8,27 +15,22 @@
                 选择特惠商品
             </h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body content">
             <div class="form-group">
-                <label class="col-sm-1 control-label"></label>
-                <div class="col-sm-12">
-                    <div class="input-group">
-                        <input type="text" class="form-control">
-                        <a class="input-group-addon">搜索</a>
-                    </div>
+                <div class="input-group">
+                    <input type="text" class="form-control">
+                    <a class="input-group-addon">搜索</a>
                 </div>
             </div>
-            <br>
-            <table class="table table-striped" style="width: 100%">
-                <br>
-                <thead>
+            <table class="table" border="1" cellspacing="0" width="100%" cellpadding="0">
+                <thead style="background: #f7f7f7;">
                 <tr>
                     <th style="width: 15rem;overflow: hidden">商品名称</th>
                     <!--<th style="width: 12rem;text-align: center">选择规格</th>-->
                     <!--<th style="width: 8rem;text-align: center">原价</th>-->
                     <!--<th style="width: 8rem;text-align: center">优惠价</th>-->
                     <!--<th style="width: 8rem;text-align: center">数量</th>-->
-                    <th style="text-align: center">选择</th>
+                    <th style="text-align: center;width:50px;">选择</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -49,23 +51,19 @@
                     <!--<td>{$gv['marketprice']}元</td>-->
                     <!--<td><input type="text" class="form-control price"></td>-->
                     <!--<td><input type="text" class="form-control num" value="1"></td>-->
-                    <td style="text-align: center"><a onclick="certain(this)" data-id="{$gv['id']}" id="certain{$gv['id']}" data-name="{$gv['title']}">选择</a></td>
+                    <td style="text-align: center"><a onclick="certain(this)" class="label label-primary" data-id="{$gv['id']}" id="certain{$gv['id']}" data-name="{$gv['title']}">选择</a></td>
                 </tr>
                 {/loop}
-                <tr>
-                    <td colspan="2" class="text-center">
-                        <div>
-                            <ul class="pagination pagination-centered">
-                                {if $page >1}<li><a href="javascript:;" page="0" class="pager-nav">首页</a></li>
-                                <li><a href="javascript:;" page="{$pageprev}" class="pager-nav">«上一页</a></li>{/if}
-                                {if $page <$pagelast}<li><a href="javascript:;" page="{$pagenext}" class="pager-nav">下一页»</a></li>
-                                <li><a href="javascript:;" page="{$pagelast}" class="pager-nav">尾页</a></li>{/if}
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
                 </tbody>
             </table>
+            <div>
+                <ul class="pagination pagination-centered">
+                    {if $page >1}<li><a href="javascript:;" page="0" class="pager-nav">首页</a></li>
+                    <li><a href="javascript:;" page="{$pageprev}" class="pager-nav">«上一页</a></li>{/if}
+                    {if $page <$pagelast}<li><a href="javascript:;" page="{$pagenext}" class="pager-nav">下一页»</a></li>
+                    <li><a href="javascript:;" page="{$pagelast}" class="pager-nav">尾页</a></li>{/if}
+                </ul>
+            </div>
         </div>
     </div><!-- modal-content -->
 </div><!--modal-dialog-->

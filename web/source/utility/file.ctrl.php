@@ -6,16 +6,16 @@
 defined('IN_IA') or exit('Access Denied');
 
 load()->func('file');
-load()->func('communication');
-load()->model('account');
 load()->model('material');
 load()->model('attachment');
-load()->model('mc');
 load()->model('module');
 
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'image', 'module', 'video', 'voice', 'news', 'keyword',
 	'networktowechat', 'networktolocal', 'towechat', 'tolocal', 'wechat_upload',
 	'group_list', 'add_group', 'change_group', 'del_group', 'move_to_group', ))) {
+	if ($_W['isajax']) {
+		iajax(-1, 'Access Denied');
+	}
 	exit('Access Denied');
 }
 $result = array(
@@ -25,19 +25,26 @@ $result = array(
 );
 
 error_reporting(0);
-$type = $_GPC['upload_type']; $type = in_array($type, array('image', 'audio', 'video')) ? $type : 'image';
+$type = $_GPC['upload_type'];
+$type = in_array($type, array('image', 'audio', 'video')) ? $type : 'image';
 $option = array();
-$option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
+$option = array_elements(array('uploadtype', 'dest_dir'), $_POST);
 
 $option['width'] = intval($option['width']);
-$option['global'] = $_GPC['global'];
 
-if (!empty($option['global']) && empty($_W['isfounder'])) {
+if (isset($_GPC['uniacid']) && $_GPC['uniacid'] == 0 && empty($_W['isfounder'])) {
 	$result['message'] = '没有向 global 文件夹上传文件的权限.';
+
+
+	if ($_W['isajax']) {
+		iajax('-1', $result);
+	}
 	die(json_encode($result));
+
 }
 
-$dest_dir = $_GPC['dest_dir']; if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir, $out)) {
+$dest_dir = $_GPC['dest_dir'];
+if (preg_match('/^[a-zA-Z0-9_\/]{0,50}$/', $dest_dir)) {
 	$dest_dir = trim($dest_dir, '/');
 	$pieces = explode('/', $dest_dir);
 	if (count($pieces) > 3) {
@@ -60,7 +67,7 @@ if (isset($_GPC['uniacid'])) {
 	$uniacid = intval($_W['uniacid']);
 }
 
-if (!empty($option['global'])) {
+if ($uniacid == 0) {
 	$setting['folder'] = "{$type}s/global/";
 	if (!empty($dest_dir)) {
 		$setting['folder'] .= '' . $dest_dir . '/';
@@ -107,8 +114,8 @@ if ('fetch' == $do) {
 		$result['message'] = '提取资源失败, 仅支持图片提取.';
 		die(json_encode($result));
 	}
-
-	if (intval($resp['headers']['Content-Length']) > $setting['limit'] * 1024) {
+	$size = intval($resp['headers']['Content-Length']);
+	if ($size > $setting['limit'] * 1024) {
 		$result['message'] = '上传的媒体文件过大(' . sizecount($size) . ' > ' . sizecount($setting['limit'] * 1024);
 		die(json_encode($result));
 	}
@@ -125,11 +132,11 @@ if ('fetch' == $do) {
 if ('upload' == $do) {
 	if (empty($_FILES['file']['name'])) {
 		$result['message'] = '上传失败, 请选择要上传的文件！';
-		die(json_encode($result));
+		iajax(-1, $result['message']);
 	}
 	if ($_FILES['file']['error'] != 0) {
-		$result['message'] = '上传失败, 请重试.';
-		die(json_encode($result));
+		$result['message'] = '上传失败, 请重试.错误码：' . $_FILES['file']['error'];
+		iajax(-1, $result['message']);
 	}
 	$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
 	$ext = strtolower($ext);
@@ -141,7 +148,7 @@ if ('upload' == $do) {
 
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
-		die(json_encode($result));
+		iajax(-1, $result['message']);
 	}
 	$pathname = $file['path'];
 	$fullname = ATTACHMENT_ROOT . '/' . $pathname;
@@ -162,7 +169,7 @@ if ('fetch' == $do || 'upload' == $do) {
 			@unlink($fullname);
 			if (is_error($thumbnail)) {
 				$result['message'] = $thumbnail['message'];
-				die(json_encode($result));
+				iajax(-1, $result);
 			} else {
 				$filename = pathinfo($thumbnail, PATHINFO_BASENAME);
 				$pathname = $thumbnail;
@@ -190,10 +197,10 @@ if ('fetch' == $do || 'upload' == $do) {
 		$info['size'] = sizecount($size);
 	}
 	$uni_remote_setting = uni_setting_load('remote');
-	if (empty($option['global']) && !empty($uni_remote_setting['remote']['type'])) {
+	if ($uniacid != 0 && !empty($uni_remote_setting['remote']['type'])) {
 		$_W['setting']['remote'] = $uni_remote_setting['remote'];
 	}
-	if (!empty($option['global'])) {
+	if ($uniacid == 0) {
 		$_W['setting']['remote'] = $_W['setting']['remote_complete_info'];
 	}
 	if (!empty($_W['setting']['remote']['type'])) {
@@ -201,7 +208,7 @@ if ('fetch' == $do || 'upload' == $do) {
 		if (is_error($remotestatus)) {
 			$result['message'] = '远程附件上传失败，请检查配置并重新上传';
 			file_delete($pathname);
-			die(json_encode($result));
+			iajax(-1, $result['message']);
 		} else {
 			file_delete($pathname);
 			$info['url'] = tomedia($pathname);
@@ -217,6 +224,9 @@ if ('fetch' == $do || 'upload' == $do) {
 		'module_upload_dir' => $module_upload_dir,
 		'group_id' => intval($_GPC['group_id']),
 	));
+	if ($_W['isw7_request']) {
+		iajax(0, '上传成功！');
+	}
 	$info['state'] = 'SUCCESS';
 	die(json_encode($info));
 }
@@ -464,11 +474,14 @@ if ('wechat_upload' == $do) {
 	die(json_encode($result));
 }
 
-$type = $_GPC['type']; $resourceid = intval($_GPC['resource_id']); $uid = intval($_W['uid']);
+$type = $_GPC['type'];
+$resourceid = intval($_GPC['resource_id']);
+$uid = intval($_W['uid']);
 $acid = intval($_W['acid']);
 $url = $_GPC['url'];
 $isnetwork_convert = !empty($url);
 $islocal = 'local' == $_GPC['local'];
+
 if ('keyword' == $do) {
 	$keyword = addslashes($_GPC['keyword']);
 	$pindex = max(1, $_GPC['page']);
@@ -558,7 +571,15 @@ if ('video' == $do || 'voice' == $do) {
 		$item['url'] = tomedia($item['attachment']);
 		unset($item['uid']);
 	}
-	$result = array('items' => $material_list, 'pager' => $pager);
+	$result = array(
+		'list' => $material_list,
+		'page' => $page_index,
+		'page_size' => $page_size,
+		'total' => $material_news_list['total'],
+		'pager' => $pager,
+		'items' => $material_list,
+		'pager' => $pager,
+	);
 	iajax(0, $result);
 }
 
@@ -577,12 +598,11 @@ if ('news' == $do) {
 if ('image' == $do) {
 	$year = $_GPC['year'];
 	$month = $_GPC['month'];
-	$page = intval($_GPC['page']);
+	$page = max(1, intval($_GPC['page']));
 	$groupid = intval($_GPC['group_id']);
 	$page_size = 10;
 	$page = max(1, $page);
-	$is_local_image = 'local' == $islocal ? true : false;
-	if ($is_local_image) {
+	if ($islocal) {
 		$attachment_table = table('core_attachment');
 	} else {
 		$attachment_table = table('wechat_attachment');
@@ -618,10 +638,10 @@ if ('image' == $do) {
 	if (!empty($list)) {
 		foreach ($list as &$meterial) {
 			if ($islocal) {
-				if (empty($option['global'])) {
-					$meterial['url'] = tomedia($meterial['attachment']);
-				} else {
+				if ($uniacid == 0) {
 					$meterial['url'] = to_global_media($meterial['attachment']);
+				} else {
+					$meterial['url'] = tomedia($meterial['attachment']);
 				}
 				unset($meterial['uid']);
 			} else {
@@ -636,7 +656,14 @@ if ('image' == $do) {
 	}
 
 	$pager = pagination($total, $page, $page_size, '', $context = array('before' => 5, 'after' => 4, 'isajax' => $_W['isajax']));
-	$result = array('items' => $list, 'pager' => $pager);
+		$result = array(
+		'list' => $list,
+		'total' => $total,
+		'page' => $page,
+		'page_size' => $page_size,
+		'pager' => $pager,
+		'items' => $list,
+	);
 	iajax(0, $result);
 }
 
@@ -716,7 +743,8 @@ if ('towechat' == $do) {
 	iajax(0, $material);
 }
 
-$is_local_image = 'local' == $islocal ? true : false;
+$is_local_image = ($islocal ? true : false);
+
 
 if ('group_list' == $do) {
 	$query = table('core_attachment_group')->where('type', $is_local_image ? 0 : 1);
@@ -730,7 +758,7 @@ if ('add_group' == $do) {
 	$table->fill(array(
 		'uid' => $_W['uid'],
 		'uniacid' => $uniacid,
-		'name' => trim($_GPC['name']),
+		'name' => safe_gpc_string($_GPC['name']),
 		'type' => $is_local_image ? 0 : 1,
 	));
 	$result = $table->save();
@@ -743,7 +771,7 @@ if ('add_group' == $do) {
 if ('change_group' == $do) {
 	$table = table('core_attachment_group');
 	$type = $is_local_image ? 0 : 1;
-	$name = trim($_GPC['name']);
+	$name = safe_gpc_string($_GPC['name']);
 	$id = intval($_GPC['id']);
 	$table->searchWithUniacidOrUid($uniacid, $_W['uid']);
 	$updated = $table->where('type', $type)
@@ -775,8 +803,7 @@ if ('del_group' == $do) {
 
 if ('move_to_group' == $do) {
 	$group_id = intval($_GPC['group_id']);
-	$ids = $_GPC['id'];
-	$ids = safe_gpc_array($ids);
+	$ids = safe_gpc_array($_GPC['id']);
 
 	if ($is_local_image) {
 		$table = table('core_attachment');
@@ -785,5 +812,5 @@ if ('move_to_group' == $do) {
 	}
 	$updated = $table->where('id', $ids)->where('uniacid', $uniacid)->fill('group_id', $group_id)->save();
 
-	iajax($updated ? 0 : 1, $updated ? '更新成功' : '更新失败');
+	iajax($updated ? 0 : -1, $updated ? '更新成功' : '更新失败');
 }

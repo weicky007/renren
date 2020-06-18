@@ -31,10 +31,10 @@ class Upgrade_EweiShopV2Page extends SystemPage
 		load()->func('communication');
 		set_time_limit(0);
 		$auth = get_auth();
-		if(!$auth['code'])show_json(0, '请先授权然后更新！<a href="index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=system.auth">立即授权</a>');
+		if(!$auth['code'])show_json(0, '当前版本为最新版本！<a href="index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=system.auth">已授权</a>');
 		$version = ((defined('EWEI_SHOPV2_VERSION') ? EWEI_SHOPV2_VERSION : '2.0.0'));
 		$release = ((defined('EWEI_SHOPV2_RELEASE') ? EWEI_SHOPV2_RELEASE : '201605010000'));
-		$resp = ihttp_request('http://cloud.010xr.com/gateway.php/a=rr&b=check', array('ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => trim(preg_replace('/http(s)?:\\/\\//', '', trim($_W['siteroot'], '/'))), 'version' => $version, 'release' => $release, 'manual' => 1, 'plugins' => array_keys($plugins)));
+		$resp = ihttp_request('http://cloud.baidu.com/gateway.php/a=rr&b=check', array('ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => trim(preg_replace('/http(s)?:\\/\\//', '', trim($_W['siteroot'], '/'))), 'version' => $version, 'release' => $release, 'manual' => 1, 'plugins' => array_keys($plugins)));
 		$templatefiles = '';
 		$result = @json_decode(gzuncompress($resp['content']), true);
 		
@@ -86,7 +86,7 @@ class Upgrade_EweiShopV2Page extends SystemPage
 
 				cache_write('cloud:modules:upgradev2', array('files' => $files, 'version' => $upgrade['version'], 'release' => $upgrade['release'], 'upgrades' => $upgrade['upgrades'], 'database' => $database));
 				$log = base64_decode($upgrade['log']);
-				show_json(1, array('result' => 1, 'version' => $upgrade['version'], 'release' => $upgrade['release'], 'filecount' => count($files), 'database' => !empty($database), 'upgrades' => !empty($upgrade['upgrades']), 'log' => $log, 'templatefiles' => $templatefiles));
+				show_json(1, array('result' => 1, 'version' => $upgrade['version'], 'release' => $upgrade['release'], 'filecount' => count($files), 'database' => !empty($database), 'upgrades' => !empty($upgrade['upgrades']), 'log' => nl2br($log), 'templatefiles' => $templatefiles));
 			}
 
 
@@ -190,7 +190,7 @@ class Upgrade_EweiShopV2Page extends SystemPage
 			}
 
 			if (!empty($path)) {
-				$resp = ihttp_request('http://cloud.010xr.com/gateway.php/a=rr&b=download', array('ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => trim(preg_replace('/http(s)?:\\/\\//', '', rtrim($_W['siteroot'], '/'))), 'path' => $path));
+				$resp = ihttp_request('http://cloud.we7.cc/gateway.php/a=rr&b=download', array('ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => trim(preg_replace('/http(s)?:\\/\\//', '', rtrim($_W['siteroot'], '/'))), 'path' => $path));
 				$ret = @json_decode(gzuncompress($resp['content']), true);
 
 				if (is_array($ret)) {
@@ -397,8 +397,6 @@ class Upgrade_EweiShopV2Page extends SystemPage
 	{
 		load()->func('file');
 		file_put_contents(EWEI_SHOPV2_PATH . 'version.php', '<?php if(!defined(\'IN_IA\')) {exit(\'Access Denied\');}if(!defined(\'EWEI_SHOPV2_VERSION\')) {define(\'EWEI_SHOPV2_VERSION\', \'' . $version . '\');}if(!defined(\'EWEI_SHOPV2_RELEASE\')) {define(\'EWEI_SHOPV2_RELEASE\', \'' . $release . '\');}');
-		$sql ="UPDATE  `ims_modules` SET  `version` =  '$version',`author` =  '乔熙网络',`url` =  'http://www.qiaoxi.pw' WHERE  `name` ='ewei_shopv2'";
-		pdo_query($sql);
 		cache_delete('cloud:modules:upgradev2');
 		$time = time();
 		global $my_scenfiles;
@@ -419,6 +417,31 @@ class Upgrade_EweiShopV2Page extends SystemPage
 		file_put_contents(IA_ROOT . '/addons/ewei_shopv2/version.php', '<?php if(!defined(\'IN_IA\')) {exit(\'Access Denied\');}if(!defined(\'EWEI_SHOPV2_VERSION\')) {define(\'EWEI_SHOPV2_VERSION\', \'2.0.0\');}if(!defined(\'EWEI_SHOPV2_RELEASE\')) {define(\'EWEI_SHOPV2_RELEASE\', \'201605010000\');}');
 		header('location: ' . webUrl('system/auth/upgrade'));
 		exit();
+	}
+
+	public function log()
+	{
+		global $_W;
+		global $_GPC;
+		$plugins = pdo_fetchall('select `identity` from ' . tablename('ewei_shop_plugin'), array(), 'identity');
+		$auth = get_auth();
+		$version = (defined('EWEI_SHOPV2_VERSION') ? EWEI_SHOPV2_VERSION : '2.0.0');
+		$release = (defined('EWEI_SHOPV2_RELEASE') ? EWEI_SHOPV2_RELEASE : '201605010000');
+		$pindex = max(1, intval($_GPC['page']));
+		$psize = 15;
+		load()->func('communication');
+		$resp = ihttp_post(EWEI_SHOPV2_AUTH_URL . 'log', array('ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => trim(preg_replace('/http(s)?:\\/\\//', '', trim($_W['siteroot'], '/'))), 'version' => $version, 'release' => $release, 'manual' => 1, 'plugins' => array_keys($plugins), 'pindex' => $pindex, 'psize' => $psize));
+		$res = @json_decode($resp['content'], true);
+		$count = 0;
+		$log = '';
+
+		if (is_array($res)) {
+			$count = $res['count'];
+			$log = $res['log'];
+		}
+
+		$pager = pagination2($count, $pindex, $psize);
+		include $this->template('system/auth/log');
 	}
 }
 

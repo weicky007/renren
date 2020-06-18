@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,6 +10,7 @@ class Team_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$otherorder = false;
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$type = $_GPC['type'];
@@ -59,12 +61,14 @@ class Team_EweiShopV2Page extends PluginWebPage
 			}
 		}
 
-		$teams = pdo_fetchall('SELECT o.* FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\t\tWHERE " . $condition . ' ORDER BY o.createtime DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$teams = pdo_fetchall('SELECT o.* FROM ' . tablename('ewei_shop_groups_order') . (' as o
+					WHERE ' . $condition . ' ORDER BY o.createtime DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
 
 		foreach ($teams as $key => $value) {
 			$good = pdo_fetch('select title from ' . tablename('ewei_shop_groups_goods') . ' where uniacid = ' . $_W['uniacid'] . ' and id = ' . $value['goodid']);
 			$teams[$key]['title'] = $good['title'];
-			$teams[$key]['num'] = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\t\t\t\t\t\t\tWHERE o.status > 0 and o.deleted = 0 and o.uniacid = :uniacid and o.teamid = :teamid ", array(':uniacid' => $_W['uniacid'], ':teamid' => $value['teamid']));
+			$teams[$key]['num'] = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+										WHERE o.status > 0 and o.deleted = 0 and o.uniacid = :uniacid and o.teamid = :teamid ', array(':uniacid' => $_W['uniacid'], ':teamid' => $value['teamid']));
 			$teams[$key]['groups_team'] = $teams[$key]['groupnum'] - $teams[$key]['num'];
 			$teams[$key]['starttime'] = date('Y-m-d H:i', $value['starttime']);
 			$hours = $value['endtime'];
@@ -85,7 +89,29 @@ class Team_EweiShopV2Page extends PluginWebPage
 			$teams = $this->multi_array_sort($teams, 'groups_team', SORT_ASC);
 		}
 
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\t\tleft join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\t\tright join " . tablename('ewei_shop_groups_category') . " as c on c.id = g.category\r\n\t\t\t\t\tWHERE " . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+					left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+					right join ' . tablename('ewei_shop_groups_category') . (' as c on c.id = g.category
+					WHERE ' . $condition), $params);
+		if (empty($teams) && !empty($_GPC['keyword']) && $_GPC['searchfield'] == 'orderno') {
+			$grouporder = pdo_fetch('select teamid from ' . tablename('ewei_shop_groups_order') . ' where uniacid = :uniacid and orderno like :orderno ', array(':uniacid' => intval($_W['uniacid']), ':orderno' => '%' . $_GPC['keyword'] . '%'));
+			$teams = pdo_fetchall('select * from ' . tablename('ewei_shop_groups_order') . ' where id = :teamid and uniacid = :uniacid and  paytime > 0 and heads = 1 and is_team = 1', array(':teamid' => $grouporder['teamid'], ':uniacid' => intval($_W['uniacid'])));
+
+			foreach ($teams as $key => $value) {
+				$good = pdo_fetch('select title from ' . tablename('ewei_shop_groups_goods') . ' where uniacid = ' . $_W['uniacid'] . ' and id = ' . $value['goodid']);
+				$teams[$key]['title'] = $good['title'];
+				$teams[$key]['num'] = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+										WHERE o.status > 0 and o.deleted = 0 and o.uniacid = :uniacid and o.teamid = :teamid ', array(':uniacid' => $_W['uniacid'], ':teamid' => $value['teamid']));
+				$teams[$key]['groups_team'] = $teams[$key]['groupnum'] - $teams[$key]['num'];
+				$teams[$key]['starttime'] = date('Y-m-d H:i', $value['starttime']);
+				$hours = $value['endtime'];
+				$date = date('Y-m-d H:i:s', $value['starttime']);
+				$teams[$key]['endtime'] = date('Y-m-d H:i', strtotime(' ' . $date . ' + ' . $hours . ' hour'));
+			}
+
+			$total = count($teams);
+		}
+
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -119,14 +145,19 @@ class Team_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$teamid = $_GPC['teamid'];
-		$teaminfo = pdo_fetch('SELECT o.*,g.id as gid,g.title,g.thumb FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\t\tleft join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\t\tWHERE o.teamid =:teamid and o.uniacid=:uniacid and o.is_team = :is_team and heads = :heads", array(':uniacid' => $_W['uniacid'], ':teamid' => $teamid, ':is_team' => 1, ':heads' => 1));
+		$teaminfo = pdo_fetch('SELECT o.*,g.id as gid,g.title,g.thumb,g.thumb_url FROM ' . tablename('ewei_shop_groups_order') . ' as o
+					left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+					WHERE o.teamid =:teamid and o.uniacid=:uniacid and o.is_team = :is_team and heads = :heads', array(':uniacid' => $_W['uniacid'], ':teamid' => $teamid, ':is_team' => 1, ':heads' => 1));
 		$total = pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_groups_order') . ' as o where o.teamid =:teamid and o.uniacid=:uniacid and o.is_team = :is_team and status > :status', array(':uniacid' => $_W['uniacid'], ':teamid' => $teamid, ':is_team' => 1, ':status' => 0));
-		$orders = pdo_fetchall('SELECT o.*,g.thumb FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\t\tleft join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\t\tWHERE o.teamid =:teamid and o.uniacid=:uniacid and o.is_team = :is_team and o.status != :status", array(':uniacid' => $_W['uniacid'], ':teamid' => $teamid, ':is_team' => 1, ':status' => 0));
+		$orders = pdo_fetchall('SELECT o.*,g.thumb,g.thumb_url FROM ' . tablename('ewei_shop_groups_order') . ' as o
+					left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+					WHERE o.teamid =:teamid and o.uniacid=:uniacid and o.is_team = :is_team and o.status != :status', array(':uniacid' => $_W['uniacid'], ':teamid' => $teamid, ':is_team' => 1, ':status' => 0));
 
 		foreach ($orders as $key => $value) {
 			$member = m('member')->getMember($value['openid']);
 			$orders[$key]['avatar'] = $member['avatar'];
 			$orders[$key]['nickname'] = $member['nickname'];
+			$orders[$key]['uid'] = $member['id'];
 		}
 
 		$member = m('member')->getMember($teaminfo['openid']);
@@ -158,14 +189,15 @@ class Team_EweiShopV2Page extends PluginWebPage
 		$teamid = intval($_GPC['id']);
 
 		if (empty($teamid)) {
-			$teamid = (is_array($_GPC['ids']) ? $_GPC['ids'] : 0);
+			$teamid = is_array($_GPC['ids']) ? $_GPC['ids'] : 0;
 		}
 		else {
 			$teamid = array($teamid);
 		}
 
 		foreach ($teamid as $key => $value) {
-			$order = pdo_fetch('select id,uniacid,groupnum,goodid,endtime from ' . tablename('ewei_shop_groups_order') . "\r\n\t\t\t\t\twhere teamid = :teamid and heads = 1 and success = 0 and uniacid = :uniacid ", array(':teamid' => $value, ':uniacid' => $uniacid));
+			$order = pdo_fetch('select id,uniacid,groupnum,goodid,endtime from ' . tablename('ewei_shop_groups_order') . '
+					where teamid = :teamid and heads = 1 and success = 0 and uniacid = :uniacid ', array(':teamid' => $value, ':uniacid' => $uniacid));
 			$order_count = pdo_fetchcolumn('select COUNT(1) from ' . tablename('ewei_shop_groups_order') . ' where teamid = :teamid and status = 1 and success = 0 and uniacid = :uniacid ', array(':teamid' => $value, ':uniacid' => $uniacid));
 			$num = $order['groupnum'] - $order_count;
 			$i = 0;
@@ -185,10 +217,38 @@ class Team_EweiShopV2Page extends PluginWebPage
 		show_json(1);
 	}
 
+	public function cancel_group()
+	{
+		global $_W;
+		global $_GPC;
+		$uniacid = intval($_W['uniacid']);
+		$teamid = intval($_GPC['id']);
+
+		if (empty($teamid)) {
+			show_json(0, '该团不存在！');
+		}
+
+		$orderNum = pdo_fetchcolumn('select COUNT(id) from ' . tablename('ewei_shop_groups_order') . ' where teamid = :teamid and uniacid = :uniacid and status >1 and success = 1 ', array(':teamid' => $teamid, ':uniacid' => $uniacid));
+
+		if (!empty($orderNum)) {
+			show_json(0, '该团商品已发货或已使用，不可取消！');
+		}
+
+		$headgroup = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order') . ' where heads = 1 and teamid = :teamid and uniacid = :uniacid ', array(':teamid' => $teamid, ':uniacid' => $uniacid));
+
+		if ($headgroup['success'] < 1) {
+			show_json(0, '该团不满足取消条件！');
+		}
+
+		pdo_update('ewei_shop_groups_order', array('success' => -1), array('teamid' => $teamid, 'uniacid' => $uniacid, 'status' => 1));
+		pdo_update('ewei_shop_groups_order', array('status' => -1), array('teamid' => $teamid, 'uniacid' => $uniacid, 'status' => 0));
+		show_json(1);
+	}
+
 	public function ajaxgettotals()
 	{
 		$totals = $this->model->getTotals();
-		$result = (empty($totals) ? array() : $totals);
+		$result = empty($totals) ? array() : $totals;
 		show_json(1, $result);
 	}
 }

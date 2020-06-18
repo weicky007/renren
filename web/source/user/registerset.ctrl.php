@@ -85,6 +85,17 @@ if ('display' == $do) {
 			break;
 		}
 	}
+	if ($_W['isajax']) {
+		$message = array(
+			'settings' => $settings,
+			'default_group' => $group,
+			'groups' => $groups,
+			'verifycode' => $copyright['verifycode'],
+			'refused_login_limit' => $copyright['refused_login_limit'],
+			'copyright' => $copyright
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('clerk' == $do) {
@@ -101,6 +112,14 @@ if ('clerk' == $do) {
 	}
 	if (empty($bind)) {
 		$bind = array('name' => '无', 'id' => 'null');
+	}
+	if ($_W['isajax']) {
+		$message = array(
+			'clerk_settings' => $settings['clerk'],
+			'binds' => $binds,
+			'bind' => $bind
+		);
+		iajax(0, $message);
 	}
 }
 

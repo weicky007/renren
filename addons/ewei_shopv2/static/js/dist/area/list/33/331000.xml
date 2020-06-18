@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="台州" code="331000">
-<county name="椒江" code="331002">
+<city name="台州市" code="331000">
+<county name="椒江区" code="331002">
     <street name="海门街道" code="331002001" />
     <street name="白云街道" code="331002002" />
     <street name="葭沚街道" code="331002003" />
@@ -15,7 +15,7 @@
     <street name="滨海工业区" code="331002401" />
     <street name="月湖新城" code="331002402" />
 </county>
-<county name="黄岩" code="331003">
+<county name="黄岩区" code="331003">
     <street name="东城街道" code="331003001" />
     <street name="南城街道" code="331003002" />
     <street name="西城街道" code="331003003" />
@@ -36,7 +36,7 @@
     <street name="上垟乡" code="331003204" />
     <street name="平田乡" code="331003205" />
 </county>
-<county name="路桥" code="331004">
+<county name="路桥区" code="331004">
     <street name="路南街道" code="331004001" />
     <street name="路桥街道" code="331004002" />
     <street name="路北街道" code="331004003" />
@@ -50,7 +50,7 @@
     <street name="滨海工业城" code="331004400" />
     <street name="滨海新区" code="331004401" />
 </county>
-<county name="玉环" code="331021">
+<county name="玉环市" code="331021">
     <street name="玉城街道" code="331021001" />
     <street name="坎门街道" code="331021002" />
     <street name="大麦屿街道" code="331021003" />
@@ -63,7 +63,7 @@
     <street name="鸡山乡" code="331021201" />
     <street name="海山乡" code="331021202" />
 </county>
-<county name="三门" code="331022">
+<county name="三门县" code="331022">
     <street name="海游镇" code="331022100" />
     <street name="沙柳镇" code="331022101" />
     <street name="珠岙镇" code="331022102" />
@@ -79,7 +79,7 @@
     <street name="泗淋乡" code="331022204" />
     <street name="蛇蟠乡" code="331022205" />
 </county>
-<county name="天台" code="331023">
+<county name="天台县" code="331023">
     <street name="赤城街道" code="331023001" />
     <street name="始丰街道" code="331023002" />
     <street name="福溪街道" code="331023003" />
@@ -96,7 +96,7 @@
     <street name="南屏乡" code="331023207" />
     <street name="泳溪乡" code="331023209" />
 </county>
-<county name="仙居" code="331024">
+<county name="仙居县" code="331024">
     <street name="安洲街道" code="331024001" />
     <street name="南峰街道" code="331024002" />
     <street name="福应街道" code="331024003" />
@@ -118,7 +118,7 @@
     <street name="大战乡" code="331024209" />
     <street name="双庙乡" code="331024210" />
 </county>
-<county name="温岭" code="331081">
+<county name="温岭市" code="331081">
     <street name="太平街道" code="331081001" />
     <street name="城东街道" code="331081002" />
     <street name="城西街道" code="331081003" />
@@ -137,7 +137,7 @@
     <street name="坞根镇" code="331081110" />
     <street name="东部新区" code="331081400" />
 </county>
-<county name="临海" code="331082">
+<county name="临海市" code="331082">
     <street name="古城街道" code="331082001" />
     <street name="大洋街道" code="331082002" />
     <street name="江南街道" code="331082003" />

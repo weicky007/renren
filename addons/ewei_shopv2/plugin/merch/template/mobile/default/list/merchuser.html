@@ -14,6 +14,7 @@
         </div>
         <div class="title">全部商户</div>
         <div class="fui-header-right"></div>
+        <div id="amap-container" style="display: none;"></div>
     </div>
     <div class="fui-content" style="bottom: 2.4rem">
         <form action="{php echo mobileUrl('merch/list/merchuser')}" method="post">
@@ -88,13 +89,13 @@
 
                 <div class="fui-list-media">
                     <div class="fui-list-media">
-                        <a href="<%value.merch_url%>">
+                        <a href="<%value.merch_url%>" class="external">
                         <img src="<%value.logo%>" class="round">
                         </a>
                      </div>
                 </div>
                 <div class="fui-list-inner store-inner">
-                    <a href="<%value.merch_url%>">
+                    <a href="<%value.merch_url%>" class="external">
                     <div class="title"> <span class='storename'><%value.merchname%></span></div>
                     <%if value.address!=''%>
                     <div class="text">
@@ -137,7 +138,8 @@
 
 
     </script>
-    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7&s=1"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7&s={php echo time()}"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.12&key=1fb308f0707e5ff11db5997d42660396&s={php echo time()}"></script>
     <script language="javascript">
         require(['../addons/ewei_shopv2/plugin/merch/static/js/list.js'], function (modal) {
             modal.init({cateid:'{$_GPC['cateid']}',keyword:'{$_GPC['keyword']}'});
@@ -146,4 +148,3 @@
     {php $this->footerMenus()}
 </div>
 {template '_footer'}
-

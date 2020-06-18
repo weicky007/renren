@@ -25,6 +25,7 @@ var myconfig = {
         'datetimepicker': 'dist/datetimepicker/jquery.datetimepicker',
         'ueditor': 'dist/ueditor/ueditor.parse.min',
         'tooltipbox': 'dist/tooltipbox',
+        'moment':'dist/moment/moment'
 
     },
     map: {
@@ -37,8 +38,8 @@ var myconfig = {
         'select2': 'dist/select2/select2,dist/select2/select2-bootstrap',
         'jquery.nestable': 'dist/jquery/nestable/nestable',
         'jquery.contextMenu': 'dist/jquery/contextMenu/jquery.contextMenu',
-        // 'daterangepicker': 'dist/daterangepicker/daterangepicker',
-        // 'datetimepicker': 'dist/datetimepicker/jquery.datetimepicker',
+        'daterangepicker': 'dist/daterangepicker/daterangepicker',
+        'datetimepicker': 'dist/datetimepicker/jquery.datetimepicker',
         'ueditor': 'dist/ueditor/themes/default/css/ueditor.min',
         'switchery': 'dist/switchery/switchery'
     }

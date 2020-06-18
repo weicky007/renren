@@ -378,17 +378,6 @@ function permission_first_sub_permission() {
 	);
 }
 
-function permission_check_module_user($permission_name) {
-	global $_W;
-	if (empty($_W['current_module']) || empty($permission_name)) {
-		return false;
-	}
-	$users_permission = permission_account_user($_W['current_module']['name']);
-	if (!in_array($permission_name, $users_permission)) {
-		return false;
-	}
-	return true;
-}
 
 function permission_check_account_user_module($action = '', $module_name = '') {
 	global $_W, $_GPC;
@@ -488,12 +477,13 @@ function permission_user_account_num($uid = 0) {
 	}
 	$store_order_table = table('site_store_order');
 	$store_create_table = table('site_store_create_account');
-	$create_buy_num['account'] = $store_create_table->getUserCreateAccountNum($user['uid']);
-	$create_buy_num['wxapp'] = $store_create_table->getUserCreateWxappNum($user['uid']);
-	$store_buy['account'] = $store_order_table->getUserBuyAccountNum($user['uid']);
-	$store_buy['wxapp'] = $store_order_table->getUserBuyWxappNum($user['uid']);
-	$store_buy['account'] = $store_buy['account'] < 0 ? 0 : $store_buy['account'];
-	$store_buy['wxapp'] = $store_buy['wxapp'] < 0 ? 0 : $store_buy['wxapp'];
+	foreach ($account_all_type_sign as $type_sign) {
+		$create_buy_num[$type_sign] = $store_create_table->getUserCreateNumByType($user['uid'], $type_sign);
+	}
+	foreach ($account_all_type_sign as $type_sign) {
+		$store_buy[$type_sign] = $store_order_table->getUserBuyNumByType($user['uid'], $type_sign);
+		$store_buy[$type_sign] = $store_buy[$type_sign] < 0 ? 0 : $store_buy[$type_sign];
+	}
 
 	$extra_create_group_info  = array_keys($extra_group_table->getCreateGroupsByUid($user['uid']));
 	$extra_limits_info = $extra_limit_table->getExtraLimitByUid($user['uid']);
@@ -503,9 +493,6 @@ function permission_user_account_num($uid = 0) {
 
 		$vice_founder_own_users_create_accounts = table('account')->searchAccountList(false, 1, $fields = 'a.uniacid, b.type', $user_founder_info['founder_uid']);
 		$vice_founder_own_users_create_nums = array();
-		$account_all_type = uni_account_type();
-		$account_all_type_sign = array_keys(uni_account_type_sign());
-
 		foreach ($account_all_type_sign as $type_info) {
 			$key_name = $type_info . '_num';
 			$vice_founder_own_users_create_nums[$key_name] = 0;
@@ -574,18 +561,16 @@ function permission_user_account_num($uid = 0) {
 		'group_name' => $group['name'],
 		'vice_group_name' => $group_vice['name'],
 		'create_groups' => $create_groups,
-
-				'store_buy_account' => $store_buy['account'],
-		'store_buy_wxapp' => $store_buy['wxapp'],
-		'store_account_limit' => $store_account_limit = intval($store_buy['account']) - intval($create_buy_num['account']) <= 0 ? 0 : intval($store_buy['account']),
-		'store_wxapp_limit' => $store_wxapp_limit = intval($store_buy['wxapp']) - intval($create_buy_num['wxapp']) <= 0 ? 0 : intval($store_buy['wxapp']),
-		'store_limit_total' => $store_account_limit + $store_wxapp_limit,
 		'founder_limit_total' => $founder_limit_total,
 	);
 	$data['max_total'] = 0;
 	$data['created_total'] = 0;
 	$data['limit_total'] = 0;
 	foreach ($account_all_type_sign as $sign) {
+		$data["store_buy_{$sign}"] = $store_buy[$sign];
+		$data["store_{$sign}_limit"] = intval($store_buy[$sign]) - intval($create_buy_num[$sign]) <= 0 ? 0 : intval($store_buy[$sign]);
+		$data['store_limit_total' ] += $data["store_{$sign}_limit"];
+
 		$maxsign = 'max' . $sign;
 		$sign_num = $sign . '_num';
 				$data['user_group_max' . $sign] = $group[$maxsign];

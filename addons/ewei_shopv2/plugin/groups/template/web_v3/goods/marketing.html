@@ -27,7 +27,7 @@
     </div>
     <div class="form-group">
         <label class="col-lg control-label">
-            {ife 'groups.goods.edit' $item}
+            {ife 'groups.goods' $item}
             <input type='radio' value='0' name='headstype' {if $item['headstype']==0}checked{/if} />
             {else}
             {if $item['headstype']==0}
@@ -42,7 +42,7 @@
                 <input type="text" name="headsmoney" value="{$item['headsmoney']}" class="form-control"/>
                 <span class="input-group-addon">元</span>
             </div>
-            <span class="help-block">团长开团立减金额，如果设置0，则团长没有优惠金额</span>
+            <span class="help-block">团长开团立减金额 </span>
             {else}
             {if $item['headstype']==0}
             <div class='form-control-static'> {$item['headsmoney']} 元</div>
@@ -67,7 +67,7 @@
                 <input type="text" name="headsdiscount" value="{$item['headsdiscount']}" class="form-control"/>
                 <span class="input-group-addon">%</span>
             </div>
-            <span class="help-block">折扣为0-100整数，如果设置0，则团长没有优惠折扣</span>
+            <span class="help-block">折扣为0-100整数 ,价格=拼团价*折扣，如果设置0，则团长没有优惠金额</span>
             {else}
             {if $item['headstype']==1}
             <div class='form-control-static'> {$item['headsdiscount']} 元</div>

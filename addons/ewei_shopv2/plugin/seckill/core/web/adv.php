@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +26,8 @@ class Adv_EweiShopV2Page extends SeckillWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_seckill_adv') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_seckill_adv') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_seckill_adv') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_seckill_adv') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -74,10 +75,10 @@ class Adv_EweiShopV2Page extends SeckillWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_seckill_adv', array('id' => $item['id']));
@@ -93,7 +94,7 @@ class Adv_EweiShopV2Page extends SeckillWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_seckill_adv', array('displayorder' => $displayorder), array('id' => $id));
@@ -110,14 +111,14 @@ class Adv_EweiShopV2Page extends SeckillWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_seckill_adv') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_seckill_adv', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('seckill.adv.edit', ('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['advname'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
+			plog('seckill.adv.edit', '修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['advname'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));

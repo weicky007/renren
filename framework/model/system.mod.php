@@ -19,7 +19,7 @@ function system_shortcut_menu() {
 	if (empty($shortcut_menu)) {
 		$shortcut_menu = array();
 		$system_menu = system_menu();
-		$is_main_founder = user_is_founder($_W['uid'], true);
+		$is_main_founder = $_W['isadmin'];
 		$is_vice_founder = user_is_vice_founder();
 		$hidden_menu = array_keys((array) pdo_getall('core_menu', array('is_display' => 0), array('id', 'permission_name'), 'permission_name'));
 
@@ -215,6 +215,7 @@ function system_template_ch_name() {
 
 function system_login_template_ch_name() {
 	$result = array(
+		'half-auto' => '兼容版',
 		'big' => '大图版',
 		'half' => '半屏图版',
 		'base' => '基础版'
@@ -467,6 +468,13 @@ function system_star_menu() {
 			'one_page' => 0,
 			'hide_sort' => 1,
 		),
+		'system_welcome_modules' => array(
+			'title' => '首页应用',
+			'icon' => 'wi wi-apply',
+			'apiurl' => url('module/display/system_welcome'),
+			'one_page' => 0,
+			'hide_sort' => 1,
+		),
 		'account_recycle' => array(
 			'title' => '回收站',
 			'icon' => 'wi wi-delete2',
@@ -479,9 +487,14 @@ function system_star_menu() {
 			'menu' => array(),
 		),
 	);
-
+	if (!in_array(IMS_FAMILY, array('s', 'x'))) {
+		unset($result['system_welcome_modules']);
+	}
 	$account_all = table('account')->searchAccountList();
 	$result['platform']['num'] = max(0, count($account_all));
+	if ($result['platform']['num'] == 0) {
+		unset($result['platform']['num']);
+	}
 
 	foreach (uni_account_type_sign() as $type_sign => $type_sign_info) {
 		$account_num = uni_user_accounts($_W['uid'], $type_sign);

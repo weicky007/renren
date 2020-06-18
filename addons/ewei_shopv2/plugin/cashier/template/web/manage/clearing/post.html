@@ -37,7 +37,7 @@
                     <td class="text-navy">{php echo $value['money']+$value['deduction']}</td>
                     <td>{$user[$value['openid']]['nickname']}</td>
                     <td class="text-navy">{$value['logno']}</td>
-                    <td>{if $value['is_applypay']=='0'}<span class="label label-default">未结算</span>{elseif $value['is_applypay']=='1'}<span class="label label-warning">申请中</span>{elseif $value['is_applypay']=='1'}<span class="label label-danger">已结算</span>{/if}</td>
+                    <td>{if $value['is_applypay']=='0'}<span class="label label-default">未结算</span>{elseif $value['is_applypay']=='1'}<span class="label label-warning">申请中</span>{elseif $value['is_applypay']=='2'}<span class="label label-danger">已结算</span>{/if}</td>
                 </tr>
                 {/loop}
                 </tbody>

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -29,7 +30,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		}
 
 		$member = m('member')->getMember($openid);
-		$mid = ($member['isagent'] && $member['status'] ? $member['id'] : 0);
+		$mid = $member['isagent'] && $member['status'] ? $member['id'] : 0;
 
 		if ($item['type'] == 0) {
 			$roomid = intval($_GPC['roomid']);
@@ -47,10 +48,11 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$cardname = $item['title'];
 			$cardtitle = $room['title'];
 			$descname = '直播间介绍';
-			$search = array('\'<script[^>]*?>.*?</script>\'si', '\'<[\\/\\!]*?[^<>]*?>\'si', "'([\r\n])[\\s]+'", '\'&(quot|#34);\'i', '\'&(amp|#38);\'i', '\'&(lt|#60);\'i', '\'&(gt|#62);\'i', '\'&(nbsp|#160);\'i', '\'&(iexcl|#161);\'i', '\'&(cent|#162);\'i', '\'&(pound|#163);\'i', '\'&(copy|#169);\'i');
+			$search = array('\'<script[^>]*?>.*?</script>\'si', '\'<[\\/\\!]*?[^<>]*?>\'si', '\'([
+])[\\s]+\'', '\'&(quot|#34);\'i', '\'&(amp|#38);\'i', '\'&(lt|#60);\'i', '\'&(gt|#62);\'i', '\'&(nbsp|#160);\'i', '\'&(iexcl|#161);\'i', '\'&(cent|#162);\'i', '\'&(pound|#163);\'i', '\'&(copy|#169);\'i');
 			$replace = array('', '', '\\1', '"', '&', '<', '>', ' ', chr(161), chr(162), chr(163), chr(169), 'chr(\\1)');
 			$desctext = preg_replace($search, $replace, $room['introduce']);
-			$desctext = (!empty($desctext) ? $desctext : '介绍未设置...');
+			$desctext = !empty($desctext) ? $desctext : '介绍未设置...';
 
 			if ($item['qrcode'] == 0) {
 				$url = mobileUrl('live/room', array('id' => $roomid, 'mid' => $mid, 'invitationid' => $id, 'invitation_openid' => $openid), true);

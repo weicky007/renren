@@ -1,6 +1,39 @@
 {template '_header'}
 
 {template 'diypage/_common'}
+<style>
+    /*装修组件的复制*/
+    .diy-toolbar{
+        width: 132px;
+        height: 48px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 6px;
+        position: absolute;
+        left: 0;
+        top: -59px;
+        padding: 0 10px;
+
+    }
+    .diy-toolbar .item{
+        width: 56px;
+        height: 100%;
+        text-align: center;
+        color: #fff;
+        font-size: 12px;
+        float: left;
+        cursor: pointer;
+    }
+    .diy-toolbar .item p{
+        width: 100%;
+    }
+    .diy-toolbar .item p.icow{
+        margin-top: 7px;
+        margin-bottom: 6px;
+    }
+    .diy-toolbar .item p.txt{
+        line-height: 1;
+    }
+</style>
 
 <div class="page-header">当前位置：<span class="text-primary">
     {if $do=='edit'}编辑{else}新建{/if} {$typename} {if $pagetype!='mod'}页面{/if}
@@ -23,11 +56,20 @@
             <div class="phone-foot"></div>
         </div>
 
-        <div class="diy-editor form-horizontal" id="diy-editor">
+        <div class="diy-editor form-horizontal" style="position: relative;" id="diy-editor">
+            <div class="diy-toolbar">
+                <div class="item copy btn-copy">
+                    <p class="icow icow-fuzhilianjie1"></p>
+                    <p class="txt">复制</p>
+                </div>
+                <div class="item delete btn-del">
+                    <p class="icow icow-shanchu2"></p>
+                    <p class="txt ">删除</p>
+                </div>
+            </div>
             <div class="editor-arrow"></div>
             <div class="inner"></div>
         </div>
-
 
         <div class="diy-menu">
             <div class="navs" id="navs"></div>
@@ -65,6 +107,9 @@
 <script type="text/javascript" src="./resource/components/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="./resource/components/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" src="./resource/components/ueditor/lang/zh-cn/zh-cn.js"></script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/select2/select2.css">
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/select2/select2-bootstrap.css">
+
 
 <script language="javascript">
     var path = '../../plugin/diypage/static/js/diy.min';
@@ -79,6 +124,7 @@
             diyadvs: {php echo json_encode($diyadvs)},
             levels: {if !empty($levels)}{php echo json_encode($levels)}{else}null{/if},
             merch: {if $_W['plugin']=='merch' && !empty($_W['merchid'])}1{else}0{/if},
+            merchid: {if $_W['plugin']=='merch' && !empty($_W['merchid'])}{$_W['merchid']}{else}0{/if},
             plugins: {$hasplugins},
             shopset: {php echo json_encode($_W['shopset']['shop'])}
         });
@@ -129,6 +175,14 @@
             modal.callbackCoupon(data);
         });
     }
+
+    function callbackData(data) {
+        myrequire([path],function(modal) {
+            modal.callbackData(data);
+        });
+    }
+
+
 </script>
 
 {template '_footer'}

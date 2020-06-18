@@ -220,7 +220,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="type-list">
-						{if !empty($account_num['account_limit']) && (!empty($account_num['founder_account_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['account_limit']) && (!empty($account_num['founder_account_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a class="item" href="./index.php?c=account&a=post-step">
 							<i class="wi wi-wx-circle"></i>
 							<div class="name">新建公众号</div>
@@ -230,7 +230,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['wxapp_limit']) && (!empty($account_num['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['wxapp_limit']) && (!empty($account_num['founder_wxapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('wxapp/post/design_method')}" class="item">
 							<i class="wi wi-wxapp"></i>
 							<div class="name">新建微信小程序</div>
@@ -240,7 +240,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['webapp_limit']) && (!empty($account_num['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['webapp_limit']) && (!empty($account_num['founder_webapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('account/create', array('sign' => WEBAPP_TYPE_SIGN))}" class="item">
 							<i class="wi wi-pc-circle"></i>
 							<div class="name">新建PC</div>
@@ -250,7 +250,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['phoneapp_limit']) && (!empty($account_num['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['phoneapp_limit']) && (!empty($account_num['founder_phoneapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('account/create', array('sign' => PHONEAPP_TYPE_SIGN))}" class="item">
 							<i class="wi wi-app"></i>
 							<div class="name">新建APP</div>
@@ -260,7 +260,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['xzapp_limit']) && (!empty($account_num['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['xzapp_limit']) && (!empty($account_num['founder_xzapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('xzapp/post-step')}" class="item">
 							<i class="wi wi-xzapp"></i>
 							<div class="name">新建熊掌号</div>
@@ -270,7 +270,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['aliapp_limit']) && (!empty($account_num['founder_aliapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['aliapp_limit']) && (!empty($account_num['founder_aliapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('account/create', array('sign' => ALIAPP_TYPE_SIGN))}" class="item">
 							<i class="wi wi-aliapp"></i>
 							<div class="name">新建支付宝小程序</div>
@@ -280,7 +280,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['baiduapp_limit']) && (!empty($account_num['founder_baiduapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['baiduapp_limit']) && (!empty($account_num['founder_baiduapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('account/create', array('sign' => BAIDUAPP_TYPE_SIGN))}" class="item">
 							<i class="wi wi-baiduapp"></i>
 							<div class="name">新建百度小程序</div>
@@ -290,7 +290,7 @@
 						</a>
 						{/if}
 
-						{if !empty($account_num['toutiaoapp_limit']) && (!empty($account_num['founder_toutiaoapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isfounder'] && !user_is_vice_founder()}
+						{if !empty($account_num['toutiaoapp_limit']) && (!empty($account_num['founder_toutiaoapp_limit']) && $_W['user']['owner_uid'] || empty($_W['user']['owner_uid'])) || $_W['isadmin']}
 						<a href="{php echo url('account/create', array('sign' => TOUTIAOAPP_TYPE_SIGN))}" class="item">
 							<i class="wi wi-toutiaoapp"></i>
 							<div class="name">新建头条小程序</div>

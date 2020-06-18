@@ -69,7 +69,7 @@ function visit_system_update($system_stat_visit, $displayorder = false) {
 	global $_W;
 	load()->model('user');
 	load()->model('account');
-	if (user_is_founder($_W['uid'])) {
+	if ($_W['isfounder']) {
 		return true;
 	}
 
@@ -84,7 +84,7 @@ function visit_system_update($system_stat_visit, $displayorder = false) {
 	if (!empty($system_stat_visit['uniacid'])) {
 		$account_info = uni_fetch($system_stat_visit['uniacid']);
 		$type = $account_info->typeSign;
-		$own_uniacid = uni_owned($_W['uid'], false, $type);
+		$own_uniacid = uni_user_accounts($_W['uid'], $type);
 		$uniacids = !empty($own_uniacid) ? array_keys($own_uniacid) : array();
 		if (empty($uniacids) || !in_array($system_stat_visit['uniacid'], $uniacids)) {
 			return true;

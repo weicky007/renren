@@ -13,6 +13,21 @@
 			</div>
 		{/loop}
 	{/if}
+{elseif $type=='goods_data_diy'}
+	{if empty($list)}
+	<div class="tip">抱歉！未查询到{if !empty($kw)}与“{$kw}”{/if}相关的商品，请更换关键字后重试。</div>
+	{else}
+	{loop $list $item}
+	<div class="line good">
+		<div class="image"><img src="{php echo tomedia($item['thumb'])}"/></div>
+		<nav title="选择" class="btn btn-default btn-sm btn-primary" data-type="{$type}" data-condition="{$item['id']}" data-tab="goodsid">选择</nav>
+		<div class="text">
+			<p class="name">{$item['title']}</p>
+			<p class="price">最低价: {$item['minprice']} 原价: {$item['productprice']}元 现价: {$item['marketprice']}元</p>
+		</div>
+	</div>
+	{/loop}
+	{/if}
 {elseif $type=='article'}
 	{if empty($list)}
 		<div class="tip">抱歉！未查询到{if !empty($kw)}与“{$kw}”{/if}相关的文章，请更换关键字后重试。</div>
@@ -82,4 +97,3 @@
 {else}
 	<div class="tip">抱歉！未查询到相关内容。</div>
 {/if}
-

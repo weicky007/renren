@@ -8,7 +8,7 @@
         {else}
         <input type="text" class="form-control " name="templateid" value="">
         {/if}
-        <span class="help-block">模版搜索关键字：任务处理通知/OPENTM200605630</span>
+        <span class="help-block">模版搜索关键字：业务处理通知/OPENTM415477060</span>
         {else}
         <div class='form-control-static'>{$res['templateid']}</div>
         {/if}
@@ -191,7 +191,7 @@
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'task.default.edit|task.default.add'}
-        <textarea name="successcanerremark" rows="5" class="form-control" data-toggle="popover" data-html="true" data-content="{$tooltip}" data-placement="right">{if $res}{$res['successscaner']['remark']['value']}{else}[关注奖励列表][积分奖励][余额奖励][奖励优惠卷]已经发送到您的账户中，点击进入查看。{/if}</textarea>
+        <textarea name="successcanerremark" rows="5" class="form-control" data-toggle="popover" data-html="true" data-content="{$tooltip}" data-placement="right">{if $res}{$res['successscaner']['remark']['value']}{else}[关注奖励列表][积分奖励][余额奖励][奖励优惠券]已经发送到您的账户中，点击进入查看。{/if}</textarea>
         {else}
         <div class='form-control-static'>{$res['successscaner']['remark']['value']}</div>
         {/if}

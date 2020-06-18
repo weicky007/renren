@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Share_EweiShopV2Page extends AppMobilePage
 {
 	public function main()

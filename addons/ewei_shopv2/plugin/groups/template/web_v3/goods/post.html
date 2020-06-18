@@ -47,6 +47,12 @@
     </form>
 </div>
 <script language='javascript'>
+    goods_id = "{$item['id']}";
+    option_open = true;
+    //是否开启了多规格
+    more_spec = "{$item['more_spec']}";
+    group_goods_id = "{$group_goods_id}";
+    shop_goods_id = "{$item[gid]}";
     require(['bootstrap'],function(){
         $('#myTab a').click(function (e) {
             e.preventDefault();
@@ -54,6 +60,65 @@
             $(this).tab('show');
         })
     });
+
+    $(function(){
+        $('#more').click(function(){
+            option_open = $('#more').is(':checked');
+            if( option_open ){
+                get_spec(  );
+            }else{
+                $( '#more_spec' ).hide();
+            }
+        });
+
+    });
+
+    function get_spec(  )
+    {
+        if( more_spec != 1 ) {
+            $.getJSON("{php echo webUrl('groups/goods/get_spec')}", {
+                goods_id: goods_id,
+                group_goods_id: group_goods_id,
+                shop_goods_id:shop_goods_id
+            }, function (msg) {
+                if (msg.status == 1) {
+                    $('#spec_s').empty();
+                    $.each(msg.result.data, function (k, v) {
+                        $('#spec_s').append("<tr><input type='hidden' name='spec[" + k + "][specs]' value='" + v.specs + "'><input type='hidden' name='spec[" + k + "][id]' value=''><input type='hidden' name='spec[" + k + "][goods_option_id]' value='" + v.id + "'>\n" +
+                            "                    <td>\n" +
+                            "                        <input type=\"text\" class=\"form-control   valid \" name='spec[" + k + "][name]' value='" + v.title + "' aria-invalid=\"false\">\n" +
+                            "                    </td>\n" +
+                            "                    <td>\n" +
+                            "                        <input type=\"text\" class=\"form-control   valid option_marketprice\" name='spec[" + k + "][marketprice]' value='" + v.marketprice + "' aria-invalid=\"false\">\n" +
+                            "                    </td>" +
+                            "                   <td>" +
+                            "                       <input type=\"text\" class=\"form-control  valid option_single_price\" name=\"spec[" + k + "]['single_price']\" value='" + v.marketprice + "'>\n" +
+                            "                   </td>" +
+                            "                    <td class=\"type-4\">\n" +
+                            "                        <input type=\"text\" class=\"form-control  option_price\" name='spec[" + k + "][price]' value=\"\">\n" +
+                            "                    </td>\n" +
+                            "                    <td class=\"type-4\">\n" +
+                            "                        <input type=\"text\" class=\"form-control  option_stock\" name='spec[" + k + "][stock]' value='" + v.stock + "'>\n" +
+                            "                    </td>\n" +
+                            "                </tr>");
+                    });
+
+                } else {
+                    //如果保存取消按钮开启状态
+                    $('#more').attr('checked', false).next('div').removeClass('checked');
+                    tip.msgbox.err(msg.result.message);
+                    $( '#more_spec' ).hide();
+                    return false;
+                }
+
+            });
+        }
+
+        $( '#more_spec' ).show();
+
+    }
+
+
     $('form').submit(function(){
         if($(':radio[name=goodstype]:checked').val()=='0'){
             if($(':input[name=goodsid_text]').val()==''){
@@ -78,6 +143,7 @@
         }
     }
     function select_goods(o){
+        goods_id = o.gid;
         var $thumb = '';
         /*商品缩略图*/
         if(o.thumb){
@@ -113,6 +179,14 @@
             ue.setContent(o.content);
         });
     }
+
+    function setCol( class_ ){
+        var value = $( '.'+class_+'_all' ).val();
+        $.each( $( '.'+class_ ) , function(k,v){
+            $( v ).val( value );
+        });
+    }
+
 </script>
 
     {/if}

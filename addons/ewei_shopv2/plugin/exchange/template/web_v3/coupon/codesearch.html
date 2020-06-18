@@ -46,7 +46,7 @@
             </div>
         </div>
             <div style="float: left;width: 0%;">
-                {php echo tpl_form_field_daterange('date',array('start'=>20161001,'end'=>20161001));}
+                {php echo tpl_form_field_eweishop_daterange('date',array('start'=>20161001,'end'=>20161001));}
             </div>
             <div class="col-sm-4 pull-right">
                 <div class="input-group">
@@ -157,7 +157,7 @@
                 {if $value['type']<2}
                 <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/goods/down',array('key'=>$value['key']));}"><i class="fa fa fa-download"></i> 下载</a>
                 {/if}
-                {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}&id={$id}" download="{$value['serial']}.png"><i class="fa fa fa-download"></i> 下载</a>
+                {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}&id={$id}" download="{$value['serial']}.jpg"><i class="fa fa fa-download"></i> 下载</a>
                 {/if}
                 {ifp 'exchange.coupon.destroy'}
                 <a class="btn btn-default btn-sm" data-toggle="ajaxRemove"
@@ -173,4 +173,3 @@
 </div>
 {$pager}
 {template '_footer'}
-TAzMjQyOTE0-->

@@ -1,4 +1,7 @@
 {template 'common/header-base'}
+{if user_is_vice_founder($_W['uid']) && $_W['iscontroller']}
+{template 'common/header-vice'}
+{else}
 <style>
 	.tooltip.right .tooltip-arrow{border-right-color: #428bca;}
 	.tooltip.bottom .tooltip-arrow{border-bottom-color: #428bca;}
@@ -247,3 +250,4 @@
 						<!-- end用户管理菜单和消息管理菜单特殊,走自己的we7-page-tab;平台/应用/我的账户无we7-page-table -->
         {/if}
 	{/if}
+						{/if}

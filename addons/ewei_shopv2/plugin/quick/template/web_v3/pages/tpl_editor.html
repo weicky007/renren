@@ -225,6 +225,21 @@
         <div class="title">1. 模板选择 <span class="pull-right"><i class="fa fa-caret-left"></i></span></div>
         <div class="editor-body">
             <div class="cut-line"></div>
+            {if $type == '1'}
+            <div class="form-group">
+                <div class="col-sm-2 control-label">页面名称</div>
+                <div class="col-sm-10">
+                    <input class="form-control input-sm bind"  name="title" placeholder="页面名称" value="<%title%>" data-bind="title" maxlength="20" id="name" />
+                    <div class="help-block">注意：页面名称是便于后台查找。</div>
+                </div>
+            </div>
+            {/if}
+            <div class="form-group">
+                <div class="col-sm-2 control-label">页面标题</div>
+                <div class="col-sm-10">
+                    <input class="form-control input-sm bind"  name="pagetitle" placeholder="页面标题" value="<%pagetitle%>" data-bind="pagetitle" data-bind-element="#page-title" maxlength="20" />
+                </div>
+            </div>
             <div class="form-group">
                 <div class="col-sm-2 control-label">模板选择</div>
                 <div class="col-sm-10">
@@ -264,7 +279,9 @@
                     <div class="col-sm-2 control-label">幻灯片设置</div>
                     <div class="col-sm-10">
                         <label class="radio-inline"><input class="bind" data-bind="showadv" data-bind-init="true" type="radio" name="showadv" value="0" <%if showadv=='0'%>checked<%/if%>> 不显示</label>
+                        {if $type == 0}
                         <label class="radio-inline"><input class="bind" data-bind="showadv" data-bind-init="true" type="radio" name="showadv" value="1" <%if showadv=='1'%>checked<%/if%>> 读取公用设置</label>
+                        {/if}
                         <label class="radio-inline"><input class="bind" data-bind="showadv" data-bind-init="true" type="radio" name="showadv" value="2" <%if showadv=='2'%>checked<%/if%>> 单独设置</label>
                         <%if showadv=='2'%>
                             <div class="help-block">图片建议尺寸750*450</div>
@@ -287,7 +304,7 @@
                                         </div>
                                         <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
                                             <input type="text" class="form-control input-sm bind" data-bind-parent="advs" data-bind="linkurl" placeholder="请选择链接或输入链接地址" value="<%adv.linkurl%>" id="adv-link-<%index%>" />
-                                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#adv-link-<%index%>">选择链接</span>
+                                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl"  {if $type=="1"}data-platform="wxapp"  {/if} data-input="#adv-link-<%index%>">选择链接</span>
                                         </div>
                                     </div>
                                 </div>
@@ -341,7 +358,9 @@
                             <div class="item" data-index="<%index%>">
                                 <span class="btn-del-child" title="删除"></span>
                                 <div class="item-image square shopicon">
-                                    <p style="color: <%style.menuicon%>;"><i class="icon <%nav.icon%>" id="shopmenu-show-<%index%>"></i></p>
+                                    <p style="color: <%style.menuicon%>;">
+                                        <i class="{if $type==1}icox  <%nav.icon%>{else}icon <%nav.icon%>{/if}" id="shopmenu-show-<%index%>"></i>
+                                    </p>
                                     <p style="color: <%style.menutext%>;" class="text2"><%nav.text%></p>
                                 </div>
                                 <div class="item-form">
@@ -349,11 +368,11 @@
                                         <span class="input-group-addon">按钮文字</span>
                                         <input type="text" class="form-control input-sm bind" data-bind-parent="shopmenu" data-bind="text" value="<%nav.text%>" />
                                         <input type="hidden" class="bind" data-bind-parent="shopmenu" data-bind="icon" id="shopmenu-<%index%>" value="<%nav.icon%>" />
-                                        <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#shopmenu-<%index%>" data-element="#shopmenu-show-<%index%>">选择图标</span>
+                                        <span class="input-group-addon btn btn-default" {if $type==1} data-toggle="selectIcon3" {else} data-toggle="selectIcon" {/if} data-input="#shopmenu-<%index%>" data-element="#shopmenu-show-<%index%>">选择图标</span>
                                     </div>
                                     <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
                                         <input type="text" class="form-control input-sm bind" data-bind-parent="shopmenu" data-bind="linkurl" placeholder="请选择链接或输入链接地址(http://开头)" value="<%nav.linkurl%>" id="shopmenu-link-<%index%>" />
-                                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#shopmenu-link-<%index%>">选择链接</span>
+                                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl"   {if $type=="1"}data-platform="wxapp" data-type="menu" {/if} data-input="#shopmenu-link-<%index%>">选择链接</span>
                                     </div>
                                 </div>
                             </div>
@@ -395,7 +414,7 @@
                                         </div>
                                         <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
                                             <input type="text" class="form-control input-sm bind" data-bind-parent="notices" data-bind="linkurl" id="notice-indput-<%index%>" placeholder="请选择链接或输入链接地址(http://开头)" value="<%notice.linkurl%>">
-                                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#notice-indput-<%index%>">选择链接</span>
+                                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" {if $type=="1"}data-platform="wxapp" data-type="menu" {/if} data-input="#notice-indput-<%index%>">选择链接</span>
                                         </div>
                                     </div>
                                 </div>
@@ -532,13 +551,6 @@
                         <span class="input-group-addon btn btn-default" onclick="<%if template=='1'%>$(this).prev().val('#ff5555').trigger('propertychange');<%else%>$(this).prev().val('#ff6500').trigger('propertychange')<%/if%>">重置</span>
                     </div>
                 </div>
-                <div class="col-sm-2 control-label">商品销量</div>
-                <div class="col-sm-4">
-                    <div class="input-group input-group-sm">
-                        <input class="form-control input-sm bind" data-bind-parent="style" data-bind="goodssales" value="<%style.goodssales%>" type="color" />
-                        <span class="input-group-addon btn btn-default" onclick="<%if template=='1'%>$(this).prev().val('#cbcbcb').trigger('propertychange');<%else%>$(this).prev().val('#888888').trigger('propertychange')<%/if%>">重置</span>
-                    </div>
-                </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-2 control-label">购物车按钮</div>
@@ -638,8 +650,8 @@
             <div class="form-group">
                 <div class="col-sm-2 control-label">分组名称</div>
                 <div class="col-sm-10">
+                    <input class="form-control input-sm bind" data-bind-parent="datas" data-bind="title" placeholder="例如: 推荐商品(最大五字)" value="<%datas[dataIndex].title%>" data-bind="title" maxlength="5" />
                     <div class="input-group">
-                        <input class="form-control input-sm bind" data-bind-parent="datas" data-bind="title" placeholder="例如: 推荐商品(最大五字)" value="<%datas[dataIndex].title%>" data-bind="title" maxlength="5" />
                         <%if datas[dataIndex].icon!=''%>
                             <span class="input-group-addon" style="border-left: 0;"><i class="icon <%datas[dataIndex].icon%>" id="show-icon"></i></span>
                         <%/if%>
@@ -647,7 +659,7 @@
                         <%if datas[dataIndex].icon!=''%>
                             <span class="input-group-addon btn" style="border-left: 0;" onclick="$('.icon-class').val('').trigger('propertychange')">清空</span>
                         <%/if%>
-                        <span class="input-group-addon btn" data-toggle="selectIcon" data-input=".icon-class" data-element="#show-icon">选择图标</span>
+                        <!--<span class="input-group-addon btn" data-toggle="selectIcon" data-input=".icon-class" data-element="#show-icon">选择图标</span>-->
                     </div>
                 </div>
             </div>
@@ -669,7 +681,7 @@
             </div>
             <%if datas[dataIndex].datatype==0%>
                 <div class="form-items" data-type="datas">
-                    <div class="inner" id="form-items">
+                    <div class="inner" id="form-items-datas">
                         <%each datas[dataIndex].data as g index%>
                         <div class="item" data-index="<%index%>">
                             <span class="btn-del-child" title="删除"></span>

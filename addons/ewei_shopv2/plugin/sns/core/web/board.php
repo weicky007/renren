@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,8 +25,8 @@ class Board_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_board') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_board') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_board') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_board') . (' WHERE 1 ' . $condition), $params);
 
 		foreach ($list as &$r) {
 			$url = mobileUrl('sns/board', array('id' => $r['id']), true);
@@ -158,6 +159,10 @@ class Board_EweiShopV2Page extends PluginWebPage
 		}
 
 		$levels = m('member')->getLevels();
+		$set_member = m('common')->getSysset();
+		$set_commission = m('common')->getPluginset('commission');
+		$default_name = empty($set_member['shop']['levelname']) ? '普通等级' : $set_member['shop']['levelname'];
+		$default_name_commission = empty($set_commission['levelname']) ? '普通等级' : $set_commission['levelname'];
 		$groups = m('member')->getGroups();
 
 		if (p('commission')) {
@@ -185,10 +190,10 @@ class Board_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title,keyword FROM ' . tablename('ewei_shop_sns_board') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,keyword FROM ' . tablename('ewei_shop_sns_board') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_sns_board', array('id' => $item['id']));
@@ -215,7 +220,7 @@ class Board_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_sns_board') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_sns_board') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_sns_board', array('displayorder' => $displayorder), array('id' => $id));
@@ -232,14 +237,14 @@ class Board_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_sns_board') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_sns_board') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_sns_board', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('sns.board.edit', ('修改版块状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '显示' : '隐藏');
+			plog('sns.board.edit', '修改版块状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));

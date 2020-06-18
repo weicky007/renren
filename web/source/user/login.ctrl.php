@@ -16,7 +16,7 @@ if (!empty($_W['uid']) && 'bind' != $_GPC['handle_type']) {
 	if ($_W['isajax']) {
 		iajax(-1, '请先退出再登录！');
 	}
-	itoast('请先退出再登录！');
+	itoast('', $_W['siteroot'] . 'web/home.php');
 }
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
@@ -83,6 +83,7 @@ function _login($forward = '') {
 		}
 		$_W['uid'] = $record['uid'];
 		$_W['isfounder'] = user_is_founder($record['uid']);
+		$_W['isadmin'] = user_is_founder($_W['uid'], true);
 		$_W['user'] = $record;
 
 		$support_login_bind_types = Oauth2CLient::supportThirdLoginBindType();

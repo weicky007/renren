@@ -1,7 +1,7 @@
 {loop $calendar $week}
 <div class="week">
     {loop $week $day}
-    <nav class="day {if !empty($day['today'])}today{/if}" data-day="{$day['day']}" data-month="{$day['month']}" data-date="{$day['date']}" data-signed="{$day['signed']}">
+    <nav class="day {if !empty($day['today'])}today{/if}" data-day="{$day['day']}" data-month="{$day['month']}" data-date="{$day['date']}" data-signed="{$day['signed']}" data-year="{$day['year']}">
         {if !empty($day['day'])}
             <p class="num">{$day['day']}</p>
             {if !empty($day['title'])}

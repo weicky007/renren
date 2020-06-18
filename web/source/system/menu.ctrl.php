@@ -3,7 +3,6 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
-
 defined('IN_IA') or exit('Access Denied');
 load()->model('system');
 
@@ -22,6 +21,11 @@ if (!empty($system_menu)) {
 		if (in_array($menu_name, $system_top_menu)) {
 			$system_menu_permission[] = $menu_name;
 		}
+		if (in_array($menu_name, $not_operate_menu)) {
+			$system_menu[$menu_name]['is_operate'] = 0;
+		} else {
+			$system_menu[$menu_name]['is_operate'] = 1;
+		}
 		if (!empty($menu['section'])) {
 			foreach ($menu['section'] as $section_name => $section) {
 				if (!empty($section['menu'])) {
@@ -36,6 +40,12 @@ if (!empty($system_menu)) {
 	}
 }
 if ('display' == $do) {
+	if ($_W['isajax']) {
+		$message = array(
+			'system_menu' => $system_menu,
+		);
+		iajax(0, $message);
+	}
 	template('system/menu');
 } elseif ('post' == $do) {
 	$id = intval($_GPC['id']);
@@ -68,7 +78,6 @@ if ('display' == $do) {
 		if (!empty($menu_db) && $menu_db['id'] != $id) {
 			iajax(-1, '菜单标识不得重复请更换', referer());
 		}
-
 	}
 	$permission_name = $menu['permission_name'];
 	$menu_db = pdo_get('core_menu', array('permission_name' => $permission_name));
@@ -96,7 +105,7 @@ if ('display' == $do) {
 			$menu_data['is_system'] = 1;
 			$menu_data['group_name'] = 'frame';
 		}
-		pdo_insert('core_menu',  $menu_data);
+		pdo_insert('core_menu', $menu_data);
 	}
 	cache_clean(cache_system_key('system_frame'));
 	iajax(0, '更新成功', referer());

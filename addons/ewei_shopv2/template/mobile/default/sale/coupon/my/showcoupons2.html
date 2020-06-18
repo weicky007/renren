@@ -58,8 +58,15 @@
 							<div class="title">{$good['title']}</div>
 							<div class="price">
 								<div class="product">&yen;{$good['minprice']}</div>
-								<div class="market">&yen;{$good['couponprice']} <span>用劵价</span></div>
+								<div class="market">&yen;{$good['couponprice']} <span>
+									{if $good['minprice']<$data['enough']}
+										满额用劵价
+									{else}
+										用劵价
+									{/if}
+								</span></div>
 							</div>
+								<span  class="text-primary">请以实际价格为准!</span>
 						</span>
 					</a>
 					{/loop}

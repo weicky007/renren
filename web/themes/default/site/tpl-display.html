@@ -33,7 +33,7 @@
 		<div class="site-template-item" ng-class="{'active' : style.styleid == setting.styleid}" ng-repeat="style in stylesResult" ng-if="style.styleid">
 			
 			<div class="site-template-img" ng-click="selectDefault(style.styleid)">
-				<img ng-src="../app/themes/{{style.name}}/preview.jpg" alt="{{style.name}}"/>
+				<img src="{{style.logo}}" alt="{{style.name}}"/>
 				<div class="cover-dark">
 					<div class="selected">
 						<i class="wi wi-right"></i>
@@ -52,11 +52,11 @@
 		<div class="site-template-item" ng-repeat="style in stylesResult" ng-if="!style.styleid">
 			<div class="cover-lock">
 				<div class="lock">
-					<a ng-href="{{links.build}}&styleid={{style.templateid}}" class="btn btn-warning item-build-btn" role="button" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-content="该模板尚未激活，激活后可正常使用！" data-original-title="" title="">点击激活</a>
+					<a ng-href="{{links.build}}&styleid={{style.mid}}" class="btn btn-warning item-build-btn" role="button" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-content="该模板尚未激活，激活后可正常使用！" data-original-title="" title="">点击激活</a>
 				</div>
 			</div>
 			<div class="site-template-img">
-				<img src="../app/themes/{{style.name}}/preview.jpg"/>
+				<img src="{{style.logo}}"/>
 				<div class="cover-dark">
 					<div class="selected">
 						<i class="wi wi-right"></i>

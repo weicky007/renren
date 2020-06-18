@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -26,7 +27,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$this->message('页面数据出错', mobileUrl());
 		}
 
-		$merchid = (empty($item['merchid']) ? 0 : intval($item['merchid']));
+		$page = json_decode($datas, true);
+		$merchid = empty($item['merchid']) ? 0 : intval($item['merchid']);
 		$data = $this->model->mobile($datas, $merchid);
 
 		if ($data['template'] == 1) {
@@ -43,10 +45,11 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$carts = 'null';
 		}
 
-		$fromquick = (!empty($data['cartdata']) && empty($data['template']) ? $item['id'] : 0);
+		$cartcount = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_member_cart') . ' where uniacid=:uniacid and openid=:openid and deleted=0 and isnewstore=0  and selected =1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+		$fromquick = !empty($data['cartdata']) && empty($data['template']) ? $item['id'] : 0;
 		$member = m('member')->getMember($_W['openid']);
-		$mid = ($member['isagent'] && $member['status'] ? $member['id'] : 0);
-		$_W['shopshare'] = array('title' => !empty($item['share_title']) ? $item['share_title'] : $item['title'], 'desc' => !empty($item['share_desc']) ? $item['share_desc'] : $item['title'], 'link' => mobileUrl('quick', array('id' => $id, 'mid' => $mid), true), 'imgUrl' => !empty($item['share_icon']) ? $item['share_icon'] : $_W['shopset']['shop']['logo']);
+		$mid = $member['isagent'] && $member['status'] ? $member['id'] : 0;
+		$_W['shopshare'] = array('title' => !empty($item['share_title']) ? $item['share_title'] : $page['pagetitle'], 'desc' => !empty($item['share_desc']) ? $item['share_desc'] : $item['title'], 'link' => mobileUrl('quick', array('id' => $id, 'mid' => $mid), true), 'imgUrl' => !empty($item['share_icon']) ? $item['share_icon'] : $_W['shopset']['shop']['logo']);
 
 		if (!empty($_W['shopshare']['imgUrl'])) {
 			$_W['shopshare']['imgUrl'] = tomedia($_W['shopshare']['imgUrl']);
@@ -100,7 +103,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			'pagesize' => $pagesize,
 			'page'     => $page,
 			'list'     => array()
-			);
+		);
 
 		if ($datatype == 0) {
 			$goodsids = trim($_GPC['goodsids']);
@@ -120,7 +123,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$cateid = intval($_GPC['cateid']);
 
 			if (!empty($cateid)) {
-				$goodslist = $this->model->getList(array('cate' => $cateid, 'page' => $page, 'pagesize' => $pagesize, 'order' => $orderby));
+				$goodslist = $this->model->getList(array('cate' => $cateid, 'page' => $page, 'pagesize' => $pagesize, 'order' => $orderby, 'merchid' => $merchid));
 				$result['list'] = $goodslist['list'];
 				$result['total'] = $goodslist['total'];
 				$result['pagesize'] = $pagesize;
@@ -183,7 +186,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		global $_W;
 		global $_GPC;
 		$quickid = intval($_GPC['quickid']);
-		$tablename = (empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart');
+		$tablename = empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart';
 		$arr = array('openid' => $_W['openid'], 'uniacid' => $_W['uniacid']);
 
 		if (!empty($quickid)) {
@@ -212,6 +215,10 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 
 		if (empty($goods)) {
 			show_json(0, '商品未找到');
+		}
+
+		if ($goods['isverify'] == 2 || $goods['type'] == 2 || $goods['type'] == 3) {
+			show_json(0, '此商品不可加入购物车<br>请返回商城直接购买');
 		}
 
 		$diyform_plugin = p('diyform');
@@ -246,7 +253,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$tablename = (empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart');
+		$tablename = empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart';
 		$condition = ' goodsid=:id and openid=:openid and deleted=0 and  uniacid=:uniacid ';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':id' => $goodsid);
 
@@ -314,7 +321,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$openid = $_W['openid'];
 		$member = m('member')->getMember($openid);
 		$quickid = intval($_GPC['quickid']);
-		$tablename = (empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart');
+		$tablename = empty($quickid) ? 'ewei_shop_member_cart' : 'ewei_shop_quick_cart';
 		$condition = ' and f.uniacid= :uniacid and f.openid=:openid and f.selected=1 and f.deleted=0 ';
 		$params = array(':uniacid' => $uniacid, ':openid' => $openid);
 
@@ -335,7 +342,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$g['unit'] = '件';
 			}
 
-			if (($g['status'] != 1) || ($g['goodsdeleted'] == 1)) {
+			if ($g['status'] != 1 || $g['goodsdeleted'] == 1) {
 				show_json(0, $g['title'] . '<br/> 已经下架');
 			}
 
@@ -345,7 +352,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$g['stock'] = $g['optionstock'];
 			}
 
-			if ($seckillinfo && ($seckillinfo['status'] == 0)) {
+			if ($seckillinfo && $seckillinfo['status'] == 0) {
 				$check_buy = plugin_run('seckill::checkBuy', $seckillinfo, $g['title'], $g['unit']);
 
 				if (is_error($check_buy)) {

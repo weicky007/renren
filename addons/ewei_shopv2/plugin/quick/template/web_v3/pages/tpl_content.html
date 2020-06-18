@@ -10,7 +10,7 @@
 <div class="diy-phone">
     <div class="phone-head"></div>
     <div class="phone-body">
-        <div class="phone-title">快速购买</div>
+        <div class="phone-title" id="page-title">{if empty($page['pagetitle'])}快速购买{else}{$page['pagetitle']}{/if}</div>
         <div class="phone-main" id="phone"></div>
     </div>
     <div class="phone-foot"></div>
@@ -19,4 +19,3 @@
 <div class="diy-editor-group" id="editor"></div>
 
 {template 'quick/pages/tpl_editor'}
-

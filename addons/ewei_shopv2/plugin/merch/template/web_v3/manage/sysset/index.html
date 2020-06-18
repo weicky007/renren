@@ -100,7 +100,7 @@
             <label class="col-lg control-label">商户位置</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'sysset.shop.edit'}
-                {php echo tpl_form_field_coordinate('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
+                {php echo tpl_form_field_position('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
                 {else}
                 <div class='form-control-static'>lng={$item['lng']},lat={$item['lat']}</div>
                 {/if}

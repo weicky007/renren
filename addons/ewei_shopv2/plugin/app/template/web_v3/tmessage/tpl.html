@@ -4,7 +4,7 @@
         {ife 'app.tmessage' $item}
         <div class="input-group">
             <span class="input-group-addon">键名</span>
-            <input type="text" name="tpl_key[]" class="form-control" value="{$row['key']}" placeholder="例如：购买时间" data-rule-required='true'/>
+            <input type="text" name="tpl_key[]" class="form-control" value="{$row['key']}" placeholder="例如：{{keyword1.DATA}}" data-rule-required='true'/>
             <span class="input-group-addon" style="padding: 0;">
                 <input type="color" name="tpl_color[]" value="{$row['color']}" style="width:50px; height:28px; border: 0; padding: 0;">
             </span>
@@ -34,4 +34,3 @@
         {/if}
     </div>
 </div>
-<!--4000097827-->

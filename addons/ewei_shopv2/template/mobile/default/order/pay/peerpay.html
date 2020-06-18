@@ -3,7 +3,9 @@
 <div class="fui-page  fui-page-current">
     <div class="fui-content">
         <div class="fui-list-group-title fui-payfor-group-title">来自{$orderMember['nickname']}的代付订单</div>
-        <div class="fui-list fui-payfor-list fui-payfor-peerpay">
+        {loop $goods  $goods}
+        <div class="fui-list fui-payfor-list fui-payfor-peerpay" style="border-bottom: none">
+
             <div class="fui-list-media">
                 <img src="{php echo tomedia($goods['thumb'])}" alt="{$goods['title']}">
             </div>
@@ -18,7 +20,7 @@
                         <span></span>
                         <span></span>
                         {/if}
-                        <span class="fui-payfor-info-price">&yen;{$order['price']}</span>
+                        <span class="fui-payfor-info-price">&yen;{$goods['price']}</span>
                     </div>
                     <div class="fui-list-media">
                         <a href="{php echo mobileUrl('goods/detail',array('id'=>$goods['id']))}" class="btn btn-sm btn-default fui-payfor-btn">&nbsp;查看商品&nbsp;</a>
@@ -26,7 +28,9 @@
                 </div>
 
             </div>
+
         </div>
+        {/loop}
         <div class="fui-tab fui-tab-danger" id="tab-plus">
             <a href="javascript:void(0);" data-type="onepay" class="active">单人代付</a>
             <a href="javascript:void(0);" data-type="morepay">多人代付</a>

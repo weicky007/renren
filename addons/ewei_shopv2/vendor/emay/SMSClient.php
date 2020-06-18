@@ -1,40 +1,65 @@
 <?php
 
-require_once dirname(__FILE__) . '/nusoaplib/nusoap.php';
-class SMSClient
-{
+require_once( dirname(__FILE__) . '/nusoaplib/nusoap.php');
+
+/**
+ * 验证流程概要:
+ *
+ * 第一次使用时，需使用[序列号]和[密码]进行login(登录操作),并在登录同时产生一个session key
+ *
+ * 登录成功后，称为[已登录状态],需要保存此产生的session key,用于以后的相关操作(如发送短信等操作)
+ *
+ * logout(注销操作)后, session key将失效，并且不能再发短信了, 除非再进行login(登录操作)
+ *
+ *
+ *
+ *
+ *
+ */
+class SMSClient{
+
 	/**
 	 * 网关地址
 	 */
-	public $url;
+	var $url;
+
 	/**
 	 * 序列号,请通过亿美销售人员获取
 	 */
-	public $serialNumber;
+	var $serialNumber;
+
 	/**
 	 * 密码,请通过亿美销售人员获取
 	 */
-	public $password;
+	var $password;
+
 	/**
 	 * 登录后所持有的SESSION KEY，即可通过login方法时创建
 	 */
-	public $sessionKey;
+	var $sessionKey;
+
 	/**
 	 * webservice客户端
 	 */
-	public $soap;
+	var $soap;
+
 	/**
 	 * 默认命名空间
 	 */
-	public $namespace = 'http://sdkhttp.eucp.b2m.cn/';
+	var $namespace = 'http://sdkhttp.eucp.b2m.cn/';
+
 	/**
 	 * 往外发送的内容的编码,默认为 GBK
 	 */
-	public $outgoingEncoding = 'GBK';
+	var $outgoingEncoding = "GBK";
+
 	/**
 	 * 往外发送的内容的编码,默认为 GBK
 	 */
-	public $incomingEncoding = '';
+	var $incomingEncoding = '';
+
+
+
 
 	/**
 	 * @param string $url 			网关地址
@@ -51,56 +76,65 @@ class SMSClient
 	 *
 	 *
 	 */
-	public function SMSClient($url, $serialNumber, $password, $sessionKey = '', $proxyhost = false, $proxyport = false, $proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30)
+	function SMSClient($url,$serialNumber,$password,$sessionKey='',$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30)
 	{
 		$this->url = $url;
 		$this->serialNumber = $serialNumber;
 		$this->password = $password;
-
-		if ($sessionKey != '') {
+		if ($sessionKey!='')
 			$this->sessionKey = $sessionKey;
-		}
 
 
-		$this->soap = new nusoap_client($url, false, $proxyhost, $proxyport, $proxyusername, $proxypassword, $timeout, $response_timeout);
+
+		/**
+		 * 初始化 webservice 客户端
+		 */
+		$this->soap = new nusoap_client($url,false,$proxyhost,$proxyport,$proxyusername,$proxypassword,$timeout,$response_timeout);
 		$this->soap->soap_defencoding = $this->outgoingEncoding;
 		$this->soap->decode_utf8 = false;
+
+
 	}
 
 	/**
 	 * 设置发送内容 的字符编码
 	 * @param string $outgoingEncoding 发送内容字符集编码
 	 */
-	public function setOutgoingEncoding($outgoingEncoding)
+	function setOutgoingEncoding($outgoingEncoding)
 	{
-		$this->outgoingEncoding = $outgoingEncoding;
+		$this->outgoingEncoding =  $outgoingEncoding;
 		$this->soap->soap_defencoding = $this->outgoingEncoding;
+
 	}
+
 
 	/**
 	 * 设置接收内容 的字符编码
 	 * @param string $incomingEncoding 接收内容字符集编码
 	 */
-	public function setIncomingEncoding($incomingEncoding)
+	function setIncomingEncoding($incomingEncoding)
 	{
-		$this->incomingEncoding = $incomingEncoding;
+		$this->incomingEncoding =  $incomingEncoding;
 		$this->soap->xml_encoding = $this->incomingEncoding;
 	}
 
-	public function setNameSpace($ns)
+
+
+	function setNameSpace($ns)
 	{
 		$this->namespace = $ns;
 	}
 
-	public function getSessionKey()
+	function getSessionKey()
 	{
 		return $this->sessionKey;
 	}
 
-	public function getError()
+	function getError()
 	{
 		return $this->soap->getError();
 	}
+
 
 	/**
 	 *
@@ -122,17 +156,21 @@ class SMSClient
 	 *
 	 *
 	 */
-	public function login($sessionKey = '')
+	function login($sessionKey='')
 	{
-		if ($sessionKey != '') {
+		if ($sessionKey!='')
+		{
 			$this->sessionKey = $sessionKey;
 		}
 
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey, 'arg2'=>$this->password);
 
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $this->password);
-		$result = $this->soap->call('registEx', $params, $this->namespace);
+		$result = $this->soap->call("registEx",$params,	$this->namespace);
+
+
 		return $result;
 	}
+
 
 	/**
 	 * 注销操作  (注:此方法必须为已登录状态下方可操作)
@@ -142,11 +180,14 @@ class SMSClient
 	 * 之前保存的sessionKey将被作废
 	 * 如需要，可重新login
 	 */
-	public function logout()
+	function logout()
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
 		print_r($params);
-		$result = $this->soap->call('logout', $params, $this->namespace);
+		$result = $this->soap->call("logout", $params ,
+			$this->namespace
+		);
+
 		return $result;
 	}
 
@@ -154,11 +195,16 @@ class SMSClient
 	 * 获取版本信息
 	 * @return string 版本信息
 	 */
-	public function getVersion()
+	function getVersion()
 	{
-		$result = $this->soap->call('getVersion', array(), $this->namespace);
+		$result = $this->soap->call("getVersion",
+			array(),
+			$this->namespace
+		);
 		return $result;
 	}
+
+
 
 	/**
 	 * 短信发送  (注:此方法必须为已登录状态下方可操作)
@@ -173,37 +219,51 @@ class SMSClient
 	 * @param int $priority 		优先级, 默认5
 	 * @return int 操作结果状态码
 	 */
-	public function sendSMS($mobiles = array(), $content, $sendTime = '', $addSerial = '', $charset = 'GBK', $priority = 5)
+	function sendSMS($mobiles=array(),$content,$sendTime='',$addSerial='',$charset='GBK',$priority=5)
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $sendTime, 'arg4' => $content, 'arg5' => $addSerial, 'arg6' => $charset, 'arg7' => $priority);
 
-		foreach ($mobiles as $mobile ) {
-			array_push($params, new soapval('arg3', false, $mobile));
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey,'arg2'=>$sendTime,
+			'arg4'=>$content,'arg5'=>$addSerial, 'arg6'=>$charset,'arg7'=>$priority
+		);
+
+		/**
+		 * 多个号码发送的xml内容格式是
+		 * <arg3>159xxxxxxxx</arg3>
+		 * <arg3>159xxxxxxx2</arg3>
+		 * ....
+		 * 所以需要下面的单独处理
+		 *
+		 */
+		foreach($mobiles as $mobile)
+		{
+			array_push($params,new soapval("arg3",false,$mobile));
 		}
-
-		$result = $this->soap->call('sendSMS', $params, $this->namespace);
+		$result = $this->soap->call("sendSMS",$params,$this->namespace);
 		return $result;
+
 	}
+
 
 	/**
 	 * 余额查询  (注:此方法必须为已登录状态下方可操作)
 	 * @return double 余额
 	 */
-	public function getBalance()
+	function getBalance()
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
-		$result = $this->soap->call('getBalance', $params, $this->namespace);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+		$result = $this->soap->call("getBalance",$params,$this->namespace);
 		return $result;
+
 	}
 
 	/**
 	 * 取消短信转发  (注:此方法必须为已登录状态下方可操作)
 	 * @return int 操作结果状态码
 	 */
-	public function cancelMOForward()
+	function cancelMOForward()
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
-		$result = $this->soap->call('cancelMOForward', $params, $this->namespace);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+		$result = $this->soap->call("cancelMOForward",$params,$this->namespace);
 		return $result;
 	}
 
@@ -215,23 +275,25 @@ class SMSClient
 	 *
 	 * 请通过亿美销售人员获取 [充值卡卡号]长度为20内 [密码]长度为6
 	 */
-	public function chargeUp($cardId, $cardPass)
+	function chargeUp($cardId, $cardPass)
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $cardId, 'arg3' => $cardPass);
-		$result = $this->soap->call('chargeUp', $params, $this->namespace);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey,'arg2'=>$cardId,'arg3'=>$cardPass);
+		$result = $this->soap->call("chargeUp",$params,$this->namespace);
 		return $result;
 	}
+
 
 	/**
 	 * 查询单条费用  (注:此方法必须为已登录状态下方可操作)
 	 * @return double 单条费用
 	 */
-	public function getEachFee()
+	function getEachFee()
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
-		$result = $this->soap->call('getEachFee', $params, $this->namespace);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+		$result = $this->soap->call("getEachFee",$params,$this->namespace);
 		return $result;
 	}
+
 
 	/**
 	 * 得到上行短信  (注:此方法必须为已登录状态下方可操作)
@@ -256,23 +318,24 @@ class SMSClient
 	 *
 	 *
 	 */
-	public function getMO()
+	function getMO()
 	{
 		$ret = array();
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
-		$result = $this->soap->call('getMO', $params, $this->namespace);
-		if (is_array($result) && (0 < count($result))) {
-			if (is_array($result[0])) {
-				foreach ($result as $moArray ) {
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+		$result = $this->soap->call("getMO",$params,$this->namespace);
+		//print_r($this->soap->response);
+		//print_r($result);
+		if (is_array($result) && count($result)>0)
+		{
+			if (is_array($result[0]))
+			{
+				foreach($result as $moArray)
 					$ret[] = new Mo($moArray);
-				}
-			}
-			 else {
+			}else{
 				$ret[] = new Mo($result);
 			}
+
 		}
-
-
 		return $ret;
 	}
 
@@ -280,12 +343,15 @@ class SMSClient
 	 * 得到状态报告  (注:此方法必须为已登录状态下方可操作)
 	 * @return array 状态报告列表, 一次最多取5个
 	 */
-	public function getReport()
+	function getReport()
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
-		$result = $this->soap->call('getReport', $params, $this->namespace);
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+		$result = $this->soap->call("getReport",$params,$this->namespace);
 		return $result;
 	}
+
+
+
 
 	/**
 	 * 企业注册  [邮政编码]长度为6 其它参数长度为20以内
@@ -302,23 +368,36 @@ class SMSClient
 	 * @return int 操作结果状态码
 	 *
 	 */
-	public function registDetailInfo($eName, $linkMan, $phoneNum, $mobile, $email, $fax, $address, $postcode)
+	function registDetailInfo($eName,$linkMan,$phoneNum,$mobile,$email,$fax,$address,$postcode)
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $eName, 'arg3' => $linkMan, 'arg4' => $phoneNum, 'arg5' => $mobile, 'arg6' => $email, 'arg7' => $fax, 'arg8' => $address, 'arg9' => $postcode);
-		$result = $this->soap->call('registDetailInfo', $params, $this->namespace);
+
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey,
+			'arg2'=>$eName,'arg3'=>$linkMan,'arg4'=>$phoneNum,
+			'arg5'=>$mobile,'arg6'=>$email,'arg7'=>$fax,'arg8'=>$address,'arg9'=>$postcode
+		);
+
+		$result = $this->soap->call("registDetailInfo",$params,$this->namespace);
 		return $result;
+
 	}
+
+
 
 	/**
 	 * 修改密码  (注:此方法必须为已登录状态下方可操作)
 	 * @param string $newPassword 新密码
 	 * @return int 操作结果状态码
 	 */
-	public function updatePassword($newPassword)
+	function updatePassword($newPassword)
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $this->password, 'arg3' => $newPassword);
-		$result = $this->soap->call('serialPwdUpd', $params, $this->namespace);
+
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey,
+			'arg2'=>$this->password,'arg3'=>$newPassword
+		);
+
+		$result = $this->soap->call("serialPwdUpd",$params,$this->namespace);
 		return $result;
+
 	}
 
 	/**
@@ -328,10 +407,14 @@ class SMSClient
 	 * @return int 操作结果状态码
 	 *
 	 */
-	public function setMOForward($forwardMobile)
+	function setMOForward($forwardMobile)
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey, 'arg2' => $forwardMobile);
-		$result = $this->soap->call('setMOForward', $params, $this->namespace);
+
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey,
+			'arg2'=>$forwardMobile
+		);
+
+		$result = $this->soap->call("setMOForward",$params,$this->namespace);
 		return $result;
 	}
 
@@ -340,55 +423,75 @@ class SMSClient
 	 * @param array $forwardMobiles 转发的手机号码列表, 如 array('159xxxxxxxx','159xxxxxxxx');
 	 * @return int 操作结果状态码
 	 */
-	public function setMOForwardEx($forwardMobiles = array())
+	function setMOForwardEx($forwardMobiles=array())
 	{
-		$params = array('arg0' => $this->serialNumber, 'arg1' => $this->sessionKey);
 
-		foreach ($forwardMobiles as $mobile ) {
-			array_push($params, new soapval('arg2', false, $mobile));
+		$params = array('arg0'=>$this->serialNumber,'arg1'=>$this->sessionKey);
+
+		/**
+		 * 多个号码发送的xml内容格式是
+		 * <arg2>159xxxxxxxx</arg2>
+		 * <arg2>159xxxxxxx2</arg2>
+		 * ....
+		 * 所以需要下面的单独处理
+		 *
+		 */
+		foreach($forwardMobiles as $mobile)
+		{
+			array_push($params,new soapval("arg2",false,$mobile));
 		}
 
-		$result = $this->soap->call('setMOForwardEx', $params, $this->namespace);
+		$result = $this->soap->call("setMOForwardEx",$params,$this->namespace);
 		return $result;
+
+
 	}
+
 
 	/**
 	 * 生成6位随机数
 	 */
-	public function generateKey()
+	function generateKey()
 	{
-		return rand(100000, 999999);
+		return rand(100000,999999);
 	}
+
+
 }
 
-class Mo
-{
+class Mo{
+
 	/**
 	 * 发送者附加码
 	 */
-	public $addSerial;
+	var $addSerial;
+
 	/**
 	 * 接收者附加码
 	 */
-	public $addSerialRev;
+	var $addSerialRev;
+
 	/**
 	 * 通道号
 	 */
-	public $channelnumber;
+	var $channelnumber;
+
 	/**
 	 * 手机号
 	 */
-	public $mobileNumber;
+	var $mobileNumber;
+
 	/**
 	 * 发送时间
 	 */
-	public $sentTime;
+	var $sentTime;
+
 	/**
 	 * 短信内容
 	 */
-	public $smsContent;
+	var $smsContent;
 
-	public function Mo(&$ret = array())
+	function Mo(&$ret=array())
 	{
 		$this->addSerial = $ret[addSerial];
 		$this->addSerialRev = $ret[addSerialRev];
@@ -396,38 +499,37 @@ class Mo
 		$this->mobileNumber = $ret[mobileNumber];
 		$this->sentTime = $ret[sentTime];
 		$this->smsContent = $ret[smsContent];
+
 	}
 
-	public function getAddSerial()
+	function getAddSerial()
 	{
 		return $this->addSerial;
 	}
-
-	public function getAddSerialRev()
+	function getAddSerialRev()
 	{
 		return $this->addSerialRev;
 	}
-
-	public function getChannelnumber()
+	function getChannelnumber()
 	{
 		return $this->channelnumber;
 	}
-
-	public function getMobileNumber()
+	function getMobileNumber()
 	{
 		return $this->mobileNumber;
 	}
-
-	public function getSentTime()
+	function getSentTime()
 	{
 		return $this->sentTime;
 	}
-
-	public function getSmsContent()
+	function getSmsContent()
 	{
 		return $this->smsContent;
 	}
-}
 
+
+
+
+}
 
 ?>

@@ -14,7 +14,8 @@
     <div class="page-toolbar m-b-sm m-t-sm">
         <div class="col-sm-3">
              <span class='pull-left'>
-                    <a class='btn btn-primary btn-sm' href="{php echo webUrl('merch/user/add')}"><i class="fa fa-plus"></i> 添加多商户</a>
+                    <a class='btn btn-primary btn-sm' href="{php echo webUrl('merch/user/add',array('status'=>$_GPC['status']))}">
+                        <i class="fa fa-plus"></i> 添加多商户</a>
                 </span>
         </div>
 
@@ -87,8 +88,7 @@
     </thead>
     <tbody>
     {loop $list $row}
-    <tr rel="pop" data-title="ID: {$row['id']} ">
-
+    <tr rel="pop" data-title="ID: {$row['id']}" data-id="{$row['id']}" >
         <td>
             <input type='checkbox'   value="{$row['id']}"/>
         </td>
@@ -113,7 +113,7 @@
         </td>
         <td  style="overflow:visible;">
             {ifp 'merch.user.view|merch.user.edit'}
-            <a href="{php echo webUrl('merch/user/edit', array('id' => $row['id']))}" class="btn btn-default btn-sm btn-op btn-operation" >
+            <a href="{php echo webUrl('merch/user/edit', array('id' => $row['id'],'status'=>$_GPC['status']))}" class="btn btn-default btn-sm btn-op btn-operation" >
                   <span data-toggle="tooltip" data-placement="top" title="" data-original-title="{ifp 'merch.user.edit'}修改{else}查看{/if}">
                         <i class='icow icow-bianji2'></i>
                    </span>
@@ -166,8 +166,40 @@
 {/if}
     </div>
 <script language="javascript">
-
-
+    require(['bootstrap'], function () {
+        $("[rel=pop]").popover({
+            trigger: 'manual',
+            placement: 'top',
+            title: $(this).data('title'),
+            html: 'true',
+            content:  "正在加载中...",
+            animation: false
+        }).on("mouseenter", function () {
+            var _this = this;
+            //异步请求统计金额
+            $.ajax({type: "GET",
+                url: "{php echo webUrl('merch/user/get_show_money')}",
+                dataType:"json",
+                data:{id:$(this).data('id')},
+                success: function(data){
+                    var result = data.result;
+                    contents="可提现金额："+result['status0']+" </br>已结算金额："+result['status3'];
+                    $(".popover-content").html(contents);
+                }
+            });
+            $(this).popover("show");
+            $(this).siblings(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        }).on("mouseleave", function () {
+            var _this = this;
+            setTimeout(function () {
+                if (!$(".popover:hover").length) {
+                    $(_this).popover("hide")
+                }
+            }, 100);
+        });
+    });
 </script>
 
 {template '_footer'}

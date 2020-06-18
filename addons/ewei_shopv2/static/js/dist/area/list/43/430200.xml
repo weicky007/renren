@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="株洲" code="430200">
-<county name="荷塘" code="430202">
+<city name="株洲市" code="430200">
+<county name="荷塘区" code="430202">
     <street name="月塘街道" code="430202001" />
     <street name="茨菇塘街道" code="430202002" />
     <street name="宋家桥街道" code="430202003" />
@@ -10,7 +10,7 @@
     <street name="仙庾镇" code="430202100" />
     <street name="明照乡" code="430202201" />
 </county>
-<county name="芦淞" code="430203">
+<county name="芦淞区" code="430203">
     <street name="贺家土街道" code="430203001" />
     <street name="建设街道" code="430203002" />
     <street name="建宁街道" code="430203003" />
@@ -22,7 +22,7 @@
     <street name="五里墩乡" code="430203201" />
     <street name="姚家坝乡" code="430203202" />
 </county>
-<county name="石峰" code="430204">
+<county name="石峰区" code="430204">
     <street name="田心街道" code="430204001" />
     <street name="响石岭街道" code="430204002" />
     <street name="清水塘街道" code="430204003" />
@@ -32,7 +32,7 @@
     <street name="龙头铺镇" code="430204100" />
     <street name="云田镇" code="430204101" />
 </county>
-<county name="天元" code="430211">
+<county name="天元区" code="430211">
     <street name="嵩山路街道" code="430211001" />
     <street name="泰山路街道" code="430211002" />
     <street name="栗雨街道" code="430211003" />
@@ -41,7 +41,7 @@
     <street name="雷打石镇" code="430211102" />
     <street name="三门镇" code="430211103" />
 </county>
-<county name="株洲" code="430221">
+<county name="渌口区" code="430221">
     <street name="渌口镇" code="430221100" />
     <street name="朱亭镇" code="430221101" />
     <street name="古岳峰镇" code="430221106" />
@@ -81,7 +81,7 @@
     <street name="鸭塘铺乡" code="430223212" />
     <street name="攸县工业园" code="430223400" />
 </county>
-<county name="茶陵" code="430224">
+<county name="茶陵县" code="430224">
     <street name="城关镇" code="430224100" />
     <street name="界首镇" code="430224101" />
     <street name="湖口镇" code="430224103" />
@@ -107,7 +107,7 @@
     <street name="利民办事处" code="430224405" />
     <street name="茶陵县红色农场" code="430224500" />
 </county>
-<county name="炎陵" code="430225">
+<county name="炎陵县" code="430225">
     <street name="霞阳镇" code="430225100" />
     <street name="沔渡镇" code="430225101" />
     <street name="十都镇" code="430225102" />
@@ -126,7 +126,7 @@
     <street name="炎陵县大院农场" code="430225400" />
     <street name="炎陵县桃源洞管理局" code="430225401" />
 </county>
-<county name="醴陵" code="430281">
+<county name="醴陵市" code="430281">
     <street name="阳三石街道" code="430281002" />
     <street name="西山街道" code="430281003" />
     <street name="黄泥坳街道" code="430281004" />

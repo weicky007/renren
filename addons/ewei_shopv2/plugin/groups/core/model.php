@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -70,27 +71,31 @@ class GroupsModel extends PluginModel
 	}
 
 	/**
-	 * 支付成功
-	 * @global type $_W
-	 * @param type $params
-	 */
+     * 支付成功
+     * @global type $_W
+     * @param type $params
+     */
 	public function payResult($orderno, $type, $app = false)
 	{
 		global $_W;
 		$uniacid = $_W['uniacid'];
-		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . "\r\n\t\t WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1", array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $orderno));
+		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . '
+		 WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $orderno));
 		$order = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order') . ' where  orderno =:orderno and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':orderno' => $orderno));
-
-		if (0 < $order['status']) {
+		if (0 < $order['status'] || 0 < $log['status']) {
 			return true;
 		}
 
 		$openid = $order['openid'];
-		$order_goods = pdo_fetch('select * from  ' . tablename('ewei_shop_groups_goods') . "\r\n\t\t\t\t\twhere id = :id and uniacid=:uniacid ", array(':uniacid' => $uniacid, ':id' => $order['goodid']));
-		$result = m('member')->setCredit($openid, 'credit1', 0 - $order['credit'], array($_W['member']['uid'], $_W['shopset']['shop']['name'] . '消费' . $order['credit'] . '积分'));
+		$order_goods = pdo_fetch('select * from  ' . tablename('ewei_shop_groups_goods') . '
+					where id = :id and uniacid=:uniacid ', array(':uniacid' => $uniacid, ':id' => $order['goodid']));
 
-		if (is_error($result)) {
-			return $result['message'];
+		if (0 < $order['credit']) {
+			$result = m('member')->setCredit($openid, 'credit1', 0 - $order['credit'], array($_W['member']['uid'], $_W['shopset']['shop']['name'] . '消费' . $order['credit'] . '积分'));
+
+			if (is_error($result)) {
+				return $result['message'];
+			}
 		}
 
 		$record = array();
@@ -98,6 +103,7 @@ class GroupsModel extends PluginModel
 		$record['type'] = $type;
 		$params = array(':teamid' => $order['teamid'], ':uniacid' => $uniacid, ':success' => 0, ':status' => 1);
 		pdo_update('ewei_shop_groups_order', array('pay_type' => $type, 'status' => 1, 'paytime' => TIMESTAMP, 'starttime' => TIMESTAMP, 'apppay' => $app ? 1 : 0), array('orderno' => $orderno));
+		pdo_update('ewei_shop_groups_paylog', array('status' => 1), array('tid' => $orderno));
 		$this->sendTeamMessage($order['id']);
 
 		if (!empty($order['is_team'])) {
@@ -110,10 +116,19 @@ class GroupsModel extends PluginModel
 			}
 		}
 
-		$stock = intval($order_goods['stock'] - 1);
-		$sales = intval($order_goods['sales']) + 1;
-		$teamnum = intval($order_goods['teamnum']) + 1;
-		pdo_update('ewei_shop_groups_goods', array('stock' => $stock, 'sales' => $sales, 'teamnum' => $teamnum), array('id' => $order_goods['id']));
+		if ($order_goods['more_spec'] == '1') {
+			$order_goods_S = pdo_get('ewei_shop_groups_order_goods', array('groups_order_id' => $order['id']));
+			$goods_option = pdo_get('ewei_shop_groups_goods_option', array('goods_option_id' => $order_goods_S['groups_goods_option_id']));
+			pdo_update('ewei_shop_groups_goods_option', array('stock' => $goods_option['stock'] - 1), array('id' => $goods_option['id']));
+			$stock = intval($order_goods['stock'] - $order_goods['goodsnum']);
+			$sales = intval($order_goods['sales']) + $order_goods['goodsnum'];
+		}
+		else {
+			$stock = intval($order_goods['stock'] - $order_goods['goodsnum']);
+			$sales = intval($order_goods['sales']) + $order_goods['goodsnum'];
+		}
+
+		pdo_update('ewei_shop_groups_goods', array('stock' => $stock, 'sales' => $sales), array('id' => $order_goods['id']));
 		return true;
 	}
 
@@ -121,21 +136,46 @@ class GroupsModel extends PluginModel
 	{
 		global $_W;
 		$paras = array(':uniacid' => $_W['uniacid']);
-		$totals['all'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 ", $paras);
-		$totals['status1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 1 and (o.success = 1 or o.is_team = 0) ", $paras);
-		$totals['status2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status=2 ", $paras);
-		$totals['status3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 0 ", $paras);
-		$totals['status4'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 3 ", $paras);
-		$totals['status5'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = -1 ", $paras);
-		$totals['team1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = 1 ", $paras);
-		$totals['team2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = 0 ", $paras);
-		$totals['team3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = -1 ", $paras);
-		$totals['allteam'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " o\r\n\t\t\t WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 ", $paras);
-		$totals['refund1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . " as ore\r\n\t\t\tleft join " . tablename('ewei_shop_groups_order') . " as o on o.id = ore.orderid\r\n\t\t\tright join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\tright join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid\r\n\t\t\tleft join " . tablename('ewei_shop_member_address') . " a on a.id=ore.refundaddressid\r\n\t\t\tright join " . tablename('ewei_shop_groups_category') . " as c on c.id = g.category\r\n\t\t\tWHERE ore.uniacid = :uniacid AND o.refundstate > 0 and o.refundid != 0 and ore.refundstatus >= 0 ", $paras);
-		$totals['refund2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . " as ore\r\n\t\t\tleft join " . tablename('ewei_shop_groups_order') . " as o on o.id = ore.orderid\r\n\t\t\tright join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\tright join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid\r\n\t\t\tleft join " . tablename('ewei_shop_member_address') . " a on a.id=ore.refundaddressid\r\n\t\t\tright join " . tablename('ewei_shop_groups_category') . " as c on c.id = g.category\r\n\t\t\tWHERE ore.uniacid = :uniacid AND (o.refundtime != 0 or ore.refundstatus < 0) ", $paras);
-		$totals['verify1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\tWHERE o.uniacid=:uniacid and o.isverify = 1 and o.status =  1 ", $paras);
-		$totals['verify2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\tWHERE o.uniacid=:uniacid and o.isverify = 1 and o.status = 3 ", $paras);
-		$totals['verify3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\tWHERE o.uniacid=:uniacid and o.isverify = 1 and o.status <= 0 ", $paras);
+		$totals['all'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 ', $paras);
+		$totals['status1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 1 and (o.success = 1 or o.is_team = 0) ', $paras);
+		$totals['status2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status=2 ', $paras);
+		$totals['status3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 0 ', $paras);
+		$totals['status4'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = 3 ', $paras);
+		$totals['status5'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.isverify = 0 and o.status = -1 ', $paras);
+		$totals['team1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = 1 ', $paras);
+		$totals['team2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = 0 ', $paras);
+		$totals['team3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 and o.success = -1 ', $paras);
+		$totals['allteam'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' o
+			 WHERE o.uniacid = :uniacid and o.heads = 1 and o.paytime > 0 and is_team = 1 ', $paras);
+		$totals['refund1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . ' as ore
+			left join ' . tablename('ewei_shop_groups_order') . ' as o on o.id = ore.orderid
+			right join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+			right join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid =  o.uniacid
+			left join ' . tablename('ewei_shop_member_address') . ' a on a.id=ore.refundaddressid
+			right join ' . tablename('ewei_shop_groups_category') . ' as c on c.id = g.category
+			WHERE ore.uniacid = :uniacid AND o.refundstate > 0 and o.refundid != 0 and ore.refundstatus >= 0 ', $paras);
+		$totals['refund2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . ' as ore
+			left join ' . tablename('ewei_shop_groups_order') . ' as o on o.id = ore.orderid
+			right join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+			right join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid =  o.uniacid
+			left join ' . tablename('ewei_shop_member_address') . ' a on a.id=ore.refundaddressid
+			right join ' . tablename('ewei_shop_groups_category') . ' as c on c.id = g.category
+			WHERE ore.uniacid = :uniacid AND (o.refundtime != 0 or ore.refundstatus < 0) ', $paras);
+		$totals['verify1'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+			WHERE o.uniacid=:uniacid and o.isverify = 1 and o.status =  1 ', $paras);
+		$totals['verify2'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+			WHERE o.uniacid=:uniacid and o.isverify = 1 and o.status = 3 ', $paras);
+		$totals['verify3'] = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order') . ' as o
+			WHERE o.uniacid=:uniacid and o.isverify = 1 and o.status <= 0 ', $paras);
 		return $totals;
 	}
 
@@ -150,10 +190,10 @@ class GroupsModel extends PluginModel
 	}
 
 	/**
-	 * 拼团发送订单通知
-	 * @param type $message_type
-	 * @param type $order
-	 */
+     * 拼团发送订单通知
+     * @param type $message_type
+     * @param type $order
+     */
 	public function sendTeamMessage($orderid = '0', $delRefund = false)
 	{
 		global $_W;
@@ -180,17 +220,19 @@ class GroupsModel extends PluginModel
 		}
 
 		$order_goods = pdo_fetch('select * from ' . tablename('ewei_shop_groups_goods') . ' where uniacid=:uniacid and id=:id ', array(':uniacid' => $_W['uniacid'], ':id' => intval($order['goodid'])));
-		$goodsprice = (!empty($order['is_team']) ? number_format($order_goods['groupsprice'], 2) : number_format($order_goods['singleprice'], 2));
-		$price = number_format(($order['price'] - $order['creditmoney']) + $order['freight'], 2);
+		$goodsprice = !empty($order['is_team']) ? number_format($order_goods['groupsprice'], 2) : number_format($order_goods['singleprice'], 2);
+		$price = number_format($order['price'] - $order['creditmoney'] + $order['freight'], 2);
 		$goods = '待发货商品--' . $order_goods['title'];
 		$goods2 = $order_goods['title'];
 		$orderpricestr = ' ¥' . $price . '元 (包含运费: ¥' . $order['freight'] . '元，积分抵扣: ¥' . $order['creditmoney'] . '元)';
 		$member = m('member')->getMember($openid);
+		$successTime = pdo_fetchcolumn('select paytime from ' . tablename('ewei_shop_groups_order') . ' where uniacid=:uniacid and teamid=:teamid order by paytime desc', array(':uniacid' => $uniacid, ':teamid' => $order['teamid']));
+		$successTime = date('Y-m-d H:i:s', $successTime);
 		$datas = array(
 			array('name' => '商城名称', 'value' => $_W['shopset']['shop']['name']),
 			array('name' => '粉丝昵称', 'value' => $member['nickname']),
 			array('name' => '订单号', 'value' => $order['orderno']),
-			array('name' => '订单金额', 'value' => ($order['price'] - $order['creditmoney']) + $order['freight']),
+			array('name' => '订单金额', 'value' => $order['price'] - $order['creditmoney'] + $order['freight']),
 			array('name' => '运费', 'value' => $order['freight']),
 			array('name' => '商品详情', 'value' => $goods),
 			array('name' => '快递公司', 'value' => $order['expresscom']),
@@ -198,8 +240,9 @@ class GroupsModel extends PluginModel
 			array('name' => '下单时间', 'value' => date('Y-m-d H:i', $order['createtime'])),
 			array('name' => '支付时间', 'value' => date('Y-m-d H:i', $order['paytime'])),
 			array('name' => '发货时间', 'value' => date('Y-m-d H:i', $order['sendtime'])),
-			array('name' => '收货时间', 'value' => date('Y-m-d H:i', $order['finishtime']))
-			);
+			array('name' => '收货时间', 'value' => date('Y-m-d H:i', $order['finishtime'])),
+			array('name' => '拼团成功时间', 'value' => $successTime)
+		);
 		$usernotice = unserialize($member['noticeset']);
 
 		if (!is_array($usernotice)) {
@@ -227,7 +270,7 @@ class GroupsModel extends PluginModel
 				$refundtype = ', 请联系客服进行退款事项！';
 			}
 
-			$applyprice = (!empty($order_refund['applyprice']) ? $order_refund['applyprice'] : ($order['price'] - $order['creditmoney']) + $order['freight']);
+			$applyprice = !empty($order_refund['applyprice']) ? $order_refund['applyprice'] : $order['price'] - $order['creditmoney'] + $order['freight'];
 
 			if ($order_refund['refundstatus'] == 0) {
 				$tm = m('common')->getSysset('notice');
@@ -235,7 +278,7 @@ class GroupsModel extends PluginModel
 					'first'    => array('value' => '您有一条申请退款的订单！', 'color' => '#4a5077'),
 					'keyword1' => array('title' => '企业名称', 'value' => $shop['name'], 'color' => '#4a5077'),
 					'keyword2' => array('title' => '订单编号', 'value' => '订单编号：' . $order['orderno'] . ',维权编号：' . $order_refund['refundno'], 'color' => '#4a5077')
-					);
+				);
 
 				if (!empty($tm['openid'])) {
 					$openids = explode(',', $tm['openid']);
@@ -251,7 +294,7 @@ class GroupsModel extends PluginModel
 					'keyword1' => array('title' => '订单编号', 'value' => $order['orderno'], 'color' => '#4a5077'),
 					'keyword2' => array('title' => '维权编号', 'value' => $order_refund['refundno'], 'color' => '#4a5077'),
 					'keyword3' => array('title' => '驳回原因', 'value' => $order_refund['reply'], 'color' => '#4a5077')
-					);
+				);
 				$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_refund', 'default' => $msg, 'datas' => $datas));
 			}
 			else {
@@ -261,8 +304,9 @@ class GroupsModel extends PluginModel
 						'keyword1' => array('title' => '退款金额', 'value' => '¥' . $applyprice . '元', 'color' => '#4a5077'),
 						'keyword2' => array('title' => '商品详情', 'value' => $goods2, 'color' => '#4a5077'),
 						'keyword3' => array('title' => '订单编号', 'value' => $order['orderno'], 'color' => '#4a5077'),
-						'remark'   => array('value' => '退款金额 ¥' . $applyprice . $refundtype . "\r\n 期待您再次购物！", 'color' => '#4a5077')
-						);
+						'remark'   => array('value' => '退款金额 ¥' . $applyprice . ($refundtype . '
+ 期待您再次购物！'), 'color' => '#4a5077')
+					);
 					$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_refund', 'default' => $msg, 'datas' => $datas));
 				}
 			}
@@ -272,24 +316,34 @@ class GroupsModel extends PluginModel
 				$order = pdo_fetchall('select * from ' . tablename('ewei_shop_groups_order') . ' where teamid = :teamid and success = 1 and status = 1 ', array(':teamid' => $order['teamid']));
 				$remark = '您参加的拼团已经成功，我们将尽快为您配送~~';
 
+				if ($order['isverify']) {
+					$remark = '您参加的拼团已经成功';
+				}
+
 				foreach ($order as $key => $value) {
 					$msg = array(
 						'first'    => array('value' => '您参加的拼团已经成功组团！', 'color' => '#4a5077'),
 						'keyword1' => array('title' => '订单编号', 'value' => $value['orderno'], 'color' => '#4a5077'),
 						'keyword2' => array('title' => '通知时间', 'value' => date('Y-m-d H:i', time()), 'color' => '#4a5077'),
 						'remark'   => array('value' => $remark, 'color' => '#4a5077')
-						);
+					);
 					$this->sendGroupsNotice(array('openid' => $value['openid'], 'tag' => 'groups_success', 'default' => $msg, 'datas' => $datas));
 				}
 
 				$tm = m('common')->getSysset('notice');
 				$remarkteam = '拼团成功了，准备发货';
+
+				if ($order['isverify']) {
+					$remarkteam = '拼团成功了,买家购买的商品已经确认收货';
+				}
+
 				$msgteam = array(
 					'first'    => array('value' => '拼团已经成功组团！', 'color' => '#4a5077'),
-					'keyword1' => array('title' => '企业名称', 'value' => $shop['name'], 'color' => '#4a5077'),
-					'keyword2' => array('title' => '摘要', 'value' => $goods, 'color' => '#4a5077'),
+					'keyword1' => array('title' => '待办项目', 'value' => $goods, 'color' => '#4a5077'),
+					'keyword2' => array('title' => '待办环节', 'value' => '等待发货', 'color' => '#4a5077'),
+					'keyword3' => array('title' => '更新时间', 'value' => date('Y-m-d H:i', time()), 'color' => '#4a5077'),
 					'remark'   => array('value' => $remarkteam, 'color' => '#4a5077')
-					);
+				);
 
 				if (!empty($tm['openid'])) {
 					$openids = explode(',', $tm['openid']);
@@ -309,7 +363,7 @@ class GroupsModel extends PluginModel
 						'keyword1' => array('title' => '订单编号', 'value' => $value['orderno'], 'color' => '#4a5077'),
 						'keyword2' => array('title' => '通知时间', 'value' => date('Y-m-d H:i:s', time()), 'color' => '#4a5077'),
 						'remark'   => array('value' => $remark, 'color' => '#4a5077')
-						);
+					);
 					$this->sendGroupsNotice(array('openid' => $value['openid'], 'tag' => 'groups_error', 'default' => $msg, 'datas' => $datas));
 				}
 			}
@@ -317,10 +371,12 @@ class GroupsModel extends PluginModel
 				if ($order['success'] == 0) {
 					if (!empty($order['addressid'])) {
 						if ($order['is_team']) {
-							$remark = "\r\n您的订单我们已经收到，请耐心等待其他团员付款~~";
+							$remark = '
+您的订单我们已经收到，请耐心等待其他团员付款~~';
 						}
 						else {
-							$remark = "\r\n您的订单我们已经收到，我们将尽快配送~~";
+							$remark = '
+您的订单我们已经收到，我们将尽快配送~~';
 						}
 					}
 
@@ -331,7 +387,7 @@ class GroupsModel extends PluginModel
 						'keyword3' => array('title' => '消费门店', 'value' => $shop['name'], 'color' => '#4a5077'),
 						'keyword4' => array('title' => '消费时间', 'value' => date('Y-m-d H:i:s', $order['createtime']), 'color' => '#4a5077'),
 						'remark'   => array('value' => $remark, 'color' => '#4a5077')
-						);
+					);
 					$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_pay', 'default' => $msg, 'url' => $url, 'datas' => $datas));
 
 					if (!$order['is_team']) {
@@ -342,7 +398,7 @@ class GroupsModel extends PluginModel
 							'keyword1' => array('title' => '企业名称', 'value' => $shop['name'], 'color' => '#4a5077'),
 							'keyword2' => array('title' => '摘要', 'value' => $goods, 'color' => '#4a5077'),
 							'remark'   => array('value' => $remarkteam, 'color' => '#4a5077')
-							);
+						);
 						$business = explode(',', $tm['openid']);
 
 						foreach ($business as $value) {
@@ -363,7 +419,7 @@ class GroupsModel extends PluginModel
 				'keyword2' => array('title' => '物流公司', 'value' => $order['expresscom'], 'color' => '#4a5077'),
 				'keyword3' => array('title' => '物流单号', 'value' => $order['expresssn'], 'color' => '#4a5077'),
 				'remark'   => array('value' => $remark, 'color' => '#4a5077')
-				);
+			);
 			$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_send', 'default' => $msg, 'datas' => $datas));
 		}
 		else if ($order['status'] == 3) {
@@ -377,7 +433,7 @@ class GroupsModel extends PluginModel
 				'keyword2' => array('title' => '物流公司', 'value' => $order['expresscom'], 'color' => '#4a5077'),
 				'keyword3' => array('title' => '物流单号', 'value' => $order['expresssn'], 'color' => '#4a5077'),
 				'remark'   => array('value' => $remark, 'color' => '#4a5077')
-				);
+			);
 			$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_send', 'default' => $msg, 'datas' => $datas));
 		}
 		else {
@@ -391,7 +447,7 @@ class GroupsModel extends PluginModel
 					'keyword1' => array('title' => '订单编号', 'value' => $order['orderno'], 'color' => '#4a5077'),
 					'keyword2' => array('title' => '通知时间', 'value' => date('Y-m-d H:i:s', time()), 'color' => '#4a5077'),
 					'remark'   => array('value' => $remark, 'color' => '#4a5077')
-					);
+				);
 				$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_error', 'default' => $msg, 'datas' => $datas));
 			}
 		}
@@ -401,8 +457,8 @@ class GroupsModel extends PluginModel
 	{
 		global $_W;
 		global $_GPC;
-		$tag = (isset($params['tag']) ? $params['tag'] : '');
-		$touser = (isset($params['openid']) ? $params['openid'] : '');
+		$tag = isset($params['tag']) ? $params['tag'] : '';
+		$touser = isset($params['openid']) ? $params['openid'] : '';
 
 		if (empty($touser)) {
 			return NULL;
@@ -414,11 +470,11 @@ class GroupsModel extends PluginModel
 			$tm = m('common')->getSysset('notice');
 		}
 
-		$templateid = ($tm['is_advanced'] ? $tm[$tag . '_template'] : $tm[$tag]);
-		$default_message = (isset($params['default']) ? $params['default'] : array());
-		$url = (isset($params['url']) ? $params['url'] : '');
-		$account = (isset($params['account']) ? $params['account'] : m('common')->getAccount());
-		$datas = (isset($params['datas']) ? $params['datas'] : array());
+		$templateid = $tm['is_advanced'] ? $tm[$tag . '_template'] : $tm[$tag];
+		$default_message = isset($params['default']) ? $params['default'] : array();
+		$url = isset($params['url']) ? $params['url'] : '';
+		$account = isset($params['account']) ? $params['account'] : m('common')->getAccount();
+		$datas = isset($params['datas']) ? $params['datas'] : array();
 		$advanced_message = false;
 
 		if ($tm['is_advanced']) {
@@ -433,7 +489,7 @@ class GroupsModel extends PluginModel
 					$advanced_message = array(
 						'first'  => array('value' => $this->replaceTemplate($advanced_template['first'], $datas), 'color' => $advanced_template['firstcolor']),
 						'remark' => array('value' => $this->replaceTemplate($advanced_template['remark'], $datas), 'color' => $advanced_template['remarkcolor'])
-						);
+					);
 					$data = iunserializer($advanced_template['data']);
 
 					foreach ($data as $d) {
@@ -501,6 +557,10 @@ class GroupsModel extends PluginModel
 
 		$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
+		if ($saler['status'] == 0) {
+			return error(-1, '无核销权限!');
+		}
+
 		if (empty($saler)) {
 			return error(-1, '无核销权限!');
 		}
@@ -517,20 +577,44 @@ class GroupsModel extends PluginModel
 		}
 
 		if (!empty($order['is_team'])) {
-			if (($order['status'] <= 0) || ($order['success'] <= 0)) {
+			if ($order['status'] <= 0 || $order['success'] <= 0) {
 				return error(-1, '此订单未满足核销条件!');
 			}
 		}
 
-		if (empty($order['is_team']) && ($order['status'] <= 0)) {
+		if (empty($order['is_team']) && $order['status'] <= 0) {
 			return error(-1, '此订单未满足核销条件!');
 		}
 
-		$goods = pdo_fetch('select * from ' . tablename('ewei_shop_groups_goods') . "\r\n\t\t\twhere uniacid=:uniacid and id = :goodid ", array(':uniacid' => $uniacid, ':goodid' => $order['goodid']));
+		if ($order['isverify'] || $order['istrade']) {
+			if (0 < $order['refundid'] && 0 < $order['refundstate']) {
+				return error(-1, '订单维权中,无法进行核销!');
+			}
+		}
+		else {
+			if ($order['dispatchtype'] == 1) {
+				if (0 < $order['refundid'] && 0 < $order['refundstate']) {
+					return error(-1, '订单维权中,无法进行自提!');
+				}
+			}
+		}
+
+		$goods = pdo_fetch('select * from ' . tablename('ewei_shop_groups_goods') . '
+			where uniacid=:uniacid and id = :goodid ', array(':uniacid' => $uniacid, ':goodid' => $order['goodid']));
 
 		if (empty($goods)) {
 			return error(-1, '订单异常!');
 		}
+
+		$option_title = '';
+		$order_goods = pdo_fetch('select id,option_name from ' . tablename('ewei_shop_groups_order_goods') . '
+			where uniacid=:uniacid and groups_goods_id = :groups_goods_id and groups_order_id = :groups_order_id', array(':uniacid' => $uniacid, ':groups_goods_id' => $goods['id'], ':groups_order_id' => $orderid));
+
+		if (!empty($order_goods)) {
+			$option_title = $order_goods['option_name'];
+		}
+
+		$goods['optiontitle'] = $option_title;
 
 		if ($order['isverify']) {
 			$storeids = array();
@@ -563,7 +647,7 @@ class GroupsModel extends PluginModel
 					}
 
 					$lastverifys = $order['verifynum'] - $verifynum;
-					if (($lastverifys < 0) && !empty($order['verifytype'])) {
+					if ($lastverifys < 0 && !empty($order['verifytype'])) {
 						return error(-1, '此订单最多核销 ' . $order['verifynum'] . ' 次!');
 					}
 				}
@@ -602,6 +686,16 @@ class GroupsModel extends PluginModel
 
 		extract($data);
 		$order = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order') . ' where id=:id and uniacid=:uniacid  limit 1', array(':id' => $orderid, ':uniacid' => $uniacid));
+
+		if (!empty($order['refundid'])) {
+			$refund = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order_refund') . ' where id=:id limit 1', array(':id' => $order['refundid']));
+
+			if (!empty($refund)) {
+				$time = time();
+				pdo_update('ewei_shop_groups_order_refund', array('status' => -1, 'endtime' => $time), array('id' => $order['refundid']));
+				pdo_update('ewei_shop_groups_order', array('refundstate' => 0), array('id' => $order['id']));
+			}
+		}
 
 		if ($order['isverify']) {
 			if ($order['verifytype'] == 0) {
@@ -645,9 +739,9 @@ class GroupsModel extends PluginModel
 			$params[':expressname'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$sql = 'SELECT id,expressname,expresscom,isdefault FROM ' . tablename('ewei_shop_exhelper_express') . ' where  1 and ' . $condition . ' ORDER BY isdefault desc, id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT id,expressname,expresscom,isdefault FROM ' . tablename('ewei_shop_exhelper_express') . (' where  1 and ' . $condition . ' ORDER BY isdefault desc, id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exhelper_express') . ' where 1 and ' . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exhelper_express') . (' where 1 and ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		return array('list' => $list, 'total' => $total, 'pager' => $pager, 'type' => $type);
 	}
@@ -675,7 +769,7 @@ class GroupsModel extends PluginModel
 	public function tempDelete($id, $type)
 	{
 		global $_W;
-		$items = pdo_fetchall('SELECT id,expressname FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE id in( ' . $id . ' ) and type=:type and uniacid=:uniacid ', array(':type' => $type, ':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,expressname FROM ' . tablename('ewei_shop_exhelper_express') . (' WHERE id in( ' . $id . ' ) and type=:type and uniacid=:uniacid '), array(':type' => $type, ':uniacid' => $_W['uniacid']));
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_exhelper_express', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));

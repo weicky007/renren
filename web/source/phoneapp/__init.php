@@ -12,7 +12,7 @@ if (!empty($_GPC['uniacid']) && intval($_GPC['uniacid']) != $_W['uniacid']) {
 if (!in_array($action, array('display', 'manage'))) {
 	$account_api = WeAccount::createByUniacid();
 	if (is_error($account_api)) {
-		message($account_api['message'], url('account/display', array('type' => PHONEAPP_TYPE_SIGN)));
+		message($account_api['message'], $_W['siteroot'] . 'web/home.php');
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {

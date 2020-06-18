@@ -76,7 +76,6 @@
 							<label for="" class="control-label col-sm-2">新密码</label>
 							<div class="form-controls col-sm-10">
 								<input type="password" value="" class="form-control new-password">
-								
 							</div>
 						</div>
 						<div class="form-group">
@@ -123,8 +122,8 @@
 		<col width="100px" />
 		<tr>
 			<th class="text-left" colspan="3">基础信息</th>
-		</tr>      
-		<tr>     
+		</tr>
+		<tr>
 			<td class="table-label">真实姓名</td>
 			<td ng-bind="profile.realname"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#realname" ng-click="editInfo('realname', profile.realname)">修改</a></div></td>
@@ -154,11 +153,13 @@
 			<td ng-bind="profile.resides"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#reside">修改</a></div></td>
 		</tr>
+		<!-- 拓展字段 start -->
 		<tr ng-repeat="field in extra_fields">
 			<td class="table-label" ng-bind="field.title"></td>
 			<td ng-bind="profile[field.field]"></td>
 			<td><div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#extra" ng-click="editExtra(field, profile )">修改</a></div></td>
 		</tr>
+		<!-- 拓展字段 end -->
 		<tr>
 			<td class="table-label">上次登录时间</td>
 			<td ng-bind="user.last_visit"></td>
@@ -185,7 +186,7 @@
 			{/if}
 		</tr>
 		
-			{if $_W['isfounder'] && !user_is_vice_founder()}
+			{if $_W['isadmin']}
 			<tr>
 				<td class="table-label">备注</td>
 				<td ng-bind="user.remark"></td>
@@ -392,7 +393,6 @@ require(['underscore'], function(){
 			recycleUser: "{php echo url('user/display/operate', array('type' => 'recycle'))}",
 		},
 	});
-
 	angular.bootstrap($('#js-user-edit-base'), ['userProfile']);
 });
 </script>

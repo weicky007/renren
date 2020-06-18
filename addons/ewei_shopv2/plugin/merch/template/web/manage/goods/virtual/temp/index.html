@@ -22,6 +22,10 @@
                 {ifp 'goods.virtual.temp.add'}
                 <a class='btn btn-primary btn-sm' href="{php echo merchUrl('goods/virtual/temp/add')}"><i class='fa fa-plus'></i> 添加模板</a>
                 {/if}
+
+                {ifp 'goods.virtual.recycled'}
+                <a class='btn btn-default btn-sm' href="{php echo merchUrl('goods/virtual/recycled')}"><i class='fa fa-trash-o'></i> 回收站</a>
+                {/if}
             </div> 
         </div>	
 
@@ -67,7 +71,7 @@
                 {ifp 'goods.virtual.temp.edit|goods.virtual.temp.view'}<a class='btn btn-default btn-sm' href="{php echo merchUrl('goods/virtual/temp/edit', array('id' => $item['id']))}"><i class='fa fa-edit'></i> {ifp 'goods.virtual.temp.edit'}编辑{else}查看{/if}</a>{/if}
                 {ifp 'goods.virtual.data.view'}<a class='btn btn-default  btn-sm' href="{php echo merchUrl('goods/virtual/data', array('typeid' => $item['id']))}" ><i class='fa fa-list'></i> 数据</a>{/if}
                 {ifp 'goods.virtual.data.add'}<a class='btn btn-primary  btn-sm' href="{php echo merchUrl('goods/virtual/data/add', array('typeid' => $item['id']))}"><i class='fa fa-plus'></i> 添加数据</a>{/if}
-                {ifp 'goods.virtual.temp.delete'}<a class='btn btn-default  btn-sm'  data-toggle='ajaxRemove' href="{php echo merchUrl('goods/virtual/temp/delete', array('id' => $item['id']))}" data-confirm="确认删除此模版吗" title='删除模板'><i class='fa fa-trash'></i> 删除</a>{/if}
+                {ifp 'goods.virtual.recycled'}<a class='btn btn-default  btn-sm'  data-toggle='ajaxRemove' href="{php echo merchUrl('goods/virtual/temp/recycled', array('id' => $item['id']))}" data-confirm="确认放入回收站吗" title='放入回收站'><i class='fa fa-trash'></i> 放入回收站</a>{/if}
             </td>
         </tr>
         {/loop} 
@@ -85,3 +89,4 @@
 
 {template '_footer'}
 
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

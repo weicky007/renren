@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="沈阳" code="210100">
-<county name="和平" code="210102">
+<city name="沈阳市" code="210100">
+<county name="和平区" code="210102">
     <street name="浑河湾街道" code="210102001" />
     <street name="新华街道" code="210102002" />
     <street name="西塔街道" code="210102007" />
@@ -16,7 +16,7 @@
     <street name="沈水湾街道" code="210102027" />
     <street name="浑河站西街道" code="210102028" />
 </county>
-<county name="沈河" code="210103">
+<county name="沈河区" code="210103">
     <street name="大西街道" code="210103004" />
     <street name="滨河街道" code="210103005" />
     <street name="万莲街道" code="210103006" />
@@ -33,7 +33,7 @@
     <street name="马官桥街道" code="210103022" />
     <street name="东陵街道" code="210103023" />
 </county>
-<county name="大东" code="210104">
+<county name="大东区" code="210104">
     <street name="大北街道" code="210104002" />
     <street name="万泉街道" code="210104003" />
     <street name="洮昌街道" code="210104004" />
@@ -49,7 +49,7 @@
     <street name="上园街道" code="210104017" />
     <street name="前进街道" code="210104018" />
 </county>
-<county name="皇姑" code="210105">
+<county name="皇姑区" code="210105">
     <street name="三台子街道" code="210105001" />
     <street name="辽河街道" code="210105003" />
     <street name="黄河街道" code="210105008" />
@@ -63,7 +63,7 @@
     <street name="北塔街道" code="210105021" />
     <street name="陵东街道" code="210105022" />
 </county>
-<county name="铁西" code="210106">
+<county name="铁西区" code="210106">
     <street name="昆明湖街道" code="210106001" />
     <street name="工人村街道" code="210106003" />
     <street name="七路街道" code="210106005" />
@@ -86,7 +86,7 @@
     <street name="高花街道" code="210106031" />
     <street name="沈阳市经济技术开发区管理委员会" code="210106401" />
 </county>
-<county name="苏家屯" code="210111">
+<county name="苏家屯区" code="210111">
     <street name="解放街道" code="210111001" />
     <street name="民主街道" code="210111003" />
     <street name="临湖街道" code="210111004" />
@@ -105,8 +105,7 @@
     <street name="白清街道" code="210111017" />
     <street name="佟沟街道" code="210111018" />
 </county>
-<county name="浑南" code="210112">
-    <street name="英达街道" code="210112007" />
+<county name="浑南区" code="210112">
     <street name="东湖街道" code="210112009" />
     <street name="五三街道" code="210112010" />
     <street name="浑河站东街道" code="210112012" />
@@ -120,8 +119,10 @@
     <street name="营城子街道" code="210112021" />
     <street name="汪家街道" code="210112022" />
     <street name="王滨街道" code="210112023" />
+    <street name="望滨街道" code="210112024" />
+    <street name="永胜街道" code="210112025" />
 </county>
-<county name="新城子" code="210113">
+<county name="沈北新区" code="210113">
     <street name="新城子街道" code="210113001" />
     <street name="清水台街道" code="210113002" />
     <street name="辉山街道" code="210113003" />
@@ -143,7 +144,7 @@
     <street name="沈北新区示范农场" code="210113405" />
     <street name="沈北新区种畜场" code="210113406" />
 </county>
-<county name="于洪" code="210114">
+<county name="于洪区" code="210114">
     <street name="迎宾路街道" code="210114001" />
     <street name="陵西街道" code="210114003" />
     <street name="于洪街道" code="210114005" />
@@ -160,7 +161,7 @@
     <street name="光辉农场" code="210114402" />
     <street name="监狱城" code="210114404" />
 </county>
-<county name="辽中" code="210122">
+<county name="辽中县" code="210122">
     <street name="蒲西街道" code="210122001" />
     <street name="蒲东街道" code="210122002" />
     <street name="于家房镇" code="210122101" />
@@ -183,7 +184,7 @@
     <street name="牛心坨镇" code="210122119" />
     <street name="四方台农场" code="210122401" />
 </county>
-<county name="康平" code="210123">
+<county name="康平县" code="210123">
     <street name="北三家子街道" code="210123001" />
     <street name="胜利街道" code="210123002" />
     <street name="东关街道" code="210123003" />
@@ -201,7 +202,7 @@
     <street name="东升满族蒙古族乡" code="210123211" />
     <street name="三台子畜牧场" code="210123404" />
 </county>
-<county name="法库" code="210124">
+<county name="法库县" code="210124">
     <street name="法库镇" code="210124100" />
     <street name="大孤家子镇" code="210124101" />
     <street name="三面船镇" code="210124102" />
@@ -222,7 +223,7 @@
     <street name="双台子乡" code="210124209" />
     <street name="卧牛石乡" code="210124210" />
 </county>
-<county name="新民" code="210181">
+<county name="新民市" code="210181">
     <street name="东城街道" code="210181001" />
     <street name="辽滨街道" code="210181002" />
     <street name="西城街道" code="210181003" />
@@ -252,8 +253,6 @@
     <street name="姚堡乡" code="210181207" />
     <street name="于家窝堡乡" code="210181209" />
     <street name="新农乡" code="210181210" />
-</county>
-<county name="沈北" code="210184">
 </county>
 </city>
 </address>

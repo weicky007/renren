@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,9 +22,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 					$recommend[$key]['thumb'] = $value['cover'];
 				}
 
-				$recommend[$key]['subscribe'] = 0;
 				$favorite = pdo_fetch('select deleted from ' . tablename('ewei_shop_live_favorite') . ' where uniacid = ' . $uniacid . ' and openid = \'' . $openid . '\' and roomid = ' . $value['id'] . ' and deleted = 0  ');
-				$recommend[$key]['subscribe'] = ($favorite['deleted'] == 1) || empty($favorite) ? 0 : 1;
+				$recommend[$key]['is_subscribe'] = empty($favorite) ? 0 : 1;
 			}
 		}
 
@@ -55,12 +55,13 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$condition .= ' and category = ' . $cateid;
 		}
 
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_live') . ' where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_live') . (' where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT id,title,thumb,covertype,cover,livetime,subscribe,living FROM ' . tablename('ewei_shop_live') . "\r\n            \t\twhere 1 " . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT id,title,thumb,covertype,cover,livetime,subscribe,living FROM ' . tablename('ewei_shop_live') . '
+            		where 1 ' . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb,cover');
 
@@ -70,6 +71,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				}
 
 				$row['livetime'] = date('Y-m-d H:i:s', $row['livetime']);
+				$favorite = pdo_fetch('select deleted from ' . tablename('ewei_shop_live_favorite') . ' where uniacid = ' . $uniacid . ' and openid = \'' . $openid . '\' and roomid = ' . $row['id'] . ' and deleted = 0  ');
+				$row['is_subscribe'] = empty($favorite) ? 0 : 1;
 			}
 
 			unset($row);

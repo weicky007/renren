@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Auth_EweiShopV2Page extends AppMobilePage
 {
 	public function __construct()
@@ -47,14 +47,13 @@ class Auth_EweiShopV2Page extends AppMobilePage
 			$token = authcode(base64_decode($token), 'DECODE', '*736bg%21@');
 
 			if (!empty($token)) {
-				app_json(array('token' => $token));
+				return app_json(array('token' => $token));
 			}
-			else {
-				app_error(AppError::$UserTokenFail);
-			}
+
+			return app_error(AppError::$UserTokenFail);
 		}
 
-		app_json();
+		return app_json();
 	}
 }
 

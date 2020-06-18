@@ -22,7 +22,10 @@ if(!empty($eid)) {
 		'direct' => 0,
 	);
 }
+	
 $module_exist_in_account = table('uni_modules')->where(array('uniacid' => $_W['uniacid'], 'module_name' => $entry['module']))->get();
+//修复安装新模块后直接从平台进入，打开前端提示‘您访问的功能模块不存在，请重新进入’错误
+if(empty($module_exist_in_account)){cache_build_account_modules($_W['uniacid']);}
 if (empty($module_exist_in_account) && !in_array($entry['module'], module_system())) {
 	message('您访问的功能模块不存在，请重新进入');
 }

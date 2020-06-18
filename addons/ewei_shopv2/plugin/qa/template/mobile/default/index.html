@@ -1,5 +1,12 @@
 {template '_header'}
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/qa/static/css/common.css?v=2016063000">
+<style>
+    .comm_center{
+        height:100%;
+        overflow: auto;
+        padding: 2.2rem 0 2.45rem;
+    }
+</style>
 <div class='fui-page  fui-page-current'>
     <div class="fui-header">
         <div class="fui-header-left">
@@ -10,7 +17,7 @@
             <a class="icon icon-home external" href="{php echo mobileUrl()}"></a>
         </div>
     </div>
-    <div class='fui-content'>
+    <div class='comm_center'>
 
         {if !empty($advs)}
         <div class='fui-swipe' data-transition="500" data-gap="1">

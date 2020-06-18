@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		$uniacid = intval($_W['uniacid']);
 		$openid = trim($_W['openid']);
 		$invitation_id = intval($_GPC['invitationid']);
-		if (p('invitation') && (0 < $invitation_id)) {
+		if (p('invitation') && 0 < $invitation_id) {
 			$invitation_openid = trim($_GPC['invitation_openid']);
 			$invitation_data = array('uniacid' => $uniacid, 'invitation_id' => $invitation_id, 'invitation_openid' => $invitation_openid, 'openid' => $openid, 'scan_time' => time());
 			pdo_insert('ewei_shop_invitation_log', $invitation_data);
@@ -39,12 +40,12 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$member = m('member')->getMember($openid);
-		$showlevels = ($room['showlevels'] != '' ? explode(',', $room['showlevels']) : array());
-		$showgroups = ($room['showgroups'] != '' ? explode(',', $room['showgroups']) : array());
+		$showlevels = $room['showlevels'] != '' ? explode(',', $room['showlevels']) : array();
+		$showgroups = $room['showgroups'] != '' ? explode(',', $room['showgroups']) : array();
 		$showroom = 0;
 
 		if (!empty($member)) {
-			if ((!empty($showlevels) && in_array($member['level'], $showlevels)) || (!empty($showgroups) && in_array($member['groupid'], $showgroups)) || (empty($showlevels) && empty($showgroups))) {
+			if (!empty($showlevels) && in_array($member['level'], $showlevels) || !empty($showgroups) && in_array($member['groupid'], $showgroups) || empty($showlevels) && empty($showgroups)) {
 				$showroom = 1;
 			}
 		}
@@ -107,22 +108,22 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 				}
 
 				if ($coupon['backtype'] == 2) {
-					if (($coupon['coupontype'] == '0') || ($coupon['coupontype'] == '2')) {
+					if ($coupon['coupontype'] == '0' || $coupon['coupontype'] == '2') {
 						$coupon['color'] = 'red ';
 					}
 					else {
 						$coupon['color'] = 'pink ';
 					}
 
-					if (!empty($coupon['backmoney']) && (0 < $coupon['backmoney'])) {
+					if (!empty($coupon['backmoney']) && 0 < $coupon['backmoney']) {
 						$coupon['display_title'] = $coupon['display_title'] . '送' . $coupon['backmoney'] . '元余额 ';
 					}
 
-					if (!empty($coupon['backcredit']) && (0 < $coupon['backcredit'])) {
+					if (!empty($coupon['backcredit']) && 0 < $coupon['backcredit']) {
 						$coupon['display_title'] = $coupon['display_title'] . '送' . $coupon['backcredit'] . '积分 ';
 					}
 
-					if (!empty($coupon['backredpack']) && (0 < $coupon['backredpack'])) {
+					if (!empty($coupon['backredpack']) && 0 < $coupon['backredpack']) {
 						$coupon['display_title'] = $coupon['display_title'] . '送' . $coupon['backredpack'] . '元红包 ';
 					}
 				}
@@ -143,7 +144,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 				$roomcoupon = json_decode($roomcoupon, true);
 
 				if (!empty($roomcoupon)) {
-					if ((intval($couponset['couponlimit']) <= floatval($roomcoupon['limit'])) && (0 < intval($couponset['couponlimit']))) {
+					if (intval($couponset['couponlimit']) <= floatval($roomcoupon['limit']) && 0 < intval($couponset['couponlimit'])) {
 						$coupon['iscoupon'] = false;
 						$coupon['couponmessage'] = '您已领取过了';
 					}
@@ -177,7 +178,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		$fullscreen = intval($room['screen']);
 		$video = trim($room['url']);
 		$poster = $room['thumb'];
-		if (!empty($video) && ($room['livetype'] != 2)) {
+		if (!empty($video) && $room['livetype'] != 2) {
 			$video_info = $this->model->getLiveInfo($video, $room['liveidentity']);
 			if (!is_error($video_info) && !empty($video_info['hls_url'])) {
 				$video = $video_info['hls_url'];
@@ -189,7 +190,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$wsConfig = json_encode(array('address' => $this->model->getWsAddress(), 'roomid' => $roomid, 'uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'uid' => $member['id'], 'nickname' => $member['nickname'], 'attachurl' => $_W['attachurl'], 'isMobile' => is_mobile(), 'isIos' => is_ios(), 'fullscreen' => $fullscreen, 'siteroot' => $_W['siteroot']));
-		$moneytext = (empty($_W['shopset']['trade']['moneytext']) ? '余额' : $_W['shopset']['trade']['moneytext']);
+		$moneytext = empty($_W['shopset']['trade']['moneytext']) ? '余额' : $_W['shopset']['trade']['moneytext'];
 		pdo_update('ewei_shop_live', array('visit' => $room['visit'] + 1), array('uniacid' => $uniacid, 'id' => $roomid));
 		$view = pdo_fetch('select * from ' . tablename('ewei_shop_live_view') . ' where uniacid = ' . $uniacid . ' and openid = \'' . $openid . '\' and roomid = ' . $roomid . ' ');
 		$viewing = pdo_fetch('select max(viewing) as viewing from ' . tablename('ewei_shop_live_view') . ' where uniacid = ' . $uniacid . ' and openid = \'' . $openid . '\' ');
@@ -206,7 +207,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		$sysset = m('common')->getSysset();
 		$shop = set_medias($sysset['shop'], 'logo');
 		$setting = pdo_fetch('select * from ' . tablename('ewei_shop_live_setting') . ' where uniacid = :uniacid  ', array(':uniacid' => $uniacid));
-		$followqrcode = (!empty($room['followqrcode']) ? $room['followqrcode'] : $sysset['share']['followqrcode']);
+		$followqrcode = !empty($room['followqrcode']) ? $room['followqrcode'] : $sysset['share']['followqrcode'];
 
 		if (!empty($followqrcode)) {
 			$followqrcode = tomedia($followqrcode);
@@ -248,7 +249,10 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 			else {
 				pdo_update('ewei_shop_live_favorite', array('deleted' => !empty($favorite['deleted']) ? 0 : 1, 'createtime' => time()), array('id' => $favorite['id']));
 
-				if ($favorite['deleted'] == 0) {
+				if (empty($favorite['deleted'])) {
+					pdo_query('update ' . tablename('ewei_shop_live') . ' set subscribe = subscribe-1 where id = ' . $roomid . ' and uniacid = ' . intval($_W['uniacid']) . ' ');
+				}
+				else {
 					pdo_query('update ' . tablename('ewei_shop_live') . ' set subscribe = subscribe+1 where id = ' . $roomid . ' and uniacid = ' . intval($_W['uniacid']) . ' ');
 				}
 
@@ -296,7 +300,10 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		$room_coupon = array();
 
 		if (empty($couponset)) {
-			$room_coupon = pdo_fetch('select lc.couponid,lc.coupontotal,lc.couponlimit,l.living,l.iscoupon,c.couponname from ' . tablename('ewei_shop_live_coupon') . " lc\r\n                    left join " . tablename('ewei_shop_live') . " as l on l.id = lc.roomid\r\n                    left join " . tablename('ewei_shop_coupon') . " as c on c.id = lc.couponid\r\n                    where lc.roomid = :roomid and lc.couponid = :couponid and lc.uniacid = :uniacid ", array(':uniacid' => $uniacid, ':roomid' => $roomid, ':couponid' => $couponid));
+			$room_coupon = pdo_fetch('select lc.couponid,lc.coupontotal,lc.couponlimit,l.living,l.iscoupon,c.couponname from ' . tablename('ewei_shop_live_coupon') . ' lc
+                    left join ' . tablename('ewei_shop_live') . ' as l on l.id = lc.roomid
+                    left join ' . tablename('ewei_shop_coupon') . ' as c on c.id = lc.couponid
+                    where lc.roomid = :roomid and lc.couponid = :couponid and lc.uniacid = :uniacid ', array(':uniacid' => $uniacid, ':roomid' => $roomid, ':couponid' => $couponid));
 			$couponset = array('title' => trim($room_coupon['couponname']), 'couponid' => intval($room_coupon['couponid']), 'coupontotal' => floatval($room_coupon['coupontotal']), 'couponlimit' => intval($room_coupon['couponlimit']), 'receivetotal' => 0, 'livetime' => intval($livetime));
 			$couponset = json_encode($couponset);
 			$couponset = redis()->hSet($table_roomcoupon, 'couponset', $couponset);
@@ -321,7 +328,7 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$roomcoupon = json_decode($roomcoupon, true);
-		if ((intval($couponset['couponlimit']) <= floatval($roomcoupon['limit'])) && (0 < intval($couponset['couponlimit']))) {
+		if (intval($couponset['couponlimit']) <= floatval($roomcoupon['limit']) && 0 < intval($couponset['couponlimit'])) {
 			show_json(-3, '您已领取过了！');
 		}
 		else if (0 < intval($couponset['couponlimit'])) {

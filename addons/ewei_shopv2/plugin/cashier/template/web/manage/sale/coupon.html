@@ -1,7 +1,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">赠送优惠券时间</label>
                 <div class="col-sm-4 col-xs-6">
-                    {php echo tpl_form_field_daterange('coupontime', array('starttime'=>date('Y-m-d H:i', !empty($item['coupontime']['start'])?$item['coupontime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['coupontime']['end'])?$item['coupontime']['end']:time())),true);}
+                    {php echo tpl_form_field_eweishop_daterange('coupontime', array('starttime'=>date('Y-m-d H:i', !empty($item['coupontime']['start'])?$item['coupontime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['coupontime']['end'])?$item['coupontime']['end']:time())),true);}
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
             </div>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label">可用优惠卷</label>
+                <label class="col-sm-2 control-label">可用优惠券</label>
                 <div class="col-sm-8 col-xs-12">
                     <?php echo tpl_selector('couponid',array(
 			'preview'=>true,

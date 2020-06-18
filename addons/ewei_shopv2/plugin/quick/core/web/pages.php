@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,6 +12,7 @@ class Pages_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
+		$type = intval($_GPC['type']);
 		$condition = ' WHERE uniacid=:uniacid and merchid=0';
 		$params = array(':uniacid' => $_W['uniacid']);
 		$keyword = trim($_GPC['keyword']);
@@ -26,7 +28,12 @@ class Pages_EweiShopV2Page extends PluginWebPage
 			$params['status'] = intval($status);
 		}
 
-		$limit = ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
+		if ($_GPC['type'] !== NULL) {
+			$params['type'] = $type;
+			$condition .= ' AND type=:type';
+		}
+
+		$limit = ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_quick') . $condition . ' ORDER BY createtime DESC' . $limit, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM' . tablename('ewei_shop_quick') . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
@@ -56,13 +63,15 @@ class Pages_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
+		$type = intval($_GPC['type']);
 
 		if (!empty($id)) {
 			$item = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_quick') . ' WHERE id=:id AND uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 			if (!empty($item['datas'])) {
 				$datas = htmlspecialchars_decode(base64_decode($item['datas']));
-				$datas = $this->model->update($datas);
+				$datas = $this->model->update($datas, $item);
+				$page = json_decode($datas, true);
 			}
 			else {
 				$datas = 'null';
@@ -71,6 +80,13 @@ class Pages_EweiShopV2Page extends PluginWebPage
 			if (!empty($item['adv_data'])) {
 				$item['adv_data'] = iunserializer($item['adv_data']);
 			}
+
+			if ($type == 1) {
+				$status = $item['status'];
+			}
+			else {
+				$status = intval($_GPC['status']);
+			}
 		}
 		else {
 			$datas = 'null';
@@ -78,18 +94,20 @@ class Pages_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			$tab = trim($_GPC['tab']);
-			$arr = array('title' => trim($_GPC['title']), 'keyword' => trim($_GPC['keyword']), 'share_title' => trim($_GPC['share_title']), 'share_desc' => trim($_GPC['share_desc']), 'share_icon' => trim($_GPC['share_icon']), 'enter_title' => trim($_GPC['enter_title']), 'enter_desc' => trim($_GPC['enter_desc']), 'enter_icon' => trim($_GPC['enter_icon']), 'status' => intval($_GPC['status']), 'lasttime' => time());
+			$arr = array('title' => trim($_GPC['title']), 'type' => trim($_GPC['type']), 'keyword' => trim($_GPC['keyword']), 'share_title' => trim($_GPC['share_title']), 'share_desc' => trim($_GPC['share_desc']), 'share_icon' => trim($_GPC['share_icon']), 'enter_title' => trim($_GPC['enter_title']), 'enter_desc' => trim($_GPC['enter_desc']), 'enter_icon' => trim($_GPC['enter_icon']), 'status' => empty($id) ? 1 : $status, 'lasttime' => time());
 			$arr['datas'] = base64_encode($_GPC['datas']);
 
-			if (empty($arr['title'])) {
-				show_json(0, '请填写页面标题');
+			if ($type != '1') {
+				if (empty($arr['title'])) {
+					show_json(0, '请填写页面标题');
+				}
 			}
 
 			if (!empty($arr['keyword'])) {
 				$keyword = m('common')->keyExist($arr['keyword']);
 
 				if (!empty($keyword)) {
-					if ($keyword['name'] != ('ewei_shopv2:quick:' . $id)) {
+					if ($keyword['name'] != 'ewei_shopv2:quick:' . $id) {
 						show_json(0, '关键字"' . $arr['keyword'] . '"已存在!');
 					}
 				}
@@ -125,7 +143,7 @@ class Pages_EweiShopV2Page extends PluginWebPage
 				$this->delKey($item['keyword']);
 			}
 
-			show_json(1, array('url' => webUrl('quick/pages/edit', array('id' => $id, 'tab' => $tab))));
+			show_json(1, array('url' => webUrl('quick/pages/edit', array('id' => $id, 'tab' => $tab, 'type' => $type))));
 		}
 
 		if (!empty($item)) {
@@ -146,10 +164,10 @@ class Pages_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title,cart,keyword FROM ' . tablename('ewei_shop_quick') . ' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid AND merchid=0', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,title,cart,keyword FROM ' . tablename('ewei_shop_quick') . (' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid AND merchid=0'), array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($items)) {
 			foreach ($items as $item) {
@@ -176,15 +194,15 @@ class Pages_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_quick') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_quick') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($items)) {
 			foreach ($items as $item) {
 				pdo_update('ewei_shop_quick', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-				plog('quick.pages.status', ('修改页面状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '显示' : '隐藏');
+				plog('quick.pages.status', '修改页面状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '显示' : '隐藏');
 			}
 		}
 

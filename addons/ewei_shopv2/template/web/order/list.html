@@ -14,7 +14,7 @@
 
 </div>
 
-<form action="./index.php" method="get" class="form-horizontal table-search" role="form">
+<form action="./index.php" method="get" class="form-horizontal table-search" role="form" id="search">
     <input type="hidden" name="c" value="site" />
     <input type="hidden" name="a" value="entry" />
     <input type="hidden" name="m" value="ewei_shopv2" />
@@ -39,7 +39,7 @@
                     <option value="{$key}" {if $_GPC['paytype'] == "$key"} selected="selected" {/if}>{$type['name']}</option>
                     {/loop}
                 </select>
-                <select name='searchtime'  class='form-control  input-sm select-md'   style="width:85px;padding:0 5px;"  >
+                <select name='searchtime'  class='form-control  input-sm select-md'   style="width:85px;padding:0 5px;" id="searchtime" >
                     <option value=''>不按时间</option>
                     <option value='create' {if $_GPC['searchtime']=='create'}selected{/if}>下单时间</option>
                     <option value='pay' {if $_GPC['searchtime']=='pay'}selected{/if}>付款时间</option>
@@ -47,7 +47,7 @@
                     <option value='finish' {if $_GPC['searchtime']=='finish'}selected{/if}>完成时间</option>
                 </select>
 
-                {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
 
             </div>
         </div>
@@ -73,13 +73,11 @@
                 {/if}
             </select>
             <div class="input-group">
-                <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"/>
+                <input type="text" class="form-control input-sm"  name="keyword" id="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"/>
+                <input type="hidden" name="export" id="export" value="0">
                 <span class="input-group-btn">
-
-                    <button class="btn btn-sm btn-primary" type="submit"> 搜索</button>
-                    <button type="submit" name="export" value="1" class="btn btn-success btn-sm">导出</button>
-
-
+                    <button type="button" data-export="0" class="btn btn-sm btn-primary btn-submit"> 搜索</button>
+                    <button type="button" data-export="1" class="btn btn-success btn-sm btn-submit">导出</button>
                 </span>
             </div>
 
@@ -124,11 +122,11 @@
                     {/if}
                 {/if}
             {/if}
-
-            {if !empty($item['refundid'])}
-            <a class='op'  href="{php echo webUrl('order/op/refund', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a>
+            {ifp 'order.op.refund'}
+                {if !empty($item['refundid'])}
+                <a class='op'  href="{php echo webUrl('order/op/refund', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a>
+                {/if}
             {/if}
-
             {if $item['merchid'] == 0}
                 {if ($item['statusvalue']>=2 || $item['sendtype']>0) && !empty($item['addressid']) && $item['statusvalue']!=3}
                     {ifp 'order.op.send'}
@@ -348,6 +346,27 @@
     </div>
 </div>
 {/if}
-
+<script>
+    //没有选中时间段不能导出
+    $(function () {
+        $('.btn-submit').click(function () {
+            var e = $(this).data('export');
+            if(e==1 ){
+                if($('#keyword').val() !='' ){
+                    $('#export').val(1);
+                    $('#search').submit();
+                }else if($('#searchtime').val()!=''){
+                    $('#export').val(1);
+                    $('#search').submit();
+                }else{
+                    tip.msgbox.err('请先选择时间段!');
+                    return;
+                }
+            }else{
+                $('#export').val(0);
+                $('#search').submit();
+            }
+        })
+    })
+</script>
 {template '_footer'}
-

@@ -11,8 +11,6 @@ load()->model('message');
 $dos = array('display', 'operate');
 $do = in_array($do, $dos) ? $do : 'display';
 
-$founders = explode(',', $_W['config']['setting']['founder']);
-
 if ('display' == $do) {
 	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
@@ -70,6 +68,14 @@ if ('display' == $do) {
 		$users = $users_table->getUsersList(false);
 		$total = $users_table->getLastQueryTotal();
 		if (!empty($users)) {
+			foreach ($users as $user_key => $user) {
+				if ($user['type'] == 1) {
+					$users[$user_key]['typename'] = '普通用户';
+				}
+				if ($user['type'] == 3) {
+					$users[$user_key]['typename'] = '应用操作员';
+				}
+			}
 			$profiles = table('users_profile')->searchWithUid(array_keys($users))->getAll('uid');
 			foreach ($profiles as $profile) {
 				$users[$profile['uid']]['avatar'] = $profile['avatar'];
@@ -79,13 +85,18 @@ if ('display' == $do) {
 		$users = array_values($users);
 		$pager = pagination($total, $pindex, $psize);
 	}
+	if ($_W['isajax']) {
+		iajax(0, array(
+			'total' => $total,
+			'page' => $pindex,
+			'page_size' => $psize,
+			'list' => $users,
+		));
+	}
 	template('user/display');
 }
 
 if ('operate' == $do) {
-	if (!$_W['isajax'] || !$_W['ispost']) {
-		iajax(-1, '非法操作！', referer());
-	}
 	$type = safe_gpc_string($_GPC['type']);
 	$types = array('recycle', 'recycle_delete', 'recycle_restore', 'check_pass');
 	if (!in_array($type, $types)) {
@@ -101,34 +112,64 @@ if ('operate' == $do) {
 			permission_check_account_user('system_user_recycle');
 			break;
 	}
-	$uid = intval($_GPC['uid']);
-	$uid_user = user_single($uid);
-	if (in_array($uid, $founders)) {
-		iajax(-1, '访问错误, 无法操作站长.', url('user/display'));
-	}
-	if (empty($uid_user)) {
-		exit('未指定用户,无法删除.');
+	$uid = safe_gpc_int($_GPC['uid']);
+	if (!empty($uid)) {
+		$uids = array($uid);
+	} else {
+		$uids = safe_gpc_array($_GPC['uids']);
 	}
 	
-		if (ACCOUNT_MANAGE_GROUP_GENERAL != $uid_user['founder_groupid']) {
-			iajax(-1, '非法操作', referer());
+		if (user_is_vice_founder()) {
+			$founder_own_uids = table('users_founder_own_users')->getFounderOwnUsersList($_W['uid']);
 		}
 	
+
+	if (isset($founder_own_uids) && empty($founder_own_uids)) {
+		iajax(-1, '非法操作');
+	}
+
+	foreach ($uids as $uid) {
+		
+			if (isset($founder_own_uids) && !in_array($uid, $founder_own_uids)) {
+				iajax(-1, '非法操作，操作用户中有不属于当前副站长的用户');
+			}
+		
+		if (user_is_founder($uid, true)) {
+			iajax(-1, '访问错误, 无法操作站长.', url('user/display'));
+		}
+		$uid_user = user_single($uid);
+		if (empty($uid_user)) {
+			exit('未指定用户,无法删除.');
+		}
+		
+			if (ACCOUNT_MANAGE_GROUP_GENERAL != $uid_user['founder_groupid']) {
+				iajax(-1, '非法操作', referer());
+			}
+		
+	}
 	switch ($type) {
 		case 'check_pass':
 			$data = array('status' => USER_STATUS_NORMAL);
-			pdo_update('users', $data, array('uid' => $uid));
+			foreach ($uids as $uid) {
+				pdo_update('users', $data, array('uid' => $uid));
+			}
 			iajax(0, '更新成功', referer());
 			break;
-		case 'recycle':			user_delete($uid, true);
+		case 'recycle':			foreach ($uids as $uid) {
+				user_delete($uid, true);
+			}
 			iajax(0, '更新成功', referer());
 			break;
-		case 'recycle_delete':			user_delete($uid);
+		case 'recycle_delete':			foreach ($uids as $uid) {
+				user_delete($uid);
+			}
 			iajax(0, '删除成功', referer());
 			break;
 		case 'recycle_restore':
 			$data = array('status' => USER_STATUS_NORMAL);
-			pdo_update('users', $data, array('uid' => $uid));
+			foreach ($uids as $uid) {
+				pdo_update('users', $data, array('uid' => $uid));
+			}
 			iajax(0, '启用成功', referer());
 			break;
 	}

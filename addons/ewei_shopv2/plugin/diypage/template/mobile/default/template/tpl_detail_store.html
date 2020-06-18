@@ -3,8 +3,8 @@
 <div class='fui-according-group' style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']};">
     <div class='fui-according expanded'>
         <div class='fui-according-header'>
-            <i class='icon icon-shop' style="color: {$diyitem['style']['titlecolor']};"></i>
-            <span class="text" style="color: {$diyitem['style']['titlecolor']};">适用门店</span>
+            <i class='icon icon-shop' style="color: {$diyitem['style']['titlecolor']};line-height: 1.15rem;"></i>
+            <span class="text" style="color: {$diyitem['style']['titlecolor']};line-height: 1.15rem;font-size: 15px;">适用门店</span>
             <span class="remark"><div class="badge">{php echo count($stores)}</div></span>
         </div>
             <div class="fui-according-content store-container fui-cell-group">
@@ -21,6 +21,9 @@
                     </div>
                 </a>
                 {/loop}
+                {if count($stores)>3}
+                <div class='show-allshop'><span class='show-allshop-btn'>加载更多门店</span></div>
+                {/if}
             </div>
         <div id="nearStore" style="display:none">
             <div class='fui-list store-item'  id='nearStoreHtml'></div>
@@ -28,5 +31,4 @@
     </div>
 </div>
 {/if}
-
 

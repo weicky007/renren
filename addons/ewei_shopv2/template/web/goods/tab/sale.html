@@ -28,7 +28,7 @@
             <!--
             <li style="width: auto">
                 <a data-toggle="tab" href="#tab-sale-5" aria-expanded="true">
-                    购物送优惠卷
+                    购物送优惠券
                 </a>
             </li>
             -->
@@ -69,7 +69,7 @@
                 </label>
                 {ife 'goods' $item}
                 <div class="col-sm-4 col-xs-6">
-                    {php echo tpl_form_field_daterange('saletime', array('starttime'=>date('Y-m-d H:i', $item['timestart']),'endtime'=>date('Y-m-d H:i', $item['timeend'])),true);}
+                    {php echo tpl_form_field_eweishop_daterange('saletime', array('starttime'=>date('Y-m-d H:i', $item['timestart']),'endtime'=>date('Y-m-d H:i', $item['timeend'])),true);}
                 </div>
                 {else}
                 <div class="col-sm-6 col-xs-6">
@@ -383,4 +383,3 @@
 {else}
 {template 'shop/selectareasNew'}
 {/if}
-

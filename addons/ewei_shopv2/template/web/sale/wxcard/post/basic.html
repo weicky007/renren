@@ -166,7 +166,7 @@
 					<input type="hidden" id="datetypevalue" name="datetypevalue" value="{$item['datetype']}">
 					<input type="radio" name="datetype" {ife 'sale.wxcard' $item}{if !empty($id)}disabled {/if}{else}disabled{/if}  {if $item['datetype']=='DATE_TYPE_FIX_TIME_RANGE'}checked{/if}  value="DATE_TYPE_FIX_TIME_RANGE" />
 					<span>固定日期</span>
-					{php echo tpl_form_field_daterange('beginendtime', array('start'=>date('Y-m-d H:i', $starttime),'end'=>date('Y-m-d H:i', $endtime)),false);}
+					{php echo tpl_form_field_eweishop_daterange('beginendtime', array('start'=>date('Y-m-d H:i', $starttime),'end'=>date('Y-m-d H:i', $endtime)),false);}
 				</div>
 				<div class="frm_controls">
 					<input type="radio" name="datetype" {ife 'sale.wxcard' $item}{if !empty($id)}disabled {/if}{else}disabled{/if}    {if $item['datetype']=='DATE_TYPE_FIX_TERM'}checked{/if}  value="DATE_TYPE_FIX_TERM" />

@@ -41,6 +41,12 @@ if ($do == 'post') {
 		if ($bindhost['host'] == safe_gpc_string($_GPC['bindhost'])) {
 			itoast('绑定域名有误', referer(), 'error');
 		}
+		if (!empty($id)) {
+			$multis = table('site_multi')->select('id')->where('uniacid', $_W['uniacid'])->getall('id');
+			if (!in_array($id, array_keys($multis))) {
+				itoast('不可越权修改！', referer(), 'error');
+			}
+		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
 			'title' => safe_gpc_string($_GPC['title']),
@@ -94,7 +100,7 @@ if ($do == 'post') {
 	$temtypes = ext_template_type();
 	$temtypes[] = array('name' => 'all', 'title' => '全部');
 	$styles = table('site_styles')
-		->searchWithTemplates('a.*, b.`id` as `tid`, b.`name` AS `tname`, b.`title`, b.`type`, b.`sections`')
+		->searchWithTemplates('a.*, b.`mid` as `tid`, b.`name` AS `tname`, b.`title`, b.`type`, b.`sections`')
 		->where(array('a.uniacid' => $_W['uniacid']))
 		->getall('id');
 	if (empty($multi)) {
@@ -121,14 +127,10 @@ if ($do == 'display') {
 		->getall();
 	foreach ($multis as &$li) {
 		$li['style'] = table('site_styles')->getById($li['styleid'], $_W['uniacid']);
-		$li['template'] = table('site_templates')->getById($li['style']['templateid']);
+		$li['template'] = table('modules')->getTemplateById($li['style']['templateid']);
 		$li['site_info'] = (array)iunserializer($li['site_info']);
 		$li['site_info']['thumb'] = tomedia($li['site_info']['thumb']);
-		if (file_exists('../app/themes/'.$li['template']['name'].'/preview.jpg')) {
-			$li['preview_thumb'] = $_W['siteroot'].'app/themes/'.$li['template']['name'].'/preview.jpg';
-		} else {
-			$li['preview_thumb'] = $_W['siteroot'].'web/resource/images/nopic-203.png';
-		}
+		$li['preview_thumb'] = $li['template']['logo'];
 	}
 	unset($li);
 	$total = table('site_multi')

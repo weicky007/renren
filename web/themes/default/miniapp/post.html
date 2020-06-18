@@ -164,7 +164,7 @@ require(['fileUploader','underscore'], function(uploader){
 		'miniapp' : miniapp,
 		'uniacid' : "{$uniacid}",
 		'version_id' : "{$version_id}",
-		'postUrl' : "{php echo url('miniapp/post', array('version_id' => $version_id))}",
+        'postUrl': "{php echo url('miniapp/post/save_post', array('version_id' => $version_id))}",
 		'token' : "{$_W['token']}",
 		'mtype' : "{$mtype}",
 	});

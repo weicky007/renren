@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Address_EweiShopV2Page extends AppMobilePage
 {
 	public function get_list()
@@ -13,7 +13,7 @@ class Address_EweiShopV2Page extends AppMobilePage
 		global $_GPC;
 
 		if (empty($_W['openid'])) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$limit = '';
@@ -22,16 +22,16 @@ class Address_EweiShopV2Page extends AppMobilePage
 		if (1 < $page) {
 			$pindex = max(1, $page);
 			$psize = 20;
-			$limit = ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$limit = ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		}
 
 		$condition = ' and openid=:openid and deleted=0 and  `uniacid` = :uniacid  ';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_address') . (' where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$sql = 'SELECT * FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition . ' ORDER BY `isdefault` DESC ' . $limit;
 		$list = pdo_fetchall($sql, $params);
-		app_json(array('page' => $pindex, 'pagesize' => $psize, 'total' => $total, 'list' => $list));
+		return app_json(array('page' => $pindex, 'pagesize' => $psize, 'total' => $total, 'list' => $list));
 	}
 
 	public function get_detail()
@@ -52,7 +52,16 @@ class Address_EweiShopV2Page extends AppMobilePage
 
 		$set = m('util')->get_area_config_set();
 		$data['openstreet'] = !empty($set['address_street']) ? true : false;
-		app_json($data);
+		return app_json($data);
+	}
+
+	public function searchlist()
+	{
+		global $_GPC;
+		global $_W;
+		$key = $_GPC['key'];
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member_address') . ' where openid=:openid and uniacid=:uniacid and deleted=0 and (realname like :realname or mobile like :realname or province like :realname  or area like :realname or address like :realname)', array(':uniacid' => $_W['uniacid'], ':realname' => '%' . $key . '%', ':openid' => $_W['openid']));
+		return app_json(array('list' => $list));
 	}
 
 	public function set_default()
@@ -63,12 +72,12 @@ class Address_EweiShopV2Page extends AppMobilePage
 		$data = pdo_fetch('select id from ' . tablename('ewei_shop_member_address') . ' where id=:id and deleted=0 and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 
 		if (empty($data)) {
-			app_error(AppError::$AddressNotFound);
+			return app_error(AppError::$AddressNotFound);
 		}
 
 		pdo_update('ewei_shop_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
 		pdo_update('ewei_shop_member_address', array('isdefault' => 1), array('id' => $id, 'uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
-		app_json();
+		return app_json();
 	}
 
 	public function submit()
@@ -88,34 +97,41 @@ class Address_EweiShopV2Page extends AppMobilePage
 		$data['uniacid'] = $_W['uniacid'];
 		$data['datavalue'] = trim($_GPC['datavalue']);
 		$data['streetdatavalue'] = trim($_GPC['streetdatavalue']);
+		$post = $data;
+		$post['id'] = $id;
+		$post['is_from_wx'] = $_GPC['is_from_wx'];
+
+		if ($this->is_repeated_address($post)) {
+			return app_error(AppError::$ParamsError, '此地址已经添加过');
+		}
 
 		if (empty($data['address'])) {
-			app_error(AppError::$ParamsError, '详细地址为空');
+			return app_error(AppError::$ParamsError, '详细地址为空');
 		}
 
 		if (empty($data['realname'])) {
-			app_error(AppError::$ParamsError, '收件人姓名为空');
+			return app_error(AppError::$ParamsError, '收件人姓名为空');
 		}
 
 		if (empty($data['mobile'])) {
-			app_error(AppError::$ParamsError, '收件人手机为空');
+			return app_error(AppError::$ParamsError, '收件人手机为空');
 		}
 
 		if (empty($data['province'])) {
-			app_error(AppError::$ParamsError, '收件省份为空');
+			return app_error(AppError::$ParamsError, '收件省份为空');
 		}
 
 		if (empty($data['city'])) {
-			app_error(AppError::$ParamsError, '收件城市为空');
+			return app_error(AppError::$ParamsError, '收件城市为空');
 		}
 
 		if (empty($data['area'])) {
-			app_error(AppError::$ParamsError, '收件区域为空');
+			return app_error(AppError::$ParamsError, '收件区域为空');
 		}
 
 		$set = m('util')->get_area_config_set();
-		if (!empty($set['address_street']) && (empty($data['datavalue']) || empty($data['streetdatavalue']))) {
-			app_error(AppError::$ParamsError, '地址数据出错，请重新选择');
+		if (!empty($set['address_street']) && (empty($data['datavalue']) && empty($_GPC['is_from_wx']))) {
+			return app_error(AppError::$ParamsError, '地址数据出错，请重新选择');
 		}
 
 		if (empty($id)) {
@@ -129,10 +145,12 @@ class Address_EweiShopV2Page extends AppMobilePage
 			$id = pdo_insertid();
 		}
 		else {
+			$data['lng'] = '';
+			$data['lat'] = '';
 			pdo_update('ewei_shop_member_address', $data, array('id' => $id, 'uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
 		}
 
-		app_json(array('addressid' => $id));
+		return app_json(array('addressid' => $id));
 	}
 
 	public function delete()
@@ -143,7 +161,7 @@ class Address_EweiShopV2Page extends AppMobilePage
 		$data = pdo_fetch('select id,isdefault from ' . tablename('ewei_shop_member_address') . ' where  id=:id and openid=:openid and deleted=0 and uniacid=:uniacid  limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':id' => $id));
 
 		if (empty($data)) {
-			app_error(AppError::$AddressNotFound);
+			return app_error(AppError::$AddressNotFound);
 		}
 
 		pdo_update('ewei_shop_member_address', array('deleted' => 1), array('id' => $id));
@@ -154,11 +172,11 @@ class Address_EweiShopV2Page extends AppMobilePage
 
 			if (!empty($data2)) {
 				pdo_update('ewei_shop_member_address', array('isdefault' => 1), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'id' => $data2['id']));
-				app_json(array('defaultid' => $data2['id']));
+				return app_json(array('defaultid' => $data2['id']));
 			}
 		}
 
-		app_json();
+		return app_json();
 	}
 
 	public function selector()
@@ -169,7 +187,35 @@ class Address_EweiShopV2Page extends AppMobilePage
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
 		$sql = 'SELECT id,realname,mobile,address,province,city,area,isdefault FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition . ' ORDER BY isdefault desc, id DESC ';
 		$list = pdo_fetchall($sql, $params);
-		app_json(array('list' => $list));
+		return app_json(array('list' => $list));
+	}
+
+	/**
+     * 验证地址是否重复添加
+     * @param $post
+     * author 洋葱
+     * @return bool
+     */
+	private function is_repeated_address($post)
+	{
+		global $_W;
+		if (empty($post['is_from_wx']) || $post['id']) {
+			return false;
+		}
+
+		if (empty($post['province']) || empty($post['city']) || empty($post['area'])) {
+			return false;
+		}
+
+		$condition = 'uniacid=:uniacid and openid=:openid and realname=:realname and mobile=:mobile and mobile=:mobile and province=:province and city=:city and area=:area and address=:address and deleted=0';
+		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':realname' => $post['realname'], ':mobile' => $post['mobile'], ':province' => $post['province'], ':city' => $post['city'], ':area' => $post['area'], ':address' => $post['address']);
+		$address = pdo_fetch('SELECT id FROM ' . tablename('ewei_shop_member_address') . (' where ' . $condition . ' limit 1'), $params);
+
+		if ($address) {
+			return true;
+		}
+
+		return false;
 	}
 }
 

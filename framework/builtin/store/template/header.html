@@ -21,11 +21,9 @@
 				</div>
                 {/if}
 				<div class="collapse navbar-collapse">
-
 					<ul class="nav navbar-nav navbar-left">
 						{template 'common/header-topnav'}
 					</ul>
-
 					<ul class="nav navbar-nav navbar-right">
 						{template 'common/header-user'}
 					</ul>
@@ -46,7 +44,7 @@
 							</div>
 						</div>
 						{loop $this->left_menus $key $menus}
-						{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !($_W['isfounder'] && !user_is_vice_founder())}
+						{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !$_W['isadmin']}
 						{php continue;}
 						{/if}
 						<div class="panel panel-menu">
@@ -127,7 +125,7 @@
 			<div class="left-menu-container">
 				<div class="left-menu">
 					{loop $this->left_menus $key $menus}
-					{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !($_W['isfounder'] && !user_is_vice_founder())}
+					{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !$_W['isadmin']}
 					{php continue;}
 					{/if}
 					<div class="panel panel-menu">
@@ -274,7 +272,7 @@
                     <!-- 二级菜单-->
                     <div class="js-menu" id="js-menu-{FRAME}{$_W['account']['uniacid']}">
                         {loop $this->left_menus $key $menus}
-                        {if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !($_W['isfounder'] && !user_is_vice_founder())}
+                        {if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !$_W['isadmin']}
                         {php continue;}
                         {/if}
                         {if $key == 'store_wish_goods' && $this->store_setting['wish_module_status'] == 0}
@@ -319,7 +317,7 @@
 <div class="container ">
 	<div class="navbar-header">
 		<a class="navbar-brand" href="{$_W['siteroot']}">
-			<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" style="max-height: 40px;max-width: 100px;">
+			<img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo to_global_media($_W['setting']['copyright']['blogo'])}{else}./resource/images/logo/logo.png{/if}" class="pull-left" wstyle="max-height: 40px;max-width: 100px;">
 		</a>
 	</div>
 	<div class="collapse navbar-collapse">
@@ -340,7 +338,7 @@
 			{else}
 				{php $nav_top_tiled_system[] = $nav}
 			{/if}
-			{if 'store' == $nav['name'] && user_is_founder($_W['uid'], true)}{php $nav_top_tiled_system[] = $nav}{/if}
+			{if 'store' == $nav['name'] && $_W['isadmin']}{php $nav_top_tiled_system[] = $nav}{/if}
 		{/loop}
 		<ul class="nav navbar-nav  navbar-left">
 			{loop $nav_top_tiled_system $nav}
@@ -373,7 +371,7 @@
 		<div class="left-menu">
 			<div class="left-menu-content">
 				{loop $this->left_menus $key $menus}
-				{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !($_W['isfounder'] && !user_is_vice_founder())}
+				{if in_array($key, array('store_manage', 'store_payments', 'store_cash_manage')) && !$_W['isadmin']}
 					{php continue;}
 				{/if}
 				<div class="panel panel-menu">

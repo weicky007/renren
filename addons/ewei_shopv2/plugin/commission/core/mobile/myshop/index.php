@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,19 +17,19 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		$uniacid = $_W['uniacid'];
 
 		if (!empty($mid)) {
-			if (!$this->model->isAgent($mid)) {
-				header('location: ' . mobileUrl());
-				exit();
-			}
-
 			if (!empty($set['closemyshop'])) {
 				$shopurl = mobileUrl('', array('mid' => $mid));
 				header('location: ' . $shopurl);
 				exit();
 			}
+
+			if (!$this->model->isAgent($mid)) {
+				header('location:' . mobileUrl('commission/register'));
+				exit();
+			}
 		}
 		else {
-			if (($member['isagent'] == 1) && ($member['status'] == 1)) {
+			if ($member['isagent'] == 1 && $member['status'] == 1) {
 				$mid = $member['id'];
 
 				if (!empty($set['closemyshop'])) {
@@ -64,14 +65,14 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$goodids = implode(',', $_W['shopset']['shop']['indexrecommands']);
 
 			if (!empty($goodids)) {
-				$indexrecommands = pdo_fetchall('select id, title, thumb, marketprice, productprice ,minprice, total from ' . tablename('ewei_shop_goods') . ' where id in( ' . $goodids . ' ) and uniacid=:uniacid and status=1 order by displayorder desc', array(':uniacid' => $uniacid));
+				$indexrecommands = pdo_fetchall('select id, title, thumb, marketprice, productprice ,minprice, total from ' . tablename('ewei_shop_goods') . (' where id in( ' . $goodids . ' ) and uniacid=:uniacid and status=1 order by displayorder desc'), array(':uniacid' => $uniacid));
 			}
 		}
 
 		$goodsstyle = $_W['shopset']['shop']['goodsstyle'];
 		$notices = pdo_fetchall('select id, title, link, thumb from ' . tablename('ewei_shop_notice') . ' where uniacid=:uniacid and status=1 order by displayorder desc limit 5', array(':uniacid' => $uniacid));
 		$shareid = $mid;
-		if (($member['isagent'] == 1) && ($member['status'] == 1)) {
+		if ($member['isagent'] == 1 && $member['status'] == 1) {
 			$shareid = $member['id'];
 		}
 
@@ -103,6 +104,9 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$args['isrecommand'] = 1;
 			}
 		}
+		else {
+			$args['isrecommand'] = 1;
+		}
 
 		$list = m('goods')->getList($args);
 		show_json(1, array('list' => $list['list'], 'total' => $list['total'], 'pagesize' => $args['pagesize']));
@@ -116,7 +120,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		$shop = pdo_fetch('select * from ' . tablename('ewei_shop_commission_shop') . ' where uniacid=:uniacid and mid=:mid limit 1', array(':uniacid' => $_W['uniacid'], ':mid' => $member['id']));
 
 		if ($_W['ispost']) {
-			$shopdata = (is_array($_GPC['shopdata']) ? $_GPC['shopdata'] : array());
+			$shopdata = is_array($_GPC['shopdata']) ? $_GPC['shopdata'] : array();
 			$shopdata['uniacid'] = $_W['uniacid'];
 			$shopdata['mid'] = $member['id'];
 
@@ -134,7 +138,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		$openselect = false;
 
 		if ($this->set['select_goods'] == '1') {
-			if (empty($member['agentselectgoods']) || ($member['agentselectgoods'] == 2)) {
+			if (empty($member['agentselectgoods']) || $member['agentselectgoods'] == 2) {
 				$openselect = true;
 			}
 		}

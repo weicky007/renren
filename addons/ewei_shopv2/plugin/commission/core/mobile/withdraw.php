@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Withdraw_EweiShopV2Page extends CommissionMobileLoginPage
 		global $_GPC;
 		$openid = $_W['openid'];
 		$member = $this->model->getInfo($openid, array('total', 'ok', 'apply', 'check', 'lock', 'pay', 'wait', 'fail'));
-		$cansettle = (1 <= $member['commission_ok']) && (floatval($this->set['withdraw']) <= $member['commission_ok']);
+		$cansettle = 1 <= $member['commission_ok'] && floatval($this->set['withdraw']) <= $member['commission_ok'];
 		$agentid = $member['id'];
 
 		if (!empty($agentid)) {

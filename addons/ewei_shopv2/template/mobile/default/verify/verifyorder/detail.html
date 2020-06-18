@@ -70,7 +70,13 @@
                 <div class="fui-cell-label">配送方式:</div>
                 <div class="fui-cell-info"></div>
                 <div class="fui-cell-remark noremark black">
-                    线下核销
+                    {if $item['isverify'] == 1}
+                        线下核销
+                    {elseif $item['dispatchtype']}
+                        自提
+                    {else}
+                        其他
+                    {/if}
                 </div>
             </div>
 
@@ -128,7 +134,7 @@
                         </a>
                         <div class="fui-list-inner">
                             <div class="title">
-                                {if !empty($og['diyformdata']) && $og['diyformdata'] != 'false'}<span class="fui-label fui-label-warning round">表单</span>{/if}
+                                {if !empty($og['diyformdata']) && $og['diyformdata'] != 'false'}<span class="fui-label fui-label-warning round"> </span>{/if}
                                 {if $goods['seckill_task']}<span class="fui-label fui-label-danger round">{$goods['seckill_task']['tag']}</span>{if $goods['seckill_room']}<span class="fui-label fui-label-primary">{php echo $goods['seckill_room']['tag']?:$goods['seckill_room']['title']}</span>{/if}{/if}
                                 {if !empty($goods['invoice'])}<label class='fui-label fui-label-success round'>支持开票</label>{/if}
                                 {$og['title']}</div>

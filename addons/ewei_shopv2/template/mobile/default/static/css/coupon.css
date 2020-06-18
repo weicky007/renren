@@ -493,11 +493,10 @@ overflow: hidden;}
 .coupon-groupblock .group-top .inner .right .subtitle {
     font-size: 0.5rem;
 }
-
-.coupon-groupblock .coupon-items {height: 9rem; background: #fff; overflow-y: hidden; overflow-x: auto; white-space: normal; position: relative; margin-top: 0.5rem}
-.coupon-groupblock .coupon-items .container1{z-index: -1;  height: 9.4rem; overflow: auto;  white-space:nowrap;}
+.coupon-groupblock .coupon-items {height: 9.5rem; background: #fff; overflow-y: hidden; overflow-x: auto; white-space: normal; position: relative; margin-top: 0.5rem}
+.coupon-groupblock .coupon-items .container1{z-index: -1;  height: 100%; overflow: auto;  white-space:nowrap;}
 .coupon-groupblock .coupon-items .item {
-    height: 9rem;
+    height: 100%;
     width: 6rem;
     overflow: hidden;
     text-decoration: none;
@@ -553,4 +552,3 @@ overflow: hidden;}
     color: #666;
     border-radius: 0.2rem;
 }
-

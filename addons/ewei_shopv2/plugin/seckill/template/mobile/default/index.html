@@ -29,7 +29,7 @@
                         {elseif $time['status']==1}
                         即将开始
                         {else}
-                        已开抢{/if}</span>
+                        已结束{/if}</span>
                 </div>
                 {/loop}
 
@@ -38,7 +38,7 @@
 
 
         <div class="swiper-container adv-container" style="margin-top:.5rem;">
-            <div class="swiper-wrapper">
+            <div class="swiper-wrapper" style="width: 100%">
                 {loop $advs $adv}
                 <div class="swiper-slide adv-slide no-swiper">
                     <a href="{php echo empty($adv['link'])?'#':$adv['link']}">
@@ -65,8 +65,8 @@
             <div class="swiper-wrapper">
                 {loop $times $time}
                 <div class="swiper-slide goods-slide" data-timeid="{$time['id']}"
-                     data-starttime="{php echo $time['starttime']-time();}"
-                     data-endtime="{php echo $time['endtime']-time();}"
+                     data-starttime="{$time['starttime']}"
+                     data-endtime="{$time['endtime']}"
                      data-status="{$time['status']}">
                     <div class='infinite-loading' ><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
                 </div>
@@ -129,7 +129,7 @@
                         </span>
                     <span class="process-text">已售 <%g.percent%>%</span>
                     <%/if%>
-                    <div class="price1">&yen;<%g.marketprice%></div>
+                    <div class="price1" style="<%if g.productprice==0%>color:#FFFFFF<%/if%>">&yen;<%g.productprice%></div>
                 </div>
             </div>
         </div>

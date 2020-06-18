@@ -3625,7 +3625,7 @@ body.body-small .footer.fixed {
 }
 
 
-
+/*CONTENTTABS*/
 
 .content-tabs {
     position: relative;
@@ -7103,7 +7103,7 @@ body.rtls.top-navigation .footer.fixed {
     }
 }
 
-.rtls {content:'1693440'}
+.rtls {content:'2820384'}
 .rtls .ltr-support {
     direction: ltr;
 }
@@ -7633,7 +7633,7 @@ body.skin-3 {
 }
 
 
-
+/*JQGRID*/
 
 .ui-jqgrid-titlebar {
     height: 40px;
@@ -7891,4 +7891,9 @@ body.skin-3 {
         font-size: 12px
     }
 }
-
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #ddd;
+}
+.input-group-addon.disabled{
+    background-color: #ddd;
+}

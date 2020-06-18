@@ -19,10 +19,11 @@
                 </div>
                 <div class="fui-list-inner">
                     <div class="row">
-                        <div class="row-text">预计最高{php echo $this->set['texts']['commission1']} <span class='text-danger'>{$commission}</span> {php echo $this->set['texts']['yuan']}
-                        </div>
+                         <div class="row-text">{$goods['title']}</div>
+                        <!--<div class="row-text">预计最高{php echo $this->set['texts']['commission1']} <span class='text-danger'>{$commission}</span> {php echo $this->set['texts']['yuan']}-->
+                        <!--</div>-->
                     </div>
-                    <div class="subtitle">已销售 <span>{$goods['sales']}</span> 件</div>
+                    <div class="subtitle">已销售 <span>{php echo $goods['sales'] + $goods['salesreal']}</span> 件</div>
                 </div>
             </div>
         </div>
@@ -71,14 +72,14 @@
 
             <div class="fui-list">
                 <div class="fui-list-inner">
-                    <div class="subtitle" style="text-indent: 2em;">{$set['qrcode_content']}</div>
+                    <div class="subtitle" style="white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;">{$set['qrcode_content']}
+                    </div>
                 </div>
             </div>
             {/if}
             <div class="fui-list">
                 <div class="fui-card">
-                    <div class="fui-card-content">
-                        说明：{if empty($set['qrcode']) || (!empty($set['qrcode'])&&empty($set['qrcode_remark']))}分享后会带有独有的推荐码，您的好友访问之后，系统会自动检测并记录客户关系。如果您的好友已被其他人抢先发展成了客户，他就不能成为您的客户，以最早发展成为客户为准。{else}{$set['qrcode_remark']}{/if}
+                    <div class="fui-card-content" style="white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;">说明：<br/>{if empty($set['qrcode']) || (!empty($set['qrcode'])&&empty($set['qrcode_remark']))}分享后会带有独有的推荐码，您的好友访问之后，系统会自动检测并记录客户关系。如果您的好友已被其他人抢先发展成了客户，他就不能成为您的客户，以最早发展成为客户为准。{else}{$set['qrcode_remark']}{/if}
                     </div>
                 </div>
             </div>
@@ -92,4 +93,3 @@
 		});
 	</script>
 {template '_footer'}
-

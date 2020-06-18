@@ -1,4 +1,4 @@
-
+/*common*/
 *{
 	margin: 0;
 	padding: 0;
@@ -355,7 +355,7 @@ a{
 	height: 20px;
 }
 
-
+/**/
 .frm_controls .input{
 	height: 32px;
 	background: #fff;
@@ -423,3 +423,4 @@ textarea{
 	margin-right:20px;
 }
 
+/*4000097827*/

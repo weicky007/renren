@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/lottery/static/style/design.css"/>
-<div class="alert alert-warning">抽奖所有等级不能低于5个，概率之和可不等于100%</div>
+<div class="alert alert-warning">抽奖所有等级不能低于5个，概率之和可不等于100%,最小概率不要低于 0.001%</div>
 <div class="form-group">
     <label class="col-sm-2 control-label">抽奖标题&概率</label>
     {ifp 'lottery.edit'}
@@ -50,7 +50,7 @@
                       <div class="col-sm-2 col-xs-12">
                           <select class="input-sm form-control input-s-sm inline" data-id="{$rank}" onchange="select_change(this);">
                               <option value="0">请选择</option>
-                              <option value="1">积分</option>
+                              <option value="1">{php echo $this->set["texts"]["credit1"]}</option>
                               <option value="2">奖金</option>
                               <option value="3">红包</option>
                               <option value="4">特惠商品</option>
@@ -75,7 +75,7 @@
                       {if $rec>0}
                       <div class="form-group rec_reward_data"  id="rec_credit{$rank}" data-rank="{$rank}" data-type="1" data-value="{$rec}" style="border-bottom:1px solid #f2f2f2;">
                           <label class="col-sm-2 control-label"></label>
-                          <div class="col-sm-7" style="padding-top: 8px;padding-bottom: 20px;">积分<span class="pull-right label label-success"  style="margin-right: 10px;">{$rec}</span></div>
+                          <div class="col-sm-7" style="padding-top: 8px;padding-bottom: 20px;">{php echo $this->set["texts"]["credit1"]}<span class="pull-right label label-success"  style="margin-right: 10px;">{$rec}</span></div>
                           <div class="col-sm-2">
                               '&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="del_data(this);" class="btn btn-danger  btn-sm btn-delete-time">删除</button>
                               '</div></div>

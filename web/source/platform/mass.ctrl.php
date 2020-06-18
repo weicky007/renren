@@ -84,7 +84,7 @@ if ('post' == $do) {
 
 	if (checksubmit('submit')) {
 		$type = in_array(intval($_GPC['type']), array(0, 1)) ? intval($_GPC['type']) : 0;
-		$group = json_decode(htmlspecialchars_decode($_GPC['group']), true);
+		$group = @json_decode(safe_gpc_html(htmlspecialchars_decode($_GPC['group'])), true);
 
 		if (empty($_GPC['reply'])) {
 			itoast('请选择要群发的素材', '', 'error');
@@ -92,8 +92,8 @@ if ('post' == $do) {
 		$mass_record = array(
 			'uniacid' => $_W['uniacid'],
 			'acid' => $_W['acid'],
-			'groupname' => $group['name'],
-			'fansnum' => $group['count'],
+			'groupname' => htmlspecialchars($group['name']),
+			'fansnum' => htmlspecialchars($group['count']),
 			'msgtype' => '',
 			'group' => $group['id'],
 			'attach_id' => '',
@@ -115,10 +115,12 @@ if ('post' == $do) {
 			}
 
 			if ('reply_basic' == $material_type) {
-				$material = htmlspecialchars_decode($material);
+				$material = safe_gpc_html(htmlspecialchars_decode($material));
 				$material = trim($material, '\"');
 			}
-
+			if ($msgtype == 'basic') {
+				$mass_record['content'] = $material;
+			}
 			$mass_record['media_id'] = $material;
 			$mass_record['attach_id'] = $attachment['id'];
 			$mass_record['msgtype'] = $msgtype;

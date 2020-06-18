@@ -14,6 +14,13 @@
         {if !empty($diygotop['params']['gotopheight'])}
         $(".fui-content").bind('scroll resize', function () {
             var scrolltop = $(".fui-content").scrollTop();
+            {if $_GPC['r'] == 'goods.detail'}
+                scrolltop = $(".basic-block").scrollTop();
+                if($(".basic-block").css('display') == 'none'){
+                    scrolltop = $(".detail-block").scrollTop();
+                    //console.log($(".basic-block").css('display'));
+                }
+            {/if}
             if (scrolltop > "{php echo intval($diygotop['params']['gotopheight'])}") {
                 $("#gotop").fadeIn(100)
             } else {

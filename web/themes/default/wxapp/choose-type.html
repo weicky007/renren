@@ -33,7 +33,7 @@
 						授权添加小程序
 					</div>
 					<div class="con">
-						{if user_is_founder($_W['uid'], true)}
+						{if $_W['isadmin']}
 						使用授权添加需认证微信开放平台和全网发布，并在<a href="{php echo url('system/platform')}" target="_blank" class="color-default">微信开放平台设置</a>中启用
 						{else}
 						使用公众平台绑定的管理员个人微信扫码即可快速添加

@@ -152,7 +152,7 @@
                     </select>
                 </span>
                 <span class="input-group-btn">
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </span>
                 <span class="input-group-select">
                     {if p('newstore')}
@@ -162,8 +162,6 @@
                         <option value='trade' {if $_GPC['searchtype']=='trade'}selected{/if}>门店预约订单</option>
                         <option value='mall' {if $_GPC['searchtype']=='mall'}selected{/if}>商城订单</option>
                     </select>
-                    {else}
-                    <input type="hidden" name="searchtype" value="mall" />
                     {/if}
                 </span>
 
@@ -172,7 +170,7 @@
                         <option value='ordersn' {if $_GPC['searchfield']=='ordersn'}selected{/if}>订单号</option>
                         <option value='saler' {if $_GPC['searchfield']=='saler'}selected{/if}>核销员</option>
                         <option value='store' {if $_GPC['searchfield']=='store'}selected{/if}>核销门店</option>
-                        <option value='verifycode' {if $_GPC['searchfield']=='verifycode'}selected{/if}>核销码</option>
+<!--                        <option value='verifycode' {if $_GPC['searchfield']=='verifycode'}selected{/if}>核销码</option>-->
                         <option value='member' {if $_GPC['searchfield']=='member'}selected{/if}>会员姓名</option>
                         <option value='address' {if $_GPC['searchfield']=='address'}selected{/if}>收件人姓名</option>
                         <option value='expresssn' {if $_GPC['searchfield']=='expresssn'}selected{/if}>快递单号</option>
@@ -485,4 +483,3 @@
     })
 </script>
 {template '_footer'}
-

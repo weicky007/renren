@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -31,6 +31,17 @@ class Tabbar_EweiShopV2Page extends PluginWebPage
 		}
 
 		$tabbar = $_GPC['tabbar'];
+		$tab_list = array();
+		$tab_pagePath_arr = array();
+
+		foreach ($tabbar['list'] as $tb) {
+			if (!in_array($tb['pagePath'], $tab_pagePath_arr)) {
+				array_push($tab_pagePath_arr, $tb['pagePath']);
+				array_push($tab_list, $tb);
+			}
+		}
+
+		$tabbar['list'] = $tab_list;
 
 		if (empty($tabbar)) {
 			show_json(0, '提交数据不能为空');

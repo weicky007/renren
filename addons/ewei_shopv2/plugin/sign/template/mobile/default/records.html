@@ -3,13 +3,17 @@
 <div class='fui-page fui-page-current'>
     <div class="fui-header">
         <div class="fui-header-left">
+            {if !$_SESSION['sign_xcx_isminiprogram']}
             <a class="back"></a>
+            {/if}
         </div>
         <div class="title">详细记录</div>
         <div class="fui-header-right">
+            {if !$_SESSION['sign_xcx_isminiprogram']}
             <a href="{php echo mobileUrl()}" class="external">
                 <i class="icon icon-home"></i>
             </a>
+            {/if}
         </div>
     </div>
     <div class='fui-content navbar'>
@@ -22,18 +26,18 @@
 
     <script type="text/html" id="record_tpl">
         <%each list as item%>
-            <div class="fui-list">
-                <div class="fui-list-inner">
-                    <div class="text" style="font-size: 0.8rem"><%=item.log%></div>
-                    <div class="text">
-                        <%if item.type==0%><span class="fui-label fui-label-success">日常{$set['textsign']}</span><%/if%>
-                        <%if item.type==1%><span class="fui-label fui-label-warning">连续{$set['textsign']}奖励</span><%/if%>
-                        <%if item.type==2%><span class="fui-label fui-label-primary">总{$set['textsign']}奖励</span><%/if%>
-                        <%item.date%>
-                    </div>
+        <div class="fui-list">
+            <div class="fui-list-inner">
+                <div class="text" style="font-size: 0.8rem"><%=item.log%></div>
+                <div class="text">
+                    <%if item.type==0%><span class="fui-label fui-label-success">日常{$set['textsign']}</span><%/if%>
+                    <%if item.type==1%><span class="fui-label fui-label-warning">连续{$set['textsign']}奖励</span><%/if%>
+                    <%if item.type==2%><span class="fui-label fui-label-primary">总{$set['textsign']}奖励</span><%/if%>
+                    <%item.date%>
                 </div>
-                <div class="fui-list-angle text-danger" style="color: {$set['maincolor']};">+<%item.credit%></div>
             </div>
+            <div class="fui-list-angle text-danger" style="color: {$set['maincolor']};">+<%item.credit%></div>
+        </div>
         <%/each%>
     </script>
 
@@ -44,3 +48,4 @@
 </div>
 {php $this->footerMenus(null, false, $texts)}
 {template '_footer'}
+<!--NDAwMDA5NzgyNw==-->

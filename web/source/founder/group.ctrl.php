@@ -15,10 +15,10 @@ if ('display' == $do) {
 
 	$condition = '';
 	$params = array();
-	$name = safe_gpc_string($_GPC['name']);
-	if (!empty($name)) {
+	$keyword = safe_gpc_string($_GPC['keyword']);
+	if (!empty($keyword)) {
 		$condition .= 'WHERE name LIKE :name';
-		$params[':name'] = "%{$name}%";
+		$params[':name'] = "%{$keyword}%";
 	}
 	$lists = pdo_fetchall('SELECT * FROM ' . tablename('users_founder_group') . $condition . ' LIMIT ' . ($pageindex - 1) * $pagesize . ',' . $pagesize, $params);
 	$lists = user_group_format($lists);
@@ -28,12 +28,15 @@ if ('display' == $do) {
 }
 
 if ('post' == $do) {
+	$user_type = 'vice_founder';
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		$group_info = pdo_get('users_founder_group', array('id' => $id));
 		$group_info['package'] = iunserializer($group_info['package']);
 		if (!empty($group_info['package']) && in_array(-1, $group_info['package'])) {
 			$group_info['check_all'] = true;
+		}else {
+			$checked_groups = pdo_getall('uni_group', array('uniacid' => 0, 'id' => $group_info['package']), array('id', 'name'), '', array('id DESC'));
 		}
 	}
 	$packages = uni_groups();
@@ -46,37 +49,55 @@ if ('post' == $do) {
 			}
 		}
 		unset($package_info);
+		$packages = array_values($packages);
 	}
 
-	if (checksubmit('submit')) {
+	$pagesize = 15;
+	$pager = pagination(count($packages), 1, $pagesize, '', array('ajaxcallback' => true, 'callbackfuncname' => 'loadMore'));
+	template('user/group-post');
+}
+
+if ('save' == $do) {
+	if ($_W['ispost']) {
 		$account_all_type = uni_account_type();
 		$account_all_type_sign = array_keys(uni_account_type_sign());
 		$founder_user_group = array(
-			'id' => intval($_GPC['id']),
+			'id' => safe_gpc_int($_GPC['id']),
 			'name' => safe_gpc_string($_GPC['name']),
 			'package' => safe_gpc_array($_GPC['package']),
-			'timelimit' => intval($_GPC['timelimit']),
+			'timelimit' => safe_gpc_int($_GPC['timelimit']),
 		);
 		foreach ($account_all_type_sign as $account_type) {
 			$maxtype = 'max' . $account_type;
-			$founder_user_group[$maxtype] = intval($_GPC[$maxtype]);
+			$founder_user_group[$maxtype] = safe_gpc_int($_GPC[$maxtype]);
 		}
 		$user_group = user_save_founder_group($founder_user_group);
 		if (is_error($user_group)) {
+			if ($_W['isajax']) {
+				iajax(-1, $user_group['message']);
+			}
 			itoast($user_group['message'], '', '');
 		}
 		cache_clean(cache_system_key('user_modules'));
+		if ($_W['isajax']) {
+			iajax(0, '用户组更新成功！');
+		}
 		itoast('用户组更新成功！', url('founder/group'), 'success');
 	}
-	template('founder/group-post');
 }
 
 if ('del' == $do) {
 	$id = intval($_GPC['id']);
 	$result = pdo_delete('users_founder_group', array('id' => $id));
 	if (!empty($result)) {
+		if ($_W['isajax']) {
+			iajax(0, '删除成功！');
+		}
 		itoast('删除成功！', url('founder/group/'), 'success');
 	} else {
+		if ($_W['isajax']) {
+			iajax(-1, '删除失败！请稍候重试！');
+		}
 		itoast('删除失败！请稍候重试！', url('founder/group'), 'error');
 	}
 	exit;

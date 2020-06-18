@@ -22,7 +22,7 @@ class StoreModuleSite extends WeModuleSite {
 
 	public function storeIsOpen() {
 		global $_W;
-		if (user_is_founder($_W['uid'], true)) {
+		if ($_W['isadmin']) {
 			return true;
 		}
 		if (1 == $this->store_setting['status']) {
@@ -120,6 +120,15 @@ class StoreModuleSite extends WeModuleSite {
 					cache_delete(cache_system_key('uniaccount_type', array('account_type' => $order[$account_type])));
 				}
 				cache_delete(cache_system_key('site_store_buy', array('type' => $goods['type'], 'uniacid' => $order['uniacid'])));
+
+				if ($goods['type'] == STORE_TYPE_USER_RENEW) {
+					$user_endtime = strtotime('+' . $order['duration'] * $goods['account_num'] . $goods['unit'], $_W['user']['endtime']);
+					table('users')
+						->where('uid', $_W['uid'])
+						->fill(array('endtime' => $user_endtime))
+						->save();
+				}
+
 				if (STORE_TYPE_USER_PACKAGE == $goods['type']) {
 					$data['uid'] = $order['buyerid'];
 					$user = user_single($data['uid']);
@@ -143,7 +152,7 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebPaySetting() {
 		$this->storeIsOpen();
 		global $_W, $_GPC;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 
@@ -253,7 +262,7 @@ class StoreModuleSite extends WeModuleSite {
 		}
 
 		if ('display' == $operate) {
-			if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
+			if ($_W['isadmin']) {
 				$message_id = $_GPC['message_id'];
 				message_notice_read($message_id);
 			}
@@ -320,7 +329,7 @@ class StoreModuleSite extends WeModuleSite {
 							} else {
 								$order['goods_info']['module_info'] = module_fetch($order['goods_info']['module']);
 							}
-							if ($order['goods_info']['is_wish'] == STORE_ORDER_WISH && user_is_founder($_W['uid'])) {
+							if ($order['goods_info']['is_wish'] == STORE_ORDER_WISH && $_W['isfounder']) {
 								$order['goods_info']['module_info']['cloud_mid'] = table('site_store_goods_cloud')->where(array('name' => $order['goods_info']['module']))->getcolumn('cloud_id');
 							}
 						} elseif ($order['goods_info']['type'] == STORE_TYPE_USER_PACKAGE) {
@@ -340,7 +349,7 @@ class StoreModuleSite extends WeModuleSite {
 		}
 
 		if ('change_price' == $operate || 'delete' == $operate) {
-			if (!user_is_founder($_W['uid'], true)) {
+			if (!$_W['isadmin']) {
 				iajax(-1, '无权限更改！');
 			}
 			$id = intval($_GPC['id']);
@@ -419,7 +428,7 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebSetting() {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$operate = $_GPC['operate'];
@@ -442,13 +451,13 @@ class StoreModuleSite extends WeModuleSite {
 			$system_menu = system_menu();
 			$goods_menu = $system_menu['store']['section']['store_goods']['menu'];
 			$core_menus = table('core_menu')
-				->select(array('id', 'permission_name', 'title'))
+				->select(array('id', 'permission_name', 'title', 'is_display'))
 				->getall('permission_name');
 			$menu_permission_name = array_keys((array)$core_menus);
-			foreach ($goods_menu as $permission_name => &$item) {
+			foreach ($goods_menu as $permission_name => &$menu_item) {
 				if (in_array($permission_name, $menu_permission_name)) {
-					$item['title'] = $core_menus[$permission_name]['title'];
-					$item['is_display'] = $core_menus[$permission_name]['is_display'];
+					$menu_item['title'] = !empty($core_menus[$permission_name]['title']) ? $core_menus[$permission_name]['title'] : $menu_item['title'];
+					$menu_item['is_display'] = $core_menus[$permission_name]['is_display'];
 				}
 			}
 			if (checksubmit('submit')) {
@@ -465,7 +474,7 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebCashSetting() {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$_W['page']['title'] = '分销设置 - 商城';
@@ -484,7 +493,7 @@ class StoreModuleSite extends WeModuleSite {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
 		load()->model('module');
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$operate = $_GPC['operate'];
@@ -602,7 +611,7 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebGoodsPost() {
 		$this->storeIsOpen();
 		global $_GPC, $_W;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$operate = $_GPC['operate'];
@@ -675,6 +684,19 @@ class StoreModuleSite extends WeModuleSite {
 					$data['account_num'] = 0;
 					$data[$all_type_info['renew'][$type]['num_sign']] = safe_gpc_int($_GPC['account_num']);
 				}
+
+				if (STORE_TYPE_ACCOUNT_PACKAGE == $type) {
+					$account_group = table('users_create_group')->where('id', $data['account_group'])->get();
+					$data['account_num'] = $account_group['maxaccount'];
+					$data['wxapp_num'] = $account_group['maxwxapp'];
+					$data['webapp_num'] = $account_group['maxwebapp'];
+					$data['phoneapp_num'] = $account_group['maxphoneapp'];
+					$data['xzapp_num'] = $account_group['maxxzapp'];
+					$data['aliapp_num'] = $account_group['maxaliapp'];
+					$data['baiduapp_num'] = $account_group['maxbaiduapp'];
+					$data['toutiaoapp_num'] = $account_group['maxtoutiaoapp'];
+				}
+
 				if (STORE_TYPE_API == $type) {
 					$data['title'] = '应用访问流量(API)';
 				}
@@ -691,7 +713,6 @@ class StoreModuleSite extends WeModuleSite {
 					$data['id'] = $id;
 					$data['module'] = $goods_info['module'];
 				}
-
 				$result = store_goods_post($data);
 				if (!empty($result)) {
 					$redirect_type = $type;
@@ -777,8 +798,10 @@ class StoreModuleSite extends WeModuleSite {
 			'module' => 'store_goods_module',
 			'account_num' => 'store_goods_account',
 			'renew' => 'store_goods_account_renew',
+			'29' => 'store_goods_user_renew',
 			'5' => 'store_goods_package',
 			'9' => 'store_goods_users_package',
+			'10' => 'store_goods_user_account',
 			'6' => 'store_goods_api',
 		);
 		if (!empty($_GPC['type']) && in_array(safe_gpc_string($_GPC['type']), array_keys($mapping_type)) && !empty($this->store_setting[$mapping_type[safe_gpc_string($_GPC['type'])]])) {
@@ -818,7 +841,7 @@ class StoreModuleSite extends WeModuleSite {
 			$store_goods = $goods_table->getGoods($is_wish);
 			$total = $goods_table->getLastQueryTotal();
 
-						$use_group_price = !user_is_founder($_W['uid']) && !empty($_W['user']['groupid']);
+						$use_group_price = !$_W['isfounder'] && !empty($_W['user']['groupid']);
 
 			if (!empty($store_goods)) {
 				foreach ($store_goods as $key => &$goods) {
@@ -854,7 +877,7 @@ class StoreModuleSite extends WeModuleSite {
 				itoast('商品不存在', '', 'info');
 			}
 			$goods = table('site_store_goods')->getById($goods);
-						if (!user_is_founder($_W['uid']) && !empty($_W['user']['groupid'])) {
+						if (!$_W['founder'] && !empty($_W['user']['groupid'])) {
 				$goods['user_group_price'] = iunserializer($goods['user_group_price']);
 				if (!empty($goods['user_group_price'][$_W['user']['groupid']]['price'])) {
 					$goods['price'] = $goods['user_group_price'][$_W['user']['groupid']]['price'];
@@ -971,9 +994,16 @@ class StoreModuleSite extends WeModuleSite {
 			if (empty($goods_info)) {
 				iajax(-1, '商品不存在！');
 			}
+
+			if ($goods_info['type'] == STORE_TYPE_USER_RENEW) {
+				if ($_W['user']['endtime'] <= USER_ENDTIME_GROUP_UNLIMIT_TYPE) {
+					iajax(-1, '您当前的状态不支持购买该商品');
+				}
+			}
+
 			$goods_type_info = $all_type_info[$goods_info['type']];
 			$user_account = table('account')->userOwnedAccount();
-						if (!user_is_founder($_W['uid']) && !empty($_W['user']['groupid'])) {
+						if (!$_W['isfounder'] && !empty($_W['user']['groupid'])) {
 				$goods_info['user_group_price'] = iunserializer($goods_info['user_group_price']);
 				if (!empty($goods_info['user_group_price'][$_W['user']['groupid']]['price'])) {
 					$goods_info['price'] = $goods_info['user_group_price'][$_W['user']['groupid']]['price'];
@@ -1102,6 +1132,15 @@ class StoreModuleSite extends WeModuleSite {
 						table('account')->where(array('uniacid' => $order[$account_type]))->fill(array('endtime' => $account_endtime))->save();
 						cache_delete(cache_system_key('uniaccount_type', array('account_type' => $order[$account_type])));
 					}
+
+					if ($goods['type'] == STORE_TYPE_USER_RENEW) {
+						$user_endtime = strtotime('+' . $order['duration'] * $goods['account_num'] . $goods['unit'], $_W['user']['endtime']);
+						table('users')
+							->where('uid', $_W['uid'])
+							->fill(array('endtime' => $user_endtime))
+							->save();
+					}
+
 					if (STORE_TYPE_USER_PACKAGE == $goods['type']) {
 						$data['uid'] = $_W['uid'];
 						$user = user_single($data['uid']);
@@ -1215,7 +1254,7 @@ class StoreModuleSite extends WeModuleSite {
 		}
 		$this->storeIsOpen();
 		global $_GPC, $_W;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$op = safe_gpc_string(trim($_GPC['op']));
@@ -1257,13 +1296,12 @@ class StoreModuleSite extends WeModuleSite {
 		$this->storeIsOpen();
 		global $_W, $_GPC;
 		$op = safe_gpc_string(trim($_GPC['op']));
-		$isfounder = user_is_founder($_W['uid'], true);
 
 				if ('wishgoods' == $op) {
 			$gpc = array();
 			$gpc['goods_type'] = intval($_GPC['goods_type']);
 			$gpc['goods_name'] = safe_gpc_string($_GPC['goods_name']);
-			$gpc['status'] = $isfounder ? intval($_GPC['status']) : 1;
+			$gpc['status'] = $_W['isadmin'] ? intval($_GPC['status']) : 1;
 			$gpc['is_wish'] = STORE_ORDER_WISH;
 			$gpc['page'] = max(intval($_GPC['page']), 1);
 			$gpc['size'] = intval($_GPC['page_size']);
@@ -1281,7 +1319,7 @@ class StoreModuleSite extends WeModuleSite {
 			));
 		}
 
-				if (!user_is_founder($_W['uid'], true)) {
+				if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 
@@ -1382,7 +1420,6 @@ class StoreModuleSite extends WeModuleSite {
 				'description' => safe_gpc_html(htmlspecialchars_decode(safe_gpc_string($_GPC['description']))),
 				'title_initial' => get_first_pinyin($_GPC['title']),
 				'createtime' => TIMESTAMP,
-				'unit' => 'month',
 				'is_wish' => STORE_ORDER_WISH,
 				'status' => intval($_GPC['status']),
 				'user_group_price' => '',
@@ -1398,7 +1435,7 @@ class StoreModuleSite extends WeModuleSite {
 				$goods = $common_data;
 				$goods['type'] = $support_type[$support]['store_type'];
 				$goods['price'] = $value['price'];
-
+				$goods['unit'] = $value['unit'] ? $value['unit'] : 'month';
 				$goods_id = $store_goods_table->where(array('module' => $goods['module'], 'type' => $goods['type'], 'is_wish' => STORE_ORDER_WISH, 'status <>' => 2))->getcolumn('id');
 				if ('false' == $value['checked']) {
 					if (empty($goods_id)) {
@@ -1423,7 +1460,7 @@ class StoreModuleSite extends WeModuleSite {
 	public function doWebPermission() {
 		global $_W, $_GPC;
 		$this->storeIsOpen();
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			itoast('', referer(), 'info');
 		}
 		$operation = trim($_GPC['operation']);
@@ -1530,29 +1567,28 @@ class StoreModuleSite extends WeModuleSite {
 			->select(array('id', 'permission_name', 'title', 'is_display'))
 			->getall('permission_name');
 		$menu_permission_name = array_keys((array)$core_menus);
-		$is_admin = user_is_founder($_W['uid'], true);
 		$is_vice_founder = user_is_vice_founder($_W['uid']);
 		foreach ($menu as $key => &$sub_menu) {
-			if (empty($sub_menu['menu']) || !is_array($sub_menu['menu']) || $sub_menu['founder'] && !$is_admin) {
+			if (empty($sub_menu['menu']) || !is_array($sub_menu['menu']) || $sub_menu['founder'] && !$_W['isadmin']) {
 				unset($menu[$key]); continue;
 			}
-			if ($is_admin && $_W['iscontroller'] && !$sub_menu['founder'] && !in_array(!$key, array('store_goods', 'store_wish_goods')) != $key) {
+			if ($_W['isadmin'] && $_W['iscontroller'] && !$sub_menu['founder'] && !in_array(!$key, array('store_goods', 'store_wish_goods')) != $key) {
 				unset($menu[$key]);continue;
 			}
-			if ($is_admin && !$_W['iscontroller'] && $sub_menu['founder']) {
+			if ($_W['isadmin'] && !$_W['iscontroller'] && $sub_menu['founder']) {
 				unset($menu[$key]);continue;
 			}
 			if ((!$is_vice_founder || !$this->store_setting['cash_status']) && $sub_menu['vice_founder']) {
 				unset($menu[$key]);continue;
 			}
 			foreach ($sub_menu['menu'] as $permission_name => &$item) {
-				if ($item['founder'] && !$is_admin) {
+				if ($item['founder'] && !$_W['isadmin']) {
 					unset($sub_menu['menu'][$permission_name]);continue;
 				}
-				if ($is_admin && $_W['iscontroller'] && isset($item['founder']) && !$item['founder']) {
+				if ($_W['isadmin'] && $_W['iscontroller'] && isset($item['founder']) && !$item['founder']) {
 					unset($sub_menu['menu'][$permission_name]);continue;
 				}
-				if ($is_admin && !$_W['iscontroller'] && $item['founder']) {
+				if ($_W['isadmin'] && !$_W['iscontroller'] && $item['founder']) {
 					unset($sub_menu['menu'][$permission_name]);continue;
 				}
 				if ($item['vice_founder'] && (!$is_vice_founder || !$this->store_setting['cash_status'])) {
@@ -1659,7 +1695,7 @@ class StoreModuleSite extends WeModuleSite {
 
 	public function doWebCash() {
 		global $_W, $_GPC;
-		if (!user_is_founder($_W['uid'])) {
+		if (!$_W['isfounder']) {
 			message('无访问权限!');
 		}
 		if (empty($this->store_setting['cash_status'])) {

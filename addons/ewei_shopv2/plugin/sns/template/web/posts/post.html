@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-heading">
     <span class='pull-right'>
-        {if $isManager}
+        {ife 'sns.posts' $item}
         	<a class='btn btn-primary btn-sm' href="{php echo webUrl('sns/posts/add')}"><i class='fa fa-plus'></i> 发表话题</a>
         {/if}
         {ifp 'sns.posts.add'}
@@ -157,3 +157,4 @@
     });*/
 </script>
 {template '_footer'}
+<!--青岛易联互动网络科技有限公司-->

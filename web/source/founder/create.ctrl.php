@@ -7,7 +7,7 @@ defined('IN_IA') or exit('Access Denied');
 
 load()->model('user');
 
-$dos = array('post', 'save');
+$dos = array('post', 'save', 'get_user_founder_group_detail_info');
 $do = in_array($do, $dos) ? $do : 'post';
 
 $is_used = safe_gpc_string($_GPC['is_used']);
@@ -16,7 +16,7 @@ $modules = user_modules($_W['uid']);
 $modules = array_filter($modules, function ($module) {
 	return empty($module['issystem']);
 });
-$templates = pdo_fetchall('SELECT * FROM ' . tablename('site_templates'));
+$templates = table('modules')->getAllTemplates();
 
 $user_extra_modules = table('users_extra_modules')->getExtraModulesByUid($uid);
 
@@ -36,19 +36,12 @@ if (!empty($modules)) {
 	}
 }
 
-$source_templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
-if (!empty($source_templates)) {
-	foreach ($source_templates as &$source_template) {
-		$source_template['checked'] = 0;
-	}
-}
-
 if (user_is_vice_founder($_W['uid'])) {
 	$founder_group_info = user_founder_group_detail_info($_W['user']['groupid']);
 	$modules_group_list = $founder_group_info['package_detail'];
 } else {
 	$uni_group_table = table('uni_group');
-	$uni_group_table->searchWithUniacidAndUid();
+	$uni_group_table->searchWithUid();
 	$modules_group_list = $uni_group_table->getUniGroupList();
 }
 
@@ -96,7 +89,7 @@ if (!empty($modules_group_list)) {
 
 		$templates = (array) iunserializer($value['templates']);
 		$modules_group_list[$key]['template_num'] = !empty($templates) ? count($templates) : 0;
-		$modules_group_list[$key]['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'));
+		$modules_group_list[$key]['templates'] = table('modules')->getAllTemplateByIds($templates);
 	}
 }
 
@@ -106,54 +99,62 @@ foreach ($uni_account_type_signs as $type_sign_name) {
 	$max_account_type_signs['max' . $type_sign_name] = 0;
 }
 
-$account_group_table = table('users_create_group');
-$account_group_lists = $account_group_table->getCreateGroupList();
-
-$user_extra_limits = table('users_extra_limit')->getExtraLimitByUid($uid);
-$create_account = array(
-	'create_groups' => $account_group_lists,
-	'create_numbers' => !empty($user_extra_limits) ? $user_extra_limits : $max_account_type_signs,
-);
-
 if ('post' == $do) {
-	template('founder/create');
+	$user_type = 'vice_founder';
+		$account_group_table = table('users_create_group');
+	$account_group_lists = $account_group_table->getCreateGroupList();
+
+	$user_extra_limits = table('users_extra_limit')->getExtraLimitByUid($uid);
+	$create_account = array(
+		'create_groups' => $account_group_lists,
+		'create_numbers' => !empty($user_extra_limits) ? $user_extra_limits : $max_account_type_signs,
+	);
+	template('user/post');
 }
 
 if ('save' == $do) {
-	$user = $_GPC['user'];
-	$username = safe_gpc_string($_GPC['user']['username']);
-	$user_info = user_single(array('username' => $username));
+	$user = array(
+		'username' => safe_gpc_string($_GPC['username']),
+		'password' => $_GPC['password'],
+		'repassword' => $_GPC['repassword'],
+		'remark' => safe_gpc_string($_GPC['remark']),
+	);
+	$user_info = user_single(array('username' => $user['username']));
 
 	if ('used' == $is_used && empty($user_info)) {
+		if ($_W['isajax']) {
+			iajax(-1, '用户不存在!');
+		}
 		itoast('用户不存在!', '', 'error');
 	}
 
-	if (!user_is_founder($_W['uid'])) {
+	if (!$_W['isfounder']) {
+		if ($_W['isajax']) {
+			iajax(-1, '没有权限!');
+		}
 		itoast('没有权限!', '', 'error');
 	}
 
-	$user_founder = array(
-		'username' => $username,
-		'remark' => safe_gpc_string($user['remark']),
-		'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER,
-	);
+	$user_founder = $user;
+	$user_founder['founder_groupid'] = ACCOUNT_MANAGE_GROUP_VICE_FOUNDER;
 
 	if ('used' == $is_used) {
 		$user_founder['uid'] = $user_info['uid'];
 		$user_save_result = user_update($user_founder);
+		if (is_error($user_save_result)) {
+			iajax(-1, $user_save_result['message'], url('user/display'));
+		}
+		$uid = $user_info['uid'];
 	} else {
-		$user_founder['password'] = safe_gpc_string($user['password']);
-		$user_founder['repassword'] = safe_gpc_string($user['repassword']);
 		$user_founder['starttime'] = TIMESTAMP;
 		$user_save_result = user_info_save($user_founder, true);
-	}
-	if (is_error($user_save_result)) {
-		iajax(-1, $user_save_result['message'], url('user/display'));
+		if (is_error($user_save_result)) {
+			iajax(-1, $user_save_result['message'], url('user/display'));
+		}
+		$uid = $user_save_result['uid'];
 	}
 
-	$uid = $user_save_result['uid'];
-
-	$user_update['groupid'] = intval($_GPC['groupid']) ? intval($_GPC['groupid']) : 0;
+	$user_update['groupid'] = safe_gpc_int($_GPC['groupid']) ? safe_gpc_int($_GPC['groupid']) : 0;
 	$user_update['uid'] = $uid;
 	if (0 == $user_update['groupid']) {
 		$user_update['endtime'] = empty($_GPC['timelimit']) ? USER_ENDTIME_GROUP_DELETE_TYPE : strtotime(intval($_GPC['timelimit']) . ' days', TIMESTAMP);
@@ -226,68 +227,22 @@ if ('save' == $do) {
 		foreach ($max_account_type_signs as $type_sign_name => $type_sign_val) {
 			$data[$type_sign_name] = intval($_GPC['create_account_nums'][$type_sign_name]);
 		}
-
+		$data['timelimit'] = intval($_GPC['timelimit']);
 		if ($extra_limit_exists) {
 			$data['uid'] = $uid;
 		}
 
 		$res = $extra_limit_table->saveExtraLimit($data, $uid);
 		if (!$res) {
-			iajax('-1', '添加附加账户数量失败!', 'founder/display');
+			iajax('-1', '添加附加账户数量及有效时间失败!', 'founder/display');
 		}
 	}
-
-	if (!empty($_GPC['timelimit'])) {
-		$extra_limit_table = table('users_extra_limit');
-		$extra_limit_exists = $extra_limit_table->getExtraLimitByUid($uid);
-		$data = array(
-			'timelimit' => intval($_GPC['timelimit']),
-		);
-
-		if ($extra_limit_exists) {
-			$data['uid'] = $uid;
-		}
-		$extra_limit_add_res = $extra_limit_table->saveExtraLimit($data, $uid);
-		if (!$extra_limit_add_res) {
-			iajax('-1', '添加有效时间失败', 'founder/display');
-		}
-	}
-
 	iajax(0, '操作成功', url('founder/display'));
 }
 
-if (checksubmit()) {
-	$username = safe_gpc_string($_GPC['username']);
-	$user_info = user_single(array('username' => $username));
-
-	if ('used' == $type && empty($user_info)) {
-		itoast('用户不存在!', '', 'error');
-	}
-
-	if (!user_is_founder($_W['uid'])) {
-		itoast('没有权限!', '', 'error');
-	}
-
-	$user_founder = array(
-		'username' => $username,
-		'remark' => safe_gpc_string($_GPC['remark']),
-		'groupid' => intval($_GPC['groupid']),
-		'founder_groupid' => ACCOUNT_MANAGE_GROUP_VICE_FOUNDER,
-	);
-
-	if ('used' == $type) {
-		$user_founder['uid'] = $user_info['uid'];
-		$result = user_update($user_founder);
-	} else {
-		$user_founder['password'] = safe_gpc_string($_GPC['password']);
-		$user_founder['repassword'] = safe_gpc_string($_GPC['repassword']);
-		$user_founder['starttime'] = TIMESTAMP;
-		$user_founder['endtime'] = intval($_GPC['timelimit']);
-		$result = user_info_save($user_founder, true);
-	}
-
-	if (is_error($result)) {
-		itoast($result['message'], '', 'error');
-	}
-	itoast($result['message'], url('founder/display'), 'success');
+if ('get_user_founder_group_detail_info' == $do) {
+	$user_group_id = safe_gpc_int($_GPC['user_group_id']);
+	$user_group_detail_info = user_founder_group_detail_info($user_group_id);
+	iajax(0, $user_group_detail_info);
 }
+

@@ -2,7 +2,7 @@
     <div class="seckill-text">
         <span class="title" style="color:#f02b2b;font-weight: bold;">{$seckillinfo['tag']}</span>
         <span class="title">{$seckillinfo['time']}点场</span>
-        <div class="killtime" data-toggle="timer" data-timer="{$seckillinfo['endtime']}|.time-hour|.time-min|.time-sec|" data-timer-callback="">
+        <div class="killtime" data-toggle="timer" data-timer="{$seckillinfo['starttime']}|.time-hour|.time-min|.time-sec|" data-timer-callback="" data-time-end="{$seckillinfo['endtime']}|.time-hour|.time-min|.time-sec|">
             <span class="item time-hour">--</span>:<span class="item time-min">--</span>:<span class="item time-sec">--</span>
         </div>
     </div>

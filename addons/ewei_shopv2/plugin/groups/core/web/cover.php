@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,7 +18,7 @@ class Cover_EweiShopV2Page extends PluginWebPage
 		}
 
 		if ($_W['ispost']) {
-			$data = (is_array($_GPC['cover']) ? $_GPC['cover'] : array());
+			$data = is_array($_GPC['cover']) ? $_GPC['cover'] : array();
 
 			if (empty($data['keyword'])) {
 				show_json(0, '请输入关键词!');

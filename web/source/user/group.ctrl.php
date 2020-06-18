@@ -25,6 +25,7 @@ if ('display' == $do) {
 	if (user_is_vice_founder()) {
 		$users_group_table->getOwnUsersGroupsList($_W['uid']);
 	}
+	$users_group_table->searchWithPage($pageindex, $pagesize);
 	$lists = $users_group_table->getUsersGroupList();
 
 	$lists = user_group_format($lists);
@@ -34,6 +35,7 @@ if ('display' == $do) {
 }
 
 if ('post' == $do) {
+	$user_type = 'user';
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
 		$group_info = pdo_get('users_group', array('id' => $id));
@@ -69,31 +71,38 @@ if ('post' == $do) {
 if ('save' == $do) {
 	$account_all_type = uni_account_type();
 	$account_all_type_sign = array_keys(uni_account_type_sign());
-	$group_info = safe_gpc_array($_GPC['group_info']);
 	$user_group = array(
-		'id' => intval($group_info['id']),
-		'name' => $group_info['name'],
-		'package' => $group_info['package'],
-		'timelimit' => intval($group_info['timelimit']),
+		'id' => safe_gpc_int($_GPC['id']),
+		'name' => safe_gpc_string($_GPC['name']),
+		'package' => safe_gpc_array($_GPC['package']),
+		'timelimit' => safe_gpc_int($_GPC['timelimit']),
 		'owner_uid' => 0
 	);
 	$max_type_all = 0;
 	foreach ($account_all_type_sign as $account_type) {
 		$maxtype = 'max' . $account_type;
-		$user_group[$maxtype] = intval($group_info[$maxtype]);
-		$max_type_all += $group_info[$maxtype];
+		$user_group[$maxtype] = safe_gpc_int($_GPC[$maxtype]);
+		$max_type_all += safe_gpc_int($_GPC[$maxtype]);
 	}
 
 	if ($max_type_all <= 0) {
-		iajax(-1, '创建账号个数，不能全部为0，至少要有一个!', referer());
+		if ($_W['isajax']) {
+			iajax(-1, '创建账号个数，不能全部为0，至少要有一个!', referer());
+		}
+		itoast('创建账号个数，不能全部为0，至少要有一个！', '', '');
 	}
-
 	$user_group_info = user_save_group($user_group);
 	if (is_error($user_group_info)) {
-		iajax(-1, $user_group_info['message'], referer());
+		if ($_W['isajax']) {
+			iajax(-1, $user_group_info['message']);
+		}
+		itoast($user_group['message'], '', '');
 	}
 	cache_clean(cache_system_key('user_modules'));
-	iajax(0, '用户组更新成功！', url('user/group/display'));
+	if ($_W['isajax']) {
+		iajax(0, '用户组更新成功！');
+	}
+	itoast('用户组更新成功！', url('user/group'), 'success');
 }
 
 if ('del' == $do) {

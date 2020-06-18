@@ -61,6 +61,12 @@
 
                     <div style="background: #f5f7f9;width: 520px;padding: 10px;margin-top: 10px">
                         <label class="radio radio-inline" style="width:240px">
+                            <input type="radio" name="data[leveltype]" value="11" {if $data['leveltype']==11}checked{/if}/> 购买指定产品
+                        </label>
+                    </div>
+
+                    <div style="background: #f5f7f9;width: 520px;padding: 10px;margin-top: 10px">
+                        <label class="radio radio-inline" style="width:240px">
                             <input type="radio" name="data[leveltype]" value="10" {if $data['leveltype']==10}checked{/if}/> 已提现佣金总金额
                         </label>
                     </div>
@@ -77,6 +83,7 @@
                       		{if $data['leveltype']==8}下级分销商总人数{/if}
                       		{if $data['leveltype']==9}一级分销商人数{/if}
                       		{if $data['leveltype']==10}已提现佣金总金额{/if}
+                            {if $data['leveltype']==11}购买指定产品{/if}
                       {/if}
                 </div>
             </div>

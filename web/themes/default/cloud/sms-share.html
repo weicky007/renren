@@ -62,6 +62,14 @@
 		<li><a href="{php echo url('cloud/sms-share')}">分配短信</a></li>
 		<li>添加分配短信</li>
 	</ol>
+
+	<div class="we7-head-info">
+		<div class="info">
+			可分配短信：<span  class="color-default">{$sms_count_remained}</span>条
+		</div>
+		<a href="//s.w7.cc/goods-7.html" class="btn btn-primary" target="_blank">购买短信</a>
+	</div>
+
 	<div class="we7-form sms-add" ng-controller="smsAdd" ng-cloak>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">选择平台</label>

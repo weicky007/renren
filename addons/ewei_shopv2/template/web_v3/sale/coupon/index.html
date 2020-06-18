@@ -80,7 +80,7 @@
 			<th style="">领取中心</th>
 			<th style="width:100px;" >口令玩法人数 猜中人数</th>
 			<th style="width:100px;">创建时间</th>
-			<th style="width: 130px;">操作</th>
+			<th style="width: 180px;">操作</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -171,6 +171,10 @@
 							   <i class='icow icow-lianjie2'></i>
 						   </span>
 					</a>
+					<a href="javascript:void(0);" class="btn btn-default btn-operation btn-op" data-toggle="popover" data-trigger="hover" data-html="true"
+					   data-content="<img src='{$row['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
+						<i class="icow icow-erweima3"></i>
+					</a>
 					{ifp 'sale.coupon.delete'}
 					<a class='btn btn-default btn-operation btn-op' data-toggle='ajaxRemove' href="{php echo webUrl('sale/coupon/delete',array('id' => $row['id']));}" data-confirm="确定要删除该优惠券吗？">
 						 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
@@ -179,13 +183,22 @@
 					</a>
 
 					{/if}
-					<a href="javascript:void(0);" class="btn btn-default btn-operation btn-op" data-toggle="popover" data-trigger="hover" data-html="true"
-					   data-content="<img src='{$row['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
-						<i class="icow icow-erweima3"></i>
+
+
+
+					{if !empty($row['quickget'])}
+
+					<a href="javascript:;" data-url="{php echo mobileUrl('sale/coupon/quickget', array('id' => $row['id']),true)}"  class="btn btn-default js-clip btn-operation btn-op">
+						 <span data-toggle="tooltip" data-placement="top"  data-original-title="复制直接领取链接">
+							   <i class='icow icow-lianjie2'></i>
+						   </span>
 					</a>
 
-
-
+					<a href="javascript:void(0);" class="btn btn-default btn-operation btn-op" data-toggle="popover" data-trigger="hover" data-html="true"
+					   data-content="<img src='{$row['quickqrcode']}' width='130' alt='链接二维码'><p style='text-align:center;'>直接领取二维码</p>" data-placement="auto right">
+						<i class="icow icow-erweima3"></i>
+					</a>
+					{/if}
 
 					<!--	{ifp 'sale.coupon.send'}
                         <a  class='btn btn-primary  btn-sm' href="{php echo webUrl('sale/coupon/send',array('couponid' => $row['id']));}"><i class='fa fa-send'></i> 发放优惠券</a>

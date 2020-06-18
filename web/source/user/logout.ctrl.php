@@ -8,7 +8,7 @@ isetcookie('__session', '', -10000);
 isetcookie('__iscontroller', '', -10000);
 $forward = $_GPC['forward'];
 if (empty($forward)) {
-	$forward = './?refersh';
+	$forward = './index.php';
 }
 
 header('Location:' . $forward);

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,13 +22,19 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		$uniacid = $_W['uniacid'];
 		$orderid = intval($_GPC['orderid']);
 		$teamid = intval($_GPC['teamid']);
-		$order = pdo_fetch('select o.*,g.title,g.status as gstatus,g.deleted as gdeleted,g.stock from ' . tablename('ewei_shop_groups_order') . " as o\r\n\t\t\t\tleft join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\twhere o.id = :id and o.uniacid = :uniacid order by o.createtime desc", array(':id' => $orderid, ':uniacid' => $uniacid));
+		$order = pdo_fetch('select o.*,g.title,g.status as gstatus,g.deleted as gdeleted,g.stock,g.more_spec from ' . tablename('ewei_shop_groups_order') . ' as o
+				left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+				where o.id = :id and o.uniacid = :uniacid order by o.createtime desc', array(':id' => $orderid, ':uniacid' => $uniacid));
 
 		if (empty($order)) {
 			$this->message('订单未找到！', mobileUrl('groups/index'), 'error');
 		}
 
-		if (!empty($isteam) && ($order['success'] == -1)) {
+		if (!!($order['more_spec'] && empty($order['specs']))) {
+			$this->message('下单数据有问题,请取消订单后重新下单', mobileUrl('groups/index'), 'error');
+		}
+
+		if (!empty($isteam) && $order['success'] == -1) {
 			$this->message('该活动已失效，请浏览其他商品或联系商家！', mobileUrl('groups/index'), 'error');
 		}
 
@@ -40,14 +47,15 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		if (!empty($teamid)) {
-			$team_orders = pdo_fetchall('select * from ' . tablename('ewei_shop_groups_order') . "\r\n\t\t\t\t\twhere teamid = :teamid and uniacid = :uniacid ", array(':teamid' => $teamid, ':uniacid' => $uniacid));
+			$team_orders = pdo_fetchall('select * from ' . tablename('ewei_shop_groups_order') . '
+					where teamid = :teamid and uniacid = :uniacid ', array(':teamid' => $teamid, ':uniacid' => $uniacid));
 
 			foreach ($team_orders as $key => $value) {
-				if ($team_orders && ($value['success'] == -1)) {
+				if ($team_orders && $value['success'] == -1) {
 					$this->message('该活动已过期，请浏览其他商品或联系商家！', mobileUrl('groups/index'), 'error');
 				}
 
-				if ($team_orders && ($value['success'] == 1)) {
+				if ($team_orders && $value['success'] == 1) {
 					$this->message('该活动已结束，请浏览其他商品或联系商家！', mobileUrl('groups/index'), 'error');
 				}
 			}
@@ -75,14 +83,15 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . "\r\n\t\t WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1", array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $order['orderno']));
-		if (!empty($log) && ($log['status'] != '0')) {
+		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . '
+		 WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $order['orderno']));
+		if (!empty($log) && $log['status'] != '0') {
 			header('location: ' . mobileUrl('groups/goods', array('id' => $order['id'])));
 			exit();
 		}
 
 		if (empty($log)) {
-			$log = array('uniacid' => $uniacid, 'openid' => $_W['openid'], 'module' => 'groups', 'tid' => $order['orderno'], 'credit' => $order['credit'], 'creditmoney' => $order['creditmoney'], 'fee' => ($order['price'] - $order['creditmoney']) + $order['freight'], 'status' => 0);
+			$log = array('uniacid' => $uniacid, 'openid' => $_W['openid'], 'module' => 'groups', 'tid' => $order['orderno'], 'credit' => $order['credit'], 'creditmoney' => $order['creditmoney'], 'fee' => $order['price'] - $order['creditmoney'] + $order['freight'], 'status' => 0);
 			pdo_insert('ewei_shop_groups_paylog', $log);
 			$plid = pdo_insertid();
 		}
@@ -94,7 +103,7 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		$sec = iunserializer($sec['sec']);
 		$param_title = $set['shop']['name'] . '订单';
 		$credit = array('success' => false);
-		if (isset($set['pay']) && ($set['pay']['credit'] == 1)) {
+		if (isset($set['pay']) && $set['pay']['credit'] == 1) {
 			if ($order['deductcredit2'] <= 0) {
 				$credit = array('success' => true, 'current' => $member['credit2']);
 			}
@@ -108,7 +117,7 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 			$params['user'] = $openid;
 			$params['fee'] = $log['fee'];
 			$params['title'] = $param_title;
-			if (isset($set['pay']) && ($set['pay']['weixin'] == 1)) {
+			if (isset($set['pay']) && $set['pay']['weixin'] == 1) {
 				load()->model('payment');
 				$setting = uni_setting($_W['uniacid'], array('payment'));
 				$options = array();
@@ -133,7 +142,7 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 				}
 			}
 
-			if (isset($set['pay']) && ($set['pay']['weixin_jie'] == 1) && !$wechat['success']) {
+			if (isset($set['pay']) && $set['pay']['weixin_jie'] == 1 && !$wechat['success']) {
 				$params['tid'] = $params['tid'] . '_borrow';
 				$options = array();
 				$options['appid'] = $sec['appid'];
@@ -168,7 +177,7 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		$payinfo = array('orderid' => $orderid, 'teamid' => $teamid, 'credit' => $credit, 'wechat' => $wechat, 'money' => $log['fee']);
 
 		if (is_h5app()) {
-			$payinfo = array('wechat' => !empty($sec['app_wechat']['merchname']) && !empty($set['pay']['app_wechat']) && !empty($sec['app_wechat']['appid']) && !empty($sec['app_wechat']['appsecret']) && !empty($sec['app_wechat']['merchid']) && !empty($sec['app_wechat']['apikey']) && (0 < $order['price']) ? true : false, 'alipay' => false, 'mcname' => $sec['app_wechat']['merchname'], 'ordersn' => $order['orderno'], 'money' => $log['fee'], 'attach' => $_W['uniacid'] . ':5', 'type' => 5, 'orderid' => $orderid, 'credit' => $credit, 'teamid' => $teamid);
+			$payinfo = array('wechat' => !empty($sec['app_wechat']['merchname']) && !empty($set['pay']['app_wechat']) && !empty($sec['app_wechat']['appid']) && !empty($sec['app_wechat']['appsecret']) && !empty($sec['app_wechat']['merchid']) && !empty($sec['app_wechat']['apikey']) && 0 < $order['price'] ? true : false, 'alipay' => false, 'mcname' => $sec['app_wechat']['merchname'], 'ordersn' => $order['orderno'], 'money' => $log['fee'], 'attach' => $_W['uniacid'] . ':5', 'type' => 5, 'orderid' => $orderid, 'credit' => $credit, 'teamid' => $teamid);
 		}
 
 		include $this->template();
@@ -208,7 +217,8 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$order_goods = pdo_fetch('select * from  ' . tablename('ewei_shop_groups_goods') . "\r\n\t\t\t\t\twhere id = :id and uniacid=:uniacid ", array(':uniacid' => $_W['uniacid'], ':id' => $order['goodid']));
+		$order_goods = pdo_fetch('select * from  ' . tablename('ewei_shop_groups_goods') . '
+					where id = :id and uniacid=:uniacid ', array(':uniacid' => $_W['uniacid'], ':id' => $order['goodid']));
 
 		if (empty($order_goods)) {
 			if ($_W['ispost']) {
@@ -230,7 +240,8 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . "\r\n\t\t WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1", array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $order['orderno']));
+		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_paylog') . '
+		 WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $uniacid, ':module' => 'groups', ':tid' => $order['orderno']));
 
 		if (empty($log)) {
 			if ($_W['ispost']) {
@@ -244,7 +255,7 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		if ($type == 'credit') {
 			$orderno = $order['orderno'];
 			$credits = m('member')->getCredit($openid, 'credit2');
-			if (($credits < $log['fee']) || ($credits < 0)) {
+			if ($credits < $log['fee'] || $credits < 0) {
 				show_json($credits, '余额不足,请充值');
 			}
 
@@ -311,6 +322,58 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 		$orderid = intval($_GPC['id']);
 		$order = pdo_fetch('select status from ' . tablename('ewei_shop_groups_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid));
 		show_json(1, $order);
+	}
+
+	public function checkorder()
+	{
+		global $_W;
+		global $_GPC;
+		$uniacid = $_W['uniacid'];
+		$orderid = intval($_GPC['orderid']);
+		$teamid = intval($_GPC['teamid']);
+		$isteam = intval($_GPC['isteam']);
+		$order = pdo_fetch('select o.*,g.title,g.status as gstatus,g.deleted as gdeleted,g.stock from ' . tablename('ewei_shop_groups_order') . ' as o
+				left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+				where o.id = :id and o.uniacid = :uniacid order by o.createtime desc', array(':id' => $orderid, ':uniacid' => $uniacid));
+
+		if (empty($order)) {
+			show_json(0, '订单未找到！');
+		}
+
+		if (!empty($isteam) && $order['success'] == -1) {
+			show_json(0, '该活动已失效，请浏览其他商品或联系商家！！');
+		}
+
+		if (empty($order['gstatus']) || !empty($order['gdeleted'])) {
+			show_json(0, $order['title'] . '<br/> 已下架!');
+		}
+
+		if ($order['stock'] <= 0) {
+			show_json(0, $order['title'] . '<br/>库存不足!');
+		}
+
+		if (!empty($teamid)) {
+			$team_orders = pdo_fetchall('select * from ' . tablename('ewei_shop_groups_order') . '
+					where teamid = :teamid and uniacid = :uniacid ', array(':teamid' => $teamid, ':uniacid' => $uniacid));
+
+			foreach ($team_orders as $key => $value) {
+				if ($team_orders && $value['success'] == -1) {
+					show_json(0, '该活动已过期，请浏览其他商品或联系商家！');
+				}
+
+				if ($team_orders && $value['success'] == 1) {
+					show_json(0, '该活动已结束，请浏览其他商品或联系商家！');
+				}
+			}
+
+			$num = pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_groups_order') . ' as o where teamid = :teamid and status > :status and uniacid = :uniacid ', array(':teamid' => $teamid, ':status' => 0, ':uniacid' => $uniacid));
+
+			if ($order['groupnum'] <= $num) {
+				show_json(0, '该活动已成功组团，请浏览其他商品或联系商家！');
+			}
+		}
+
+		show_json(1, '可以支付');
 	}
 }
 

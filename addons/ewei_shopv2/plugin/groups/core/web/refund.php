@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -52,7 +53,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 			}
 
 			if ($status == 'over') {
-				$condition .= ' AND (o.refundtime != 0 or ore.refundstatus < 0) ';
+				$condition .= ' AND (o.refundtime != 0 or ore.refundstatus < 0) and ore.refundstatus<>-1';
 			}
 
 			if (empty($starttime) || empty($endtime)) {
@@ -80,6 +81,9 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				$params[':keyword'] = $_GPC['keyword'];
 
 				if ($searchfield == 'orderno') {
+					$condition .= ' AND locate(:keyword,o.orderno)>0 ';
+				}
+				else if ($searchfield == 'refundno') {
 					$condition .= ' AND locate(:keyword,ore.refundno)>0 ';
 				}
 				else if ($searchfield == 'member') {
@@ -99,10 +103,20 @@ class Refund_EweiShopV2Page extends PluginWebPage
 			}
 
 			if (empty($_GPC['export'])) {
-				$page = 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+				$page = 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			}
 
-			$list = pdo_fetchall("SELECT o.addressid,o.goodid,o.pay_type,o.price,o.creditmoney,o.is_team,o.refundid,ore.*,g.title,g.thumb,g.category,g.groupsprice,g.singleprice,c.name,g.thumb\r\n                ,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity,o.orderno\r\n                , a.area as aarea,a.address as aaddress,ore.refundstatus as status\r\n                FROM " . tablename('ewei_shop_groups_order_refund') . " as ore\r\n                left join " . tablename('ewei_shop_groups_order') . " as o on o.id = ore.orderid\r\n\t\t\t\tright join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\tright join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid\r\n\t\t\t\tleft join " . tablename('ewei_shop_member_address') . " a on a.id=ore.refundaddressid\r\n\t\t\t\tright join " . tablename('ewei_shop_groups_category') . " as c on c.id = g.category\r\n\t\t\t\tWHERE 1 " . $condition . '  ORDER BY ore.applytime DESC ' . $page, $params);
+			$list = pdo_fetchall('SELECT o.addressid,o.goodid,og.option_name as optiontitle,o.pay_type,o.price,o.creditmoney,o.is_team,o.refundid,ore.*,g.title,g.thumb,g.category,g.groupsprice,g.singleprice,c.name,g.thumb,g.thumb_url
+                ,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity,o.orderno
+                , a.area as aarea,a.address as aaddress,ore.refundstatus as status
+                FROM ' . tablename('ewei_shop_groups_order_refund') . ' as ore
+                left join ' . tablename('ewei_shop_groups_order') . ' as o on o.id = ore.orderid
+				left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+				left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid =  o.uniacid
+				left join ' . tablename('ewei_shop_member_address') . ' a on a.id=ore.refundaddressid
+				left join ' . tablename('ewei_shop_groups_category') . ' as c on c.id = g.category
+				left join ' . tablename('ewei_shop_groups_order_goods') . (' as og on og.groups_order_id = o.id
+				WHERE 1 ' . $condition . '  ORDER BY ore.applytime DESC ') . $page, $params);
 
 			foreach ($list as $key => $value) {
 				if (!empty($value['address'])) {
@@ -122,7 +136,13 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				}
 			}
 
-			$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . " as ore\r\n                left join " . tablename('ewei_shop_groups_order') . " as o on o.id = ore.orderid\r\n\t\t\t\tright join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\tright join " . tablename('ewei_shop_member') . " m on m.openid=o.openid and m.uniacid =  o.uniacid\r\n\t\t\t\tleft join " . tablename('ewei_shop_member_address') . " a on a.id=ore.refundaddressid\r\n\t\t\t\tright join " . tablename('ewei_shop_groups_category') . " as c on c.id = g.category\r\n\t\t\t\tWHERE 1 " . $condition . ' ', $params);
+			$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_order_refund') . ' as ore
+                left join ' . tablename('ewei_shop_groups_order') . ' as o on o.id = ore.orderid
+				right join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+				right join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid =  o.uniacid
+				left join ' . tablename('ewei_shop_member_address') . ' a on a.id=ore.refundaddressid
+				right join ' . tablename('ewei_shop_groups_category') . (' as c on c.id = g.category
+				WHERE 1 ' . $condition . ' '), $params);
 			$pager = pagination2($total, $pindex, $psize);
 			$paytype = array('credit' => '余额支付', 'wechat' => '微信支付', 'other' => '其他支付');
 			$paystatus = array(-2 => '取消', -1 => '拒绝', 0 => '申请', 1 => '完成', 3 => '通过', 4 => '客户填写退货快递单号', 5 => '店家填写换货快递单号');
@@ -167,7 +187,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 					array('title' => '维权原因', 'field' => 'reason', 'width' => 24),
 					array('title' => '维权说明', 'field' => 'content', 'width' => 24),
 					array('title' => '订单备注', 'field' => 'remark', 'width' => 36)
-					);
+				);
 				$exportlist = array();
 
 				foreach ($list as $key => $value) {
@@ -201,7 +221,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 					$r['expresssn'] = $value['expresssn'];
 					$r['rexpresscom'] = $value['rexpresscom'];
 					$r['rexpresssn'] = $value['rexpresssn'];
-					$r['amount'] = (($value['groupsprice'] * 1) - $value['creditmoney']) + $value['freight'];
+					$r['amount'] = $value['groupsprice'] * 1 - $value['creditmoney'] + $value['freight'];
 					$r['remark'] = $value['remark'];
 					$r['title'] = $value['title'];
 					$r['goodssn'] = $value['goodssn'];
@@ -232,13 +252,18 @@ class Refund_EweiShopV2Page extends PluginWebPage
 			extract($opdata);
 			$refundid = $refund['id'];
 			$params = array(':refundid' => $refundid);
-			$refund = pdo_fetch("SELECT ore.*,o.price,o.credit,o.freight,o.paytime,o.pay_type,o.orderno,o.goodid,g.title,g.thumb,g.category,g.groupsprice\r\n                FROM " . tablename('ewei_shop_groups_order_refund') . " as ore\r\n\t\t\t\tright join " . tablename('ewei_shop_groups_order') . " as o on o.id = ore.orderid\r\n\t\t\t\tleft join " . tablename('ewei_shop_groups_goods') . " as g on g.id = o.goodid\r\n\t\t\t\tWHERE ore.id = :refundid ", $params);
+			$refund = pdo_fetch('SELECT ore.*,o.price,o.credit,op.title as optiontitle,o.freight,o.paytime,o.pay_type,o.orderno,o.goodid,g.title,g.thumb,g.thumb_url,g.category,g.groupsprice
+                FROM ' . tablename('ewei_shop_groups_order_refund') . ' as ore
+				right join ' . tablename('ewei_shop_groups_order') . ' as o on o.id = ore.orderid
+				left join ' . tablename('ewei_shop_groups_goods') . ' as g on g.id = o.goodid
+				left join ' . tablename('ewei_shop_groups_goods_option') . ' as op on op.specs = o.specs
+				WHERE ore.id = :refundid ', $params);
 			$member = m('member')->getMember($refund['openid']);
 			$refund['images'] = iunserializer($refund['images']);
 			$step_array = array();
 			$step_array[1]['step'] = 1;
 			$step_array[1]['title'] = '客户申请维权';
-			$step_array[1]['time'] = $refund['createtime'];
+			$step_array[1]['time'] = $refund['applytime'];
 			$step_array[1]['done'] = 1;
 			$step_array[2]['step'] = 2;
 			$step_array[2]['title'] = '商家处理维权申请';
@@ -279,12 +304,12 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				}
 				else {
 					$step_array[2]['time'] = $refund['operatetime'];
-					if (($refund['refundstatus'] == 1) || (4 <= $refund['refundstatus'])) {
+					if ($refund['refundstatus'] == 1 || 4 <= $refund['refundstatus']) {
 						$step_array[3]['done'] = 1;
 						$step_array[3]['time'] = $refund['sendtime'];
 					}
 
-					if (($refund['refundstatus'] == 1) || ($refund['refundstatus'] == 5)) {
+					if ($refund['refundstatus'] == 1 || $refund['refundstatus'] == 5) {
 						$step_array[4]['done'] = 1;
 
 						if ($refund['rtype'] == 1) {
@@ -345,12 +370,14 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				show_json(0, '订单未申请维权，不需处理！');
 			}
 
-			if ($item['status'] == 3) {
+			$setting = pdo_fetch('SELECT refundday FROM ' . tablename('ewei_shop_groups_set') . ' WHERE uniacid = :uniacid ', array(':uniacid' => $_W['uniacid']));
+			$refundtime = $item['finishtime'] + 3600 * 24 * $setting['refundday'];
+			if ($item['status'] == 3 && $refundtime < time()) {
 				pdo_update('ewei_shop_groups_order', array('refundstate' => 0), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 				show_json(0, '订单已完成，不需处理！');
 			}
 
-			if (($refund['status'] < 0) || ($refund['status'] == 1)) {
+			if ($refund['status'] < 0 || $refund['status'] == 1) {
 				pdo_update('ewei_shop_groups_order', array('refundstate' => 0), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 				show_json(0, '未找到需要处理的维权申请，不需处理！');
 			}
@@ -400,7 +427,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				$change_refund['rexpresscom'] = $_GPC['rexpresscom'];
 				$change_refund['rexpresssn'] = trim($_GPC['rexpresssn']);
 				$change_refund['refundstatus'] = 5;
-				if (($refund['refundstatus'] != 5) && empty($refund['returntime'])) {
+				if ($refund['refundstatus'] != 5 && empty($refund['returntime'])) {
 					$change_refund['returntime'] = $time;
 
 					if (empty($refund['operatetime'])) {
@@ -431,13 +458,14 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				}
 
 				$realprice = $refund['applyprice'];
-				$order = pdo_fetch('SELECT id,orderno,credit,creditmoney,price,freight,status,pay_type,is_team,apppay FROM ' . tablename('ewei_shop_groups_order') . "\r\n                    WHERE id = :orderid and uniacid=:uniacid", array(':orderid' => $item['id'], ':uniacid' => $uniacid));
+				$order = pdo_fetch('SELECT id,orderno,credit,creditmoney,price,freight,status,pay_type,is_team,apppay FROM ' . tablename('ewei_shop_groups_order') . '
+                    WHERE id = :orderid and uniacid=:uniacid', array(':orderid' => $item['id'], ':uniacid' => $uniacid));
 				$credits = $refund['applycredit'];
 				$refundtype = 0;
-				$totalmoney = $order['price'] + $order['freight'];
+				$totalmoney = $order['price'] + $order['freight'] - $order['creditmoney'];
 
 				if ($order['pay_type'] == 'credit') {
-					m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['orderno']));
+					m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['orderno']));
 					$result = true;
 				}
 				else if ($order['pay_type'] == 'wechat') {
@@ -453,12 +481,12 @@ class Refund_EweiShopV2Page extends PluginWebPage
 					$refundtype = 2;
 				}
 				else {
-					if ($realprice < 1) {
-						show_json(0, '退款金额必须大于1元，才能使用微信企业付款退款!');
+					if ($realprice < 0.29999999999999999) {
+						show_json(0, '退款金额必须大于0.3元，才能使用微信企业付款退款!');
 					}
 
 					$realprice = round($realprice - $item['deductcredit2'], 2);
-					$result = m('finance')->pay($item['openid'], 1, $realprice * 100, $refund['refundno'], $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['orderno']);
+					$result = m('finance')->pay($item['openid'], 1, $realprice * 100, $refund['refundno'], $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['orderno']);
 					$refundtype = 1;
 				}
 
@@ -467,7 +495,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 				}
 
 				if (0 < $item['credit']) {
-					m('member')->setCredit($item['openid'], 'credit1', $item['credit'], array('0', $shopset['name'] . '购物返还抵扣积分 积分: ' . $item['credit'] . ' 抵扣金额: ' . $item['creditmoney'] . ' 订单号: ' . $item['orderno']));
+					m('member')->setCredit($item['openid'], 'credit1', $item['credit'], array('0', $shopset['name'] . ('购物返还抵扣积分 积分: ' . $item['credit'] . ' 抵扣金额: ' . $item['creditmoney'] . ' 订单号: ' . $item['orderno'])));
 				}
 
 				if (!empty($refundtype)) {
@@ -529,7 +557,7 @@ class Refund_EweiShopV2Page extends PluginWebPage
 	public function ajaxgettotals()
 	{
 		$totals = $this->model->getTotals();
-		$result = (empty($totals) ? array() : $totals);
+		$result = empty($totals) ? array() : $totals;
 		show_json(1, $result);
 	}
 }

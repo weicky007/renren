@@ -176,7 +176,7 @@ class CloudApi {
 	public function url($api, $method, $params = array(), $dataType = 'json') {
 		$access_token = $this->getAccessToken();
 		if (is_error($access_token)) {
-			return $access_token;
+			//return $access_token;
 		}
 		if (empty($params) || !is_array($params)) {
 			$params = array();

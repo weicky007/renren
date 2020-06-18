@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,8 +15,8 @@ class Setting_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			ca('sysset.notice.edit');
-			$tdata = (is_array($_GPC['tdata']) ? $_GPC['tdata'] : array());
-			$set_data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$tdata = is_array($_GPC['tdata']) ? $_GPC['tdata'] : array();
+			$set_data = is_array($_GPC['data']) ? $_GPC['data'] : array();
 
 			if (empty($tdata['willcancel_close_advanced'])) {
 				$uniacids = m('cache')->get('willcloseuniacid', 'global');

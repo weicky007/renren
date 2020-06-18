@@ -30,7 +30,7 @@
         </label>
         {ife 'goods' $item}
         <div class="col-sm-4 col-xs-6">
-            {php echo tpl_form_field_daterange('saletime', array('starttime'=>date('Y-m-d H:i', !empty($item['timestart'])?$item['timestart']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['timeend'])?$item['timeend']:strtotime('7 days'))),true);}
+            {php echo tpl_form_field_eweishop_daterange('saletime', array('starttime'=>date('Y-m-d H:i', !empty($item['timestart'])?$item['timestart']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['timeend'])?$item['timeend']:strtotime('7 days'))),true);}
         </div>
         {else}
         <div class="col-sm-6 col-xs-6">
@@ -64,11 +64,12 @@
             {/if}
         </div>
         <label class="col-sm-2 control-label">
-            促销结束时间
+            促销起止时间
         </label>
         {ife 'goods' $item}
         <div class="col-sm-4 col-xs-6">
-            {php echo tpl_form_field_date('isdiscount_time', !empty($item['isdiscount_time']) ? date('Y-m-d H:i',$item['isdiscount_time']) : date('Y-m-d H:i'),true)}
+            {php $time = array('start'=>$item['isdiscount_time_start'],'end'=>$item['isdiscount_time']);}
+            {php echo tpl_form_field_eweishop_daterange('act_time', $time, true);}
         </div>
         {else}
         <div class="col-sm-4 col-xs-6">
@@ -135,7 +136,10 @@
                             </span>
                 </div>
                 <p class="help-block">
-                    会员购物赠送的积分, 如果不填写或填写0，则默认为不赠送积分，如果带%则为按成交价格的比例计算积分
+                    会员购物赠送的积分, 如果不填写，则默认为不赠送积分，会走营销中赠送规则
+                </p>
+                <p class="help-block">
+                    如果填写0,则该商品不赠送积分,也不会走营销中的赠送规则,如果带%则为按成交价格的比例计算积分
                 </p>
                 <p class="help-block">
                     如: 购买2件，设置10 积分, 不管成交价格是多少， 则购买后获得20积分
@@ -235,12 +239,16 @@
                                 元
                             </span>
                 </div>
+                <label class="checkbox-inline" for="manydeduct2">
+                    <input id="manydeduct2" type="checkbox" {if $item['manydeduct2']==1 }checked="true"{/if} value="1" name="manydeduct2">
+                    允许多件累计抵扣
+                </label>
                         <span class="help-block">
                             如果设置0，则支持全额抵扣，设置-1 不支持余额抵扣
                         </span>
                 {else}
                 <div class='form-control-static'>
-                    {if empty($item['deduct2'])} 支持全额抵扣 {elseif $item['deduct2']==-1} 不支持余额抵扣{else} 最多抵扣 {$item['deduct2']} 元 {/if}
+                    {if empty($item['deduct2'])} 支持全额抵扣 {elseif $item['deduct2']==-1} 不支持余额抵扣{else} 最多抵扣 {$item['deduct2']} 元 {/if}{if empty($item['manydeduct2'])}不允许多件累计抵扣{else}允许多件累计抵扣 {/if}
                 </div>
                 {/if}
             </div>

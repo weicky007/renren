@@ -128,7 +128,7 @@
 					<div class="input-group">
 						<input type="number" class="form-control" min="0" name="price" ng-model="goodsInfo.price" step="0.01">
 						<span class="input-group-addon">
-							元 / <span ng-if="goodsInfo.is_wish == 1">月</span>
+							元 / <span ng-if="goodsInfo.is_wish == 1">{{getUnitName()}}</span>
 						</span>
 						<div class="input-group-btn">
 							<input type="hidden" name="unit" value="{$goods_info['unit']}">
@@ -136,14 +136,19 @@
 								{if in_array($goods_info['type'], array_keys($all_type_info['renew']))}
 								<input name="{$all_type_info['renew'][$goods_info['type']]['num_sign']}" class="form-control" value="{$goods_info[$all_type_info['renew'][$goods_info['type']]['num_sign']]}" ng-model="num">
 								{/if}
+								{if $goods_info['type'] == STORE_TYPE_USER_RENEW}
+							<input name="account_num" class="form-control" value="{$goods_info['account_num']}" ng-model="num">
+								{/if}
 							{else}
-							{if $type == STORE_TYPE_ACCOUNT_RENEW}
+								{if in_array($type,  array(STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_USER_RENEW))}
 									<input name="account_num" class="form-control" value="" ng-model="num">
 								{/if}
 							{/if}
+
 							{if !in_array($type, array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_PACKAGE))}
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ng-if="goodsInfo.is_wish != 1">
 								<span ng-if="unit == 'day'">日</span>
+								<span ng-if="unit == 'week'">周</span>
 								<span ng-if="unit == 'month'">月</span>
 								<span ng-if="unit == 'year'">年</span>
 								<span class="caret"></span>
@@ -152,6 +157,7 @@
 							{if !in_array($type, array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP, STORE_TYPE_ACCOUNT_PACKAGE))}
 							<ul class="dropdown-menu dropdown-menu-right" style="min-width: 60px;">
 								<li><a href="#" ng-click="changeUnit('day')">日</a></li>
+								<li><a href="#" ng-click="changeUnit('week')">周</a></li>
 								<li><a href="#" ng-click="changeUnit('month')">月</a></li>
 								<li><a href="#" ng-click="changeUnit('year')">年</a></li>
 							</ul>
@@ -161,7 +167,7 @@
 				</div>
 			</div>
 			<div class="user-group-price-content"></div>
-			{if $type != STORE_TYPE_USER_PACKAGE}
+			{if !in_array($type, array(STORE_TYPE_USER_PACKAGE, STORE_TYPE_USER_RENEW))}
 			<div class="form-group" ng-if="userGroups && goodsInfo.is_wish != 1">
 				<label class="control-label col-sm-2"></label>
 				<div class="col-sm-8 form-controls">
@@ -347,5 +353,6 @@
 		'userGroups': {php echo !empty($user_groups) ? json_encode($user_groups) : 'null'},
 	});
 	angular.bootstrap($('#js-goods-post'), ['storeApp']);
+
 </script>
 {template 'common/footer'}

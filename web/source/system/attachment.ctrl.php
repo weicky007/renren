@@ -100,6 +100,15 @@ if ('global' == $do) {
 	if (empty($upload['image']['zip_percentage'])) {
 		$upload['image']['zip_percentage'] = 100;
 	}
+
+	if ($_W['isajax']) {
+		$message = array(
+			'upload_max_filesize' => $upload_max_filesize,
+			'post_max_size' => $post_max_size,
+			'upload' => $upload
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('remote' == $do) {
@@ -148,17 +157,29 @@ if ('remote' == $do) {
 		);
 		if (ATTACH_OSS == $remote['type']) {
 			if ('' == trim($remote['alioss']['key'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '阿里云OSS-Access Key ID不能为空');
+				}
 				itoast('阿里云OSS-Access Key ID不能为空', '', '');
 			}
 			if ('' == trim($remote['alioss']['secret'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '阿里云OSS-Access Key Secret不能为空');
+				}
 				itoast('阿里云OSS-Access Key Secret不能为空', '', '');
 			}
 			$buckets = attachment_alioss_buctkets($remote['alioss']['key'], $remote['alioss']['secret']);
 			if (is_error($buckets)) {
+				if ($_W['isajax']) {
+					iajax(-1, 'OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写');
+				}
 				itoast('OSS-Access Key ID 或 OSS-Access Key Secret错误，请重新填写', '', '');
 			}
 			list($remote['alioss']['bucket'], $remote['alioss']['url']) = explode('@@', $_GPC['alioss']['bucket']);
 			if (empty($buckets[$remote['alioss']['bucket']])) {
+				if ($_W['isajax']) {
+					iajax(-1, 'Bucket不存在或是已经被删除');
+				}
 				itoast('Bucket不存在或是已经被删除', '', '');
 			}
 			$remote['alioss']['url'] = 'http://' . $remote['alioss']['bucket'] . '.' . $buckets[$remote['alioss']['bucket']]['location'] . '.aliyuncs.com';
@@ -173,26 +194,47 @@ if ('remote' == $do) {
 			attachment_replace_article_remote_url($remote_urls['alioss']['old_url'], $remote['alioss']['url']);
 		} elseif (ATTACH_FTP == $remote['type']) {
 			if (empty($remote['ftp']['host'])) {
+				if ($_W['isajax']) {
+					iajax(-1, 'FTP服务器地址为必填项.');
+				}
 				itoast('FTP服务器地址为必填项.', '', '');
 			}
 			if (empty($remote['ftp']['username'])) {
+				if ($_W['isajax']) {
+					iajax(-1, 'FTP帐号为必填项.');
+				}
 				itoast('FTP帐号为必填项.', '', '');
 			}
 			if (empty($remote['ftp']['password'])) {
+				if ($_W['isajax']) {
+					iajax(-1, 'FTP密码为必填项.');
+				}
 				itoast('FTP密码为必填项.', '', '');
 			}
 			attachment_replace_article_remote_url($remote_urls['ftp']['old_url'], $_GPC['ftp']['url']);
 		} elseif (ATTACH_QINIU == $remote['type']) {
 			if (empty($remote['qiniu']['accesskey'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写Accesskey.');
+				}
 				itoast('请填写Accesskey', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['secretkey'])) {
-				itoast('secretkey', referer(), 'info');
+				if ($_W['isajax']) {
+					iajax(-1, '请填写secretkey.');
+				}
+				itoast('请填写secretkey', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['bucket'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写bucket.');
+				}
 				itoast('请填写bucket', referer(), 'info');
 			}
 			if (empty($remote['qiniu']['url'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写url.');
+				}
 				itoast('请填写url', referer(), 'info');
 			} else {
 				$remote['qiniu']['url'] = strexists($remote['qiniu']['url'], 'http') ? trim($remote['qiniu']['url'], '/') : 'http://' . trim($remote['qiniu']['url'], '/');
@@ -201,19 +243,34 @@ if ('remote' == $do) {
 			$auth = attachment_qiniu_auth($remote['qiniu']['accesskey'], $remote['qiniu']['secretkey'], $remote['qiniu']['bucket']);
 			if (is_error($auth)) {
 				$message = $auth['message']['error'] == 'bad token' ? 'Accesskey或Secretkey填写错误， 请检查后重新提交' : 'bucket填写错误或是bucket所对应的存储区域选择错误，请检查后重新提交';
+				if ($_W['isajax']) {
+					iajax(-1, $message);
+				}
 				itoast($message, referer(), 'info');
 			}
 		} elseif (ATTACH_COS == $remote['type']) {
 			if (empty($remote['cos']['appid'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写APPID');
+				}
 				itoast('请填写APPID', referer(), 'info');
 			}
 			if (empty($remote['cos']['secretid'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写SECRETID');
+				}
 				itoast('请填写SECRETID', referer(), 'info');
 			}
 			if (empty($remote['cos']['secretkey'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写SECRETKEY');
+				}
 				itoast('请填写SECRETKEY', referer(), 'info');
 			}
 			if (empty($remote['cos']['bucket'])) {
+				if ($_W['isajax']) {
+					iajax(-1, '请填写BUCKET');
+				}
 				itoast('请填写BUCKET', referer(), 'info');
 			}
 			$remote['cos']['bucket'] = str_replace("-{$remote['cos']['appid']}", '', trim($remote['cos']['bucket']));
@@ -230,6 +287,9 @@ if ('remote' == $do) {
 			$auth = attachment_cos_auth($remote['cos']['bucket'], $remote['cos']['appid'], $remote['cos']['secretid'], $remote['cos']['secretkey'], $remote['cos']['local']);
 
 			if (is_error($auth)) {
+				if ($_W['isajax']) {
+					iajax(-1, $auth['message']);
+				}
 				itoast($auth['message'], referer(), 'info');
 			}
 		}
@@ -239,10 +299,21 @@ if ('remote' == $do) {
 		$_W['setting']['remote_complete_info']['qiniu'] = $remote['qiniu'];
 		$_W['setting']['remote_complete_info']['cos'] = $remote['cos'];
 		setting_save($_W['setting']['remote_complete_info'], 'remote');
+		if ($_W['isajax']) {
+			iajax(0, '远程附件配置信息更新成功！');
+		}
 		itoast('远程附件配置信息更新成功！', url('system/attachment/remote'), 'success');
 	}
 	$bucket_datacenter = attachment_alioss_datacenters();
 	$local_attachment = file_dir_exist_image(ATTACHMENT_ROOT . 'images');
+	if ($_W['isajax']) {
+		$message = array(
+			'remote' => $remote,
+			'bucket_datacenter' => $bucket_datacenter,
+			'local_attachment' => $local_attachment
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('buckets' == $do) {

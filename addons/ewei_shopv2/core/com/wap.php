@@ -1,13 +1,15 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Wap_EweiShopV2ComModel extends ComModel 
+
+class Wap_EweiShopV2ComModel extends ComModel
 {
-	public function getSet() 
+	public function getSet()
 	{
 		return '';
 	}
 }
+
 ?>

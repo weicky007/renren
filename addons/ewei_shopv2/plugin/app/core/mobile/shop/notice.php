@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Notice_EweiShopV2Page extends AppMobilePage
 {
 	public function get_list()
@@ -15,9 +15,9 @@ class Notice_EweiShopV2Page extends AppMobilePage
 		$psize = 10;
 		$condition = ' and `uniacid` =:uniacid and status=1';
 		$params = array(':uniacid' => $_W['uniacid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_notice') . ' where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_notice') . (' where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_notice') . ' where 1 ' . $condition . ' ORDER BY displayorder desc,id desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_notice') . ' where 1 ' . $condition . ' ORDER BY displayorder desc,id desc LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 
 		foreach ($list as $key => &$row) {
@@ -26,7 +26,7 @@ class Notice_EweiShopV2Page extends AppMobilePage
 		}
 
 		unset($row);
-		app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total));
+		return app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total));
 	}
 
 	public function detail()
@@ -43,9 +43,9 @@ class Notice_EweiShopV2Page extends AppMobilePage
 			$notice = pdo_fetch('select * from ' . tablename('ewei_shop_notice') . ' where id=:id and uniacid=:uniacid and status=1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		}
 
-		app_json(array(
-	'notice' => array('title' => $notice['title'], 'createtime' => date('Y-m-d H:i', $notice['createtime']), 'detail' => $notice['detail'])
-	));
+		return app_json(array(
+			'notice' => array('title' => $notice['title'], 'createtime' => date('Y-m-d H:i', $notice['createtime']), 'detail' => M('common')->html_to_images($notice['detail']))
+		));
 	}
 }
 

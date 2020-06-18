@@ -10,6 +10,13 @@ load()->model('setting');
 $dos = array('save_expire', 'change_status', 'setting');
 $do = in_array($do, $dos) ? $do : 'setting';
 
+if (!$_W['isfounder']) {
+	if ($_W['isajax']) {
+		iajax(-1, '无权限操作！');
+	}
+	itoast('无权限操作！');
+}
+
 $user_expire = setting_load('user_expire');
 $user_expire = !empty($user_expire['user_expire']) ? $user_expire['user_expire'] : array();
 
@@ -31,9 +38,11 @@ if ('save_expire' == $do) {
 	iajax(0, '设置成功', $url);
 }
 
-if ('change_status' == $do) {
+if ('change_status' == $do && $_W['ispost']) {
 	$type = safe_gpc_string($_GPC['type']);
-
+	if (empty($type) || !in_array($type, array('status', 'status_store_button', 'status_store_redirect'))) {
+		iajax(-1, '参数错误！');
+	}
 	if ('status' == $type) {
 		$user_expire['status'] = empty($user_expire['status']) ? 1 : 0;
 		$url = url('user/expire');
@@ -56,6 +65,10 @@ if ('setting' == $do) {
 	$user_expire['notice'] = !empty($user_expire['notice']) ? $user_expire['notice'] : '您的账号已到期，请前往商城购买续费';
 	$user_expire['status_store_button'] = !empty($user_expire['status_store_button']) ? $user_expire['status_store_button'] : 0;
 	$user_expire['status_store_redirect'] = !empty($user_expire['status_store_redirect']) ? $user_expire['status_store_redirect'] : 0;
+	unset($user_expire['status'], $user_expire['day']);
 }
-
+if ($_W['isajax']) {
+	iajax(0, $user_expire);
+}
 template('user/expire');
+

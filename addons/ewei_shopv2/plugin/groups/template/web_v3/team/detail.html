@@ -139,7 +139,7 @@
                     </td>
                     <td style='text-align: left;overflow:hidden;border-left:none;'>
                         {if $item['pay_type']=='system'}系统虚拟{/if}
-                        <a href="{php echo webUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['nickname']}</a>
+                        <a href="{php echo webUrl('member/list/detail',array('id'=>$item['uid']))}"> {$item['nickname']}</a>
                         <br/>{$item['addressdata']['mobile']}
                     </td>
                     <td style='text-align:center;' >
@@ -257,6 +257,10 @@
                     </td>
                     <td style='text-align:center' >
                         <a class='op text-primary'  href="{php echo webUrl('groups/order/detail', array('orderid' => $item['id']))}" >查看详情</a>
+                        {if ($total > $teaminfo['groupnum']) && $item['status'] == 1}
+                        <br/>
+                        <a class="btn btn-danger btn-xs" data-toggle="ajaxPost" href="{php echo webUrl('groups/order/refund', array('id'=>$item['id']))}" data-confirm="当前团购人数超过预设数量 ! 是否给此订单退款？">退款</a>
+                        {/if}
                     </td>
                     <td  class='ops' style='line-height:20px;text-align:center' >
                         {if $item['deleted'] == 1}

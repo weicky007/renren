@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,9 +20,9 @@ class Page extends WeModuleSite
 		$interval *= 60;
 		$current = time();
 
-		if (($lasttime + $interval) <= $current) {
+		if ($lasttime + $interval <= $current) {
 			m('cache')->set('receive', date('Y-m-d H:i:s', $current), 'global');
-			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/receive.php', NULL, NULL, 1);
+			var_dump(ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/receive.php', NULL, NULL, 10));
 		}
 
 		$lasttime = strtotime(m('cache')->getString('closeorder', 'global'));
@@ -34,9 +35,23 @@ class Page extends WeModuleSite
 		$interval *= 60;
 		$current = time();
 
-		if (($lasttime + $interval) <= $current) {
+		if ($lasttime + $interval <= $current) {
 			m('cache')->set('closeorder', date('Y-m-d H:i:s', $current), 'global');
-			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', NULL, NULL, 1);
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', NULL, NULL, 10);
+		}
+
+		$lasttime = strtotime(m('cache')->getString('closeorder_virtual', 'global'));
+		$interval_v = intval(m('cache')->getString('closeorder_virtual_time', 'global'));
+
+		if (empty($interval_v)) {
+			$interval_v = 60;
+		}
+
+		$current = time();
+
+		if ($lasttime + $interval_v <= $current) {
+			m('cache')->set('closeorder_virtual', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', array('uniacid' => $_W['uniacid']), NULL, 10);
 		}
 
 		$lasttime = strtotime(m('cache')->getString('fullback_receive', 'global'));
@@ -49,9 +64,24 @@ class Page extends WeModuleSite
 		$interval *= 60;
 		$current = time();
 
-		if (($lasttime + $interval) <= $current) {
+		if ($lasttime + $interval <= $current) {
 			m('cache')->set('fullback_receive', date('Y-m-d H:i:s', $current), 'global');
-			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/fullback.php', NULL, NULL, 1);
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/fullback.php', NULL, NULL, 10);
+		}
+
+		$lasttime = strtotime(m('cache')->getString('presell_status', 'global'));
+		$interval = intval(m('cache')->getString('presell_status_time', 'global'));
+
+		if (empty($interval)) {
+			$interval = 60;
+		}
+
+		$interval *= 60;
+		$current = time();
+
+		if ($lasttime + $interval <= $current) {
+			m('cache')->set('presell_status', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'goods/presell.php', NULL, NULL, 10);
 		}
 
 		$lasttime = strtotime(m('cache')->getString('status_receive', 'global'));
@@ -64,9 +94,9 @@ class Page extends WeModuleSite
 		$interval *= 60;
 		$current = time();
 
-		if (($lasttime + $interval) <= $current) {
+		if ($lasttime + $interval <= $current) {
 			m('cache')->set('status_receive', date('Y-m-d H:i:s', $current), 'global');
-			ihttp_request(EWEI_SHOPV2_TASK_URL . 'goods/status.php', NULL, NULL, 1);
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'goods/status.php', NULL, NULL, 10);
 		}
 
 		if (com('coupon')) {
@@ -80,9 +110,9 @@ class Page extends WeModuleSite
 			$interval *= 60;
 			$current = time();
 
-			if (($lasttime + $interval) <= $current) {
+			if ($lasttime + $interval <= $current) {
 				m('cache')->set('willcloseorder', date('Y-m-d H:i:s', $current), 'global');
-				ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/willclose.php', NULL, NULL, 1);
+				ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/willclose.php', NULL, NULL, 10);
 			}
 		}
 
@@ -97,10 +127,55 @@ class Page extends WeModuleSite
 			$interval *= 60;
 			$current = time();
 
-			if (($lasttime + $interval) <= $current) {
+			if ($lasttime + $interval <= $current) {
 				m('cache')->set('couponback', date('Y-m-d H:i:s', $current), 'global');
-				ihttp_request(EWEI_SHOPV2_TASK_URL . 'coupon/back.php', NULL, NULL, 1);
+				ihttp_request(EWEI_SHOPV2_TASK_URL . 'coupon/back.php', NULL, NULL, 10);
 			}
+		}
+
+		$lasttime = strtotime(m('cache')->getString('sendnotice', 'global'));
+		$interval = intval(m('cache')->getString('sendnotice_time', 'global'));
+
+		if (empty($interval)) {
+			$interval = 60;
+		}
+
+		$interval *= 60;
+		$current = time();
+
+		if ($lasttime + $interval <= $current) {
+			m('cache')->set('sendnotice', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'notice/sendnotice.php', array('uniacid' => $_W['uniacid']), NULL, 10);
+		}
+
+		$lasttime = strtotime(m('cache')->getString('sendcycelbuy', 'global'));
+		$interval = intval(m('cache')->getString('sendcycelbuy_time', 'global'));
+
+		if (empty($interval)) {
+			$interval = 60;
+		}
+
+		$interval *= 60;
+		$current = time();
+
+		if ($lasttime + $interval <= $current) {
+			m('cache')->set('sendcycelbuy', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'cycelbuy/sendnotice.php', array('uniacid' => $_W['uniacid']), NULL, 10);
+		}
+
+		$lasttime = strtotime(m('cache')->getString('cycelbuyreceive', 'global'));
+		$interval = intval(m('cache')->getString('cycelbuyreceive_time', 'global'));
+
+		if (empty($interval)) {
+			$interval = 60;
+		}
+
+		$interval *= 60;
+		$current = time();
+
+		if ($lasttime + $interval <= $current) {
+			m('cache')->set('cycelbuyreceive', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'cycelbuy/receive.php', array('uniacid' => $_W['uniacid']), NULL, 10);
 		}
 
 		if (p('groups')) {
@@ -114,9 +189,9 @@ class Page extends WeModuleSite
 			$groups_order_interval *= 60;
 			$groups_order_current = time();
 
-			if (($groups_order_lasttime + $groups_order_interval) <= $groups_order_current) {
+			if ($groups_order_lasttime + $groups_order_interval <= $groups_order_current) {
 				m('cache')->set('groups_order_cancelorder', date('Y-m-d H:i:s', $groups_order_current), 'global');
-				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/groups/task/order.php', NULL, NULL, 1);
+				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/groups/task/order.php', NULL, NULL, 10);
 			}
 
 			$groups_team_lasttime = strtotime(m('cache')->getString('groups_team_refund', 'global'));
@@ -129,9 +204,9 @@ class Page extends WeModuleSite
 			$groups_team_interval *= 60;
 			$groups_team_current = time();
 
-			if (($groups_team_lasttime + $groups_team_interval) <= $groups_team_current) {
+			if ($groups_team_lasttime + $groups_team_interval <= $groups_team_current) {
 				m('cache')->set('groups_team_refund', date('Y-m-d H:i:s', $groups_team_current), 'global');
-				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/groups/task/refund.php', NULL, NULL, 1);
+				ihttp_request($_W['siteroot'] . ('addons/ewei_shopv2/plugin/groups/task/refund.php?uniacid=' . $_W['uniacid']), NULL, NULL, 10);
 			}
 
 			$groups_receive_lasttime = strtotime(m('cache')->getString('groups_receive', 'global'));
@@ -144,9 +219,9 @@ class Page extends WeModuleSite
 			$groups_receive_interval *= 60;
 			$groups_receive_current = time();
 
-			if (($groups_receive_lasttime + $groups_receive_interval) <= $groups_receive_current) {
+			if ($groups_receive_lasttime + $groups_receive_interval <= $groups_receive_current) {
 				m('cache')->set('groups_receive', date('Y-m-d H:i:s', $groups_receive_current), 'global');
-				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/groups/task/receive.php', NULL, NULL, 1);
+				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/groups/task/receive.php', NULL, NULL, 10);
 			}
 		}
 
@@ -155,21 +230,40 @@ class Page extends WeModuleSite
 			$interval = 5 * 60;
 			$current = time();
 
-			if (($lasttime + $interval) <= $current) {
+			if ($lasttime + $interval <= $current) {
 				m('cache')->set('seckill_delete_lasttime', date('Y-m-d H:i:s', $current), 'global');
-				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/seckill/task/receive.php', NULL, NULL, 1);
+				ihttp_request($_W['siteroot'] . 'addons/ewei_shopv2/plugin/seckill/task/delete.php', NULL, NULL, 10);
 			}
 		}
 
-		exit('run finished.');
+		if (p('friendcoupon')) {
+			$lasttime = strtotime(m('cache')->getString('friendcoupon_send_failed_message', 'global'));
+			$interval = 60;
+			$current = time();
+
+			if ($lasttime + $interval <= $current) {
+				m('cache')->set('friendcoupon_send_failed_message', date('Y-m-d H:i:s', $current), 'global');
+				ihttp_request($_W['siteroot'] . ('addons/ewei_shopv2/plugin/friendcoupon/task/sendMessage.php?uniacid=' . $_W['uniacid']), NULL, NULL, 10);
+			}
+		}
+
+		if (p('merch')) {
+			$lasttime = strtotime(m('cache')->getString('merch_expire', 'global'));
+			$interval = 5 * 60;
+			$current = time();
+
+			if ($lasttime + $interval <= $current) {
+				m('cache')->set('merch_expire', date('Y-m-d H:i:s', $current), 'global');
+				ihttp_request(EWEI_SHOPV2_TASK_URL . 'plugin/merch.php', NULL, NULL, 10);
+			}
+		}
 	}
 
 	public function template($filename = '', $type = TEMPLATE_INCLUDEPATH, $account = false)
 	{
 		global $_W;
 		global $_GPC;
-		$set = m('common')->getSysset('template');
-		$isv3 = $set['style_v3'];
+		$isv3 = true;
 
 		if (isset($_W['shopversion'])) {
 			$isv3 = $_W['shopversion'];
@@ -181,13 +275,13 @@ class Page extends WeModuleSite
 
 		if (!empty($_W['plugin']) && $isv3) {
 			$plugin_config = m('plugin')->getConfig($_W['plugin']);
-			if ((is_array($plugin_config) && empty($plugin_config['v3'])) || !$plugin_config) {
+			if (is_array($plugin_config) && empty($plugin_config['v3']) || !$plugin_config) {
 				$isv3 = false;
 			}
 		}
 
 		$bsaeTemp = array('_header', '_header_base', '_footer', '_tabs', 'funbar');
-		if (($_W['plugin'] == 'merch') && $_W['merch_user'] && (!in_array($filename, $bsaeTemp) || !$isv3)) {
+		if ($_W['plugin'] == 'merch' && $_W['merch_user'] && (!in_array($filename, $bsaeTemp) || !$isv3)) {
 			return $this->template_merch($filename, $isv3);
 		}
 
@@ -195,7 +289,7 @@ class Page extends WeModuleSite
 			$filename = str_replace('.', '/', $_W['routes']);
 		}
 
-		if (($_GPC['do'] == 'web') || defined('IN_SYS')) {
+		if ($_GPC['do'] == 'web' || defined('IN_SYS')) {
 			$filename = str_replace('/add', '/post', $filename);
 			$filename = str_replace('/edit', '/post', $filename);
 			$filename_default = str_replace('/add', '/post', $filename);
@@ -209,23 +303,23 @@ class Page extends WeModuleSite
 
 		if (defined('IN_SYS')) {
 			if (!$isv3) {
-				$compile = IA_ROOT . '/data/tpl/web/' . $_W['template'] . '/' . $name . '/' . $filename . '.tpl.php';
-				$source = $moduleroot . '/template/' . $filename . '.html';
+				$compile = IA_ROOT . ('/data/tpl/web/' . $_W['template'] . '/' . $name . '/' . $filename . '.tpl.php');
+				$source = $moduleroot . ('/template/' . $filename . '.html');
 
 				if (!is_file($source)) {
-					$source = $moduleroot . '/template/' . $filename . '/index.html';
+					$source = $moduleroot . ('/template/' . $filename . '/index.html');
 				}
 			}
 
 			if ($isv3 || !is_file($source)) {
 				if ($isv3) {
-					$compile = IA_ROOT . '/data/tpl/web_v3/' . $_W['template'] . '/' . $name . '/' . $filename . '.tpl.php';
+					$compile = IA_ROOT . ('/data/tpl/web_v3/' . $_W['template'] . '/' . $name . '/' . $filename . '.tpl.php');
 				}
 
-				$source = $moduleroot . '/template/' . $filename_v3 . '.html';
+				$source = $moduleroot . ('/template/' . $filename_v3 . '.html');
 
 				if (!is_file($source)) {
-					$source = $moduleroot . '/template/' . $filename_v3 . '/index.html';
+					$source = $moduleroot . ('/template/' . $filename_v3 . '/index.html');
 				}
 			}
 
@@ -261,15 +355,15 @@ class Page extends WeModuleSite
 				$template = 'default';
 			}
 
-			$compile = IA_ROOT . '/data/tpl/app/' . $name . '/' . $template . '/account/' . $filename . '.tpl.php';
-			$source = IA_ROOT . '/addons/' . $name . '/template/account/' . $template . '/' . $filename . '.html';
+			$compile = IA_ROOT . ('/data/tpl/app/' . $name . '/' . $template . '/account/' . $filename . '.tpl.php');
+			$source = IA_ROOT . ('/addons/' . $name . '/template/account/' . $template . '/' . $filename . '.html');
 
 			if (!is_file($source)) {
-				$source = IA_ROOT . '/addons/' . $name . '/template/account/default/' . $filename . '.html';
+				$source = IA_ROOT . ('/addons/' . $name . '/template/account/default/' . $filename . '.html');
 			}
 
 			if (!is_file($source)) {
-				$source = IA_ROOT . '/addons/' . $name . '/template/account/default/' . $filename . '/index.html';
+				$source = IA_ROOT . ('/addons/' . $name . '/template/account/default/' . $filename . '/index.html');
 			}
 		}
 		else {
@@ -283,26 +377,26 @@ class Page extends WeModuleSite
 				$template = 'default';
 			}
 
-			$compile = IA_ROOT . '/data/tpl/app/' . $name . '/' . $template . '/mobile/' . $filename . '.tpl.php';
-			$source = IA_ROOT . '/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '.html';
+			$compile = IA_ROOT . ('/data/tpl/app/' . $name . '/' . $template . '/mobile/' . $filename . '.tpl.php');
+			$source = IA_ROOT . ('/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '.html');
 
 			if (!is_file($source)) {
-				$source = IA_ROOT . '/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '/index.html';
+				$source = IA_ROOT . ('/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '/index.html');
 			}
 
 			if (!is_file($source)) {
-				$source = IA_ROOT . '/addons/' . $name . '/template/mobile/default/' . $filename . '.html';
+				$source = IA_ROOT . ('/addons/' . $name . '/template/mobile/default/' . $filename . '.html');
 			}
 
 			if (!is_file($source)) {
-				$source = IA_ROOT . '/addons/' . $name . '/template/mobile/default/' . $filename . '/index.html';
+				$source = IA_ROOT . ('/addons/' . $name . '/template/mobile/default/' . $filename . '/index.html');
 			}
 
 			if (!is_file($source)) {
 				$names = explode('/', $filename);
 				$pluginname = $names[0];
 				$ptemplate = m('cache')->getString('template_' . $pluginname);
-				if (empty($ptemplate) || ($pluginname == 'creditshop')) {
+				if (empty($ptemplate) || $pluginname == 'creditshop') {
 					$ptemplate = 'default';
 				}
 
@@ -312,11 +406,19 @@ class Page extends WeModuleSite
 
 				unset($names[0]);
 				$pfilename = implode('/', $names);
-				$compile = IA_ROOT . '/data/tpl/app/' . $name . '/plugin/' . $pluginname . '/' . $ptemplate . '/mobile/' . $filename . '.tpl.php';
-				$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/' . $ptemplate . '/' . $pfilename . '.html';
+				$compile = IA_ROOT . ('/data/tpl/app/' . $name . '/plugin/' . $pluginname . '/' . $ptemplate . '/mobile/' . $filename . '.tpl.php');
+				$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/' . $ptemplate . ('/' . $pfilename . '.html');
 
 				if (!is_file($source)) {
 					$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/' . $ptemplate . '/' . $pfilename . '/index.html';
+				}
+
+				if (!is_file($source)) {
+					$source = $moduleroot . '/plugin/' . $pluginname . ('/template/mobile/default/' . $pfilename . '.html');
+				}
+
+				if (!is_file($source)) {
+					$source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/default/' . $pfilename . '/index.html';
 				}
 			}
 		}
@@ -325,7 +427,7 @@ class Page extends WeModuleSite
 			exit('Error: template source \'' . $filename . '\' is not exist!');
 		}
 
-		if (DEVELOPMENT || !is_file($compile) || (filemtime($compile) < filemtime($source))) {
+		if (DEVELOPMENT || !is_file($compile) || filemtime($compile) < filemtime($source)) {
 			shop_template_compile($source, $compile, true);
 		}
 
@@ -344,7 +446,7 @@ class Page extends WeModuleSite
 		$filename = str_replace('/edit', '/post', $filename);
 		$name = 'ewei_shopv2';
 		$moduleroot = IA_ROOT . '/addons/ewei_shopv2';
-		$compile = IA_ROOT . '/data/tpl/web/' . $_W['template'] . '/merch/' . $name . '/' . $filename . '.tpl.php';
+		$compile = IA_ROOT . ('/data/tpl/web/' . $_W['template'] . '/merch/' . $name . '/' . $filename . '.tpl.php');
 		$explode = explode('/', $filename);
 
 		if ($isv3) {
@@ -388,7 +490,7 @@ class Page extends WeModuleSite
 			exit('Error: template source \'' . $filename . '\' is not exist!');
 		}
 
-		if (DEVELOPMENT || !is_file($compile) || (filemtime($compile) < filemtime($source))) {
+		if (DEVELOPMENT || !is_file($compile) || filemtime($compile) < filemtime($source)) {
 			shop_template_compile($source, $compile, true);
 		}
 
@@ -404,10 +506,10 @@ class Page extends WeModuleSite
 		$buttondisplay = true;
 
 		if (is_array($msg)) {
-			$message = (isset($msg['message']) ? $msg['message'] : '');
-			$title = (isset($msg['title']) ? $msg['title'] : '');
-			$buttontext = (isset($msg['buttontext']) ? $msg['buttontext'] : '');
-			$buttondisplay = (isset($msg['buttondisplay']) ? $msg['buttondisplay'] : true);
+			$message = isset($msg['message']) ? $msg['message'] : '';
+			$title = isset($msg['title']) ? $msg['title'] : '';
+			$buttontext = isset($msg['buttontext']) ? $msg['buttontext'] : '';
+			$buttondisplay = isset($msg['buttondisplay']) ? $msg['buttondisplay'] : true;
 		}
 
 		if (empty($redirect)) {

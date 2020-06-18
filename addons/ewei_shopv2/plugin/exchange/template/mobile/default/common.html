@@ -24,7 +24,7 @@
             <div class="title">
                 <p class="text">兑换中心</p>
                 <p class="text2" style="display: none;">兑换码: D123456</p>
-                <p class="num">此兑换码已查询<span id="num">1</span>次</p>
+                {if $res['showcount'] == 0}<p class="num">查询人数: <span id="num">1</span>人</p>{/if}
             </div>
             <div class="input">
                 <input placeholder="请输入兑换码" id="exchangeno" value="{$key}"/>
@@ -34,7 +34,7 @@
                     <div class="ico money"></div>
                     <div class="info">
                         <p class="t1">余额兑换</p>
-                        <p class="t2">面值：1000元</p>
+                        <p class="t2">面值：...元</p>
                     </div>
                     <div class="btn-exc btn btn-danger btn-sm" id="balance">兑换</div>
                 </div>
@@ -42,7 +42,7 @@
                     <div class="ico credit"></div>
                     <div class="info">
                         <p class="t1">积分兑换</p>
-                        <p class="t2">面值：1000元</p>
+                        <p class="t2">面值：...积分</p>
                     </div>
                     <div class="btn-exc btn btn-danger btn-sm" id="score">兑换</div>
                 </div>
@@ -50,7 +50,7 @@
                     <div class="ico coupon"></div>
                     <div class="info">
                         <p class="t1">优惠券兑换</p>
-                        <p class="t2">面值：1000元</p>
+                        <p class="t2">兑换优惠券</p>
                     </div>
                     <div class="btn-exc btn btn-danger btn-sm" id="coupon">兑换</div>
                 </div>
@@ -58,7 +58,7 @@
                     <div class="ico redbag"></div>
                     <div class="info">
                         <p class="t1">红包兑换</p>
-                        <p class="t2">面值：1000元</p>
+                        <p class="t2">面值：...元</p>
                     </div>
                     <div class="btn-exc btn btn-danger btn-sm" id="red">兑换</div>
                 </div>
@@ -66,7 +66,7 @@
                     <div class="ico goods"></div>
                     <div class="info">
                         <p class="t1">商品兑换</p>
-                        <p class="t2">面值：1000元</p>
+                        <p class="t2">兑换商品</p>
                     </div>
                     <div class="btn-exc btn btn-danger btn-sm" id="goods">兑换</div>
                 </div>

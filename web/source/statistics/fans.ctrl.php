@@ -17,6 +17,9 @@ $support_type = array(
 if ('display' == $do) {
 	$today_stat = pdo_get('stat_fans', array('date' => date('Ymd'), 'uniacid' => $_W['uniacid']));
 	$yesterday_stat = pdo_get('stat_fans', array('date' => date('Ymd', strtotime('-1 days')), 'uniacid' => $_W['uniacid']));
+	$today_stat['jing_num'] = $today_stat['new'] - $today_stat['cancel'];
+	$today_stat['cumulate'] = intval($today_stat['jing_num']) + $yesterday_stat['cumulate'];
+	$today_stat['cumulate'] = max(0, $today_stat['cumulate']);
 	template('statistics/fans-display');
 }
 

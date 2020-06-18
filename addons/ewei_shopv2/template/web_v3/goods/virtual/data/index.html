@@ -3,6 +3,9 @@
     .time_search .btn-group .btn{
         float:none;
     }
+    .item-istop{
+        display: inline-block;width: 18px;height: 18px;text-align: center;line-height: 18px;background: #f00;color: #fff;border-radius: 2px;margin-left: 5px;padding-right: 1px;
+    }
 </style>
 <div class="page-header">
     当前位置：<span class="text-primary">模板数据 <small>总数:{$total} 模板名称:{$type['title']})</small></span>
@@ -51,11 +54,11 @@
         <li {if $_GPC['status'] == ''}class="active"{/if}>
             <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid']))}">全部</a>
         </li>
-        <li {if $_GPC['status'] == '0'}class="active"{/if}>
-            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 0))}">未使用</a>
-        </li>
         <li {if $_GPC['status'] == '1'}class="active"{/if}>
-            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 1))}">已使用</a>
+            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 1))}">未使用</a>
+        </li>
+        <li {if $_GPC['status'] == '2'}class="active"{/if}>
+            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 2))}">已使用</a>
         </li>
 
     </ul>
@@ -95,7 +98,12 @@
                     <td class="text-center">{$item['id']}</td>
                     {php $datas = iunserializer($item['fields'])}
                     {loop $type['fields'] $key $name}
-                    <td> {$datas[$key]}</td>
+                        <td>
+                            {$datas[$key]}
+                            {if $key == 'key' && empty($item['openid']) && $item['is_top'] == 1}
+                            <span class="item-istop">顶</span>
+                            {/if}
+                        </td>
                     {/loop}
                     <td style='width:60px; text-align: center'>
                         {if empty($item['openid'])}
@@ -145,10 +153,14 @@
                 <tfoot>
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td>
+                    <td colspan="2">
                         <div class="btn-group">
                             {ifp 'goods.virtual.data.delete'}
-                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('goods/virtual/data/delete', array('typeid'=>$_GPC['typeid']))}"><i class='fa fa-trash'></i> 删除</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('goods/virtual/data/delete', array('typeid'=>$_GPC['typeid']))}"><i class='fa fa-trash'></i> 删除</button>
+                            {/if}
+                            {ifp 'goods.virtual.data.edit'}
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-confirm="确认要置顶?" data-href="{php echo webUrl('goods/virtual/data/top', array('typeid'=>$_GPC['typeid'],'op'=>'up'))}"><i class='fa fa-upload'></i> 置顶</button>
+                            <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-confirm="确认取消置顶?" data-href="{php echo webUrl('goods/virtual/data/top', array('typeid'=>$_GPC['typeid'],'op'=>'down'))}"><i class='fa fa-download'></i> 取消置顶</button>
                             {/if}
                         </div>
                     </td>
@@ -173,4 +185,3 @@
     })
 </script>
 {template '_footer'}
-

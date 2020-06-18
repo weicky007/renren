@@ -56,17 +56,18 @@ if ('forward' == $do) {
 		'description' => '',
 		'groupid' => 0,
 	);
-	if(!pdo_insert('uni_account', $account_insert)) {
+	$insert_result = table('uni_account')->fill($account_insert)->save();
+	if (!$insert_result) {
 		itoast('授权登录新建公众号失败，请重试', url('account/manage'), 'error');
 	}
 	$uniacid = pdo_insertid();
-	$template = pdo_fetch('SELECT id,title FROM ' . tablename('site_templates') . " WHERE name = 'default'");
+	$template = table('modules')->getTemplateByName('default');
 	$style_insert = array(
 		'uniacid' => $uniacid,
-		'templateid' => $template['id'],
+		'templateid' => $template['mid'],
 		'name' => $template['title'] . '_' . random(4),
 	);
-	pdo_insert('site_styles', $style_insert);
+	table('site_styles')->fill($style_insert)->save();
 	$styleid = pdo_insertid();
 
 	$multi_insert = array(
@@ -74,7 +75,7 @@ if ('forward' == $do) {
 		'title' => $account_insert['name'],
 		'styleid' => $styleid,
 	);
-	pdo_insert('site_multi', $multi_insert);
+	table('site_multi')->fill($multi_insert)->save();
 	$multi_id = pdo_insertid();
 
 	$unisetting_insert = array(
@@ -91,7 +92,7 @@ if ('forward' == $do) {
 		'sync' => iserializer(array('switch' => 0, 'acid' => '')),
 	);
 	pdo_insert('uni_settings', $unisetting_insert);
-	pdo_insert('mc_groups', array('uniacid' => $uniacid, 'title' => '默认会员组', 'isdefault' => 1));
+	table('mc_groups')->fill(array('uniacid' => $uniacid, 'title' => '默认会员组', 'isdefault' => 1))->save();
 
 	$account_index_insert = array(
 		'uniacid' => $uniacid,
@@ -99,9 +100,11 @@ if ('forward' == $do) {
 		'hash' => random(8),
 		'isconnect' => 1,
 	);
-	pdo_insert('account', $account_index_insert);
+	table('account')->fill($account_index_insert)->save();
 	$acid = pdo_insertid();
-
+	if (is_error($acid)) {
+		itoast('授权登录新建公众号失败，请重试', url('account/manage'), 'error');
+	}
 	$subaccount_insert = array(
 		'acid' => $acid,
 		'uniacid' => $uniacid,
@@ -115,23 +118,24 @@ if ('forward' == $do) {
 		'token' => $account_platform->token,
 	);
 	pdo_insert('account_wechats', $subaccount_insert);
-	if(is_error($acid)) {
-		itoast('授权登录新建公众号失败，请重试', url('account/manage'), 'error');
+	$user_create_account_info = permission_user_account_num();
+	if (empty($_W['isfounder']) && empty($user_create_account_info["usergroup_account_limit"])) {
+		pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_OFFCIAL_AUTH));
 	}
 	if (user_is_vice_founder()) {
-		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+		uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 	}
 	if (empty($_W['isfounder'])) {
-		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
+		uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 		if (!empty($_W['user']['owner_uid'])) {
-			uni_user_account_role($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+			uni_account_user_role_insert($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 		}
 	}
-	pdo_update('uni_account', array('default_acid' => $acid), array('uniacid' => $uniacid));
+	pdo_update('uni_account', array('default_acid' => $acid, 'logo' => $account_info['authorizer_info']['head_img'], 'qrcode' => $account_info['authorizer_info']['qrcode_url']), array('uniacid' => $uniacid));
 	$headimg = ihttp_request($account_info['authorizer_info']['head_img']);
 	$qrcode = ihttp_request($account_info['authorizer_info']['qrcode_url']);
-	file_put_contents(IA_ROOT . '/attachment/headimg_'.$acid.'.jpg', $headimg['content']);
-	file_put_contents(IA_ROOT . '/attachment/qrcode_'.$acid.'.jpg', $qrcode['content']);
+	file_put_contents(IA_ROOT . '/attachment/headimg_' . $acid . '.jpg', $headimg['content']);
+	file_put_contents(IA_ROOT . '/attachment/qrcode_' . $acid . '.jpg', $qrcode['content']);
 
 	cache_build_account($uniacid);
 	cache_delete(cache_system_key('proxy_wechatpay_account'));
@@ -143,7 +147,7 @@ if ('forward' == $do) {
 	$level = intval($_GPC['level']);
 	$uniacid = intval($_GPC['uniacid']);
 
-	if (user_is_founder($_W['uid'])) {
+	if ($_W['isfounder']) {
 		$user_accounts = table('account')->getAll();
 	} else {
 		$user_accounts = uni_user_accounts($_W['uid']);
@@ -184,5 +188,5 @@ if ('forward' == $do) {
 	exit('success');
 } elseif ('test' == $do) {
 	$authurl = $account_platform->getAuthLoginUrl();
-	echo '<a href="'.$authurl.'%26test=1"><img src="https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon_button3_2.png" /></a>';
+	echo '<a href="' . $authurl . '%26test=1"><img src="https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon_button3_2.png" /></a>';
 }

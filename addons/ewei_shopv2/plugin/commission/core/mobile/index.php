@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,14 +13,14 @@ class Index_EweiShopV2Page extends CommissionMobileLoginPage
 		global $_GPC;
 		$this->diypage('commission');
 		$member = $this->model->getInfo($_W['openid'], array('total', 'ordercount0', 'ok', 'ordercount', 'wait', 'pay'));
-		$cansettle = (1 <= $member['commission_ok']) && (floatval($this->set['withdraw']) <= $member['commission_ok']);
+		$cansettle = 1 <= $member['commission_ok'] && floatval($this->set['withdraw']) <= $member['commission_ok'];
 		$level1 = $level2 = $level3 = 0;
 		$level1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid=:agentid and uniacid=:uniacid limit 1', array(':agentid' => $member['id'], ':uniacid' => $_W['uniacid']));
-		if ((2 <= $this->set['level']) && (0 < count($member['level1_agentids']))) {
+		if (2 <= $this->set['level'] && 0 < count($member['level1_agentids'])) {
 			$level2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
 
-		if ((3 <= $this->set['level']) && (0 < count($member['level2_agentids']))) {
+		if (3 <= $this->set['level'] && 0 < count($member['level2_agentids'])) {
 			$level3 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
 
@@ -28,7 +29,7 @@ class Index_EweiShopV2Page extends CommissionMobileLoginPage
 		$openselect = false;
 
 		if ($this->set['select_goods'] == '1') {
-			if (empty($member['agentselectgoods']) || ($member['agentselectgoods'] == 2)) {
+			if (empty($member['agentselectgoods']) || $member['agentselectgoods'] == 2) {
 				$openselect = true;
 			}
 		}
@@ -71,6 +72,16 @@ class Index_EweiShopV2Page extends CommissionMobileLoginPage
 
 			if ($hasauthor) {
 				$team_money = $plugin_author->getTeamPay($member['id']);
+			}
+		}
+
+		$hasdividend = false;
+		$plugin_dividend = p('dividend');
+
+		if ($plugin_dividend) {
+			$plugin_dividend_set = $plugin_dividend->getSet();
+			if (!empty($plugin_dividend_set['open']) && !empty($plugin_dividend_set['commissionshow'])) {
+				$hasdividend = true;
 			}
 		}
 

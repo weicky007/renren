@@ -95,8 +95,8 @@
                 d.type=3;
                 d.num=obj.data('value');
                 d.total=obj.data('total');
-                if(d.num<1){
-                    tip.msgbox.err('微信企业付款需支付1元以上!');
+                if(d.num<0.3){
+                    tip.msgbox.err('微信企业付款需支付0.3元以上!');
                     $('form').attr('stop',1);
                     return false;
                 }
@@ -146,4 +146,3 @@
 
 </script>
 {template '_footer'}
-

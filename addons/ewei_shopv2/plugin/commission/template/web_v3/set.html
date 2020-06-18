@@ -89,6 +89,16 @@
                 $(".cashother-group").hide();
             }
         })
+
+        $(document).on("click", '[name="data[cansee]"]',function(){
+            var cansee = $('[name="data[cansee]"]:checked').val();
+            if (cansee ==1){
+                $("#seetitle").attr("style","");
+            }else{
+                $("#seetitle").attr("style","display: none");
+            }
+        })
+
         $('form').submit(function () {
             var become_child = $(":radio[name='data[become_child]']:checked").val();
             if (become_child == '1' || become_child == '2') {

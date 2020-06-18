@@ -40,8 +40,6 @@ class WeAccount extends ArrayObject {
 		'groups' => 'groups',
 		'setting' => 'setting',
 		'grouplevel' => 'groupLevel',
-		'logo' => 'logo',
-		'qrcode' => 'qrcode',
 		'type_name' => 'typeName',
 		'switchurl' => 'switchUrl',
 		'setmeal' => 'setMeal',
@@ -133,7 +131,7 @@ class WeAccount extends ArrayObject {
 		if (empty($uniaccount)) {
 			return error('-1', '帐号不存在或是已经被删除');
 		}
-		if (!empty($_W['uid']) && !user_is_founder($_W['uid'], true) && !permission_account_user_role($_W['uid'], $uniacid)) {
+		if (!empty($_W['uid']) && !$_W['isadmin'] && !permission_account_user_role($_W['uid'], $uniacid)) {
 			return error('-1', '无权限操作该平台账号');
 		}
 
@@ -187,7 +185,8 @@ class WeAccount extends ArrayObject {
 	}
 
 	protected function fetchDisplayUrl() {
-		return url('account/display', array('type' => $this->typeSign));
+		global $_W;
+		return $_W['siteroot'] . 'web/home.php';
 	}
 
 	protected function fetchCurrentUserRole() {
@@ -1431,9 +1430,6 @@ abstract class WeModuleProcessor extends WeBase {
 		$url = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $url);
 		if (strexists($url, 'http://') || strexists($url, 'https://')) {
 			return $url;
-		}
-		if (uni_is_multi_acid() && strexists($url, './index.php?i=') && !strexists($url, '&j=') && !empty($_W['acid'])) {
-			$url = str_replace("?i={$_W['uniacid']}&", "?i={$_W['uniacid']}&j={$_W['acid']}&", $url);
 		}
 		if ($_W['account']['level'] == ACCOUNT_SERVICE_VERIFY) {
 			return $_W['siteroot'] . 'app/' . $url;

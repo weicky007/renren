@@ -4,6 +4,26 @@
     .input-sm{padding:2px;}
 </style>
 <div class="form-group">
+    <label class="col-lg control-label">是否创建直接领取链接</label>
+    <div class="col-sm-9 col-xs-12" >
+        {ife 'sale.coupon' $item}
+        <label class="radio-inline">
+            <input type="radio" name="quickget" value="1" {if $item['quickget'] == 1}checked="true"{/if} /> 可以
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="quickget" value="0" {if $item['quickget'] == 0}checked="true"{/if}/> 不可以
+        </label>
+
+        <span class='help-block'>会员是否可以通过链接直接获取优惠券.注意!!!此功能无法与支付与积分兑换优惠券功能同时使用!!!</span>
+
+        {else} <div class='form-control-static'>
+        {if $item['quickget']==1}可以{else}不可以{/if}
+    </div>
+        {/if}
+    </div>
+</div>
+
+<div class="form-group">
     <label class="col-lg control-label">加入领券中心</label>
     <div class="col-sm-9 col-xs-12" >
         {ife 'sale.coupon' $item}
@@ -22,6 +42,7 @@
         {/if}
     </div>
 </div>
+
 <div class="gettype" {if $item['gettype']!=1}style="display:none"{/if}>
 
     {ife 'sale.coupon' $item}

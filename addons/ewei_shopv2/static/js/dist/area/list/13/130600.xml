@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="保定" code="130600">
-<county name="新市" code="130602">
+<city name="保定市" code="130600">
+<county name="竞秀区" code="130602">
     <street name="先锋街道" code="130602001" />
     <street name="新市场街道" code="130602002" />
     <street name="东风街道" code="130602003" />
@@ -15,7 +15,7 @@
     <street name="大马坊乡" code="130602205" />
     <street name="保定国家高新区" code="130602400" />
 </county>
-<county name="北市" code="130603">
+<county name="莲池区" code="130606">
     <street name="和平里街道" code="130603001" />
     <street name="五四路街道" code="130603002" />
     <street name="西关街道" code="130603003" />
@@ -24,8 +24,6 @@
     <street name="韩庄乡" code="130603200" />
     <street name="东金庄乡" code="130603201" />
     <street name="百楼乡" code="130603202" />
-</county>
-<county name="南市" code="130604">
     <street name="联盟街道" code="130604001" />
     <street name="红星街道" code="130604002" />
     <street name="裕华街道" code="130604003" />
@@ -36,7 +34,7 @@
     <street name="焦庄乡" code="130604202" />
     <street name="五尧乡" code="130604203" />
 </county>
-<county name="满城" code="130621">
+<county name="满城区" code="130621">
     <street name="惠阳街道" code="130621001" />
     <street name="满城镇" code="130621100" />
     <street name="大册营镇" code="130621101" />
@@ -51,7 +49,7 @@
     <street name="坨南乡" code="130621206" />
     <street name="刘家台乡" code="130621207" />
 </county>
-<county name="清苑" code="130622">
+<county name="清苑区" code="130622">
     <street name="清苑镇" code="130622100" />
     <street name="冉庄镇" code="130622101" />
     <street name="阳城镇" code="130622102" />
@@ -71,7 +69,7 @@
     <street name="阎庄乡" code="130622208" />
     <street name="望亭乡" code="130622209" />
 </county>
-<county name="涞水" code="130623">
+<county name="涞水县" code="130623">
     <street name="城区社区管理办公室街道" code="130623001" />
     <street name="涞水镇" code="130623100" />
     <street name="永阳镇" code="130623101" />
@@ -89,7 +87,7 @@
     <street name="龙门乡" code="130623206" />
     <street name="胡家庄乡" code="130623207" />
 </county>
-<county name="阜平" code="130624">
+<county name="阜平县" code="130624">
     <street name="阜平镇" code="130624100" />
     <street name="龙泉关镇" code="130624101" />
     <street name="平阳镇" code="130624102" />
@@ -104,7 +102,7 @@
     <street name="夏庄乡" code="130624207" />
     <street name="北果元乡" code="130624208" />
 </county>
-<county name="徐水" code="130625">
+<county name="徐水区" code="130625">
     <street name="安肃镇" code="130625100" />
     <street name="崔庄镇" code="130625101" />
     <street name="大因镇" code="130625102" />
@@ -120,7 +118,7 @@
     <street name="东釜山乡" code="130625205" />
     <street name="义联庄乡" code="130625206" />
 </county>
-<county name="定兴" code="130626">
+<county name="定兴县" code="130626">
     <street name="定兴镇" code="130626100" />
     <street name="固城镇" code="130626101" />
     <street name="贤寓镇" code="130626102" />
@@ -160,7 +158,7 @@
     <street name="黄石口乡" code="130627211" />
     <street name="倒马关乡" code="130627212" />
 </county>
-<county name="高阳" code="130628">
+<county name="高阳县" code="130628">
     <street name="高阳镇" code="130628100" />
     <street name="庞口镇" code="130628101" />
     <street name="西演镇" code="130628102" />
@@ -171,7 +169,7 @@
     <street name="龙化乡" code="130628204" />
     <street name="庞家佐乡" code="130628205" />
 </county>
-<county name="容城" code="130629">
+<county name="容城县" code="130629">
     <street name="容城镇" code="130629100" />
     <street name="小里镇" code="130629101" />
     <street name="南张镇" code="130629102" />
@@ -181,7 +179,7 @@
     <street name="贾光乡" code="130629201" />
     <street name="平王乡" code="130629203" />
 </county>
-<county name="涞源" code="130630">
+<county name="涞源县" code="130630">
     <street name="涞源镇" code="130630100" />
     <street name="银坊镇" code="130630101" />
     <street name="走马驿镇" code="130630102" />
@@ -200,7 +198,7 @@
     <street name="乌龙沟乡" code="130630208" />
     <street name="烟煤洞乡" code="130630209" />
 </county>
-<county name="望都" code="130631">
+<county name="望都县" code="130631">
     <street name="望都镇" code="130631100" />
     <street name="固店镇" code="130631101" />
     <street name="贾村镇" code="130631102" />
@@ -210,7 +208,7 @@
     <street name="高岭乡" code="130631204" />
     <street name="中韩庄乡" code="130631205" />
 </county>
-<county name="安新" code="130632">
+<county name="安新县" code="130632">
     <street name="安新镇" code="130632100" />
     <street name="大王镇" code="130632101" />
     <street name="三台镇" code="130632102" />
@@ -253,7 +251,7 @@
     <street name="蔡家峪乡" code="130633217" />
     <street name="南城司乡" code="130633218" />
 </county>
-<county name="曲阳" code="130634">
+<county name="曲阳县" code="130634">
     <street name="恒州镇" code="130634100" />
     <street name="灵山镇" code="130634101" />
     <street name="燕赵镇" code="130634102" />
@@ -288,7 +286,7 @@
     <street name="鲍墟乡" code="130635203" />
     <street name="大曲堤乡" code="130635204" />
 </county>
-<county name="顺平" code="130636">
+<county name="顺平县" code="130636">
     <street name="蒲阳镇" code="130636100" />
     <street name="高于铺镇" code="130636101" />
     <street name="腰山镇" code="130636102" />
@@ -300,7 +298,7 @@
     <street name="台鱼乡" code="130636204" />
     <street name="大悲乡" code="130636205" />
 </county>
-<county name="博野" code="130637">
+<county name="博野县" code="130637">
     <street name="博野镇" code="130637100" />
     <street name="小店镇" code="130637101" />
     <street name="程委镇" code="130637102" />
@@ -320,7 +318,7 @@
     <street name="双堂乡" code="130638203" />
     <street name="张岗乡" code="130638204" />
 </county>
-<county name="涿州" code="130681">
+<county name="涿州市" code="130681">
     <street name="双塔街道" code="130681001" />
     <street name="桃园街道" code="130681002" />
     <street name="清凉寺街道" code="130681003" />
@@ -337,7 +335,7 @@
     <street name="刁窝乡" code="130681206" />
     <street name="开发区管理委员会" code="130681400" />
 </county>
-<county name="定州" code="130682">
+<county name="定州市" code="130682">
     <street name="南城区街道" code="130682001" />
     <street name="北城区街道" code="130682002" />
     <street name="西城区街道" code="130682003" />
@@ -364,7 +362,7 @@
     <street name="大鹿庄乡" code="130682206" />
     <street name="西城乡" code="130682208" />
 </county>
-<county name="安国" code="130683">
+<county name="安国市" code="130683">
     <street name="祁州药市街道" code="130683001" />
     <street name="祁州镇" code="130683100" />
     <street name="伍仁桥镇" code="130683101" />
@@ -377,7 +375,7 @@
     <street name="西安国城乡" code="130683202" />
     <street name="北段村乡" code="130683204" />
 </county>
-<county name="高碑店" code="130684">
+<county name="高碑店市" code="130684">
     <street name="和平街道" code="130684001" />
     <street name="军城街道" code="130684002" />
     <street name="东盛街道" code="130684003" />

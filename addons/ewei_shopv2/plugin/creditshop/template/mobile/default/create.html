@@ -4,14 +4,26 @@
 <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/creditshop/static/css/common.css" />
 <style type="text/css">
     .fui-navbar ~ .fui-content, .fui-content.navbar{padding-bottom:0;}
-    {if $set['creditbalance']==0 && $pay['credit'] == 0}
-    .fui-actionsheet a.balance{display: none;}
-    {/if}
-    {if $set['creditwechat']==0 && $pay['weixin'] == 0 && $pay['weixin_jie'] == 0}
-    .fui-actionsheet a.wechat{display: none;}
-    {/if}
-    {if $set['creditalipay']==0 && $pay['alipay'] == 0}
-    .fui-actionsheet a.alipay{display: none;}
+    {if !is_h5app()}
+        {if $set['creditbalance']==0 && $pay['credit'] == 0}
+        .fui-actionsheet a.balance{display: none;}
+        {/if}
+        {if $set['creditwechat']==0 && $pay['weixin'] == 0 && $pay['weixin_jie'] == 0}
+        .fui-actionsheet a.wechat{display: none;}
+        {/if}
+        {if $set['creditalipay']==0 && $pay['alipay'] == 0}
+        .fui-actionsheet a.alipay{display: none;}
+        {/if}
+    {else}
+        {if $pay['credit'] == 0}
+        .fui-actionsheet a.balance{display: none;}
+        {/if}
+        {if $pay['app_wechat'] == 0}
+        .fui-actionsheet a.wechat{display: none;}
+        {/if}
+        {if $pay['app_alipay'] == 0}
+        .fui-actionsheet a.alipay{display: none;}
+        {/if}
     {/if}
     .text-danger2 {
         background: none;
@@ -20,7 +32,7 @@
 <div class='fui-page order-detail-page'>
     <div class="fui-header">
         <div class="fui-header-left">
-            <a class="back" href="{php echo mobileUrl('creditshop/detai')}"></a>
+            <a class="back" href="{php echo mobileUrl('creditshop/detail')}"></a>
         </div>
         <div class="title">创建订单</div>
         <div class="fui-header-right"></div>
@@ -56,8 +68,8 @@
                 </div>
                 {/if}
                 <div class="fui-cell">
-                    <div class="fui-cell-text store">请选择兑换门店</div>
                     <a class="fui-cell-info" href="{php echo mobileUrl('store/selector', array('ids'=>$goods['storeids'],'merchid'=>$goods['merchid']))}">
+                        <span class="fui-cell-text store" style="float: left">请选择兑换门店</span>
                         <div class="fui-cell-remark" id="storename"></div>
                     </a>
                 </div>
@@ -78,11 +90,21 @@
                     <div class='fui-list-angle'>
                         <span class='marketprice'>
                             {$goods['credit']}{$_W['shopset']['trade']['credittext']}{if $goods['money']>0}<br />&yen;{$goods['money']}{/if}
-				            <br/>   x 1
+				            {if $goods['type'] == 1}<br/>   x 1{/if}
                         </span>
                     </div>
                 </div>
             </a>
+            {if $goods['type'] == 0}
+            <!--数量选择区域-->
+            <div class="numarea" style="height: 2rem">
+                <div class="fui-number" style="position: absolute;right: 0.5rem;margin-top: 0.25rem">
+                    <div class="minus">-</div>
+                    <input class="num" id="num" type="tel" name="num" value="1"/>
+                    <div class="plus">+</div>
+                </div>
+            </div>
+            {/if}
         </div>
 
         {if !empty($stores)}
@@ -131,7 +153,10 @@
             <div class="fui-cell">
                 <div class="fui-cell-label">商品小计</div>
                 <div class="fui-cell-info"></div>
-                <div class="fui-cell-remark noremark">{$goods['credit']}{$_W['shopset']['trade']['credittext']} + &yen;{$goods['money']}</div>
+                <div class="fui-cell-remark noremark">
+                    <span id="showcredit">{$goods['credit']}</span>{$_W['shopset']['trade']['credittext']}
+                    + &yen;<span id="showmoney">{$goods['money']}</span>
+                </div>
             </div>
             {if $goods['goodstype']==0 && $goods['type']==0 && $goods['isverify']==0}
             <div class="fui-cell">
@@ -141,7 +166,7 @@
                     {if is_array($goods['dispatch'])}
                         &yen;{php echo number_format($goods['dispatch']['min'],2)} ~ &yen;{php echo number_format($goods['dispatch']['max'],2)}
                     {else}
-                        {php echo $goods['dispatch'] == 0 ? '包邮' : '&yen;'.number_format($goods['dispatch'],2)}
+                        <span id="dispatch">{php echo $goods['dispatch'] == 0 ? '包邮' : '&yen;'.number_format($goods['dispatch'],2)}</span>
                     {/if}
                 </div>
             </div>
@@ -153,7 +178,7 @@
         <p class="nav-item" style="width:10%;text-align: left;padding:0.3rem;font-size:0.7rem;">
             需付{if $goods['isverify'] == 0 && $goods['goodstype']==0 && $goods['type']==0 && $goods['dispatch'] > 0}(含运费){/if}：
             <span class="text-danger2" style="background: none;">
-                {$goods['credit']}{$_W['shopset']['trade']['credittext']}
+                <span id="realcredit">{$goods['credit']}</span>{$_W['shopset']['trade']['credittext']}
                 {if $goods['money'] > 0 || $goods['dispatch'] >0}+
                     {if is_array($goods['dispatch'])}
                         &yen;<span class="moneydispatch">{php echo number_format($goods['money'] + $goods['dispatch']['max'],2)}</span>
@@ -168,8 +193,9 @@
     {template 'order/pay/wechat_jie'}
     <script language='javascript'>
         require(['../addons/ewei_shopv2/plugin/creditshop/static/js/create.js'], function (modal) {
-            modal.init({goods: {php echo json_encode($goods)},optionid:{$optionid}});
+            modal.init({goods: {php echo json_encode($goods)},optionid:{$optionid},chance:{$chance},payinfo:{$payinfo}});
         });
     </script>
+
 </div>
 {template '_footer'}

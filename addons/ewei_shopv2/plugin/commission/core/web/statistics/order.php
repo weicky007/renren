@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -27,7 +28,7 @@ class Order_EweiShopV2Page extends WebPage
 			$st = '.' . $st;
 		}
 
-		$sendtype = (!isset($_GPC['sendtype']) ? 0 : $_GPC['sendtype']);
+		$sendtype = !isset($_GPC['sendtype']) ? 0 : $_GPC['sendtype'];
 		$condition = ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0 and o.agentid>0';
 		$ccard_plugin = p('ccard');
 
@@ -72,29 +73,29 @@ class Order_EweiShopV2Page extends WebPage
 				$condition .= ' AND locate(:keyword,o.ordersn)>0';
 			}
 			else if ($searchfield == 'member') {
-				$condition .= ' AND (locate(:keyword,m.realname)>0 or locate(:keyword,m.mobile)>0 or locate(:keyword,m.nickname)>0)';
+				$condition .= ' AND o.openid in (select openid from ' . tablename('ewei_shop_member') . ' where realname like :keyword or mobile=:keyword or nickname like :keyword)';
 			}
 			else if ($searchfield == 'address') {
 				$condition .= ' AND ( locate(:keyword,a.realname)>0 or locate(:keyword,a.mobile)>0 or locate(:keyword,o.carrier)>0)';
 			}
 			else if ($searchfield == 'location') {
-				$condition .= ' AND ( locate(:keyword,a.province)>0 or locate(:keyword,a.city)>0 or locate(:keyword,a.area)>0 or locate(:keyword,a.address)>0)';
+				$condition .= ' AND ( locate(:keyword,o.address)>0 or locate(:keyword,o.address_send)>0 )';
 			}
 			else if ($searchfield == 'expresssn') {
 				$condition .= ' AND locate(:keyword,o.expresssn)>0';
 			}
 			else if ($searchfield == 'saler') {
-				$condition .= ' AND (locate(:keyword,sm.realname)>0 or locate(:keyword,sm.mobile)>0 or locate(:keyword,sm.nickname)>0 or locate(:keyword,s.salername)>0 )';
+				$condition .= ' AND verifyopenid in (select openid from ' . tablename('ewei_shop_member') . ' where realname like :keyword or mobile=:keyword or nickname like :keyword)';
 			}
 			else if ($searchfield == 'store') {
 				$condition .= ' AND (locate(:keyword,store.storename)>0)';
 				$sqlcondition = ' left join ' . tablename('ewei_shop_store') . ' store on store.id = o.verifystoreid and store.uniacid=o.uniacid';
 			}
 			else if ($searchfield == 'goodstitle') {
-				$sqlcondition = ' inner join ( select  og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and (locate(:keyword,g.title)>0)) gs on gs.orderid=o.id';
+				$sqlcondition = ' inner join ( select  og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . (' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and (locate(:keyword,g.title)>0)) gs on gs.orderid=o.id');
 			}
 			else if ($searchfield == 'goodssn') {
-				$sqlcondition = ' inner join ( select og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and (((locate(:keyword,g.goodssn)>0)) or (locate(:keyword,og.goodssn)>0))) gs on gs.orderid=o.id';
+				$sqlcondition = ' inner join ( select og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . (' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and (((locate(:keyword,g.goodssn)>0)) or (locate(:keyword,og.goodssn)>0))) gs on gs.orderid=o.id');
 			}
 			else {
 				if ($searchfield == 'merch') {
@@ -140,7 +141,7 @@ class Order_EweiShopV2Page extends WebPage
 		}
 
 		$olevel = intval($_GPC['olevel']);
-		if (!empty($agentid) && (0 < $level)) {
+		if (!empty($agentid) && 0 < $level) {
 			$agent = $p->getInfo($agentid, array());
 
 			if (!empty($agent)) {
@@ -152,11 +153,11 @@ class Order_EweiShopV2Page extends WebPage
 					$condition .= ' and  ( o.agentid=' . intval($_GPC['agentid']);
 				}
 
-				if ((2 <= $level) && (0 < $agent['level2'])) {
+				if (2 <= $level && 0 < $agent['level2']) {
 					$condition .= ' or o.agentid in( ' . implode(',', array_keys($agent['level1_agentids'])) . ')';
 				}
 
-				if ((3 <= $level) && (0 < $agent['level3'])) {
+				if (3 <= $level && 0 < $agent['level3']) {
 					$condition .= ' or o.agentid in( ' . implode(',', array_keys($agent['level2_agentids'])) . ')';
 				}
 
@@ -194,21 +195,11 @@ class Order_EweiShopV2Page extends WebPage
 			$paras[':authorid'] = $authorid;
 		}
 
-		if (($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0') || !empty($sqlcondition)) {
-			$sql = 'select o.* , a.realname as arealname,a.mobile as amobile,a.province as aprovince ,a.city as acity , a.area as aarea,a.address as aaddress, d.dispatchname,m.nickname,m.id as mid,m.realname as mrealname,m.mobile as mmobile,sm.id as salerid,sm.nickname as salernickname,s.salername,r.rtype,r.status as rstatus,o.agentid from ' . tablename('ewei_shop_order') . ' o' . ' left join ' . tablename('ewei_shop_order_refund') . ' r on r.id =o.refundid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid =  o.uniacid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on a.id=o.addressid ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . ' left join ' . tablename('ewei_shop_saler') . ' s on s.openid = o.verifyopenid and s.uniacid=o.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' sm on sm.openid = s.openid and sm.uniacid=s.uniacid' . ' ' . $sqlcondition . ' where ' . $condition . ' ' . $statuscondition . ' GROUP BY o.id ORDER BY o.createtime DESC  ';
+		if ($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0 and o.agentid>0' || !empty($sqlcondition)) {
+			$sql = 'select o.*  from ' . tablename('ewei_shop_order') . ' o' . (' ' . $sqlcondition . ' where ' . $condition . ' ' . $statuscondition . ' GROUP BY o.id ORDER BY o.createtime DESC  ');
 
 			if (empty($_GPC['export'])) {
-				$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
-			}
-
-			$list = pdo_fetchall($sql, $paras);
-		}
-		else {
-			$status_condition = str_replace('o.', '', $statuscondition);
-			$sql = 'select * from ' . tablename('ewei_shop_order') . ' where uniacid = :uniacid and ismr=0 and deleted=0 and isparent=0 ' . $status_condition . ' GROUP BY id ORDER BY createtime DESC  ';
-
-			if (empty($_GPC['export'])) {
-				$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+				$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			}
 
 			$list = pdo_fetchall($sql, $paras);
@@ -233,11 +224,70 @@ class Order_EweiShopV2Page extends WebPage
 				$addressid = ltrim($addressid, ',');
 				$dispatchid = ltrim($dispatchid, ',');
 				$verifyopenid = ltrim($verifyopenid, ',');
-				$refundid_array = pdo_fetchall('SELECT id,rtype,status as rstatus FROM ' . tablename('ewei_shop_order_refund') . ' WHERE id IN (' . $refundid . ')', array(), 'id');
-				$openid_array = pdo_fetchall('SELECT openid,nickname,id as mid,realname as mrealname,mobile as mmobile FROM ' . tablename('ewei_shop_member') . ' WHERE openid IN (' . $openid . ') AND uniacid=' . $_W['uniacid'], array(), 'openid');
-				$addressid_array = pdo_fetchall('SELECT id,realname as arealname,mobile as amobile,province as aprovince ,city as acity , area as aarea,address as aaddress FROM ' . tablename('ewei_shop_member_address') . ' WHERE id IN (' . $addressid . ')', array(), 'id');
-				$dispatchid_array = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id IN (' . $dispatchid . ')', array(), 'id');
-				$verifyopenid_array = pdo_fetchall('SELECT sm.id as salerid,sm.nickname as salernickname,sm.openid,s.salername FROM ' . tablename('ewei_shop_saler') . ' s LEFT JOIN ' . tablename('ewei_shop_member') . ' sm ON sm.openid = s.openid and sm.uniacid=s.uniacid WHERE s.openid IN (' . $verifyopenid . ')', array(), 'openid');
+				$refundid_array = pdo_fetchall('SELECT id,rtype,status as rstatus FROM ' . tablename('ewei_shop_order_refund') . (' WHERE id IN (' . $refundid . ')'), array(), 'id');
+				$openid_array = pdo_fetchall('SELECT openid,nickname,id as mid,realname as mrealname,mobile as mmobile FROM ' . tablename('ewei_shop_member') . (' WHERE openid IN (' . $openid . ') AND uniacid=' . $_W['uniacid']), array(), 'openid');
+				$addressid_array = pdo_fetchall('SELECT id,realname as arealname,mobile as amobile,province as aprovince ,city as acity , area as aarea,address as aaddress FROM ' . tablename('ewei_shop_member_address') . (' WHERE id IN (' . $addressid . ')'), array(), 'id');
+				$dispatchid_array = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id IN (' . $dispatchid . ')'), array(), 'id');
+				$verifyopenid_array = pdo_fetchall('SELECT sm.id as salerid,sm.nickname as salernickname,sm.openid,s.salername FROM ' . tablename('ewei_shop_saler') . ' s LEFT JOIN ' . tablename('ewei_shop_member') . (' sm ON sm.openid = s.openid and sm.uniacid=s.uniacid WHERE s.openid IN (' . $verifyopenid . ')'), array(), 'openid');
+
+				foreach ($list as $key => &$value) {
+					$list[$key]['rtype'] = $refundid_array[$value['refundid']]['rtype'];
+					$list[$key]['rstatus'] = $refundid_array[$value['refundid']]['rstatus'];
+					$list[$key]['nickname'] = $openid_array[$value['openid']]['nickname'];
+					$list[$key]['mid'] = $openid_array[$value['openid']]['mid'];
+					$list[$key]['mrealname'] = $openid_array[$value['openid']]['mrealname'];
+					$list[$key]['mmobile'] = $openid_array[$value['openid']]['mmobile'];
+					$list[$key]['arealname'] = $addressid_array[$value['addressid']]['arealname'];
+					$list[$key]['amobile'] = $addressid_array[$value['addressid']]['amobile'];
+					$list[$key]['aprovince'] = $addressid_array[$value['addressid']]['aprovince'];
+					$list[$key]['acity'] = $addressid_array[$value['addressid']]['acity'];
+					$list[$key]['aarea'] = $addressid_array[$value['addressid']]['aarea'];
+					$list[$key]['astreet'] = $addressid_array[$value['addressid']]['astreet'];
+					$list[$key]['aaddress'] = $addressid_array[$value['addressid']]['aaddress'];
+					$list[$key]['dispatchname'] = $dispatchid_array[$value['dispatchid']]['dispatchname'];
+					$list[$key]['salerid'] = $verifyopenid_array[$value['verifyopenid']]['salerid'];
+					$list[$key]['salernickname'] = $verifyopenid_array[$value['verifyopenid']]['salernickname'];
+					$list[$key]['salername'] = $verifyopenid_array[$value['verifyopenid']]['salername'];
+				}
+
+				unset($value);
+			}
+		}
+		else {
+			$status_condition = str_replace('o.', '', $statuscondition);
+			$sql = 'select * from ' . tablename('ewei_shop_order') . (' where uniacid = :uniacid and ismr=0 and deleted=0 and isparent=0 and agentid > 0 ' . $status_condition . ' GROUP BY id ORDER BY createtime DESC  ');
+
+			if (empty($_GPC['export'])) {
+				$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+			}
+
+			$list = pdo_fetchall($sql, $paras);
+
+			if (!empty($list)) {
+				$refundid = '';
+				$openid = '';
+				$addressid = '';
+				$dispatchid = '';
+				$verifyopenid = '';
+
+				foreach ($list as $key => $value) {
+					$refundid .= ',\'' . $value['refundid'] . '\'';
+					$openid .= ',\'' . $value['openid'] . '\'';
+					$addressid .= ',\'' . $value['addressid'] . '\'';
+					$dispatchid .= ',\'' . $value['dispatchid'] . '\'';
+					$verifyopenid .= ',\'' . $value['verifyopenid'] . '\'';
+				}
+
+				$refundid = ltrim($refundid, ',');
+				$openid = ltrim($openid, ',');
+				$addressid = ltrim($addressid, ',');
+				$dispatchid = ltrim($dispatchid, ',');
+				$verifyopenid = ltrim($verifyopenid, ',');
+				$refundid_array = pdo_fetchall('SELECT id,rtype,status as rstatus FROM ' . tablename('ewei_shop_order_refund') . (' WHERE id IN (' . $refundid . ')'), array(), 'id');
+				$openid_array = pdo_fetchall('SELECT openid,nickname,id as mid,realname as mrealname,mobile as mmobile FROM ' . tablename('ewei_shop_member') . (' WHERE openid IN (' . $openid . ') AND uniacid=' . $_W['uniacid']), array(), 'openid');
+				$addressid_array = pdo_fetchall('SELECT id,realname as arealname,mobile as amobile,province as aprovince ,city as acity , area as aarea,address as aaddress FROM ' . tablename('ewei_shop_member_address') . (' WHERE id IN (' . $addressid . ')'), array(), 'id');
+				$dispatchid_array = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id IN (' . $dispatchid . ')'), array(), 'id');
+				$verifyopenid_array = pdo_fetchall('SELECT sm.id as salerid,sm.nickname as salernickname,sm.openid,s.salername FROM ' . tablename('ewei_shop_saler') . ' s LEFT JOIN ' . tablename('ewei_shop_member') . (' sm ON sm.openid = s.openid and sm.uniacid=s.uniacid WHERE s.openid IN (' . $verifyopenid . ')'), array(), 'openid');
 
 				foreach ($list as $key => &$value) {
 					$list[$key]['rtype'] = $refundid_array[$value['refundid']]['rtype'];
@@ -271,14 +321,14 @@ class Order_EweiShopV2Page extends WebPage
 			22 => array('css' => 'warning', 'name' => '支付宝支付'),
 			23 => array('css' => 'warning', 'name' => '银联支付'),
 			3  => array('css' => 'primary', 'name' => '货到付款')
-			);
+		);
 		$orderstatus = array(
 			-1 => array('css' => 'default', 'name' => '已关闭'),
 			0  => array('css' => 'danger', 'name' => '待付款'),
 			1  => array('css' => 'info', 'name' => '待发货'),
 			2  => array('css' => 'warning', 'name' => '待收货'),
 			3  => array('css' => 'success', 'name' => '已完成')
-			);
+		);
 		$is_merch = array();
 		$is_merchname = 0;
 
@@ -301,7 +351,7 @@ class Order_EweiShopV2Page extends WebPage
 				$value['statusvalue'] = $s;
 				$value['statuscss'] = $orderstatus[$value['status']]['css'];
 				$value['status'] = $orderstatus[$value['status']]['name'];
-				if (($pt == 3) && empty($value['statusvalue'])) {
+				if ($pt == 3 && empty($value['statusvalue'])) {
 					$value['statuscss'] = $orderstatus[1]['css'];
 					$value['status'] = $orderstatus[1]['name'];
 				}
@@ -347,7 +397,7 @@ class Order_EweiShopV2Page extends WebPage
 					}
 				}
 
-				if (($value['dispatchtype'] == 1) || !empty($value['isverify']) || !empty($value['virtual']) || !empty($value['isvirtual'])) {
+				if ($value['dispatchtype'] == 1 || !empty($value['isverify']) || !empty($value['virtual']) || !empty($value['isvirtual'])) {
 					$value['address'] = '';
 					$carrier = iunserializer($value['carrier']);
 
@@ -400,7 +450,7 @@ class Order_EweiShopV2Page extends WebPage
 					$magent = m('member')->getMember($agentid);
 				}
 
-				$order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.diyformdata,og.diyformfields,op.specs,g.merchid from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' left join ' . tablename('ewei_shop_goods_option') . ' op on og.optionid = op.id ' . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $uniacid, ':orderid' => $value['id']));
+				$order_goods = pdo_fetchall('select g.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.changeprice,og.oldprice,og.commission1,og.commission2,og.commission3,og.commissions,og.diyformdata,og.diyformfields,op.specs,g.merchid,og.nocommission from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' left join ' . tablename('ewei_shop_goods_option') . ' op on og.optionid = op.id ' . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $uniacid, ':orderid' => $value['id']));
 				$goods = '';
 
 				foreach ($order_goods as &$og) {
@@ -412,46 +462,47 @@ class Order_EweiShopV2Page extends WebPage
 						}
 					}
 
-					if (!empty($level) && empty($agentid)) {
+					if (!empty($level) && empty($agentid) && empty($og['nocommission'])) {
 						$commissions = iunserializer($og['commissions']);
 
 						if (!empty($m1)) {
 							$value['m1'] = $m1;
 
 							if (is_array($commissions)) {
-								$commission1 += (isset($commissions['level1']) ? floatval($commissions['level1']) : 0);
+								$commission1 += isset($commissions['level1']) ? floatval($commissions['level1']) : 0;
 							}
 							else {
 								$c1 = iunserializer($og['commission1']);
 								$l1 = $p->getLevel($m1['openid']);
-								$commission1 += (isset($c1['level' . $l1['id']]) ? $c1['level' . $l1['id']] : $c1['default']);
+								$commission1 += isset($c1['level' . $l1['id']]) ? $c1['level' . $l1['id']] : $c1['default'];
 							}
 						}
 
 						if (!empty($m2)) {
 							if (is_array($commissions)) {
-								$commission2 += (isset($commissions['level2']) ? floatval($commissions['level2']) : 0);
+								$commission2 += isset($commissions['level2']) ? floatval($commissions['level2']) : 0;
 							}
 							else {
 								$c2 = iunserializer($og['commission2']);
 								$l2 = $p->getLevel($m2['openid']);
-								$commission2 += (isset($c2['level' . $l2['id']]) ? $c2['level' . $l2['id']] : $c2['default']);
+								$commission2 += isset($c2['level' . $l2['id']]) ? $c2['level' . $l2['id']] : $c2['default'];
 							}
 						}
 
 						if (!empty($m3)) {
 							if (is_array($commissions)) {
-								$commission3 += (isset($commissions['level3']) ? floatval($commissions['level3']) : 0);
+								$commission3 += isset($commissions['level3']) ? floatval($commissions['level3']) : 0;
 							}
 							else {
 								$c3 = iunserializer($og['commission3']);
 								$l3 = $p->getLevel($m3['openid']);
-								$commission3 += (isset($c3['level' . $l3['id']]) ? $c3['level' . $l3['id']] : $c3['default']);
+								$commission3 += isset($c3['level' . $l3['id']]) ? $c3['level' . $l3['id']] : $c3['default'];
 							}
 						}
 					}
 
-					$goods .= '' . $og['title'] . "\r\n";
+					$goods .= '' . $og['title'] . '
+';
 
 					if (!empty($og['optiontitle'])) {
 						$goods .= ' 规格: ' . $og['optiontitle'];
@@ -473,13 +524,15 @@ class Order_EweiShopV2Page extends WebPage
 						$goods .= ' 商品条码: ' . $og['productsn'];
 					}
 
-					$goods .= ' 单价: ' . ($og['price'] / $og['total']) . ' 折扣后: ' . ($og['realprice'] / $og['total']) . ' 数量: ' . $og['total'] . ' 总价: ' . $og['price'] . ' 折扣后: ' . $og['realprice'] . "\r\n ";
+					$goods .= ' 单价: ' . $og['price'] / $og['total'] . ' 折扣后: ' . $og['realprice'] / $og['total'] . ' 数量: ' . $og['total'] . ' 总价: ' . $og['price'] . ' 折扣后: ' . $og['realprice'] . '
+ ';
 					if (p('diyform') && !empty($og['diyformfields']) && !empty($og['diyformdata'])) {
 						$diyformdata_array = p('diyform')->getDatas(iunserializer($og['diyformfields']), iunserializer($og['diyformdata']));
 						$diyformdata = '';
 
 						foreach ($diyformdata_array as $da) {
-							$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+							$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 						}
 
 						$og['goods_diyformdata'] = $diyformdata;
@@ -495,7 +548,7 @@ class Order_EweiShopV2Page extends WebPage
 
 				$value['goods'] = set_medias($order_goods, 'thumb');
 				$value['goods_str'] = $goods;
-				if (!empty($agentid) && (0 < $level)) {
+				if (!empty($agentid) && 0 < $level) {
 					$commission_level = 0;
 
 					if ($value['agentid'] == $agentid) {
@@ -507,10 +560,10 @@ class Order_EweiShopV2Page extends WebPage
 							$commissions = iunserializer($c['commissions']);
 
 							if (empty($commissions)) {
-								$commission_level += (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default']);
+								$commission_level += isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
 							}
 							else {
-								$commission_level += (isset($commissions['level1']) ? floatval($commissions['level1']) : 0);
+								$commission_level += isset($commissions['level1']) ? floatval($commissions['level1']) : 0;
 							}
 						}
 					}
@@ -525,10 +578,10 @@ class Order_EweiShopV2Page extends WebPage
 								$commissions = iunserializer($c['commissions']);
 
 								if (empty($commissions)) {
-									$commission_level += (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default']);
+									$commission_level += isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
 								}
 								else {
-									$commission_level += (isset($commissions['level2']) ? floatval($commissions['level2']) : 0);
+									$commission_level += isset($commissions['level2']) ? floatval($commissions['level2']) : 0;
 								}
 							}
 						}
@@ -545,10 +598,10 @@ class Order_EweiShopV2Page extends WebPage
 									$commissions = iunserializer($c['commissions']);
 
 									if (empty($commissions)) {
-										$commission_level += (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default']);
+										$commission_level += isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
 									}
 									else {
-										$commission_level += (isset($commissions['level3']) ? floatval($commissions['level3']) : 0);
+										$commission_level += isset($commissions['level3']) ? floatval($commissions['level3']) : 0;
 									}
 								}
 							}
@@ -586,7 +639,7 @@ class Order_EweiShopV2Page extends WebPage
 				array('title' => '商品数量', 'field' => 'goods_total', 'width' => 12),
 				array('title' => '商品单价(折扣前)', 'field' => 'goods_price1', 'width' => 12),
 				array('title' => '商品单价(折扣后)', 'field' => 'goods_price2', 'width' => 12),
-				array('title' => '商品价格(折扣后)', 'field' => 'goods_rprice1', 'width' => 12),
+				array('title' => '商品价格(折扣前)', 'field' => 'goods_rprice1', 'width' => 12),
 				array('title' => '商品价格(折扣后)', 'field' => 'goods_rprice2', 'width' => 12),
 				array('title' => '支付方式', 'field' => 'paytype', 'width' => 12),
 				array('title' => '配送方式', 'field' => 'dispatchname', 'width' => 12),
@@ -608,19 +661,17 @@ class Order_EweiShopV2Page extends WebPage
 				array('title' => '快递单号', 'field' => 'expresssn', 'width' => 24),
 				array('title' => '订单备注', 'field' => 'remark', 'width' => 36),
 				array('title' => '核销员', 'field' => 'salerinfo', 'width' => 24),
-				array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36)
-				);
+				array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36),
+				array('title' => '一级佣金', 'field' => 'commission1', 'width' => 24),
+				array('title' => '二级佣金', 'field' => 'commission2', 'width' => 24),
+				array('title' => '三级佣金', 'field' => 'commission3', 'width' => 24)
+			);
 
 			if (p('diyform')) {
 				$columns[] = array('title' => '订单自定义信息', 'field' => 'order_diyformdata', 'width' => 36);
 				$columns[] = array('title' => '商品自定义信息', 'field' => 'goods_diyformdata', 'width' => 36);
 				$columns[] = array('title' => '分销商会员自定义信息', 'field' => 'member_diyformdata', 'width' => 36);
 				$columns[] = array('title' => '分销商申请自定义信息', 'field' => 'agent_diyformdata', 'width' => 36);
-			}
-
-			if (!empty($agentid) && (0 < $level)) {
-				$columns[] = array('title' => '分销级别', 'field' => 'level', 'width' => 24);
-				$columns[] = array('title' => '分销佣金', 'field' => 'commission', 'width' => 24);
 			}
 
 			foreach ($list as &$row) {
@@ -682,22 +733,27 @@ class Order_EweiShopV2Page extends WebPage
 					$diyformdata = '';
 
 					foreach ($diyformdata_array as $da) {
-						$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+						$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 					}
 
 					$row['order_diyformdata'] = $diyformdata;
 				}
 
 				$row['agent_id'] = $row['m1']['id'];
-				$row['agent_nickname'] = $row['m1']['nickname'];
-				$row['agent_realname'] = $row['m1']['realname'];
+				$row['realname'] = str_replace('=', '', $row['realname']);
+				$row['nickname'] = str_replace('=', '', $row['nickname']);
+				$row['nickname'] = str_replace('"', '""', $row['nickname']);
+				$row['agent_nickname'] = str_replace('=', '', $row['m1']['nickname']);
+				$row['agent_realname'] = str_replace('=', '', $row['m1']['realname']);
 				$row['agent_mobile'] = $row['m1']['mobile'];
 				if (p('diyform') && !empty($row['m1']['diymemberfields']) && !empty($row['m1']['diymemberdata'])) {
 					$diyformdata_array = p('diyform')->getDatas(iunserializer($row['m1']['diymemberfields']), iunserializer($row['m1']['diymemberdata']));
 					$diyformdata = '';
 
 					foreach ($diyformdata_array as $da) {
-						$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+						$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 					}
 
 					$row['member_diyformdata'] = $diyformdata;
@@ -708,7 +764,8 @@ class Order_EweiShopV2Page extends WebPage
 					$diyformdata = '';
 
 					foreach ($diyformdata_array as $da) {
-						$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+						$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 					}
 
 					$row['agent_diyformdata'] = $diyformdata;
@@ -766,6 +823,19 @@ class Order_EweiShopV2Page extends WebPage
 					$r['goods_rprice1'] = $g['price'];
 					$r['goods_rprice2'] = $g['realprice'];
 					$r['goods_diyformdata'] = $g['goods_diyformdata'];
+
+					if ($r['commission3'] == '-1') {
+						$r['commission3'] = '';
+					}
+
+					if ($r['commission2'] == '-1') {
+						$r['commission2'] = '';
+					}
+
+					if ($r['commission1'] == '-1') {
+						$r['commission1'] = '';
+					}
+
 					$exportlist[] = $r;
 				}
 			}
@@ -774,11 +844,11 @@ class Order_EweiShopV2Page extends WebPage
 			m('excel')->export($exportlist, array('title' => '订单数据-' . date('Y-m-d-H-i', time()), 'columns' => $columns));
 		}
 
-		if (($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0') || !empty($sqlcondition)) {
-			$t = pdo_fetch('SELECT COUNT(*) as count, ifnull(sum(o.price),0) as sumprice   FROM ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_order_refund') . ' r on r.id =o.refundid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  and m.uniacid =  o.uniacid' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_saler') . ' s on s.openid = o.verifyopenid and s.uniacid=o.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' sm on sm.openid = s.openid and sm.uniacid=s.uniacid' . ' ' . $sqlcondition . ' WHERE ' . $condition . ' ' . $statuscondition, $paras);
+		if ($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0' || !empty($sqlcondition)) {
+			$t = pdo_fetch('SELECT COUNT(*) as count, ifnull(sum(o.price),0) as sumprice   FROM ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_order_refund') . ' r on r.id =o.refundid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  and m.uniacid =  o.uniacid' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_saler') . ' s on s.openid = o.verifyopenid and s.uniacid=o.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' sm on sm.openid = s.openid and sm.uniacid=s.uniacid' . (' ' . $sqlcondition . ' WHERE ' . $condition . ' ' . $statuscondition), $paras);
 		}
 		else {
-			$t = pdo_fetch('SELECT COUNT(*) as count, ifnull(sum(price),0) as sumprice   FROM ' . tablename('ewei_shop_order') . ' WHERE uniacid = :uniacid and ismr=0 and deleted=0 and isparent=0 ' . $status_condition, $paras);
+			$t = pdo_fetch('SELECT COUNT(*) as count, ifnull(sum(price),0) as sumprice   FROM ' . tablename('ewei_shop_order') . (' WHERE uniacid = :uniacid and ismr=0 and deleted=0 and isparent=0 ' . $status_condition), $paras);
 		}
 
 		$total = $t['count'];
@@ -851,7 +921,7 @@ class Order_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$merch = intval($_GPC['merch']);
 		$totals = m('order')->getTotals($merch);
-		$result = (empty($totals) ? array() : $totals);
+		$result = empty($totals) ? array() : $totals;
 		show_json(1, $result);
 	}
 }

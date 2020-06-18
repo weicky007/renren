@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Sms_EweiShopV2Page extends AppMobilePage
 {
 	public function register()
@@ -37,13 +37,31 @@ class Sms_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		global $_GPC;
 		$mobile = trim($_GPC['mobile']);
+		$verifyImgCode = trim($_GPC['verifyImgCode']);
 
 		if (empty($mobile)) {
-			app_error(AppError::$ParamsError, '手机号不能为空');
+			return app_error(AppError::$ParamsError, '手机号不能为空');
 		}
 
-		if (($temp == 'bind') && $this->iswxapp && empty($_W['shopset']['isclose']) && !empty($_W['shopset']['openbind'])) {
-			$data = m('common')->getSysset('app');
+		$wapset = m('common')->getSysset('wap');
+
+		if (!empty($wapset['smsimgcode'])) {
+			if (empty($verifyImgCode)) {
+				return app_error('请输入图形验证码');
+			}
+
+			$verifyCodeKey = 'sms_captcha_code_uniaicid_' . $_W['uniacid'] . '_openid_' . $_W['openid'];
+			$verifyCode = m('cache')->get($verifyCodeKey);
+			$imgcodehash = md5(strtolower($verifyImgCode) . $_W['config']['setting']['authkey']);
+
+			if ($imgcodehash != trim($verifyCode)) {
+				return app_error(AppError::$ParamsError, '图形验证码错误');
+			}
+		}
+
+		$appset = m('common')->getSysset('app');
+		if ($temp == 'bind' && $this->iswxapp && empty($appset['isclose']) && !empty($appset['openbind'])) {
+			$data = $appset;
 		}
 		else {
 			$data = m('common')->getSysset('wap');
@@ -52,7 +70,7 @@ class Sms_EweiShopV2Page extends AppMobilePage
 		$sms_id = $data['sms_' . $temp];
 
 		if (empty($sms_id)) {
-			app_error(AppError::$SMSTplidNull);
+			return app_error(AppError::$SMSTplidNull);
 		}
 
 		$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
@@ -66,7 +84,7 @@ class Sms_EweiShopV2Page extends AppMobilePage
 		$time = time() - $sendtime;
 
 		if ($time < 60) {
-			app_error(AppError::$SMSRateError);
+			return app_error(AppError::$SMSRateError);
 		}
 
 		$code = random(5, true);
@@ -75,10 +93,24 @@ class Sms_EweiShopV2Page extends AppMobilePage
 		if ($ret['status']) {
 			m('cache')->set($key, $code);
 			m('cache')->set($key_time, time());
-			app_json();
+			return app_json();
 		}
 
-		app_error(AppError::$SystemError, $ret['message']);
+		return app_error(AppError::$SystemError, $ret['message']);
+	}
+
+	public function captcha()
+	{
+		global $_W;
+		global $_GPC;
+		error_reporting(0);
+		load()->classs('captcha');
+		session_start();
+		$captcha = new Captcha();
+		$captcha->build(150, 40);
+		$hash = md5(strtolower($captcha->phrase) . $_W['config']['setting']['authkey']);
+		m('cache')->set('sms_captcha_code_uniaicid_' . $_W['uniacid'] . '_openid_' . $_GPC['openid'], $hash);
+		$captcha->output();
 	}
 }
 

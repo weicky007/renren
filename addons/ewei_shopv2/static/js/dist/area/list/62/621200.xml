@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="陇南" code="621200">
-<county name="武都" code="621202">
+<city name="陇南市 " code="621200">
+<county name="武都区" code="621202">
     <street name="城关镇" code="621202100" />
     <street name="安化镇" code="621202101" />
     <street name="东江镇" code="621202102" />
@@ -80,7 +80,7 @@
     <street name="石坊乡" code="621222219" />
     <street name="石鸡坝乡" code="621222220" />
 </county>
-<county name="宕昌" code="621223">
+<county name="宕昌县" code="621223">
     <street name="城关镇" code="621223100" />
     <street name="哈达铺镇" code="621223101" />
     <street name="理川镇" code="621223102" />
@@ -130,7 +130,7 @@
     <street name="铜钱乡" code="621224215" />
     <street name="三河坝乡" code="621224218" />
 </county>
-<county name="西和" code="621225">
+<county name="西和县" code="621225">
     <street name="汉源镇" code="621225100" />
     <street name="长道镇" code="621225101" />
     <street name="何坝镇" code="621225102" />
@@ -200,7 +200,7 @@
     <street name="大河店乡" code="621227210" />
     <street name="虞关乡" code="621227211" />
 </county>
-<county name="两当" code="621228">
+<county name="两当县" code="621228">
     <street name="城关镇" code="621228100" />
     <street name="站儿巷镇" code="621228101" />
     <street name="西坡镇" code="621228102" />

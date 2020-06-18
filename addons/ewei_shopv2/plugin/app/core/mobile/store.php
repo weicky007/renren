@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Store_EweiShopV2Page extends AppMobilePage
 {
 	/**
@@ -17,6 +17,8 @@ class Store_EweiShopV2Page extends AppMobilePage
 		$ids = trim($_GPC['ids']);
 		$type = intval($_GPC['type']);
 		$merchid = intval($_GPC['merchid']);
+		$lng = $_GPC['lng'];
+		$lat = $_GPC['lat'];
 		$condition = '';
 
 		if (!empty($ids)) {
@@ -39,8 +41,19 @@ class Store_EweiShopV2Page extends AppMobilePage
 			$list = pdo_fetchall('select * from ' . tablename('ewei_shop_store') . ' where  uniacid=:uniacid and status=1 ' . $condition . ' order by displayorder desc,id desc', array(':uniacid' => $_W['uniacid']));
 		}
 
+		foreach ($list as $key => $value) {
+			$list[$key]['dast'] = m('util')->GetDistance($value['lat'], $value['lng'], $lat, $lng, 2) . 'km';
+		}
+
+		$score = array();
+
+		foreach ($list as $key => $value) {
+			$score[$key] = $value['dast'];
+		}
+
+		array_multisort($score, SORT_ASC, SORT_NUMERIC, $list);
 		$list = set_medias($list, 'logo');
-		app_json(array('list' => $list));
+		return app_json(array('list' => $list));
 	}
 
 	/**
@@ -65,16 +78,16 @@ class Store_EweiShopV2Page extends AppMobilePage
 		$gcj02 = $this->Convert_BD09_To_GCJ02($store['lat'], $store['lng']);
 		$store['lat'] = $gcj02['lat'];
 		$store['lng'] = $gcj02['lng'];
-		app_json(array('store' => $store));
+		return app_json(array('store' => $store));
 	}
 
 	public function Convert_BD09_To_GCJ02($lat, $lng)
 	{
-		$x_pi = (3.1415926535897931 * 3000) / 180;
+		$x_pi = 3.1415926535897931 * 3000 / 180;
 		$x = $lng - 0.0064999999999999997;
 		$y = $lat - 0.0060000000000000001;
-		$z = sqrt(($x * $x) + ($y * $y)) - (2.0000000000000002E-5 * sin($y * $x_pi));
-		$theta = atan2($y, $x) - (3.0000000000000001E-6 * cos($x * $x_pi));
+		$z = sqrt($x * $x + $y * $y) - 2.0000000000000002E-5 * sin($y * $x_pi);
+		$theta = atan2($y, $x) - 3.0000000000000001E-6 * cos($x * $x_pi);
 		$lng = $z * cos($theta);
 		$lat = $z * sin($theta);
 		return array('lat' => $lat, 'lng' => $lng);

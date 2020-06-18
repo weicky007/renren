@@ -133,7 +133,7 @@
                                                 {if $third['enabled']==1}显示{else}隐藏{/if}</div>
 
                                                     {ifp 'goods.category.edit|goods.category.view'}<a class='btn btn-default btn-sm btn-operation btn-op' href="{php echo webUrl('goods/category/edit', array('id' => $third['id']))}" title="" >
-                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="修改">
                                                         <i class="icow icow-bianji2"></i>
                                                          </span>
                                                     </a>{/if}
@@ -226,5 +226,4 @@
         </script>
 
         {template '_footer'}
-
 

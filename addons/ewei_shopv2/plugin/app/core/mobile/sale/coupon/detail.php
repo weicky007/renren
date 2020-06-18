@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -66,15 +66,15 @@ class Detail_EweiShopV2Page extends MobilePage
 				$coupon['color'] = 'pink ';
 			}
 
-			if (!empty($coupon['backmoney']) && (0 < $coupon['backmoney'])) {
+			if (!empty($coupon['backmoney']) && 0 < $coupon['backmoney']) {
 				$title3 = $title3 . '送' . $coupon['backmoney'] . '元余额 ';
 			}
 
-			if (!empty($coupon['backcredit']) && (0 < $coupon['backcredit'])) {
+			if (!empty($coupon['backcredit']) && 0 < $coupon['backcredit']) {
 				$title3 = $title3 . '送' . $coupon['backcredit'] . '积分 ';
 			}
 
-			if (!empty($coupon['backredpack']) && (0 < $coupon['backredpack'])) {
+			if (!empty($coupon['backredpack']) && 0 < $coupon['backredpack']) {
 				$title3 = $title3 . '送' . $coupon['backredpack'] . '元红包';
 			}
 		}
@@ -113,7 +113,7 @@ class Detail_EweiShopV2Page extends MobilePage
 			$hascommission = !empty($plugin_com_set['level']);
 
 			if (in_array('0', $limitagentlevels)) {
-				$commissionname = (empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname']);
+				$commissionname = empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname'];
 			}
 		}
 
@@ -126,7 +126,7 @@ class Detail_EweiShopV2Page extends MobilePage
 			$hasglobonus = !empty($plugin_globonus_set['open']);
 
 			if (in_array('0', $limitpartnerlevels)) {
-				$globonuname = (empty($plugin_globonus_set['levelname']) ? '普通等级' : $plugin_globonus_set['levelname']);
+				$globonuname = empty($plugin_globonus_set['levelname']) ? '普通等级' : $plugin_globonus_set['levelname'];
 			}
 		}
 
@@ -140,7 +140,7 @@ class Detail_EweiShopV2Page extends MobilePage
 			$hasabonus = !empty($plugin_abonus_set['open']);
 
 			if (in_array('0', $limitaagentlevels)) {
-				$abonuname = (empty($plugin_abonus_set['levelname']) ? '普通等级' : $plugin_abonus_set['levelname']);
+				$abonuname = empty($plugin_abonus_set['levelname']) ? '普通等级' : $plugin_abonus_set['levelname'];
 			}
 		}
 
@@ -149,11 +149,11 @@ class Detail_EweiShopV2Page extends MobilePage
 		if ($coupon['islimitlevel'] == 1) {
 			$openid = trim($_W['openid']);
 			$member = m('member')->getMember($openid);
-			if (!empty($coupon['limitmemberlevels']) || ($coupon['limitmemberlevels'] == '0')) {
+			if (!empty($coupon['limitmemberlevels']) || $coupon['limitmemberlevels'] == '0') {
 				$shop = $_W['shopset']['shop'];
 
 				if (in_array('0', $limitmemberlevels)) {
-					$meblvname = (empty($shop['levelname']) ? '普通等级' : $shop['levelname']);
+					$meblvname = empty($shop['levelname']) ? '普通等级' : $shop['levelname'];
 				}
 
 				$level1 = pdo_fetchall('select * from ' . tablename('ewei_shop_member_level') . ' where uniacid=:uniacid and  id in (' . $coupon['limitmemberlevels'] . ') ', array(':uniacid' => $_W['uniacid']));
@@ -163,27 +163,27 @@ class Detail_EweiShopV2Page extends MobilePage
 				}
 			}
 
-			if ((!empty($coupon['limitagentlevels']) || ($coupon['limitagentlevels'] == '0')) && $hascommission) {
+			if ((!empty($coupon['limitagentlevels']) || $coupon['limitagentlevels'] == '0') && $hascommission) {
 				$level2 = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_level') . ' where uniacid=:uniacid and id  in (' . $coupon['limitagentlevels'] . ') ', array(':uniacid' => $_W['uniacid']));
-				if (($member['isagent'] == '1') && ($member['status'] == '1')) {
+				if ($member['isagent'] == '1' && $member['status'] == '1') {
 					if (in_array($member['agentlevel'], $limitagentlevels)) {
 						$pass = true;
 					}
 				}
 			}
 
-			if ((!empty($coupon['limitpartnerlevels']) || ($coupon['limitpartnerlevels'] == '0')) && $hasglobonus) {
+			if ((!empty($coupon['limitpartnerlevels']) || $coupon['limitpartnerlevels'] == '0') && $hasglobonus) {
 				$level3 = pdo_fetchall('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid and  id in(' . $coupon['limitpartnerlevels'] . ') ', array(':uniacid' => $_W['uniacid']));
-				if (($member['ispartner'] == '1') && ($member['partnerstatus'] == '1')) {
+				if ($member['ispartner'] == '1' && $member['partnerstatus'] == '1') {
 					if (in_array($member['partnerlevel'], $limitpartnerlevels)) {
 						$pass = true;
 					}
 				}
 			}
 
-			if ((!empty($coupon['limitaagentlevels']) || ($coupon['limitaagentlevels'] == '0')) && $hasabonus) {
+			if ((!empty($coupon['limitaagentlevels']) || $coupon['limitaagentlevels'] == '0') && $hasabonus) {
 				$level4 = pdo_fetchall('select * from ' . tablename('ewei_shop_abonus_level') . ' where uniacid=:uniacid and  id in (' . $coupon['limitaagentlevels'] . ') ', array(':uniacid' => $_W['uniacid']));
-				if (($member['isaagent'] == '1') && ($member['aagentstatus'] == '1')) {
+				if ($member['isaagent'] == '1' && $member['aagentstatus'] == '1') {
 					if (in_array($member['aagentlevel'], $limitaagentlevels)) {
 						$pass = true;
 					}
@@ -299,7 +299,7 @@ class Detail_EweiShopV2Page extends MobilePage
 				$params['user'] = $openid;
 				$params['fee'] = $coupon['money'];
 				$params['title'] = $set['shop']['name'] . '优惠券领取单号:' . $log['logno'];
-				if (isset($set['pay']) && ($set['pay']['weixin'] == 1) && ($jie !== 1)) {
+				if (isset($set['pay']) && $set['pay']['weixin'] == 1 && $jie !== 1) {
 					load()->model('payment');
 					$setting = uni_setting($_W['uniacid'], array('payment'));
 					$options = array();
@@ -318,7 +318,7 @@ class Detail_EweiShopV2Page extends MobilePage
 					}
 				}
 
-				if ((isset($set['pay']) && ($set['pay']['weixin_jie'] == 1) && !$wechat['success']) || ($jie === 1)) {
+				if (isset($set['pay']) && $set['pay']['weixin_jie'] == 1 && !$wechat['success'] || $jie === 1) {
 					$params['tid'] = $params['tid'] . '_borrow';
 					$options = array();
 					$options['appid'] = $sec['appid'];
@@ -357,7 +357,7 @@ class Detail_EweiShopV2Page extends MobilePage
 		}
 
 		$coupon = com('coupon')->getCoupon($log['couponid']);
-		if (!empty($coupon['usecredit2']) || ($coupon['money'] <= 0)) {
+		if (!empty($coupon['usecredit2']) || $coupon['money'] <= 0) {
 			$result = com('coupon')->payResult($log['logno']);
 
 			if (is_error($result)) {

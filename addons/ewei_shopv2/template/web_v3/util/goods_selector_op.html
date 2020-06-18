@@ -5,6 +5,7 @@
             <h4 class="modal-title">商品设置选项</h4>
         </div>
         <div class="modal-body">
+            <div class="alert alert-danger hide" id="ophtml"></div>
             <table class="table" style="width:100%;margin-top: 10px">
                 <thead>
                 <tr>
@@ -70,6 +71,12 @@
     $(function () {
         var goodsid = {$goods['id']};
         var goods = model.selectedPool[goodsid];
+        var htm = $(model.ele).find('.op-html').html();
+        if (htm){
+            $('#ophtml').html(htm);
+            $('#ophtml').removeClass('hide');
+        }
+
 //        如果有规格
         if (goods.options != undefined && model.option_switch == 1){
             $.each(goods.options,function (i, v) {
@@ -96,5 +103,4 @@
         model.ele = undefined;
     });
 </script>
-
 

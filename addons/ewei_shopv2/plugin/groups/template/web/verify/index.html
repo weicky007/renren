@@ -35,7 +35,7 @@
                         <option value='send' {if $_GPC['searchtime']=='send'}selected{/if}>发货时间</option>
                         <option value='finish' {if $_GPC['searchtime']=='finish'}selected{/if}>完成时间</option>
                     </select>
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </div>
             </div>
             <div class="col-sm-5 pull-right">
@@ -76,7 +76,7 @@
                 订单编号:  {$item['orderno']}
             </td>
             <td colspan='4' style='text-align:right;font-size:12px;' class='aops'>
-                {if $item['status'] >= 0 && $item['status'] < 3 }
+                {if $item['status'] == 0 }
                 {ifp 'groups.verify.close'}
                 <a class='op'  data-toggle='ajaxModal' href="{php echo webUrl('groups/order/close',array('id'=>$item['id']))}" >关闭订单</a>
                 {/if}

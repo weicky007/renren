@@ -8,10 +8,14 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('setting');
 load()->model('utility');
 
-$dos = array('send_code', 'check_smscode');
+$dos = array('send_code', 'check_smscode', 'checkcaptcha');
 $do = in_array($do, $dos) ? $do : 'send_code';
 
 $custom_sign = safe_gpc_string($_GPC['custom_sign']);
+$need_checkcaptcha = true;
+if (isset($_GPC['need_checkcaptcha']) && empty(safe_gpc_int($_GPC['need_checkcaptcha']))) {
+	$need_checkcaptcha = false;
+}
 $_W['uniacid'] = intval($_GPC['uniacid']);
 if (empty($_W['uniacid'])) {
 	$uniacid_arr = array(
@@ -58,8 +62,7 @@ if ('send_code' == $do) {
 	if (!empty($row)) {
 		$imagecode = intval($_GPC['imagecode']);
 		$failed_count = table('uni_verifycode')->getFailedCountByReceiver($receiver);
-
-		if ($failed_count >= 3) {
+		if ($need_checkcaptcha && $failed_count >= 3) {
 			if (empty($imagecode)) {
 				iajax(-3, '请输入图形验证码!');
 			}

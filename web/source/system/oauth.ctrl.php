@@ -17,6 +17,13 @@ $oauth = !empty($oauth['global_oauth']) ? $oauth['global_oauth'] : array();
 if ('display' == $do) {
 	$user_have_accounts = user_borrow_oauth_account_list();
 	$oauth_accounts = $user_have_accounts['oauth_accounts'];
+	if ($_W['isajax']) {
+		$message = array(
+			'oauth_accounts' => $oauth_accounts,
+			'oauth' => $oauth['oauth']
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('save_oauth' == $do) {

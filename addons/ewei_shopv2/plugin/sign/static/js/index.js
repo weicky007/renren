@@ -45,18 +45,21 @@ define(['core', 'tpl'], function (core, tpl) {
                 var date = _this.data('date');
                 var day = _this.data('day');
                 var month = _this.data('month');
+                var year = _this.data('year');
 
                 if(modal.params.signold<1){
                     return;
                 }
-                
+
                 if(!date || !day){
                     return
                 }
                 if (day >= modal.params.today || signed) {
                     return
                 }
-
+                if (year < modal.params.year || signed) {
+                    return
+                }
                 if(month<modal.params.month){
                     return
                 }
@@ -116,7 +119,7 @@ define(['core', 'tpl'], function (core, tpl) {
                             content: $('#changesmodel').html(),
                             extraClass: 'picker-modal',
                             maskClick: function () {
-                                taskget.close()
+                                taskget.close();
                             }
                         });
                         taskget.container.find('.changes-btn-close').click(function () {
@@ -126,6 +129,7 @@ define(['core', 'tpl'], function (core, tpl) {
                         taskget.show();
                     }else{
                         FoxUI.alert(result.message);
+                        $("#credit").text(result.credit)
                     }
                     _this.data('doing', 0);
                     if (!date) {

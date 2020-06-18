@@ -54,7 +54,7 @@
                                     <div class="col-md-10">
                                         <label class="radio-inline"><input type="radio" name="type" value="1" checked="true" /> 实体商品</label>
 
-                                        {if com('virtual') && com('perm')->check_com('virtual')}
+                                        {if com('virtual') }
                                         <label class="radio-inline"><input type="radio" name="type" value="2" onclick="type_change(2);" /> 虚拟商品</label>
 
                                         <label class="radio-inline"><input type="radio" name="type" value="3" onclick="type_change(3);" /> 虚拟物品(卡密)</label>
@@ -131,8 +131,8 @@
                             <div class="col-md-2 region-goods-left">
                                 <div class="region-inner">商品信息</div>
                             </div>
-                            <div class="col-md-10 region-goods-right">
-                                <div class="form-group row">
+                            <div class="col-md-10 region-goods-right ">
+                                <div class="form-group row goodsPrice">
                                     <label class="col-sm control-label must">商品价格</label>
                                     <div class="col-md-6">
                                         <div class="input-group">
@@ -201,7 +201,7 @@
                                     <div class="col-md-10">
                                         <div class="input-group"  {if !is_array($intervalprices[0])} style="display: none"{/if}  id="interval1">
                                             <span class="input-group-addon">购买</span>
-                                            <input type="text" name="inte-rvalnum1" id="intervalnum1" class="form-control" value="" />
+                                            <input type="text" name="intervalnum1" id="intervalnum1" class="form-control" value="" />
                                             <span class="input-group-addon">件及以上</span>
                                             <input type="text" name="intervalprice1" id="intervalprice1" class="form-control" value="" />
                                             <span class="input-group-addon">元/件</span>
@@ -285,7 +285,7 @@
                                         上架时间
                                     </label>
                                     <div class="col-sm-4 col-xs-6">
-                                        {php echo tpl_form_field_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $statustimestart),'endtime'=>date('Y-m-d H:i', $statustimeend)),true);}
+                                        {php echo tpl_form_field_eweishop_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $statustimestart),'endtime'=>date('Y-m-d H:i', $statustimeend)),true);}
                                     </div>
                                 </div>
 
@@ -543,16 +543,19 @@
         * 商品类型选择
         * */
         $("input[name=type]").off("click").on("click",function () {
+
             var goodstype = $(this).val();
             /*类型显示相关信息*/
             $(".send-group").hide();
             $("#type_virtual").hide();
             $(".interval").hide();
+            $(".goodsPrice").show();
             if(goodstype==2){
                 $(".send-group").show();
             }else if(goodstype==3){
                 $("#type_virtual").show();
             }else if(goodstype==4){
+                $(".goodsPrice").hide();
                 $(".interval").show();
             }
         });
@@ -587,10 +590,13 @@
                 tip.msgbox.err("请填写上传图片");
                 return;
             }
-            if(marketprice<=0 || isNaN(marketprice)){
-                tip.msgbox.err("请填写商品售价");
-                $("#marketprice").focus();
-                return;
+            var goodsType = $("input[name='type']:checked").val();
+            if(goodsType!='4') {
+                if (marketprice <= 0 || isNaN(marketprice)) {
+                    tip.msgbox.err("请填写商品售价");
+                    $("#marketprice").focus();
+                    return;
+                }
             }
             if(type=='list'){
                 if($(this).hasClass("active")){
@@ -649,10 +655,13 @@
                 tip.msgbox.err("请填写上传图片");
                 return;
             }
-            if(marketprice<=0 || isNaN(marketprice)){
-                tip.msgbox.err("请填写商品售价");
-                $("#marketprice").focus();
-                return;
+            var goodsType = $("input[name='type']:checked").val();
+            if(goodsType !=4) {
+                if (marketprice <= 0 || isNaN(marketprice)) {
+                    tip.msgbox.err("请填写商品售价");
+                    $("#marketprice").focus();
+                    return;
+                }
             }
             if(tab=='list'){
                 $("#crectgoods li").removeClass("active");
@@ -694,7 +703,7 @@
                 $("#next").show();
             }
         });
-        
+        /**/
         $(".spec_item_thumb").find('i').click(function(){
             var group  =$(this).parent();
             group.find('img').attr('src',"{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg");
@@ -775,7 +784,8 @@
     }
     function addSpec(){
         var len = $(".spec_item").length;
-
+        var type = $("input[name='type']:checked").val();
+        var virtual = $("#virtual").val();
         if(type==3 && virtual==0 && len>=1){
             tip.msgbox.err('您的商品类型为：虚拟物品(卡密)的多规格形式，只能添加一种规格！');
             return;
@@ -1712,15 +1722,14 @@
         }
     }
 
-                function type_change(type) {
+    function type_change(type) {
 
-                   if(type == 3) {
-                        $(".dispatch_info").hide();
-                    }
-                }
+       if(type == 3) {
+            $(".dispatch_info").hide();
+        }
+    }
 
     isdiscount_change();
 
 </script>
 {template '_footer'}
-

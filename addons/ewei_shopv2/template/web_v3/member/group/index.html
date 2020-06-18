@@ -1,6 +1,6 @@
 {template '_header'}
 
-<div class="page-header">当前位置：<span class="text-primary">会员分组管理</span></div>
+<div class="page-header">当前位置：<span class="text-primary">标签组管理</span></div>
 <div class="page-content">
 
     <form action="./index.php" method="get" class="form-horizontal form-search" role="form">
@@ -13,7 +13,7 @@
         <div class="page-toolbar">
             <div class="pull-left">
                 {ifp 'member.group.add'}
-                    <a class='btn btn-primary btn-sm' data-toggle="ajaxModal" href="{php echo webUrl('member/group/add')}"><i class='fa fa-plus'></i> 添加会员分组</a>
+                    <a class='btn btn-primary btn-sm' data-toggle="ajaxModal" href="{php echo webUrl('member/group/add')}"><i class='fa fa-plus'></i> 添加标签组</a>
                 {/if}
             </div>
             <div class="pull-right col-md-6">
@@ -53,8 +53,9 @@
                 <thead>
                     <tr>
                         <th style="width:25px;"></th>
-                        <th>分组名称</th>
-                        <th>会员数</th>
+                        <th>标签名称</th>
+                        <th style="width: 200px">会员数</th>
+                        <th>标签描述</th>
                         <th style="width: 90px;">操作</th>
                     </tr>
                 </thead>
@@ -66,12 +67,13 @@
                                         <input type='checkbox' value="{$row['id']}"/>
                                     {/if}
                                 </td>
-                                <td>{$row['groupname']}</td>
-                                <td>{$row['membercount']}</td>
+                                <td style="cursor: pointer;" onclick='location="{php echo webUrl('member/list')}"'>{$row['groupname']}</td>
+                                <td style="cursor: pointer;" onclick='location="{php echo webUrl('member/list')}"'>{$row['membercount']}</td>
+                                <td>{$row['description']}</td>
                                 <td>
                                     {ifp 'member.list'}
                                         <a class='btn btn-op btn-operation' href="{php echo webUrl('member/list', array('groupid' => $row['id']))}">
-                                            <span data-toggle="tooltip" data-placement="top" data-original-title="分组会员">
+                                            <span data-toggle="tooltip" data-placement="top" data-original-title="标签会员">
                                                     <i class='icow icow-member'></i>
                                                 </span>
                                         </a>
@@ -85,7 +87,7 @@
                                             </a>
                                         {/if}
                                         {ifp 'member.group.delete'}
-                                            <a data-toggle='ajaxRemove' href="{php echo webUrl('member/group/delete', array('id' => $row['id']))}"class="btn btn-op btn-operation" data-confirm='确认要删除此会员分组吗?'>
+                                            <a data-toggle='ajaxRemove' href="{php echo webUrl('member/group/delete', array('id' => $row['id']))}"class="btn btn-op btn-operation" data-confirm='确认要删除此标签组吗?'>
                                                 <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
                                                    <i class='icow icow-shanchu1'></i>
                                                 </span>
@@ -107,7 +109,7 @@
                                 {/if}
                             </div>
                         </td>
-                        <td colspan="2" style="text-align: right">
+                        <td colspan="3" style="text-align: right">
                             <span class="pull-right" style="line-height: 28px;">(共{php echo count($list)}条记录)</span>
                             {$pager}
                         </td>
@@ -119,6 +121,5 @@
 
 </div>
 {template '_footer'}
-
 
 

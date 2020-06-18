@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,16 +17,16 @@ return array(
 				'items' => array(
 					array('title' => '签到规则', 'route' => 'rule'),
 					array('title' => '签到入口', 'route' => 'set')
-					)
-				),
+				)
+			),
 			array(
 				'title' => '签到记录',
 				'items' => array(
 					array('title' => '签到记录', 'route' => 'records')
-					)
 				)
 			)
 		)
-	);
+	)
+);
 
 ?>

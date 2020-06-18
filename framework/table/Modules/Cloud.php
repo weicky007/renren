@@ -10,6 +10,7 @@ class Cloud extends \We7Table {
 	protected $primaryKey = 'id';
 	protected $field = array(
 		'name',
+		'application_type',
 		'title',
 		'title_initial',
 		'logo',
@@ -35,6 +36,7 @@ class Cloud extends \We7Table {
 	);
 	protected $default = array(
 		'name' => '',
+		'application_type' => 1,
 		'title' => '',
 		'title_initial' => '',
 		'logo' => '',
@@ -56,7 +58,7 @@ class Cloud extends \We7Table {
 		'is_ban' => 0,
 		'lastupdatetime' => 0,
 		'buytime' => 0,
-		'module_status' => 0
+		'module_status' => 1
 	);
 
 	public function getByName($name) {

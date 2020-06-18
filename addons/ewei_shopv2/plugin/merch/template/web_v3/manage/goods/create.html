@@ -54,7 +54,7 @@
                                     <div class="col-md-10">
                                         <label class="radio-inline"><input type="radio" name="type" value="1" checked="true" /> 实体商品</label>
 
-                                        {if com('virtual') && com('perm')->check_com('virtual')}
+                                        {if com('virtual')}
                                         <label class="radio-inline"><input type="radio" name="type" value="2" /> 虚拟商品</label>
 
                                         <label class="radio-inline"><input type="radio" name="type" value="3" /> 虚拟物品(卡密)</label>
@@ -1395,4 +1395,3 @@
 
 </script>
 {template '_footer'}
-

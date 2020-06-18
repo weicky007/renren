@@ -156,7 +156,7 @@
             <div class='panel-heading'>
                 现有列 （拖动可排序)
 
-                <select id="templates" class="form-control select2" style="width:300px;" onchange="changeTemplate()">
+                <select id="templates" class="form-control select2" style="width:300px;" onchange="changeTemplate()" name="tempname">
                     <option value="" >请选择导出列模板</option>
                     {loop $templates $key $t}
                     <option value="{$key}" >{$key}</option>
@@ -374,7 +374,15 @@
     $(function () {
 
         initEvents();
+
+        $('#form1').submit(function(){
+            var val = $('#templates').val();
+            if(val == ''){
+                alert('请选择导出列模板!');
+                return false;
+            }
+            return true;
+        });
     });
 </script>
 {template '_footer'}
-

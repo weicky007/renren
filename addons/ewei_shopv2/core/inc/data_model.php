@@ -1,4 +1,5 @@
 <?php
+
 class DataModel
 {
 	public function read($key = '')

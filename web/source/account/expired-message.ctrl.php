@@ -31,5 +31,7 @@ if ('save' == $do) {
 
 	iajax(0, '保存设置成功', url('account/expired-message'));
 }
-
+if ($_W['isajax']) {
+	iajax(0, $account_all_type_sign);
+}
 template('account/manage-expired-message');

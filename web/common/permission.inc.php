@@ -318,9 +318,7 @@ $we7_file_permission = array(
 		'default' => '',
 		'direct' => array(),
 		'vice_founder' => array(
-			'template',
 			'updatecache',
-			'attachment',
 		),
 		'owner' => array(
 			'updatecache',
@@ -329,10 +327,11 @@ $we7_file_permission = array(
 			'updatecache',
 		),
 		'operator' => array(
-			'account',
 			'updatecache',
 		),
-		'clerk' => array(),
+		'clerk' => array(
+			'updatecache',
+		),
 		'unbind_user' => array(
 			'updatecache',
 		),
@@ -543,7 +542,6 @@ $we7_file_permission = array(
 			'see_module_manage_system_newversion',
 			'see_user_add_welcome_account',
 			'see_user_edit_base_founder_name',
-			'see_user_edit_base_remark',
 			'see_user_create_own_vice_founder',
 			'see_user_profile_account_num',
 			'see_user_profile_edit_username',

@@ -2,7 +2,16 @@
 
 {php $system=m('system')->init()}
 {php $sysmenus = m('system')->getMenu(true)}
-{php unset($sysmenus['menu'][8])}
+{php $notice_redis_click = m('common')->getSysset('notice_redis')}
+{php $wxpaycert_view_click = m('common')->getSysset('wxpaycert_view')}
+<!--多商户图片选择器删除图片没有方法解决  只能在此隐藏-->
+{if strpos( $_W['script_name'] , 'merchant' ) != false}
+<style>
+    .del{
+        opacity:0;
+    }
+</style>
+{/if}
 <div class="wb-header" style="position: fixed;">
     <div class="logo {if !empty($system['foldnav'])}small{/if}">
         {if !empty($copyright) && !empty($copyright['logo'])}
@@ -15,7 +24,7 @@
         </li>
         <li class="wb-shortcut"><a id="showmenu"><i class="icow icow-list"></i></a></li>
     </ul>
-    <div class="wb-topbar-search expand-search">
+    <div class="wb-topbar-search expand-search" id="navwidth">
         <form action="" id="topbar-search">
             <input type="hidden" name="c" value="site" />
             <input type="hidden" name="a" value="entry" />
@@ -35,30 +44,66 @@
     </div>
     <div class="wb-header-flex"></div>
 
-    {if empty($_W['shopset']['template']['close_v2'])}
-        <div class="switch-version-box">
-            <a class="switch-version" title="返回旧版" href="{php echo webUrl('switchversion', array('route'=>$_GET['r'], 'id'=>$_GET['id']))}">返回旧版</a>
-        </div>
-    {/if}
-
     <ul>
         {if $system['right_menu']['system']}
             <li data-toggle="tooltip" data-placement="bottom" title="">
                 <a href="{php echo webUrl('system')}">
-                    <!--<i class="icow icow-syssetL"></i>-->
-                    系统管理</a>
+                    系统管理
+                </a>
             </li>
         {/if}
+        {if p('app')}
+            {php  $appsets = p('app')->getGlobal()}
+            {if !empty($appsets['mmanage']['qrcode'])}
+                {php  $appqrcode = tomedia($appsets['mmanage']['qrcode'])}
+            {/if}
+        {/if}
+
+		{if !empty($appqrcode)}
+	        <li   class="wxcode_box">
+	            <i class="icow icow-erweima2" style="margin-right: 10px"></i>手机管理后台
+	            <img src="../addons/ewei_shopv2/static/images/new.gif" alt=""  style="margin-top: -10px ">
+	            <div class="wx_code">
+	                <img src="{$appqrcode}" alt="">
+	                <div class="text">扫码登录小程序管理后台</div>
+	            </div>
+	        </li>
+
+        {/if}
+        {if $_W['role'] == 'founder'}
+        <li>
+            <a href="{php echo webUrl('system')}" target="_blank">
+                <i class="icow icow-icon_shoppingmall" style="margin-right: 10px;color: #f34347"></i>应用设置
+            </a>
+        </li>
+        {/if}
         <li class="dropdown {if $system['merch']}auto{/if} ellipsis">
-            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{$system['right_menu']['menu_title']}<span></span></a>
-            <ul class="dropdown-menu">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                {if strlen($system['right_menu']['menu_title'])>60}
+                {php echo substr($system['right_menu']['menu_title'],0,60).'...'}
+                {else}
+                {$system['right_menu']['menu_title']}
+                {/if}
+                <span></span>
+            </a>
+
+            <ul class="dropdown-menu" {if $system['routes'][0]=='system'}style="width:100%;left:0"{/if}>
+                {if $system['routes'][0]!='system'}
                 {loop $system['right_menu']['menu_items'] $right_menu_item}
                     {if !is_array($right_menu_item)}
-                        <li class="divider"></li>
                     {else}
-                        <li><a href="{$right_menu_item['href']}" {if $right_menu_item['blank']}target="_blank"{/if}> {$right_menu_item['text']}</a></li>
+                        <li>
+                            <a href="{$right_menu_item['href']}" {if $right_menu_item['blank']}target="_blank"{/if}>
+                                <i class="icow {$right_menu_item['icow']} " style="font-size: 30px;"></i>
+                                <span style="display: block">{$right_menu_item['text']}</span>
+                            </a>
+                        </li>
                     {/if}
                 {/loop}
+                <li {if $system['merch']} style="display: none" {/if}><a href="./index.php?c=account&a=display&">返回系统</a></li>
+                {else}
+                <li style="margin-top: 0;height: 50px;line-height: 50px;{if $system['merch']}display: none{/if}"><a href="./index.php?c=account&a=display&">返回系统</a></li>
+                {/if}
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="退出登录" data-href="{$system['right_menu']['logout']}">
@@ -113,7 +158,7 @@
     <!-- 一级导航 -->
     <div class="wb-nav {if !empty($system['foldnav'])}fold{/if}">
         <p class="wb-nav-fold"><i class="icow icow-zhedie"></i></p>
-        <ul>
+        <ul id="navheight">
             {loop $sysmenus['menu'] $sysmenu}
                 <li {if $sysmenu['active']}class="active"{/if}>
                     <a href="{php echo empty($sysmenu['index'])? webUrl($sysmenu['route']): webUrl($sysmenu['route']. '.'. $sysmenu['index'])}">
@@ -126,13 +171,69 @@
                                 <i class="icow icow-{$sysmenu['icon']}" {if !empty($sysmenu['iconcolor'])} style="color: {$sysmenu['iconcolor']}"{/if}></i>
                             {/if}
                         {/if}
-                        <span class="wb-nav-title">{$sysmenu['text']}</span>
+                        {if $sysmenu['route'] == 'sysset'}
+                            <span class="wb-nav-title {if empty($notice_redis_click['notice_redis_click']) || !isset($notice_redis_click['notice_redis_click'])}point{/if}">{$sysmenu['text']}</span>
+                        {else}
+                            <span class="wb-nav-title">{$sysmenu['text']}</span>
+                        {/if}
                     </a>
                     <span class="wb-nav-tip">{$sysmenu['text']}</span>
                 </li>
             {/loop}
+            {if $_W['role'] == 'founder'}
+            {if $system['routes'][0]=='system'}
+            <li class="sysset">
+                {loop $system['right_menu']['menu_items'] $right_menu_item}
+                    {if !is_array($right_menu_item)}
+                    {else}
+
+                        <a href="{$right_menu_item['href']}" {if $right_menu_item['blank']}target="_blank"{/if}>
+                            <i class="icow {$right_menu_item['icow']}"></i>
+                            <span class="wb-nav-title">{$right_menu_item['text']}</span>
+                        </a>
+
+                    {/if}
+                {/loop}
+            </li>
+            {else}
+            <li class="sysset">
+                <i class="icow icow-qiehuan"></i>
+
+                <span class="wb-nav-title" data-href="">系统管理</span>
+                <div class="syssetsub">
+                    <div class="syssettitle">系统管理</div>
+                    <a href="{php echo webUrl('system/plugin')}"><i class="icow icow-plugins "></i>应用</a>
+                    <a href="{php echo webUrl('system/copyright')}"><i class="icow icow-banquan"></i>版权</a>
+                    <a href="{php echo webUrl('system/data')}"><i class="icow icow-statistics"></i>数据</a>
+                    <a href="{php echo webUrl('system/site')}"><i class="icow icow-wangzhan"></i>网站</a>
+                    <a href="{php echo webUrl('system/auth')}"><i class="icow icow-iconfont-shouquan"></i>授权</a>
+                    <a href="{php echo webUrl('system/auth/upgrade')}"><i class="icow icow-gengxin"></i>更新</a>
+                    <span class="syssettips"></span>
+                </div>
+            </li>
+            {/if}
+            {/if}
         </ul>
+
+
     </div>
+    <!--低分辨率一级导航显示不全问题 start-->
+    <script>
+        var navheight = document.getElementById('navheight');
+        var navwidth = document.getElementById('navwidth')
+        var vh = document.body.clientHeight;
+        var vw = screen.width;
+        if(vh < 800){
+            navheight.classList.add("wb-navheight");
+        } else {
+            navheight.classList.remove("wb-navheight");
+        }
+        if(vw < 1300 ){
+            navwidth.classList.add("wb-navwidth");
+        }
+    </script>
+    <!--低分辨率一级导航显示不全问题 end-->
+
 
     <!-- 二级导航 -->
     {if !$no_left && !empty($sysmenus['submenu']['items'])}
@@ -143,7 +244,7 @@
           </div>
         </div>
     {/if}
-
+ 
     {if !$no_right}
         <div class="wb-panel {if empty($system['foldpanel'])}in{/if}">
             <div class="panel-group" id="panel-accordion">
@@ -255,7 +356,7 @@
                 </div>
                 {/if}
                 <!--系统更新-->
-                {if $_W['isfounder'] && $_W['routes']!='system.auth.upgrade'}
+                {if $_W['isfounder'] && $_W['routes']!='system.auth.upgrade' && $_W['role'] !='vice_founder'}
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingFive" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
                         <h4 class="panel-title">

@@ -1,6 +1,8 @@
 {template '_header'}
+{if $groupsset['followbar'] ==1}
 {php $this->followBar()}
-<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css" />
+{/if}
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css?v=2018531" />
 <div class='fui-page creditshop-index-page'>
 	<div class="fui-header" style="z-index: 100;">
 		<div class="fui-header-left">
@@ -57,16 +59,33 @@
 				<img src="<%item.thumb%>" alt="<%item.title%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic100.jpg'">
 			</a>
 			<div class="lynn_index_list_info fui-list-inner" onclick="window.location.href='{php echo mobileUrl('groups/goods')}&id=<%item.id%>';">
-				<h3><%item.title%></h3>
-				<p><%item.description%></p>
-				<del>原价：¥<%item.price%></del>
-				<div class="lynn_index_list_team">
-						<span class="lynn_index_list_team_left">
-							<strong><i class="icon icon-group"></i></strong>
-							<%item.groupnum%>人团 ¥<em><%item.groupsprice%></em>/<%item.goodsnum%><%if item.units%><%item.units%><%else%>件<%/if%>
-						</span>
-					<a href="{php echo mobileUrl('groups/goods')}&id=<%item.id%>" class="lynn_index_list_team_a">去拼团 ></a>
+				<h3><span class="person"><%if item.is_ladder == '1'%>阶梯团<%else%><%item.groupnum%>人团<%/if%></span><%item.title%></h3>
+				<span>
+					原价：¥<%item.price%>
+				</span>
+				<div class="price">
+					<span><%item.groupsprice%>/<%item.goodsnum%><%if item.units%><%item.units%><%else%>件<%/if%></span>
+					<a href="{php echo mobileUrl('groups/goods')}&id=<%item.id%>" class="lynn_index_list_team_a">去拼团 </a>
 				</div>
+				<!--<div class="lynn_index_list_team">-->
+					<!--<%if item.is_ladder == '1'%>-->
+					<!--<span class="lynn_index_list_team_left">-->
+							<!--<strong><i class="icon icon-group"></i></strong>阶梯团享受不同的价格优惠-->
+						<!--</span>-->
+					<!--<a href="{php echo mobileUrl('groups/goods')}&id=<%item.id%>" class="lynn_index_list_team_a">去拼团 ></a>-->
+					<!--<%/if%>-->
+					<!--<%if item.more_spec == '1'%>-->
+					<!--<span class="lynn_index_list_team_left">-->
+							<!--<strong><i class="icon icon-group"></i></strong>多规格团,总有一款适合你-->
+						<!--</span>-->
+					<!--<%else%>-->
+					<!--<span class="lynn_index_list_team_left">-->
+							<!--<strong><i class="icon icon-group"></i></strong>-->
+							<!--<%item.groupnum%>人团 ¥<em><%item.groupsprice%></em>/<%item.goodsnum%><%if item.units%><%item.units%><%else%>件<%/if%>-->
+						<!--</span>-->
+					<!--<%/if%>-->
+					<!--<a href="{php echo mobileUrl('groups/goods')}&id=<%item.id%>" class="lynn_index_list_team_a">去拼团 ></a>-->
+				<!--</div>-->
 			</div>
 		</li>
 		<%/each%>

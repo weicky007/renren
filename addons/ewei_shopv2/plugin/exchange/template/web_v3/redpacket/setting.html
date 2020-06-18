@@ -6,7 +6,7 @@
 <div class="form-group" style="padding: 30px 10px 0"></div>
 {if !empty($id)}
 <ul id="myTab" class="nav nav-tabs">
-    <li class="active"><a href="#home" data-toggle="tab">{if $id>0}编辑商品兑换{else}添加商品兑换{/if}</a></li>
+    <li class="active"><a href="#home" data-toggle="tab">{if $id>0}编辑红包兑换{else}添加红包兑换{/if}</a></li>
     <li><a href="#message" data-toggle="tab">消息通知</a></li>
     <li><a href="#zhuangxiu" data-toggle="tab">页面设置</a></li>
 </ul>
@@ -136,7 +136,7 @@
     <div class="col-sm-9  col-xs-12">
         <div class="input-group">
             <span class="input-group-addon">发送红包的人或事件</span>
-            <input type="text" name="sendname" class="form-control" value="{$setting['sendname']}">
+            <input type="text" name="sendname" class="form-control" required placeholder="必填" value="{$setting['sendname']}">
         </div>
     </div>
 </div>
@@ -154,7 +154,7 @@
     <div class="col-sm-9  col-xs-12">
         <div class="input-group">
             <span class="input-group-addon">参与活动的名称</span>
-            <input type="text" name="actname" class="form-control" value="{$setting['actname']}">
+            <input type="text" name="actname" class="form-control" required placeholder="必填" value="{$setting['actname']}">
         </div>
     </div>
 </div>
@@ -166,7 +166,6 @@
             <input type="text" name="remark" class="form-control" value="{$setting['remark']}" required placeholder="必填">
         </div>
         <br>
-        <span style="color: red">* 空白不填则使用默认红包模板</span>
     </div>
 </div>
 

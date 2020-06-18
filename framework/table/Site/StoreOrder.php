@@ -62,30 +62,24 @@ class StoreOrder extends \We7Table {
 		return $query;
 	}
 
-	public function getUserBuyAccountNum($uid) {
-		$count = $this->getQueryJoinGoodsTable(STORE_ORDER_FINISH, STORE_TYPE_ACCOUNT)
-			->select('b.account_num')
-			->where('a.buyerid', intval($uid))
-			->getall();
-		if (empty($count)) {
-			return 0;
-		} else {
-			$count = array_sum(array_column($count, 'account_num'));
-			$deleted_account = table('site_store_create_account')->getUserDeleteNum($uid, ACCOUNT_TYPE_OFFCIAL_NORMAL);
-			return max(0, $count - $deleted_account);
+	public function getUserBuyNumByType($uid, $type) {
+		$account_all_type = uni_account_type();
+		$account_all_type_sign = uni_account_type_sign();
+		foreach($account_all_type as $account_type) {
+			if ($account_type['type_sign'] == $type) {
+				$store_type_number = $account_type['store_type_number'];
+				break;
+			}
 		}
-	}
-
-	public function getUserBuyWxappNum($uid) {
-		$count = $this->getQueryJoinGoodsTable(STORE_ORDER_FINISH, STORE_TYPE_WXAPP)
-			->select('b.wxapp_num')
+		$count = $this->getQueryJoinGoodsTable(STORE_ORDER_FINISH, array($store_type_number, STORE_TYPE_ACCOUNT_PACKAGE))
+			->select("b.{$type}_num")
 			->where('a.buyerid', intval($uid))
 			->getall();
 		if (empty($count)) {
 			return 0;
 		} else {
-			$count = array_sum(array_column($count, 'wxapp_num'));
-			$deleted_account = table('site_store_create_account')->getUserDeleteNum($uid, ACCOUNT_TYPE_APP_NORMAL);
+			$count = array_sum(array_column($count, "{$type}_num"));
+			$deleted_account = table('site_store_create_account')->getUserDeleteNum($uid, $account_all_type_sign[$type]['contain_type']);
 			return max(0, $count - $deleted_account);
 		}
 	}

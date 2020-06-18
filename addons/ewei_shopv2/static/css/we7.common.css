@@ -804,3 +804,6 @@ select.we7-select[multiple=multiple], select[multiple=multiple] {
 .modal.uploader-modal {
     z-index: 2060 !important;
 }
+.modal{
+    z-index: 2060;
+}

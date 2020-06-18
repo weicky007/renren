@@ -19,16 +19,14 @@
         <tbody>
         {loop $list $row}
         <tr class="orderlist" data="{$row['id']}">
-            <td style="width:25px;">{if $is_check == 1}<input type='checkbox' class="checkitem" value="{$row['id']}"/>{/if}</td>
+            <td style="width:25px;">{if $is_check == 1}<input type='checkbox' {if $row['select']}checked{/if} class="checkitem" value="{$row['id']}"/>{/if}</td>
             <td style="width:180px;" data-toggle="tooltip" title="{$row['nickname']}" style="width:80px;">
                 {$row['ordersn']}
-            </td>
-
             </td>
             <td>{$row['orderprice']}</td>
             <td >{$row['realprice']}</td>
             <td>{$row['payrate']}%</td>
-            <td>{$row['realpricerate']}</td>
+            <td>{php echo round($row['realpricerate'],2)}</td>
             <td>{php echo date('Y-m-d H:i:s',$row['finishtime'])}</td>
             <td style='width:80px;cursor: pointer'>{if empty($row['merchapply'])}
                 <span class="label label-default">等待</span>
@@ -108,15 +106,24 @@
 
                         <td style='width:110px'>秒杀优惠：</td>
                         <td style='width:100px'>{$row['seckilldiscountprice']}</td>
-
+                        {if $row['refundprice']>0}
+                        <td style='width:110px'>申请售后剩余金额</td>
+                        <td style='width:100px'>{$row['refundprice']}</td>
+                        {else}
                         <td style='width:110px'></td>
                         <td style='width:100px'></td>
+                        {/if}
                     </tr>
                 </table>
             </td>
         </tr>
 
         {/loop}
+        <tfoot>
+        <tr>
+            <td colspan="8" class="text-right">{$list_pager}</td>
+        </tr>
+        </tfoot>
         </tbody>
     </table>
 </div>
@@ -130,5 +137,4 @@
         })
     })
 </script>
-
 

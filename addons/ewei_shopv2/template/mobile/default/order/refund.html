@@ -20,6 +20,13 @@
     .fui-cell-group .fui-cell.noborder:before{
         border:0;
     }
+    .refuse_reason{
+        padding: 0.5rem;
+        background: #626674;
+        color: #FFF;
+        font-size: 0.65rem;
+        line-height: 1rem
+    }
 </style>
 <div class='fui-page {if empty($order['refundstate'])}fui-page-current{/if}' id='page-refund-edit' >
 <div class="fui-header">
@@ -30,17 +37,37 @@
     <div class="fui-header-right">&nbsp;</div>
 </div>
 <div class='fui-content  navbar'>
+
+    {if  strlen($trade['refundcontent']) >0}
+    <div class="refuse_reason">
+        退款须知：<br/>{$trade['refundcontent']}
+    </div>
+    {/if}
+
     <div class="fui-cell-group">
         <div class="fui-cell">
             <div class="fui-cell-label">处理方式</div>
             <div class="fui-cell-info">
 
                 <select id="rtype">
-                    {if $order['status']==2 || $order['status']==3}
-                    <option value="1" {if $refund['rtype']=='1'}selected{/if}>退货退款</option>
+                    {if $canreturns == 1}
+                    <!--当产品金额被余额全部抵扣之后.允许换货-->
+                    {if ($refundgoods['exchange'] && $order['cannotrefund']) || !$order['cannotrefund']}
                     <option value="2" {if $refund['rtype']=='2'}selected{/if}>换货</option>
                     {/if}
-                    <option value="0" {if $refund['rtype']=='0'}selected{/if}>退款(仅退款不退货)</option>
+                    {else}
+                        {if ($refundgoods['refund'] > 0 && $order['cannotrefund']) || !$order['cannotrefund']}
+                        <option value="0" {if $refund['rtype']=='0'}selected{/if}>退款(仅退款不退货)</option>
+                        {/if}
+                        {if $order['status']==2 || $order['status']==3}
+                        {if ($refundgoods['returngoods'] > 0 && $order['cannotrefund']) || !$order['cannotrefund']}
+                        <option value="1" {if $refund['rtype']=='1'}selected{/if}>退货退款</option>
+                        {/if}
+                        {if ($refundgoods['exchange'] > 0 && $order['cannotrefund']) || !$order['cannotrefund']}
+                            <option value="2" {if $refund['rtype']=='2'}selected{/if}>换货</option>
+                        {/if}
+                        {/if}
+                    {/if}
                 </select>
             </div>
             <div class="fui-cell-remark"></div>
@@ -84,7 +111,10 @@
 
                 {loop $refund['imgs'] $k $v}
                 <input type="hidden" name="images[]" value="{$v}" />
-                <li style="background-image:url({php echo tomedia($v)})" class="image image-sm" data-filename="{$v}"><span class="image-remove"><i class="icon icon-close"></i></span></li>
+                <li style="background-image:url({php echo tomedia($v)})" class="image image-sm" data-filename="{$v}">
+                    <span class="image-remove"><i class="icon icon-close"></i></span>
+                    <img src="{php echo tomedia($v)}" alt="" style="opacity: 0;width:100%;height:100%;">
+                </li>
                 {/loop}
 
 

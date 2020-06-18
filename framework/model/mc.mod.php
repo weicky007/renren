@@ -183,7 +183,7 @@ function mc_fetch_one($uid, $uniacid = 0) {
 	return $result;
 }
 
-function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0){
+function mc_fansinfo($openidOruid, $acid = 0, $uniacid = 0) {
 	global $_W;
 	if (empty($openidOruid)) {
 		return array();
@@ -376,12 +376,8 @@ function mc_oauth_account_userinfo($url = '') {
 	if (!empty($url)) {
 		$_SESSION['dest_url'] = urlencode($url);
 	}
-	$str = '';
-	if(uni_is_multi_acid()) {
-		$str = "&j={$_W['acid']}";
-	}
 	$oauth_url = uni_account_oauth_host();
-	$url = $oauth_url . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=userinfo";
+	$url = $oauth_url . "app/index.php?i={$_W['uniacid']}&c=auth&a=oauth&scope=userinfo";
 	$callback = urlencode($url);
 
 	$oauth_account = WeAccount::create($_W['account']['oauth']);

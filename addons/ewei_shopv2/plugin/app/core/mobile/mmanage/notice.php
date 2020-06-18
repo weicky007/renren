@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,7 +17,7 @@ class Notice_EweiShopV2Page extends AppMobileAuthPage
 			}
 		}
 
-		app_json(array('list' => $notice));
+		return app_json(array('list' => $notice));
 	}
 
 	public function detail()
@@ -26,17 +26,22 @@ class Notice_EweiShopV2Page extends AppMobileAuthPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError, '参数错误');
+			return app_error(AppError::$ParamsError, '参数错误');
 		}
 
 		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_system_copyright_notice') . ' WHERE id=:id AND status=1 LIMIT 1', array('id' => $id));
 
 		if (empty($item)) {
-			app_error(AppError::$ParamsError, '公告不存在');
+			return app_error(AppError::$ParamsError, '公告不存在');
 		}
 
 		$item['createtime'] = !empty($item['createtime']) ? date('Y-m-d H:i:s', $item['createtime']) : 0;
-		app_json(array('detail' => $item));
+
+		if (!empty($item['content'])) {
+			$item['content'] = htmlspecialchars_decode($item['content']);
+		}
+
+		return app_json(array('detail' => $item));
 	}
 }
 

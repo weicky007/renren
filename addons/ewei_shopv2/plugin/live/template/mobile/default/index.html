@@ -71,7 +71,7 @@
             {loop $recommend $row}
             <div class="fui-list">
                 <div class="fui-list-media">
-                    <a href="{php echo mobileUrl('live/room',array('id'=>$row['id']))}" data-nocache="true">
+                    <a href="{php echo mobileUrl('live/room',array('id'=>$row['id']))}" data-nocache="true" class="external">
                         {if $row['living']==1}
                             <span class="live-living">
                                 <i></i>直播中
@@ -81,21 +81,17 @@
                     </a>
                 </div>
                 <div class="fui-list-inner">
-                    <a href="{php echo mobileUrl('live/room',array('id'=>$row['id']))}" data-nocache="true">
+                    <a href="{php echo mobileUrl('live/room',array('id'=>$row['id']))}" data-nocache="true" class="external">
                         <h3>{$row['title']}</h3>
                     </a>
                     <p>{php echo date('Y-m-d H:i:s', $row['livetime'])} 开播</p>
                     <div class="live-list-subscribe">
                         <span>订阅人数 {$row['subscribe']}</span>
                         <span>
-                            {if $row['living']==0}
-                                {if $row['subscribe']>0}
-                                    <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a disabled" data-id="{$row['id']}"  data-subscribe="{$row['subscribe']}">取消订阅</a>
-                                {else}
-                                    <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a" data-id="{$row['id']}" data-subscribe="{$row['subscribe']}">点击订阅</a>
-                                {/if}
+                            {if $row['is_subscribe']>0}
+                                <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a disabled" data-id="{$row['id']}"  data-subscribe="{$row['is_subscribe']}">取消订阅</a>
                             {else}
-                                <a href="{php echo mobileUrl('live/room',array('id'=>$row['id']))}" data-nocache="true" class="live-subscribe-a live-subscribe-full-a">观看直播</a>
+                                <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a" data-id="{$row['id']}" data-subscribe="{$row['is_subscribe']}">点击订阅</a>
                             {/if}
                         </span>
                     </div>
@@ -120,7 +116,7 @@
         <%each list as row%>
         <div class="live-hot-list-room">
             <div class="live-hot-list-inner">
-                <a href="{php echo mobileUrl('live/room');}&id=<%row.id%>" data-nocache="true" class="live-hot-list-img">
+                <a href="{php echo mobileUrl('live/room');}&id=<%row.id%>" data-nocache="true" class="live-hot-list-img external">
                     <%if row.living==1%>
                     <span class="live-living">
                         <i></i>直播中
@@ -128,20 +124,18 @@
                     <%/if%>
                     <img src="<%row.thumb%>" alt="<%row.title%>">
                 </a>
-                <a href="{php echo mobileUrl('live/room');}&id=<%row.id%>" data-nocache="true"><h3><%row.title%></h3></a>
+                <a href="{php echo mobileUrl('live/room');}&id=<%row.id%>" class="external" data-nocache="true"><h3><%row.title%></h3></a>
                 <p><%row.livetime%> 开播</p>
                 <div class="live-list-subscribe" style="padding:0 0.3rem;">
                     <span>订阅人数 <%row.subscribe%></span>
                     <span>
-                        <%if row.living==0%>
-                            <%if row.subscribe > 0%>
-                                <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a disabled" data-id="<%row.id%>"  data-subscribe="<%row.subscribe%>">取消订阅</a>
-                            <%else%>
-                                <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a" data-id="<%row.id%>" data-subscribe="<%row.subscribe%>">点击订阅</a>
-                            <%/if%>
+
+                        <%if row.is_subscribe > 0%>
+                            <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a disabled" data-id="<%row.id%>"  data-subscribe="<%row.is_subscribe%>">取消订阅</a>
                         <%else%>
-                            <a href="{php echo mobileUrl('live/room');}&id=<%row.id%>" data-nocache="true" class="live-subscribe-a live-subscribe-full-a">观看直播</a>
+                            <a href="javascript:void(0);" class="live-subscribe-a live-subscribe-default-a" data-id="<%row.id%>" data-subscribe="<%row.is_subscribe%>">点击订阅</a>
                         <%/if%>
+
                     </span>
                 </div>
             </div>

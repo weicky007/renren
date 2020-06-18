@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,12 +15,12 @@ class Processor extends WeModuleProcessor
 		}
 
 		$names = explode(':', $rule['name']);
-		$plugin = (isset($names[1]) ? $names[1] : '');
+		$plugin = isset($names[1]) ? $names[1] : '';
 		$processname = $plugin;
 
 		if (!empty($plugin)) {
 			if ($plugin == 'com') {
-				$com = (isset($names[2]) ? $names[2] : '');
+				$com = isset($names[2]) ? $names[2] : '';
 
 				if (empty($com)) {
 					return false;

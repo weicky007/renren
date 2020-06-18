@@ -22,7 +22,7 @@
         <div class="page-toolbar m-b-sm m-t-sm">
             <div class="col-sm-6">
                 <div class="btn-group btn-group-sm" style='float:left'>
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </div>
             </div>
             <div class="col-sm-6 pull-right">
@@ -95,7 +95,7 @@
 
                 </a>
                 {/if}
-                {if $item['status'] >= 0 && $item['status'] < 3 }
+                {if $item['status'] == 0 }
                 {ifp 'groups.verify.close'}
                 <a class='op'  data-toggle='ajaxModal' href="{php echo webUrl('groups/order/close',array('id'=>$item['id']))}" >
                     <i class="icow icow-shutDown" title=""  style="color: #999;margin-right: 3px;display: inline-block;vertical-align: middle"></i>关闭订单</a>
@@ -105,7 +105,9 @@
         </tr>
         <tr class='trbody' style="border-bottom: 1px solid #efefef">
             <td style='overflow:hidden;'><img src="{php echo tomedia($item['thumb'])}" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;' onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"></td>
-            <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}</td>
+            <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}<br/>
+                <span style="color: #999"> {if !empty($item['optiontitle'])}{$item['optiontitle']}{/if}{$item['goodssn']}</span>
+            </td>
             <td style='text-align:right;border-left:none;'>
                 ¥ {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
                 <br/>x1

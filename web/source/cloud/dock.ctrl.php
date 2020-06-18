@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
@@ -46,14 +46,13 @@ if ('auth' == $do) {
 	if (empty($auth)) {
 		exit('推送的站点数据有误');
 	}
-/*qwj	$_W['setting']['site']['url'] = $auth['url'];
+		$_W['setting']['site']['url'] = $auth['url'];
 	$_W['setting']['site']['key'] = $auth['key'];
 	$_W['setting']['site']['token'] = $auth['token'];
 	$site_info = cloud_site_info();
 	if (is_error($site_info) || $site_info['key'] != $auth['key']) {
 		exit('非法请求！');
 	}
-	*/
 	setting_save($auth, 'site');
 	exit('success');
 }
@@ -147,19 +146,9 @@ if ('if_un' == $do) {
 	if (empty($module_name) || (empty($support_type))) {
 		exit('参数错误！');
 	}
-	switch ($support_type) {
-		case 'theme_support':
-			$theme_info = table('site_templates')->getByName($module_name);
-			if (!empty($theme_info)) {
-				exit('0');
-			}
-			break;
-		default:
-			$module_info = module_fetch($module_name);
-			if (!empty($module_info) && $module_support_type[$support_type]['support'] == $module_info[$support_type]) {
-				exit('0');
-			}
-			break;
+	$module_info = module_fetch($module_name);
+	if (!empty($module_info) && $module_support_type[$support_type]['support'] == $module_info[$support_type]) {
+		exit('0');
 	}
 	exit('1');
 }

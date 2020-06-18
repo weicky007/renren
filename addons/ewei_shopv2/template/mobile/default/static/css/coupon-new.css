@@ -173,7 +173,8 @@
     font-weight: bold;
 }
 .coupon-item .coupon-right .usetime {
-    line-height: 1.4rem;
+    line-height: 0.7rem;
+    margin-top: 0.3rem;
     font-size: 0.6rem;
     color: #999;
     display: -webkit-box;

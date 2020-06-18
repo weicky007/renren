@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Withdraw_EweiShopV2Page extends AppMobilePage
 {
 	public function main()
@@ -16,11 +16,11 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 		$openid = $_W['openid'];
 
 		if (empty($openid)) {
-			app_error(AppError::$UserNotLogin);
+			return app_error(AppError::$UserNotLogin);
 		}
 
 		if (empty($set['withdraw'])) {
-			app_error(AppError::$WithdrawNotOpen);
+			return app_error(AppError::$WithdrawNotOpen);
 		}
 
 		$withdrawcharge = $set['withdrawcharge'];
@@ -32,6 +32,7 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 		$type_array = array();
 
 		if ($set['withdrawcashweixin'] == 1) {
+			$type_array[] = array('type' => 0, 'title' => '提现到微信钱包');
 		}
 
 		if ($set['withdrawcashalipay'] == 1) {
@@ -64,7 +65,7 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 
 			$condition = ' and uniacid=:uniacid';
 			$params = array(':uniacid' => $_W['uniacid']);
-			$banklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC', $params);
+			$banklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC'), $params);
 		}
 
 		if (!empty($last_data) && !empty($type_array)) {
@@ -98,7 +99,7 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 			}
 		}
 
-		app_json($result);
+		return app_json($result);
 	}
 
 	public function submit()
@@ -141,7 +142,7 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 			$type_array[3]['title'] = '提现到银行卡';
 			$condition = ' and uniacid=:uniacid';
 			$params = array(':uniacid' => $_W['uniacid']);
-			$banklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC', $params);
+			$banklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC'), $params);
 		}
 
 		$applytype = intval($_GPC['applytype']);
@@ -156,19 +157,19 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 			$alipay1 = trim($_GPC['alipay1']);
 
 			if (empty($realname)) {
-				app_error(AppError::$ParamsError, '请填写姓名');
+				return app_error(AppError::$ParamsError, '请填写姓名');
 			}
 
 			if (empty($alipay)) {
-				app_error(AppError::$ParamsError, '请填写支付宝帐号');
+				return app_error(AppError::$ParamsError, '请填写支付宝帐号');
 			}
 
 			if (empty($alipay1)) {
-				app_error(AppError::$ParamsError, '请填写确认帐号');
+				return app_error(AppError::$ParamsError, '请填写确认帐号');
 			}
 
 			if ($alipay != $alipay1) {
-				app_error(AppError::$ParamsError, '支付宝帐号与确认帐号不一致');
+				return app_error(AppError::$ParamsError, '支付宝帐号与确认帐号不一致');
 			}
 
 			$apply['realname'] = $realname;
@@ -182,23 +183,23 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 				$bankcard1 = trim($_GPC['bankcard1']);
 
 				if (empty($realname)) {
-					app_error(AppError::$ParamsError, '请填写姓名!');
+					return app_error(AppError::$ParamsError, '请填写姓名!');
 				}
 
 				if (empty($bankname)) {
-					app_error(AppError::$ParamsError, '请选择银行');
+					return app_error(AppError::$ParamsError, '请选择银行');
 				}
 
 				if (empty($bankcard)) {
-					app_error(AppError::$ParamsError, '请填写银行卡号');
+					return app_error(AppError::$ParamsError, '请填写银行卡号');
 				}
 
 				if (empty($bankcard1)) {
-					app_error(AppError::$ParamsError, '请填写确认卡号');
+					return app_error(AppError::$ParamsError, '请填写确认卡号');
 				}
 
 				if ($bankcard != $bankcard1) {
-					app_error(AppError::$ParamsError, '银行卡号与确认卡号不一致');
+					return app_error(AppError::$ParamsError, '银行卡号与确认卡号不一致');
 				}
 
 				$apply['realname'] = $realname;
@@ -235,7 +236,7 @@ class Withdraw_EweiShopV2Page extends AppMobilePage
 		pdo_insert('ewei_shop_member_log', $apply);
 		$logid = pdo_insertid();
 		m('notice')->sendMemberLogMessage($logid);
-		app_json();
+		return app_json();
 	}
 
 	public function getLastApply($openid, $applytype = -1)

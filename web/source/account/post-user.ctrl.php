@@ -7,16 +7,22 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('module');
 load()->model('system');
 
-$dos = array('delete', 'edit', 'set_permission', 'set_manager', 'module');
+$dos = array('delete', 'edit', 'set_permission', 'save_permission', 'set_manager', 'module');
 $do = in_array($do, $dos) ? $do : 'edit';
 
 $uniacid = intval($_GPC['uniacid']);
 if (empty($uniacid)) {
+	if ($_W['isajax']) {
+		iajax(-1, '请选择要编辑的平台账号');
+	}
 	itoast('请选择要编辑的平台账号', referer(), 'error');
 }
 $state = permission_account_user_role($_W['uid'], $uniacid);
 $role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 if (!$role_permission) {
+	if ($_W['isajax']) {
+		iajax(-1, '无权限操作');
+	}
 	itoast('无权限操作！', referer(), 'error');
 }
 $founders = explode(',', $_W['config']['setting']['founder']);
@@ -56,7 +62,16 @@ if ('edit' == $do) {
 			}
 		}
 	}
-
+	if ($_W['isajax']) {
+	    iajax(0, array(
+	    	'founder_info' => $founder_info,
+			'vice_founder' => empty($vice_founder) ? '' : $vice_founder,
+			'owner' => empty($owner) ? '' : $owner,
+			'manager' => empty($manager) ? '' : $manager,
+			'operator' => empty($operator) ? '' : $operator,
+			'create_user_url' => $_W['siteroot'] . 'web' . ltrim(url('user/create'), '.'),
+		));
+	}
 	template('account/manage-users');
 }
 
@@ -86,12 +101,12 @@ if ('delete' == $do) {
 		pdo_delete('system_stat_visit', $data);
 		iajax(0, '删除成功！', referer());
 	} else {
-		iajax(-1, '删除失败，请重试！');
+		iajax(-1, '删除失败，请重试');
 	}
 }
 
 if ('set_manager' == $do) {
-	$username = trim($_GPC['username']);
+	$username = safe_gpc_string($_GPC['username']);
 	$user = user_single(array('username' => $username));
 	if (!empty($user)) {
 		if (2 != $user['status']) {
@@ -229,46 +244,58 @@ if ('set_manager' == $do) {
 	}
 }
 
-if ('set_permission' == $do) {
+if ('set_permission' == $do || 'save_permission' == $do) {
 	$uid = intval($_GPC['uid']);
 	$user = user_single(array('uid' => $uid));
 	if (empty($user)) {
+		if ($_W['isajax']) {
+			iajax(-1, '您操作的用户不存在或是已经被删除');
+		}
 		itoast('您操作的用户不存在或是已经被删除！', '', '');
 	}
 	$role = permission_account_user_role($_W['uid'], $uniacid);
 	if (empty($role)) {
+		if ($_W['isajax']) {
+			iajax(-1, '此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！');
+		}
 		itoast('此用户没有操作该统一公众号的权限，请选指派“管理员”或是“操作员”权限！', '', '');
 	}
 	$module_permission = permission_account_user_menu($uid, $uniacid, 'modules');
-	if (is_error($module_permission)) {
-		itoast('参数错误！');
-	}
 
 	if ('all' == current($module_permission)) {
-		$module_permission_keys = array('permission' => 'all');
+		$module_permission_keys = array();
 		$module_permission_all = 1;
 	} else {
 		$module_permission_keys = array_keys($module_permission);
 		$module_permission_all = 0;
 	}
+	$user_all_module_permission = table('users_permission')->getAllUserModulePermission($uid, $uniacid);
 
 	$module = uni_modules_by_uniacid($uniacid);
-	$uni_modules_permission_all = array();
-	$uni_modules_permissions = array();
+		$user_modules_permissions = array();
 	if (!empty($module)) {
-		foreach ($module as $key => $value) {
+		foreach ($module as $module_name_key => $value) {
 			if (1 == $value['issystem']) {
+				unset($module[$module_name_key]);
 				continue;
 			}
-			$permissions = module_permission_fetch($key);
-			if (empty($permissions)) {
-				$uni_modules_permission_all[] = $key;
-				$uni_modules_permissions[$key] = array();
+			if (!empty($user_all_module_permission[$module_name_key]['permission'])) {
+				$have_module_permission = explode('|', $user_all_module_permission[$module_name_key]['permission']);
 			} else {
-				foreach ($permissions as $permission_info) {
-					$uni_modules_permission_all[] = $permission_info['permission'];
-					$uni_modules_permissions[$key][] = $permission_info['permission'];
+				$have_module_permission = array();
+			}
+			$user_modules_permissions[$module_name_key] = array('module_title' => $value['title'], 'permission' => array());
+			$permissions = module_permission_fetch($module_name_key);
+			if (empty($permissions)) {
+				$user_modules_permissions[$module_name_key]['permission'] = (in_array('all', $have_module_permission) || in_array('all', $module_permission)) ? array('all') : array();
+				continue;
+			}
+			foreach ($permissions as $permission_info) {
+				$permission_info['checked'] = 0;
+				if (in_array($permission_info['permission'], $have_module_permission) || in_array('all', $have_module_permission) || in_array('all', $module_permission)) {
+					$permission_info['checked'] = 1;
 				}
+				$user_modules_permissions[$module_name_key]['permission'][] = $permission_info;
 			}
 		}
 	}
@@ -278,11 +305,11 @@ if ('set_permission' == $do) {
 			$account_type = 'account' == $account_type_sign ? 'system' : $account_type_sign;
 		}
 	}
+
 	$user_menu_permissions = permission_account_user_menu($uid, $uniacid, $account_type);
 	$menus = system_menu_permission_list($role);
 
 	permission_account_user_init($user['uid'], $uniacid);
-	$all_menu_permission = permission_menu_name();
 
 	if (in_array($account['type_sign'], array(ACCOUNT_TYPE_SIGN, XZAPP_TYPE_SIGN, WEBAPP_TYPE_SIGN))) {
 		$account_type_menu = ACCOUNT_TYPE_SIGN;
@@ -291,105 +318,140 @@ if ('set_permission' == $do) {
 	} else {
 		$account_type_menu = $account['type_sign'];
 	}
-	if (checksubmit('submit')) {
-		$user_menu_permission_new = array();
 
-		if (!empty($_GPC['menus'])) {
-			foreach ($_GPC['menus'] as $permission_name) {
-				if (in_array($permission_name, $all_menu_permission)) {
-					$user_menu_permission_new[] = $permission_name;
-				}
-			}
-			$data = array(
-				'type' => $account_type,
-				'permission' => implode('|', $user_menu_permission_new),
-			);
-			$result = permission_update_account_user($uid, $uniacid, $data);
-			if (is_error($result)) {
-				itoast($result['message']);
-			}
-		} else {
-			$data = array(
-				'type' => $account_type,
-				'permission' => '|',
-			);
-			$result = permission_update_account_user($uid, $uniacid, $data);
-		}
-		if (is_error($result)) {
-			itoast($result['message']);
-		}
-
-				
-		$permission_names = "'" . implode(array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_WEBAPP, PERMISSION_PHONEAPP, PERMISSION_XZAPP, PERMISSION_ALIAPP, PERMISSION_BAIDUAPP, PERMISSION_TOUTIAOAPP, PERMISSION_SYSTEM), "','") . "'";
-		pdo_query('DELETE FROM ' . tablename('users_permission') . ' WHERE uniacid = :uniacid AND uid = :uid AND type not in (' . $permission_names . ')', array(':uniacid' => $uniacid, ':uid' => $uid));
-		if (!empty($_GPC['module'])) {
-			$selected_modules_permission = array();
-			foreach ($_GPC['module'] as $module_val) {
-				if (empty($_GPC['module_' . $module_val]) || 1 == $_GPC[$module_val . '_select']) {
-					if (empty($uni_modules_permissions[$module_val])) {
-						$selected_modules_permission[] = $module_val;
-					} else {
-						foreach ($uni_modules_permissions[$module_val] as $sub_modules_permission) {
-							$selected_modules_permission[] = $sub_modules_permission;
-						}
-					}
-				}
-			}
-
-			$selected_all_module_permission = array_diff($uni_modules_permission_all, $selected_modules_permission);
-			if (!empty($selected_all_module_permission)) {
-				foreach ($_GPC['module'] as $module_val) {
-					$insert = array(
-						'uniacid' => $uniacid,
-						'uid' => $uid,
-						'type' => $module_val,
-					);
-					if (empty($_GPC['module_' . $module_val]) || 1 == $_GPC[$module_val . '_select']) {
-						$insert['permission'] = 'all';
-						pdo_insert('users_permission', $insert);
+	if ('set_permission' == $do) {
+		if ($_W['isajax']) {
+			if (!empty($menus[$account_type_menu]) && !empty($menus[$account_type_menu]['section'])) {
+				foreach ($menus[$account_type_menu]['section'] as $section_key => &$section) {
+					if ($section_key == 'platform_module') {
+						unset($menus[$account_type_menu]['section']['platform_module']);
 						continue;
-					} else {
-						$data = array();
-						foreach ($_GPC['module_' . $module_val] as $v) {
-							$data[] = $v;
-						}
-						if (!empty($data)) {
-							$insert['permission'] = implode('|', $data);
-							pdo_insert('users_permission', $insert);
-						}
 					}
+					if (empty($section['menu'])) {
+						continue;
+					}
+					foreach ($section['menu'] as &$menu) {
+						
+						if (in_array($menu['permission_name'], $user_menu_permissions)) {
+							$menu['checked'] = 1;
+						} else {
+							$menu['checked'] = 0;
+						}
+						if (empty($menu['sub_permission'])) {
+							continue;
+						}
+						foreach ($menu['sub_permission'] as &$sub_permission) {
+							if (in_array($sub_permission['permission_name'], $user_menu_permissions)) {
+								$sub_permission['checked'] = 1;
+							} else {
+								$sub_permission['checked'] = 0;
+							}
+						}
+						unset($menu);
+					}
+					unset($sub_permission);
 				}
+				unset($section);
 			}
-		} else {
-			$module_all_permission_data = array(
-				'uid' => $uid,
-				'uniacid' => $uniacid,
-				'type' => 'modules',
+			$result = array(
+				'uni_modules_permission' => $user_modules_permissions,
+				'menus' => $menus[$account_type_menu],
 			);
-			$module_all_permission = pdo_get('users_permission', $module_all_permission_data);
-			if (empty($module_all_permission)) {
-				$module_all_permission_data['permission'] = 'none';
-				pdo_insert('users_permission', $module_all_permission_data);
-			}
+			iajax(0, $result);
 		}
-		cache_delete(cache_system_key('permission', array('uniacid' => $uniacid, 'uid' => $uid)));
-		itoast('操作菜单权限成功！', referer(), 'success');
+		template('account/set-permission');
 	}
-	template('account/set-permission');
 }
 
-if ('module' == $do && $_W['isajax']) {
+if ('save_permission' == $do) {
+	$user_menu_permission_new = array();
+	if (!empty($_GPC['menus'])) {
+		$all_menu_permission = permission_menu_name();
+		foreach ($_GPC['menus'] as $permission_name) {
+			if (in_array($permission_name, $all_menu_permission)) {
+				$user_menu_permission_new[] = $permission_name;
+			}
+		}
+		$data = array(
+			'type' => $account_type,
+			'permission' => implode('|', $user_menu_permission_new),
+		);
+		$result = permission_update_account_user($uid, $uniacid, $data);
+		if (is_error($result)) {
+			if ($_W['isajax']) {
+				iajax(-1, $result['message']);
+			}
+			itoast($result['message']);
+		}
+	} else {
+		$data = array(
+			'type' => $account_type,
+			'permission' => '|',
+		);
+		$result = permission_update_account_user($uid, $uniacid, $data);
+	}
+	if (is_error($result)) {
+		if ($_W['isajax']) {
+			iajax(-1, $result['message']);
+		}
+		itoast($result['message']);
+	}
+	
+			
+	$permission_names = "'" . implode(array(PERMISSION_ACCOUNT, PERMISSION_WXAPP, PERMISSION_WEBAPP, PERMISSION_PHONEAPP, PERMISSION_XZAPP, PERMISSION_ALIAPP, PERMISSION_BAIDUAPP, PERMISSION_TOUTIAOAPP, PERMISSION_SYSTEM), "','") . "'";
+	pdo_query('DELETE FROM ' . tablename('users_permission') . ' WHERE uniacid = :uniacid AND uid = :uid AND type not in (' . $permission_names . ')', array(':uniacid' => $uniacid, ':uid' => $uid));
+	if (!empty($_GPC['module'])) {
+		foreach ($_GPC['module'] as $module_val) {
+			$insert = array(
+				'uniacid' => $uniacid,
+				'uid' => $uid,
+				'type' => $module_val,
+			);
+			if (1 == $_GPC[$module_val . '_select']) {
+				$insert['permission'] = 'all';
+				pdo_insert('users_permission', $insert);
+				continue;
+			} else {
+				$data = array();
+				foreach ($_GPC['module_' . $module_val] as $v) {
+					$data[] = $v;
+				}
+				if (!empty($data)) {
+					$insert['permission'] = implode('|', $data);
+					pdo_insert('users_permission', $insert);
+				}
+			}
+		}
+	} else {
+		$module_all_permission_data = array(
+			'uid' => $uid,
+			'uniacid' => $uniacid,
+			'type' => 'modules',
+		);
+		$module_all_permission = pdo_get('users_permission', $module_all_permission_data);
+		if (empty($module_all_permission)) {
+			$module_all_permission_data['permission'] = 'none';
+			pdo_insert('users_permission', $module_all_permission_data);
+		}
+	}
+	cache_delete(cache_system_key('permission', array('uniacid' => $uniacid, 'uid' => $uid)));
+	if ($_W['isajax']) {
+		iajax(0, '操作菜单权限成功!');
+	}
+	itoast('操作菜单权限成功！', referer(), 'success');
+}
+
+if ('module' == $do) {
 	$uid = intval($_GPC['uid']);
 	$user = user_single($uid);
 	if (empty($user)) {
-		iajax(1, '访问错误, 未找到指定操作用户.', '');
+		iajax(-1, '访问错误, 未找到指定操作用户.', '');
 	}
-	$founders = explode(',', $_W['config']['setting']['founder']);
-	$isfounder = in_array($user['uid'], $founders);
+	$isfounder = user_is_founder($uid, true);
 	if ($isfounder) {
-		iajax(2, '访问错误, 无法编辑站长.', '');
+		iajax(-1, '访问错误, 无法编辑站长.', '');
 	}
-	$module_name = trim($_GPC['m']);
+	$module_name = safe_gpc_string($_GPC['m']);
 	$module = pdo_fetch('SELECT * FROM ' . tablename('modules') . ' WHERE name = :m', array(':m' => $module_name));
 		$purview = pdo_fetch('SELECT * FROM ' . tablename('users_permission') . ' WHERE uniacid = :aid AND uid = :uid AND type = :type', array(':aid' => $uniacid, ':uid' => $uid, ':type' => $module_name));
 	$user_module_permissions = permission_account_user_menu($uid, $uniacid, 'modules');
@@ -454,7 +516,7 @@ if ('module' == $do && $_W['isajax']) {
 	}
 	unset($data_val);
 	if (empty($data)) {
-		iajax(3, '无子权限！', '');
+		iajax(-1, '无子权限！', '');
 	} else {
 		iajax(0, $data, '');
 	}

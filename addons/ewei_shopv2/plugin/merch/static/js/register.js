@@ -66,17 +66,17 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                     btn.removeAttr('stop').html(html);
                     FoxUI.toast.show(pjson.result.message);
                     return
+                }else if(pjson.status == 1) {
+                    FoxUI.message.show({
+                        icon: 'icon icon-info text-warning',
+                        content: "您的申请已经提交，请等待我们联系您!",
+                        buttons: [{
+                            text: '先去商城逛逛', extraClass: 'btn-danger', onclick: function () {
+                                location.href = core.getUrl('')
+                            }
+                        }]
+                    });
                 }
-
-                FoxUI.message.show({
-                    icon: 'icon icon-info text-warning',
-                    content: "您的申请已经提交，请等待我们联系您!",
-                    buttons: [{
-                        text: '先去商城逛逛', extraClass: 'btn-danger', onclick: function () {
-                            location.href = core.getUrl('')
-                        }
-                    }]
-                });
 
             }, true, true)
         });

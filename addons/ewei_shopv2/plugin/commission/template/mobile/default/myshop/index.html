@@ -62,7 +62,7 @@
 	
 	
 	 <div class="fui-line" style="background: #f4f4f4;">
-	         <div class="text text-danger"><i class="icon icon-hotfill"></i> 小店推荐</div>
+	         <div class="text text-danger xiaodian"><i class="icon icon-hotfill"></i> 小店推荐</div>
 	 </div>
 	<div class="fui-goods-group block" id='container'></div>
 	<div class='infinite-loading' style="text-align: center; color: #666;">
@@ -89,12 +89,22 @@
 						</div>
 					</a>
 					<div class="detail">
-						<a href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>">
+						<a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
+							<div class="name"><%if g.type == 9%><span class="cycle-tip">周期购</span><%/if%> <%g.title%></div>
+						</a>
 							<div class="name"><%g.title%></div>
 						</a>
 						<div class="price">
 							<span class="text">￥<%g.minprice%></span>
-							<span class="buy"><i class="icon icon-cart"></i></span>
+							<%if g.bargain > 0%>
+							<span class="buy" data-type="<%g.type%>" data-url="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"><i class="icon icon-cart" ></i></span>
+							<%else if g.bargain<=0 && g.type ==9%>
+							<span class="buy" data-type="<%g.type%>" data-url="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>"><i class="icon icon-cart" ></i></span>
+
+							<%else%>
+							<span class="buy" data-type="=<%g.type%>" data-url="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"><i class="icon icon-cart" ></i></span>
+
+							<%/if%>
 						</div>
 					</div>
 				</div>

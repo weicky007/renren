@@ -1,11 +1,42 @@
 {template '_header'}
+<style>
+    /*装修组件的复制*/
+    .diy-toolbar{
+        width: 132px;
+        height: 48px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 6px;
+        position: absolute;
+        left: 0;
+        top: -59px;
+        padding: 0 10px;
 
+    }
+    .diy-toolbar .item{
+        width: 56px;
+        height: 100%;
+        text-align: center;
+        color: #fff;
+        font-size: 12px;
+        float: left;
+        cursor: pointer;
+    }
+    .diy-toolbar .item p{
+        width: 100%;
+    }
+    .diy-toolbar .item p.icow{
+        margin-top: 7px;
+        margin-bottom: 6px;
+    }
+    .diy-toolbar .item p.txt{
+        line-height: 1;
+    }
+</style>
 <link href="../addons/ewei_shopv2/plugin/app/static/css/web.css?v=20170911" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/app/static/css/diy.min.css?v=201609291000" rel="stylesheet" type="text/css"/>
 <link href="../addons/ewei_shopv2/plugin/app/static/css/foxui.diy.css?v=201612141111" rel="stylesheet" type="text/css"/>
 <link href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet" type="text/css">
 <link href="../addons/ewei_shopv2/plugin/app/static/fonts/iconfont.css" rel="stylesheet" type="text/css">
-
 <div class="page-header">
     当前位置：
     <span class="text-primary">{if empty($item)}新建{else}编辑{/if}页面 {if !empty($item)}<small>(名称: test)</small>{/if}</span>
@@ -13,17 +44,19 @@
 
 <div class="page-content">
     {template 'app/_tab'}
-
     <div class="row relative w840">
 
+        <div class='alert alert-primary' id="advanced_alert">
+            <p>温馨提示：小程序最多只支持10级页面跳转，超过10级无法跳转</p>
+        </div>
         {if is_array($release) && !is_error($release)}
-            <div class="qrcode-layer">
-                {if $release['audit_status']==1}
-                <div class="layer">未提交</div>
-                {/if}
-                <img src="{php echo $release['audit_status']==1? '../addons/ewei_shopv2/plugin/app/static/images/qrcode.png': $release['xcx_qrcode_url']}" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
-                <span>扫码预览</span>
-            </div>
+        <div class="qrcode-layer">
+            {if $release['audit_status']==1}
+            <div class="layer">未提交</div>
+            {/if}
+            <img src="{php echo $release['audit_status']==1? '../addons/ewei_shopv2/plugin/app/static/images/qrcode.png': $release['xcx_qrcode_url']}" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" />
+            <span>扫码预览</span>
+        </div>
         {/if}
 
         <div class="diy-phone" data-merch="{php echo intval($_W['merchid'])}">
@@ -37,7 +70,17 @@
             <div class="phone-foot"></div>
         </div>
 
-        <div class="diy-editor form-horizontal" id="diy-editor">
+        <div class="diy-editor form-horizontal" style="position: relative;" id="diy-editor">
+            <div class="diy-toolbar">
+                <div class="item copy btn-copy">
+                    <p class="icow icow-fuzhilianjie1"></p>
+                    <p class="txt">复制</p>
+                </div>
+                <div class="item delete btn-del">
+                    <p class="icow icow-shanchu2"></p>
+                    <p class="txt ">删除</p>
+                </div>
+            </div>
             <div class="editor-arrow"></div>
             <div class="inner"></div>
         </div>
@@ -46,8 +89,11 @@
             <div class="navs" id="navs"></div>
             <div class="action">
                 <nav class="btn btn-default btn-sm" style="float: left; display: none" id="gotop"><i class="icon icon-top" style="font-size: 12px"></i> 返回顶部</nav>
-                <nav class="btn btn-success btn-sm btn-save" data-type="isdefault">保存并设为默认首页</nav>
-                <nav class="btn btn-primary btn-sm btn-save" data-type="save">仅保存页面</nav>
+                <nav class="btn btn-success btn-sm btn-save" data-type="isdefault" data-id="2" style="{if ($_GPC['type']!=2 && $_GPC['type']!=20)||$page['type']!=2 && $page['type']!=20 || !empty($page['isdefault'])}display: none;{/if}">保存并设为默认首页</nav>
+                <nav class="btn btn-success btn-sm btn-save" data-type="isdefault" data-id="3" style="{if $_GPC['type']!=3 || $page['type']!=3 || !empty($page['isdefault'])}display: none;{/if}">保存并设为默认会员页</nav>
+                <nav class="btn btn-success btn-sm btn-save" data-type="isdefault" data-id="4" style="{if $_GPC['type']!=4 || $page['type']!=4 || !empty($page['isdefault'])}display: none;{/if}">保存并设为默认商品详情页</nav>
+                <nav class="btn btn-success btn-sm btn-save" data-type="cancel_default" style="{if empty($page['isdefault']) || ($page['type'] == 2 || $page['type'] == 20 || $_GPC['type']==2 || $_GPC['type']==20)}display:none{/if}">取消默认</nav>
+                <nav class="btn btn-primary btn-sm btn-save" data-type="save">保存页面</nav>
             </div>
         </div>
     </div>
@@ -59,13 +105,30 @@
 <script type="text/javascript" src="./resource/components/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="./resource/components/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" src="./resource/components/ueditor/lang/zh-cn/zh-cn.js"></script>
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/select2/select2.css">
+<link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/select2/select2-bootstrap.css">
 
 <script language="javascript">
     myrequire(['../../plugin/app/static/js/diy.min','tpl','web/biz'],function(modal,tpl){
         window.tpl = tpl;
+        console.log({$json});
         modal.init({$json});
     });
-
+    function callbackMerch (data) {
+        myrequire(['../../plugin/app/static/js/diy.min'],function(modal) {
+            modal.callbackMerch(data);
+        });
+    }
+    function callbackMerchCategory (data) {
+        myrequire(['../../plugin/app/static/js/diy.min'],function(modal) {
+            modal.callbackMerchCategory(data);
+        });
+    }
+    function callbackMerchGroup (data) {
+        myrequire(['../../plugin/app/static/js/diy.min'],function(modal) {
+            modal.callbackMerchGroup(data);
+        });
+    }
     function callbackGoods(data) {
         myrequire(['../../plugin/app/static/js/diy.min'],function(modal) {
             modal.callbackGoods(data);
@@ -86,7 +149,12 @@
             modal.callbackCoupon(data);
         });
     }
+    function callbackData(data) {
+        myrequire(['../../plugin/app/static/js/diy.min'],function(modal) {
+            modal.callbackData(data);
+        });
+    }
+
 </script>
 
 {template '_footer'}
-<!--4000097827-->

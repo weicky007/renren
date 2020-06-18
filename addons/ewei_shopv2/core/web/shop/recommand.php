@@ -1,32 +1,36 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Recommand_EweiShopV2Page extends WebPage 
+
+class Recommand_EweiShopV2Page extends WebPage
 {
-	public function main() 
+	public function main()
 	{
 		global $_W;
 		global $_GPC;
-		if ($_W['ispost']) 
-		{
+
+		if ($_W['ispost']) {
 			$shop = $_W['shopset']['shop'];
 			$shop['indexrecommands'] = $_GPC['goodsid'];
 			m('common')->updateSysset(array('shop' => $shop));
 			plog('shop.recommand', '修改首页推荐商品设置');
 			show_json(1);
 		}
-		$goodsids = ((isset($_W['shopset']['shop']['indexrecommands']) ? implode(',', $_W['shopset']['shop']['indexrecommands']) : ''));
+
+		$goodsids = isset($_W['shopset']['shop']['indexrecommands']) ? implode(',', $_W['shopset']['shop']['indexrecommands']) : '';
 		$goods = false;
-		if (!(empty($goodsids))) 
-		{
-			$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . ' where id in (' . $goodsids . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $goodsids . '\',id)');
+
+		if (!empty($goodsids)) {
+			$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . (' where id in (' . $goodsids . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $goodsids . '\',id)'));
 		}
+
 		$goodsstyle = $_W['shopset']['shop']['goodsstyle'];
 		include $this->template();
 	}
-	public function setstyle() 
+
+	public function setstyle()
 	{
 		global $_W;
 		global $_GPC;
@@ -37,4 +41,5 @@ class Recommand_EweiShopV2Page extends WebPage
 		show_json(1);
 	}
 }
+
 ?>

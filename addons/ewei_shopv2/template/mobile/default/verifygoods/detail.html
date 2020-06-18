@@ -1,13 +1,14 @@
 {template '_header'}
-	<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/index.css?v=1.0.0">
-	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_ahs53c80msawnrk9.css"/>
-	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_057ap6ia2gbep14i.css"/>
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/index.css?v=1.0.0">
+<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_ahs53c80msawnrk9.css"/>
+<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_057ap6ia2gbep14i.css"/>
 <div class="fui-page cav">
 	<div class="fui-header">
 		<div class="fui-header-left">
 			<a class="back" id="btn-back"></a>
 		</div>
 		<div class="title">
+			卡券包
 		</div>
 		<div class="fui-header-right"></div>
 	</div>
@@ -26,6 +27,7 @@
 				</div>
 			</div>
 		</div>
+		{if $cansee ==1}
 		<div class="code_box">
 			<p>请将二维码出示给核销员</p>
 			<div class="img_box detail_code">
@@ -33,27 +35,46 @@
 			</div>
 			<div class="cav_code">{$verifycode}</div>
 		</div>
+		{elseif $cansee ==2}
+		<div class="code_box" style="height: 50px">
+			<p style="top: auto;">记次/时商品已过期</p>
+		</div>
+		{elseif $cansee ==3}
+		<div class="code_box" style="height: 50px">
+			<p >记次/时商品已经使用完毕</p>
+		</div>
+		{/if}
 		<div class="fui-cell-group noborder cav_detail">
 			<div class="fui-cell-title upright" style="padding-left: 1rem;font-size: 0.7rem;">核销详情</div>
-			<div class="fui-cell" style="padding: 0.3rem 0.6rem">
-				<div class="fui-cell-info" style="font-size: 0.7rem;color: #000;">
+
+			{if !empty($goodsstore)}
+			<div class="fui-cell" >
+				<div class="fui-cell-label " style="padding-left:15px;">指定门店</div>
+				<div class="fui-cell-info"  >
+					{$goodsstore['storename']}
+				</div>
+			</div>
+			{/if}
+
+			<div class="fui-cell" >
+				<div class="fui-cell-label " style="padding-left:15px;">核销数</div>
+				<div class="fui-cell-info"  >
 					{if empty($item['limitnum'])}
-						不限次数
+					不限
 					{else}
-						核销总次数：{$item['limitnum']} 剩余次数：{php echo intval($item['limitnum']) - $verifynum}
+					剩余 {php echo intval($item['limitnum']) - $verifynum} 次 /  总数 <span class="text-danger ">{$item['limitnum']}</span> 次
 					{/if}
 				</div>
-				<div class="fui-cell-remark noremark">
-				</div>
 			</div>
-			<div class="fui-cell">
-				<div class="fui-cell-info" style="font-size: 0.7rem;color: #999;">
-					有效日期：{$limitdatestr}前有效
-				</div>
-				<div class="fui-cell-remark noremark">
-				</div>
+
+
+
+
+			<div class="fui-cell " >
+				<div class="fui-cell-label "  style="padding-left:15px;">有效期</div>
+				<div class="fui-cell-info" >{$limitdatestr} 前有效</div>
 			</div>
-		</div>
+
 		<div class="fui-list-group cav_record">
 			<div class="fui-list_title upright" style="padding-left: 1rem;font-size: 0.7rem">核销记录</div>
 			{if !empty($verifygoodlogs)}
@@ -63,8 +84,9 @@
 					<div>核销员:{$verifygoodlog['salername']}</div>
 					<div>核销门店:{$verifygoodlog['storename']}</div>
 					<div>核销次数:{$verifygoodlog['verifynum']}</div>
+					<div>备注:{$verifygoodlog['remarks']}</div>
 				</div>
-				<div class="fui-list-angle">{php echo date('Y-m-d H:i:s', $verifygoodlog['verifydate']) }</div>
+				<div class="fui-list-angle" style="width:auto;">{php echo date('Y-m-d H:i:s', $verifygoodlog['verifydate']) }</div>
 			</div>
 			{/loop}
 			{else}
@@ -93,24 +115,23 @@
 </div>
 
 <script type="text/javascript">
-	$(".fui-content").bind('scroll resize', function () {
-		var scrolltop = $(".fui-content").scrollTop();
-		if (scrolltop >100) {
-			$("#gotop").fadeIn(100)
-		} else {
-			$("#gotop").fadeOut(100)
-		}
-	});
-	$("#gotop").unbind('click').click(function () {
-		$(".fui-content").animate({scrollTop: "0px"}, 1000)
-	});
+    $(".fui-content").bind('scroll resize', function () {
+        var scrolltop = $(".fui-content").scrollTop();
+        if (scrolltop >100) {
+            $("#gotop").fadeIn(100)
+        } else {
+            $("#gotop").fadeOut(100)
+        }
+    });
+    $("#gotop").unbind('click').click(function () {
+        $(".fui-content").animate({scrollTop: "0px"}, 1000)
+    });
 
-	$('.detail_code').click(function(){
-		$('.mask').css({display:'block'})
-	})
-	$('.mask').click(function(){
-		$(this).css({display:'none'})
-	})
+    $('.detail_code').click(function(){
+        $('.mask').css({display:'block'})
+    })
+    $('.mask').click(function(){
+        $(this).css({display:'none'})
+    })
 </script>
-
 

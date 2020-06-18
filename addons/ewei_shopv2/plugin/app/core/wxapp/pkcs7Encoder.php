@@ -1,5 +1,5 @@
 <?php
-//haha
+
 class PKCS7Encoder
 {
 	static public $block_size = 16;
@@ -13,7 +13,7 @@ class PKCS7Encoder
 	{
 		$block_size = PKCS7Encoder::$block_size;
 		$text_length = strlen($text);
-		$amount_to_pad = PKCS7Encoder::$block_size - ($text_length % PKCS7Encoder::$block_size);
+		$amount_to_pad = PKCS7Encoder::$block_size - $text_length % PKCS7Encoder::$block_size;
 
 		if ($amount_to_pad == 0) {
 			$amount_to_pad = PKCS7Encoder::block_size;
@@ -39,7 +39,7 @@ class PKCS7Encoder
 	public function decode($text)
 	{
 		$pad = ord(substr($text, -1));
-		if (($pad < 1) || (32 < $pad)) {
+		if ($pad < 1 || 32 < $pad) {
 			$pad = 0;
 		}
 

@@ -4,17 +4,6 @@
 <div class="page-content">
     <form action="" method="post" class="form-horizontal form-validate" enctype="multipart/form-data">
 
-        {if !empty($_W['isfounder'])}
-            <div class="form-group">
-                <label class="col-lg control-label">管理端模板</label>
-                <div class="col-sm-9 col-xs-12">
-                    <label class="radio-inline"><input type="radio" name="data[close_v2]" value="0" {if empty($data['close_v2'])}checked="checked"{/if}> 开启返回旧版</label>
-                    <label class="radio-inline"><input type="radio" name="data[close_v2]" value="1" {if !empty($data['close_v2'])}checked="checked"{/if}> 关闭返回旧版</label>
-                    <div class="help-block">提示：开启返回旧版后用户可自行切换新旧版</div>
-                </div>
-            </div>
-        {/if}
-
         <div class="form-group">
             <label class="col-lg control-label">手机端模板</label>
             <div class="col-sm-9 col-xs-12">

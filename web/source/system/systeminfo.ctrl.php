@@ -14,6 +14,8 @@ if ('display' == $do) {
 	$info = array(
 		'os' => php_uname(),
 		'php' => PHP_VERSION,
+		'ims_version' => IMS_VERSION,
+		'ims_release_date' => IMS_RELEASE_DATE,
 		'sapi' => $_SERVER['SERVER_SOFTWARE'] ? $_SERVER['SERVER_SOFTWARE'] : php_sapi_name(),
 	);
 	$info['family'] = '您的产品是';
@@ -82,7 +84,13 @@ if ('display' == $do) {
 	$info['developers'] = array('袁文涛', '任超 (米粥)', '马德坤', '宋建君 (Gorden)', '赵波', '杨峰', '卜睿君', '张宏', '高建业', '葛海波', '马莉娜', '樊永康', '王玉', '翟佳佳', '张拯', '张玮');
 	$info['operators'] = array('侯琪琪 (琪琪)', '杨欣雨 (小雨)', '赵小雷 (擎擎)', '蔡帅帅 (小帅)', '朱传宝 (阿宝)', '蒋康康 (阿康)', '王鹏 (鹏鹏)');
 	//qwj
-	$info['exchange_group'] = array('link' => 'https://jq.qq.com/?_wv=1027&k=5tyw0ZU', 'title' => 'RubySn0w-708900924');
+	$info['exchange_group'] = array('link' => 'https://shang.qq.com/wpa/qunwpa?idkey=3f2aa4d82a1b82b84892b85319b61ce917e19e57f525309f45864ac04e12f223', 'title' => '百码云');
+	if ($_W['isajax']) {
+		$message = array(
+			'info' => $info
+		);
+		iajax(0, $message);
+	}
 	template('system/systeminfo');
 }
 

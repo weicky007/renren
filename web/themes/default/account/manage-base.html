@@ -115,7 +115,7 @@
 			<td ng-if="account.highest_visit"><span ng-bind="account.highest_visit"></span><span class="color-gray"> 次 / 月</span></td>
 			<td ng-if="!account.highest_visit">不限次数</span></td>
 			<td class="text-right">
-				{if user_is_founder($_W['uid'])}
+				{if $_W['isfounder']}
 				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#visit" ng-click="editInfo('highest_visit', account.highest_visit)">修改</a></div>
 				{/if}
 			</td>
@@ -253,7 +253,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<input type="text" ng-model="middleAccount.account" class="form-control" placeholder="公众号账号" />
+						<input type="text" ng-model="middleAccount.account" class="form-control" placeholder="{php echo $account->typeName}账号" />
 						<span class="help-block"></span>
 					</div>
 				</div>

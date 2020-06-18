@@ -1,6 +1,51 @@
 {template '_header'}
 <script>//document.title = "{$item['title']}"; </script>
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/quick/static/css/quick.css?v={php echo time()}">
+<style type="text/css">
+.fui-goods-tab .menu .nav {
+	border-left: 2px solid transparent;
+}
+.fui-goods-tab .menu .nav.active {
+    border-left: 2px solid #ff5555;
+    boder-bottom: none;
+}
+.fui-goods-tab.style3 .menu .nav.active:before {
+    display: none;
+}
+/*.fui-page, .fui-page-group{*/
+    /*height: 100%;*/
+/*}*/
+#title {
+	padding: 0.4rem 0;
+    display: block;
+}
+.quick-list .quick-item .info .buyline .buy .icon {
+    font-size: 1rem;
+    vertical-align: middle;
+    line-height: .8rem;
+}
+.quick-num .minus, .quick-num .plus {
+    height: 1rem;
+    width: 1rem;
+}
+.fui-fullHigh-item.menu {
+    width: 4.6rem;
+    padding-bottom: 20px;
+}
+.quick-list .quick-item .thumb img,.quick-list .quick-item .thumb {
+    width: 4rem;
+    height: 4rem;
+}
+.quick-list .quick-item .info .sales {
+    padding: 0.34rem 0;
+}
+.quick-list .quick-item .info .buyline {
+    padding-top: 0.6rem;
+}
+.fui-swipe-bullet {
+    margin: 0 4px;
+}
+</style>
 
 {if !empty($data['style'])}
     <style type="text/css">
@@ -23,6 +68,18 @@
             .fui-goods-tab .main .item .inner .buyline .price {color: {$data['style']['goodsprice']};}
             .fui-goods-tab .main .item .inner .buyline .sales {color: {$data['style']['goodssales']};}
             .fui-goods-tab .main .item .inner .buyline .buybtn  {background: {$data['style']['goodscart']};}
+            .fui-goods-tab .main .item .inner .buyline .buybtndis  {
+                height: 1.2rem;
+                width: 1.2rem;
+                background: #ccc;
+                color: #fff;
+                border-radius: 1.2rem;
+                text-align: center;
+                line-height: 1.3rem;
+                font-size: 0.75rem;
+                font-weight: bold;
+                margin-top: -0.2rem;
+        }
             .fui-navbar ~ .fui-content, .fui-content.navbar {padding: 0}
             .cart-dot:before {background: {$data['style']['footercart']};}
             .cart-dot .icon {color: {$data['style']['footercarticon']};}
@@ -59,7 +116,7 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">{$item['title']}</div>
+        <div class="title">{php echo empty($page['pagetitle'])?'快速购买':$page['pagetitle']}</div>
         <div class="fui-header-right">
             <a href="{php echo mobileUrl('order')}" class="external">
                 <i class="icon icon-person2"></i>
@@ -82,11 +139,12 @@
                                 <div class="notice" style="overflow: hidden">
                                     <span class="text" id="notice">
                                         {if empty($data['notices'])}
-                                        <i class="icon icon-notification"></i> 暂无公告
+                                        <!--<i class="icon icon-notification"></i>-->
+                                         暂无公告
                                         {else}
                                             <ul>
                                                 {loop $data['notices'] $notice}
-                                                    <li><i class="icon icon-notification"></i><a href="{php echo $data['style']['notice']==2?$notice['linkurl']:mobileUrl('shop/notice/detail', array('id'=>$notice['id']))}" data-nocache="true">{$notice['title']}</a></li>
+                                                    <li><a href="{php echo $data['style']['notice']==2?$notice['linkurl']:mobileUrl('shop/notice/detail', array('id'=>$notice['id']))}" data-nocache="true">{$notice['title']}</a></li>
                                                 {/loop}
                                             </ul>
                                         {/if}
@@ -120,20 +178,65 @@
                                 <div class="empty-data">该分组数据为空</div>
                             {else}
                                 {loop $item['data'] $i $g}
+
+                                    {if $g['total']>0}
                                     <div class="item" data-goodsid="{$g['id']}">
+                                        {if $g['total']>0}
+                                        <a class="thumb" href="{php echo mobileUrl('goods/detail', array('id'=>$g['id']))}" data-nocache="true">
+
+                                            <img src="{php echo tomedia($g['thumb'])}" />
+
+                                        </a>
+                                        {/if}
+                                        {if $g['total']==0}
                                         <a class="thumb" href="{php echo mobileUrl('goods/detail', array('id'=>$g['id']))}" data-nocache="true">
                                             <img src="{php echo tomedia($g['thumb'])}" />
+                                            <div style="background: rgba(173,173,173,0.6);width:4rem;height:4rem;float:left;position: relative;left:0rem;top:-4rem;"><h3 style="font-size: 1rem;position: absolute;left:1rem;top:1rem;">售罄</h3></div>
                                         </a>
+                                        {/if}
                                         <div class="inner">
                                             <a class="title" href="{php echo mobileUrl('goods/detail', array('id'=>$g['id']))}" data-nocache="true">{$g['title']}</a>
                                             <div class="subtitle">{$g['subtitle']}</div>
                                             <div class="buyline">
                                                 <div class="price">￥{$g['minprice']}</div>
+                                                {if $g['showsales']==1}
                                                 <div class="sales">销量{$g['sales']}</div>
+                                                {/if}
+                                                {if $g['total']>0}
                                                 <div class="buybtn"><i class="icon icon-add"></i></div>
+                                                {/if}
+                                                {if $g['total']==0}
+                                                <div class="buybtndis"><i class="icon icon-add"></i></div>
+                                                {/if}
                                             </div>
                                         </div>
                                     </div>
+                                    {else}
+                                        <div class="item" data-goodsid="{$g['id']}">
+                                            <a style="position: relative" class="thumb" href="{php echo mobileUrl('goods/detail', array('id'=>$g['id']))}" data-nocache="true">
+
+                                                <img src="{php echo tomedia($g['thumb'])}" />
+                                                <img style="position: absolute; top: 0; left: 0;" src="{php echo '../addons/ewei_shopv2/static/images/shouqin.png'}" />
+
+                                            </a>
+                                            <div class="inner">
+                                                <a class="title" href="{php echo mobileUrl('goods/detail', array('id'=>$g['id']))}" data-nocache="true">{$g['title']}</a>
+                                                <div class="subtitle">{$g['subtitle']}</div>
+                                                <div class="buyline">
+                                                    <div class="price">￥{$g['minprice']}</div>
+                                                    {if $g['showsales']==1}
+                                                    <div class="sales">销量{$g['sales']}</div>
+                                                    {/if}
+                                                    {if $g['total']>0}
+                                                    <div class="buybtn"><i class="icon icon-add"></i></div>
+                                                    {/if}
+                                                    {if $g['total']==0}
+                                                    <div class="buybtndis"><i class="icon icon-add"></i></div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
                                 {/loop}
                             {/if}
                         {/loop}
@@ -168,7 +271,7 @@
 
     <script language="javascript">
         require(['../addons/ewei_shopv2/plugin/quick/static/js/mobile.js'], function(modal){
-            modal.init({datas: {$datas}, cart: {php echo $carts}, fromquick:{$fromquick}, template: {$data['template']}});
+            modal.init({datas: {$datas}, cart: {php echo $carts}, fromquick:{$fromquick}, template: {$data['template']}, merchid: {$merchid}});
         });
     </script>
 
@@ -177,6 +280,7 @@
 {if $data['template']==0}
     <!-- 底部菜单 -->
     <div class="fui-footer quick">
+
         <div class="quick-cart empty" id="quick-cart-btn">
             <div class="dot">0</div>
             <div class="inner">
@@ -190,6 +294,7 @@
         <div class="quick-submit disabled" id="btn-submit" style="margin: 0">去结算</div>
     </div>
     <!-- 购物车展开 -->
+
     <div class="fui-footer cart" id="quick-cart">
         <div class="title">
             <div class="text">购物车</div>
@@ -198,14 +303,15 @@
         <div class="inner"></div>
         <div class="tip">Tip: 加入购物车后请尽快下单哦~</div>
     </div>
+
     <div class="mask mask-cart"></div>
 {else}
 
-    <a class="cart-dot" href="{php echo mobileUrl('member/cart')}" data-nocache="true">
+    <a class="cart-dot {php echo empty($cartcount)?'empty': ''} menucart" href="{php echo mobileUrl('member/cart')}" data-nocache="true">
         <i class="icon icon-cartfill"></i>
     </a>
 
-    {php $this->footerMenus()}
+  {php $this->footerMenus()}
 {/if}
 
     {if !empty($startadv)}

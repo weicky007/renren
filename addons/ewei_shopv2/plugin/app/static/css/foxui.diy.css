@@ -258,7 +258,9 @@
 .fui-goods-item .image .goodsicon.right {
     right: 0;
 }
-
+.fui-goods-item .image .goodsicon.right img{
+    float: right;
+}
 .fui-goods-item .image .goodsicon.top {
     top: 0;
 }
@@ -655,7 +657,7 @@
 }
 
 .diy-richtext img {
-    display: block;
+    display: inline-block;
     max-width: 100%;
 }
 
@@ -1183,6 +1185,9 @@
 .follow_topbar ~ .diy-fixedsearch {
     top: 2.6rem;
 }
+.follow_topbar ~ .fui-content .fui-topmenu {
+    top: 2.6rem;
+}
 .fui-header ~ .diy-fixedsearch {
     top: 2.2rem;
 }
@@ -1204,4 +1209,3 @@
     right: 3px;
     width:auto;
 }
-/*4000097827*/

@@ -1,6 +1,6 @@
 <?php
 /**
- * [WeEngine System] Copyright (c) 20191214152809 WE7.CC
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 define('IN_MOBILE', true);
@@ -100,11 +100,7 @@ if(!empty($handle)) {
 }
 
 if(empty($actions)) {
-	$str = '';
-	if(uni_is_multi_acid()) {
-		$str = "&j={$_W['acid']}";
-	}
-	header("location: index.php?i={$_W['uniacid']}{$str}&c=home?refresh");
+	header("location: index.php?i={$_W['uniacid']}&c=home?refresh");
 }
 if(!in_array($action, $actions)) {
 	$action = $acl[$controller]['default'];

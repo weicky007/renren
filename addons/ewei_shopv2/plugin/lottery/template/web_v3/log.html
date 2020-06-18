@@ -53,7 +53,7 @@
 				<tr>
 					<td><span data-toggle='tooltip' title='{$row['nickname']}'><img src='{$row['avatar']}' style='width:20px;height:20px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</span></td>
 					<td>{$row['realname']}<br/>{$row['mobile']}</td>
-					<td  data-toggle="tooltip" title="{if !empty($row['lottery_data'])}{php echo $this->model->lottery_complain($row['lottery_data']);}{else}无奖励{/if}"> {if !empty($row['lottery_data'])}{php echo mb_substr($this->model->lottery_complain($row['lottery_data']),0,10,'utf-8');}{else}无奖励{/if}
+					<td  data-toggle="tooltip" title="{if !empty($row['lottery_data'])}{php echo $this->model->lottery_complain($row['lottery_data']);}{else}无奖励{/if}"> {if !empty($row['lottery_data'])}{php echo mb_substr($this->model->lottery_complain($row['lottery_data']),0,13,'utf-8');}{else}无奖励{/if}
 					</td>
 					<td>{php echo date('Y-m-d H:i',$row['addtime']);}</td>
 					<td>
@@ -83,4 +83,3 @@
 	</form>
 </div>
 {template '_footer'}
-

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$set = $_W['shopset']['globonus'];
 		$leveltype = $set['leveltype'];
 		$default = array('id' => 'default', 'levelname' => empty($set['levelname']) ? '默认等级' : $set['levelname'], 'bonus' => $set['bonus']);
-		$others = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_globonus_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY bonus asc');
+		$others = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_globonus_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY bonus asc'));
 		$list = array_merge(array($default), $others);
 		include $this->template();
 	}
@@ -47,14 +48,14 @@ class Level_EweiShopV2Page extends PluginWebPage
 
 			if (!empty($id)) {
 				if ($id == 'default') {
-					$updatecontent = '<br/>等级名称: ' . $set['levelname'] . '->' . $data['levelname'] . '<br/>分红比例: ' . $set['bonus'] . '->' . $data['bonus'];
+					$updatecontent = '<br/>等级名称: ' . $set['levelname'] . '->' . $data['levelname'] . ('<br/>分红比例: ' . $set['bonus'] . '->' . $data['bonus']);
 					$set['levelname'] = $data['levelname'];
 					$set['bonus'] = $data['bonus'];
 					$this->updateSet($set);
 					plog('globonus.level.edit', '修改股东默认等级' . $updatecontent);
 				}
 				else {
-					$updatecontent = '<br/>等级名称: ' . $level['levelname'] . '->' . $data['levelname'] . '<br/>分红比例: ' . $level['bonus'] . '->' . $data['bonus'];
+					$updatecontent = '<br/>等级名称: ' . $level['levelname'] . '->' . $data['levelname'] . ('<br/>分红比例: ' . $level['bonus'] . '->' . $data['bonus']);
 					pdo_update('ewei_shop_globonus_level', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 					plog('globonus.level.edit', '修改股东等级 ID: ' . $id . $updatecontent);
 				}
@@ -78,10 +79,10 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_globonus_level') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_globonus_level') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_globonus_level', array('id' => $item['id']));

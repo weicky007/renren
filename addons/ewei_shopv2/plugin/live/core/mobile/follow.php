@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -29,7 +30,7 @@ class Follow_EweiShopV2Page extends PluginMobileLoginPage
 		$condition = ' and lf.uniacid = :uniacid and lf.openid = \'' . $openid . '\' and lf.deleted = 0 ';
 		$params = array(':uniacid' => $_W['uniacid']);
 		$living = 1;
-		if (($type == 'living') || ($type == '')) {
+		if ($type == 'living' || $type == '') {
 			$living = 1;
 		}
 		else {
@@ -38,12 +39,16 @@ class Follow_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_live_favorite') . " as lf\r\n                    right join " . tablename('ewei_shop_live') . ' as l on l.id = lf.roomid and l.living = ' . $living . "\r\n            \t\twhere 1 " . $condition;
+		$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_live_favorite') . ' as lf
+                    right join ' . tablename('ewei_shop_live') . (' as l on l.id = lf.roomid and l.living = ' . $living . '
+            		where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT lf.id,lf.roomid,l.title,l.thumb,l.livetime,l.subscribe,l.living,l.covertype,l.cover FROM ' . tablename('ewei_shop_live_favorite') . " as lf\r\n                    right join " . tablename('ewei_shop_live') . ' as l on l.id = lf.roomid and l.living = ' . $living . "\r\n            \t\twhere 1 " . $condition . ' ORDER BY lf.id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT lf.id,lf.roomid,l.title,l.thumb,l.livetime,l.subscribe,l.living,l.covertype,l.cover FROM ' . tablename('ewei_shop_live_favorite') . ' as lf
+                    right join ' . tablename('ewei_shop_live') . (' as l on l.id = lf.roomid and l.living = ' . $living . '
+            		where 1 ') . $condition . ' ORDER BY lf.id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb,cover');
 

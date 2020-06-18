@@ -26,7 +26,7 @@ function message_notice_all_read($type = '') {
 	if (!empty($type)) {
 		$message_table->whereType($type);
 	}
-	if (user_is_founder($_W['uid']) && !user_is_vice_founder($_W['uid'])) {
+	if ($_W['isadmin']) {
 		$message_table->fillIsRead(MESSAGE_READ)->whereIsRead(MESSAGE_NOREAD)->save();
 		return true;
 	}
@@ -412,7 +412,7 @@ function message_event_notice_list() {
 	global $_W;
 	$message_table = table('core_message_notice_log');
 	$message_table->searchWithIsRead(MESSAGE_NOREAD);
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		$message_table->searchWithOutType(MESSAGE_USER_EXPIRE_TYPE);
 	} else {
 		$message_table->searchWithUid($_W['uid']);

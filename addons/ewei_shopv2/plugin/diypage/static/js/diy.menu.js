@@ -109,14 +109,15 @@ define(['jquery.ui'], function (ui) {
                 var arrowleft = pwidth / 2;
                 var oldleft = parseFloat($(this).find('.arrow').css('left').replace('px', ''));
                 $(this).find('.arrow').css({'left': arrowleft - 10, 'margin-left': 0})
-            } else if (i + 1 == len) {
+            }
+            if (i + 1 == len) {
 
                 var pwidth = $(this).closest('.item').width();
 
                 if(width>pwidth){
                     var left =  - (width - pwidth) - 2;
                     margin = 0;
-                    
+
                     var c = $(this).closest('.item').width() / 2;
                     var arrowleft = width - c;
                     $(this).find('.arrow').css({'left': arrowleft - 8, 'margin-left': 0})

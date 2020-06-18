@@ -2,10 +2,10 @@
     {if $other['is_system']}{php continue;}{/if}
     <li ><a href="{$other['url']}" target="_blank"><i class="{$other['icon']}"></i><span>{$other['title']}</span></a></li>
     {/loop}
-    {if $_W['iscontroller'] && user_is_founder($_W['uid'], true)}
+    {if $_W['iscontroller'] && $_W['isadmin']}
         <li><a href="{php echo $_W['siteroot'] . 'web/home.php'}" ><i class="wi wi-caozuotai"></i><span>客户端</span></a></li>
     {else}
-    {if user_is_founder($_W['uid'], true)}
+    {if $_W['isadmin']}
         <li ><a href="{php echo url('account/manage', array('iscontroller' => 1))}"><i class="wi wi-kongzhitai"></i><span>控制台</span></a></li>
     {/if}
     {/if}

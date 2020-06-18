@@ -1,11 +1,12 @@
 <div class="form-group">
-    <label class="col-lg control-label must">页面标题</label>
+    <label class="col-lg control-label must">页面名称</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'quick.pages' $item}
-            <input type="text" name="title" class="form-control" value="{$item['title']}" data-rule-required="true" id="pagetitle" />
+            <input type="text" name="title" id="pagetitle" class="form-control" value="{$item['title']}" data-rule-required="true"  />
         {else}
             <div class="form-control-static">{$item['title']}</div>
         {/if}
+        <div class="help-block">注意：页面名称是便于后台查找。</div>
     </div>
 </div>
 
@@ -65,7 +66,11 @@
     <label class="col-lg control-label">入口封面图标</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'quick.pages' $item}
-            {php echo tpl_form_field_image2('enter_icon', $item['enter_icon']);}
+            {if $_W['merchid']>0}
+             {php echo tpl_form_field_image2('enter_icon', $item['enter_icon'],'',array('dest_dir'=>'merch/'.$_W['merchid']));}
+            {else}
+             {php echo tpl_form_field_image2('enter_icon', $item['enter_icon']);}
+            {/if}
         {else}
             {if !empty($item['share_icon'])}
                 <img src="{php echo tomedia($item['enter_icon'])}" style='width:100px;border:1px solid #ccc;padding:1px' />

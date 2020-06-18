@@ -50,6 +50,44 @@
         {/if}
     </div>
 </div>
+<div class="form-group" id="autogroup" style="{if $item['type']==4}display: block;{else}display: none;{/if}">
+<!-- <div class="form-group" style="display: block;"> -->
+    <label class="col-lg control-label">会员是否自动分组</label>
+    <div class="col-sm-9 col-xs-12">
+        {ife 'poster' $item}
+        <label class="radio-inline">
+            <input type="radio" name="ismembergroup" value="1" {if $item['ismembergroup']==1}checked{/if} /> 是
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="ismembergroup" value="0" {if empty($item['ismembergroup'])}checked{/if} /> 否
+        </label>
+        <span class='help-block'>开启会员自动分组，扫描二维码时会员将添加到指定分组</span>
+        {else}
+        <div class='form-control-static'>{if $item['ismembergroup']==1}是{else}否{/if}</div>
+        {/if}
+    </div>
+</div>
+<div class="form-group" id="membergroup" {if $item['type']!=4}style="display:none;"{/if}>
+<label class="col-lg control-label">指定会员分组</label>
+<div class="col-sm-9 col-xs-12">
+    {ife 'poster' $item}
+    <select name='membergroupid' class='form-control'>
+        <option value=''>无分组</option>
+        {loop $groups $group}
+        <option value="{$group['id']}" {if $item['membergroupid']==$group['id']}selected{/if}>{$group['groupname']}</option>
+        {/loop}
+    </select>
+    {else}
+    <div class='form-control-static'>
+        {if empty($member['groupid'])}
+        无分组
+        {else}
+        {php echo pdo_fetchcolumn('select groupname from '.tablename('ewei_shop_member_group').' where id=:id limit 1',array(':id'=>$member['groupid']))}
+        {/if}
+    </div>
+    {/if}
+</div>
+</div>
 
 <div class="form-group">
     <label class="col-lg control-label">是否默认</label>
@@ -82,14 +120,15 @@
 </div>
 <script type="text/javascript">
     $(function () {
-        $("input[name='ismembergroup']").off('click').on('click',function () {
-            if($(this).val()==1){
+        $("input[name='type']").off('click').on('click',function () {
+            if($(this).val()==4){
+                $("#autogroup").show();
                 $("#membergroup").show();
             }else{
+                $("#autogroup").hide();
                 $("#membergroup").hide();
             }
-        })
+        });
     })
 </script>
-
 

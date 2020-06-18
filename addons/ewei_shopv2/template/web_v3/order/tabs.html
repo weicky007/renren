@@ -56,16 +56,16 @@
     {/if}
 </ul>
 {/if}
-  {ifp 'order.list.status4|order.list.status5'}
+  {ifp 'order.op.refund'}
 <div class='menu-header'><i class="menu-icon fa {if $_GPC['r']=='order.list.status4'||$_GPC['r']=='order.list.status5'}fa-caret-down{else}fa-caret-right{/if}"></i>维权</div>
 <ul class='order-list' {if $_GPC['r']=='order.list.status4'||$_GPC['r']=='order.list.status5'}style="display: block;"{/if}>
-    {ifp 'order.list.status4'}
+    {ifp 'order.op.refund'}
     <li {if $_W['routes']=='order.list.status4'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status4')}">维权申请 <span class='text-danger status4'>--</span></a>
     </li>
     {/if}
      
-    {ifp 'order.list.status5'}
+    {ifp 'order.op.refund'}
     <li {if $_W['routes']=='order.list.status5'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status5')}">维权完成 <span class="status5">--</span></a>
     </li>

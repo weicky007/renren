@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$agentlevels = $this->model->getLevels(true, true);
 		$level = $this->set['level'];
 		$pindex = max(1, intval($_GPC['page']));
-		$psize = 300;
+		$psize = 20;
 		$params = array();
 		$condition = '';
 		$searchfield = strtolower(trim($_GPC['searchfield']));
@@ -69,10 +70,14 @@ class Agent_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and dm.agentblack=' . intval($_GPC['agentblack']);
 		}
 
-		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_commission_level') . ' l on l.id = dm.agentlevel' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid and f.uniacid=' . $_W['uniacid'] . ' where dm.uniacid = ' . $_W['uniacid'] . ' and dm.isagent =1  ' . $condition . ' ORDER BY dm.agenttime desc';
-		$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_commission_level') . ' l on l.id = dm.agentlevel' . ' left join ' . tablename('mc_mapping_fans') . ('f on f.openid=dm.openid and f.uniacid=' . $_W['uniacid']) . ' where dm.uniacid = ' . $_W['uniacid'] . (' and dm.isagent =1  ' . $condition . ' ORDER BY dm.agenttime desc');
+
+		if (empty($_GPC['export'])) {
+			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+		}
+
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm  ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . ' and dm.isagent =1 ' . $condition, $params);
+		$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm  ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . (' and dm.isagent =1 ' . $condition), $params);
 		$array = array('total', 'pay', 'ordercount0', 'ordermoney0', 'ordercount', 'ordermoney', 'ordercount3', 'ordermoney3');
 		if (!empty($_GPC['ordertime']['start']) && !empty($_GPC['ordertime']['end'])) {
 			$starttime = strtotime($_GPC['ordertime']['start']);
@@ -114,7 +119,8 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				$diyformdata = '';
 
 				foreach ($diyformdata_array as $da) {
-					$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+					$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 				}
 
 				$row['member_diyformdata'] = $diyformdata;
@@ -125,7 +131,8 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				$diyformdata = '';
 
 				foreach ($diyformdata_array as $da) {
-					$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+					$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 				}
 
 				$row['agent_diyformdata'] = $diyformdata;
@@ -140,7 +147,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 
 			foreach ($list as &$row) {
 				$row['createtime'] = date('Y-m-d H:i', $row['createtime']);
-				$row['agentime'] = empty($row['agenttime']) ? '' : date('Y-m-d H:i', $row['agentime']);
+				$row['agenttime'] = empty($row['agenttime']) ? '' : date('Y-m-d H:i', $row['agenttime']);
 				$row['groupname'] = empty($row['groupname']) ? '无分组' : $row['groupname'];
 				$row['levelname'] = empty($row['levelname']) ? '普通等级' : $row['levelname'];
 				$row['parentname'] = empty($row['parentname']) ? '总店' : '[' . $row['agentid'] . ']' . $row['parentname'];
@@ -172,10 +179,10 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				array('title' => '三级分销订单数量', 'field' => 'level3_ordercount', 'width' => 12),
 				array('title' => '下级累计佣金', 'field' => 'level_commission_total', 'width' => 12),
 				array('title' => '注册时间', 'field' => 'createtime', 'width' => 12),
-				array('title' => '成为分销商时间', 'field' => 'createtime', 'width' => 12),
-				array('title' => '审核状态', 'field' => 'createtime', 'width' => 12),
+				array('title' => '成为分销商时间', 'field' => 'agenttime', 'width' => 12),
+				array('title' => '审核状态', 'field' => 'statusstr', 'width' => 12),
 				array('title' => '是否关注', 'field' => 'followstr', 'width' => 12)
-				);
+			);
 
 			if (p('diyform')) {
 				$columns[] = array('title' => '分销商会员自定义信息', 'field' => 'member_diyformdata', 'width' => 36);
@@ -197,10 +204,10 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($members as $member) {
 			pdo_update('ewei_shop_member', array('isagent' => 0, 'status' => 0), array('id' => $member['id']));
@@ -324,8 +331,8 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$list = array();
 
 		if ($hasagent) {
-			$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . '  ' . $condition, $params);
-			$list = pdo_fetchall('select dm.*,p.nickname as parentname,p.avatar as parentavatar  from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid'] . ' where dm.uniacid = ' . $_W['uniacid'] . '  ' . $condition . '   ORDER BY dm.agenttime desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+			$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . ('  ' . $condition), $params);
+			$list = pdo_fetchall('select dm.*,p.nickname as parentname,p.avatar as parentavatar  from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . ('f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid']) . ' where dm.uniacid = ' . $_W['uniacid'] . ('  ' . $condition . '   ORDER BY dm.agenttime desc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
 			$pager = pagination($total, $pindex, $psize);
 
 			foreach ($list as &$row) {
@@ -382,7 +389,8 @@ class Agent_EweiShopV2Page extends PluginWebPage
 					$diyformdata = '';
 
 					foreach ($diyformdata_array as $da) {
-						$diyformdata .= $da['name'] . ': ' . $da['value'] . "\r\n";
+						$diyformdata .= $da['name'] . ': ' . $da['value'] . '
+';
 					}
 
 					$row['agent_diyformdata'] = $diyformdata;
@@ -410,7 +418,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				array('title' => '成为分销商时间', 'field' => 'createtime', 'width' => 12),
 				array('title' => '审核状态', 'field' => 'createtime', 'width' => 12),
 				array('title' => '是否关注', 'field' => 'followstr', 'width' => 12)
-				);
+			);
 
 			if (p('diyform')) {
 				$columns[] = array('title' => '分销商自定义信息', 'field' => 'agent_diyformdata', 'width' => 36);
@@ -447,7 +455,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and id<>' . intval($_GPC['selfid']);
 		}
 
-		$ds = pdo_fetchall('SELECT id,avatar,nickname,openid,realname,mobile FROM ' . tablename('ewei_shop_member') . ' WHERE 1 ' . $condition . ' order by createtime desc', $params);
+		$ds = pdo_fetchall('SELECT id,avatar,nickname,openid,realname,mobile FROM ' . tablename('ewei_shop_member') . (' WHERE 1 ' . $condition . ' order by createtime desc'), $params);
 		include $this->template('commission/query');
 	}
 
@@ -458,11 +466,11 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$status = intval($_GPC['status']);
-		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,status FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,status FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 		$time = time();
 
 		foreach ($members as $member) {
@@ -503,11 +511,11 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$agentblack = intval($_GPC['agentblack']);
-		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,agentblack FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,agentblack FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($members as $member) {
 			if ($member['agentblack'] === $agentblack) {

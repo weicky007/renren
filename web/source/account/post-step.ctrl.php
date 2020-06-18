@@ -38,12 +38,29 @@ if (1 == $step) {
 	$uniacid = intval($_GPC['uniacid']);
 	$uni_account = pdo_get('uni_account', array('uniacid' => $uniacid));
 	if (empty($uni_account)) {
+		if ($_W['isajax']) {
+			iajax(-1, '非法访问');
+		}
 		itoast('非法访问');
 	}
 	$owner_info = account_owner($uniacid);
-	if (!(user_is_founder($_W['uid'], true) || $_W['uid'] == $owner_info['uid'])) {
+	if (!($_W['isadmin'] || $_W['uid'] == $owner_info['uid'])) {
+		if ($_W['isajax']) {
+			iajax(-1, '非法访问');
+		}
 		itoast('非法访问');
 	}
 	$account = account_fetch($uni_account['default_acid']);
+	if ($_W['isajax']) {
+		$result = array(
+			'isconnect' => $account['isconnect'],
+			'name' => $account['name'],
+			'uniacid' => $account['uniacid'],
+			'access_url' => $_W['siteroot'] . 'api.php?id=' . $account['acid'],
+			'token' => $account['token'],
+			'encodingaeskey' => $account['encodingaeskey'],
+		);
+	    iajax(0, $result);
+	}
 }
 template('account/post-step');

@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Uploader_EweiShopV2Page extends AppMobilePage
 {
 	public function upload()
@@ -12,7 +12,7 @@ class Uploader_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		global $_GPC;
 		load()->func('file');
-		$field = $_GPC['file'];
+		$field = isset($_GPC['file']) ? $_GPC['file'] : 'file';
 
 		if (!empty($_FILES[$field]['name'])) {
 			if (is_array($_FILES[$field]['name'])) {
@@ -32,24 +32,22 @@ class Uploader_EweiShopV2Page extends AppMobilePage
 					$files[] = $ret;
 				}
 
-				app_json(array('files' => $files));
+				return app_json(array('files' => $files));
 			}
-			else {
-				$result = $this->uploadFile($_FILES[$field]);
 
-				if ($result['status'] == 'error') {
-					app_error(AppError::$UploadFail, $result['message']);
-				}
+			$result = $this->uploadFile($_FILES[$field]);
 
-				$files = array(
-					array('status' => 1, 'url' => trim($_W['attachurl'] . $result['filename']), 'filename' => $result['filename'])
-					);
-				app_json(array('files' => $files));
+			if ($result['status'] == 'error') {
+				return app_error(AppError::$UploadFail, $result['message']);
 			}
+
+			$files = array(
+				array('status' => 1, 'url' => trim($_W['attachurl'] . $result['filename']), 'filename' => $result['filename'])
+			);
+			return app_json(array('files' => $files));
 		}
-		else {
-			app_error(AppError::$UploadNoFile, '未选择图片');
-		}
+
+		return app_error(AppError::$UploadNoFile, '未选择图片');
 	}
 
 	protected function uploadFile($uploadfile)
@@ -108,7 +106,7 @@ class Uploader_EweiShopV2Page extends AppMobilePage
 		load()->func('file');
 		$file = $_GPC['file'];
 		file_delete($file);
-		app_json();
+		return app_json();
 	}
 }
 

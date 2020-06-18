@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -90,7 +91,7 @@ class Batchsend_EweiShopV2Page extends WebPage
 					foreach ($err_array as $k => $v) {
 						$tip .= $v . ' ';
 
-						if (($j % 2) == 0) {
+						if ($j % 2 == 0) {
 							$tip .= '<br>';
 						}
 

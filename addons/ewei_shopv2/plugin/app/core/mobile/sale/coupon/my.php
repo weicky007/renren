@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class My_EweiShopV2Page extends AppMobilePage
 {
 	public function getlist()
@@ -50,7 +50,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		}
 
 		$total = pdo_fetchcolumn($sql, array(':openid' => $openid, ':uniacid' => $_W['uniacid']));
-		$sql .= ' order by d.gettime desc  LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql .= ' order by d.gettime desc  LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$coupons = set_medias(pdo_fetchall($sql, array(':openid' => $openid, ':uniacid' => $_W['uniacid'])), 'thumb');
 		pdo_update('ewei_shop_coupon_data', array('isnew' => 0), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
 
@@ -124,15 +124,15 @@ class My_EweiShopV2Page extends AppMobilePage
 					}
 				}
 
-				if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+				if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 					$title2 = $title2 . '送' . $row['backmoney'] . '元余额';
 				}
 
-				if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+				if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 					$title2 = $title2 . '送' . $row['backcredit'] . '积分';
 				}
 
-				if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+				if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 					$title2 = $title2 . '送' . $row['backredpack'] . '元红包';
 				}
 			}
@@ -162,8 +162,6 @@ class My_EweiShopV2Page extends AppMobilePage
 			unset($row['backredpack']);
 			unset($row['bgcolor']);
 			unset($row['merchid']);
-			unset($row['settitlecolor']);
-			unset($row['titlecolor']);
 			unset($row['past']);
 			unset($row['merchname']);
 			unset($row['css']);
@@ -174,7 +172,7 @@ class My_EweiShopV2Page extends AppMobilePage
 
 		unset($row);
 		$set = m('common')->getPluginset('coupon');
-		app_json(array('list' => $coupons, 'pagesize' => $psize, 'total' => $total, 'closecenter' => intval($set['closecenter'])));
+		return app_json(array('list' => $coupons, 'pagesize' => $psize, 'total' => $total, 'closecenter' => intval($set['closecenter'])));
 	}
 
 	public function getdetail()
@@ -184,21 +182,21 @@ class My_EweiShopV2Page extends AppMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$data = pdo_fetch('select * from ' . tablename('ewei_shop_coupon_data') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 		if (empty($data)) {
 			if (empty($coupon)) {
-				app_error(AppError::$CouponRecordNotFound);
+				return app_error(AppError::$CouponRecordNotFound);
 			}
 		}
 
 		$coupon = pdo_fetch('select * from ' . tablename('ewei_shop_coupon') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $data['couponid'], ':uniacid' => $_W['uniacid']));
 
 		if (empty($coupon)) {
-			app_error(AppError::$CouponNotFound);
+			return app_error(AppError::$CouponNotFound);
 		}
 
 		$coupon['gettime'] = $data['gettime'];
@@ -269,22 +267,22 @@ class My_EweiShopV2Page extends AppMobilePage
 		}
 
 		if ($coupon['backtype'] == 2) {
-			if (($coupon['coupontype'] == '0') || ($coupon['coupontype'] == '2')) {
+			if ($coupon['coupontype'] == '0' || $coupon['coupontype'] == '2') {
 				$coupon['color'] = 'red ';
 			}
 			else {
 				$coupon['color'] = 'pink ';
 			}
 
-			if (!empty($coupon['backmoney']) && (0 < $coupon['backmoney'])) {
+			if (!empty($coupon['backmoney']) && 0 < $coupon['backmoney']) {
 				$title3 = $title3 . '送' . $coupon['backmoney'] . '元余额 ';
 			}
 
-			if (!empty($coupon['backcredit']) && (0 < $coupon['backcredit'])) {
+			if (!empty($coupon['backcredit']) && 0 < $coupon['backcredit']) {
 				$title3 = $title3 . '送' . $coupon['backcredit'] . '积分 ';
 			}
 
-			if (!empty($coupon['backredpack']) && (0 < $coupon['backredpack'])) {
+			if (!empty($coupon['backredpack']) && 0 < $coupon['backredpack']) {
 				$title3 = $title3 . '送' . $coupon['backredpack'] . '元红包 ';
 			}
 		}
@@ -339,7 +337,7 @@ class My_EweiShopV2Page extends AppMobilePage
 			$detail['usestr'] = '即' . $coupon['gettypestr'] . '日内 ' . $coupon['timedays'] . ' 天有效';
 		}
 		else {
-			$detail['usestr'] = '有效期 ' . $coupon['timestr'];
+			$detail['usestr'] = ' ' . $coupon['timestr'];
 		}
 
 		if (empty($coupon['coupontype'])) {
@@ -349,22 +347,25 @@ class My_EweiShopV2Page extends AppMobilePage
 			$detail['getstr'] = '立即去充值';
 		}
 		else {
-			$detail['getstr'] = '返回我的优惠卷';
+			$detail['getstr'] = '返回我的优惠券';
 		}
 
-		if ($coupon['descnoset']) {
-			if ($coupon['coupontype']) {
+		if ($coupon['descnoset'] == '0') {
+			if ($coupon['coupontype'] == '0') {
 				$detail['desc'] = htmlspecialchars_decode($set['consumedesc']);
 			}
-			else {
+			else if ($coupon['coupontype'] == '1') {
 				$detail['desc'] = htmlspecialchars_decode($set['rechargedesc']);
+			}
+			else {
+				$detail['desc'] = htmlspecialchars_decode($set['consumedesc']);
 			}
 		}
 		else {
 			$detail['desc'] = $coupon['desc'];
 		}
 
-		app_json(array('detail' => $detail));
+		return app_json(array('detail' => $detail));
 	}
 
 	public function showcoupons()
@@ -454,15 +455,15 @@ class My_EweiShopV2Page extends AppMobilePage
 					}
 				}
 
-				if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+				if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 					$title2 = $title2 . '送' . $row['discount'] . '元余额';
 				}
 
-				if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+				if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 					$title2 = $title2 . '送' . $row['discount'] . '积分';
 				}
 
-				if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+				if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 					$title2 = $title2 . '送' . $row['discount'] . '元红包';
 				}
 			}
@@ -478,7 +479,7 @@ class My_EweiShopV2Page extends AppMobilePage
 				$imgname = 'used';
 			}
 			else {
-				if ((($row['timelimit'] == 0) && ($row['timedays'] != 0) && ((($row['timedays'] * 86400) + $row['gettime']) < time())) || (($row['timelimit'] == 1) && ($row['timeend'] < time()))) {
+				if ($row['timelimit'] == 0 && $row['timedays'] != 0 && $row['timedays'] * 86400 + $row['gettime'] < time() || $row['timelimit'] == 1 && $row['timeend'] < time()) {
 					$check = 2;
 					$row['color'] = 'disa';
 					$imgname = 'past';
@@ -492,7 +493,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		}
 
 		unset($row);
-		app_json(array('couponnum' => count($new), 'coupons' => $new));
+		return app_json(array('couponnum' => count($new), 'coupons' => $new));
 	}
 
 	public function showcoupon2()
@@ -502,14 +503,14 @@ class My_EweiShopV2Page extends AppMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$data = pdo_fetch('select c.*  from ' . tablename('ewei_shop_coupon_data') . '  cd inner join  ' . tablename('ewei_shop_coupon') . ' c on cd.couponid = c.id  where cd.id=:id and cd.uniacid=:uniacid and coupontype =0  limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 		if (empty($data)) {
 			if (empty($coupon)) {
-				app_error(AppError::$CouponRecordNotFound);
+				return app_error(AppError::$CouponRecordNotFound);
 			}
 		}
 
@@ -520,22 +521,22 @@ class My_EweiShopV2Page extends AppMobilePage
 		$data['deduct'] = (double) $data['deduct'];
 
 		if ($data['backtype'] == 0) {
-			$data['title1'] = '<span>￥</span>' . (double) $data['deduct'];
+			$data['title1'] = '￥' . (double) $data['deduct'];
 		}
 		else if ($data['backtype'] == 1) {
-			$data['title1'] = (double) $data['discount'] . '<span>折</span>';
+			$data['title1'] = (double) $data['discount'] . '折';
 		}
 		else {
 			if ($data['backtype'] == 2) {
-				if (!empty($data['backmoney']) && (0 < $data['backmoney'])) {
+				if (!empty($data['backmoney']) && 0 < $data['backmoney']) {
 					$data['title1'] = '送' . $data['backmoney'] . '元余额';
 				}
 
-				if (!empty($data['backcredit']) && (0 < $data['backcredit'])) {
+				if (!empty($data['backcredit']) && 0 < $data['backcredit']) {
 					$data['title1'] .= '送' . $data['backcredit'] . '积分';
 				}
 
-				if (!empty($data['backredpack']) && (0 < $data['backredpack'])) {
+				if (!empty($data['backredpack']) && 0 < $data['backredpack']) {
 					$data['title1'] .= '送' . $data['backredpack'] . '元红包';
 				}
 			}
@@ -552,7 +553,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		$params = array(':uniacid' => $_W['uniacid']);
 		$sql = 'select  distinct  g.*  from ';
 		$table = '';
-		if (($data['limitgoodcatetype'] == 1) && !empty($data['limitgoodcateids'])) {
+		if ($data['limitgoodcatetype'] == 1 && !empty($data['limitgoodcateids'])) {
 			$limitcateids = explode(',', $data['limitgoodcateids']);
 
 			if (0 < count($limitcateids)) {
@@ -580,7 +581,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		}
 
 		$where = ' where  g.uniacid=:uniacid and g.bargain =0 and g.status =1 ';
-		if (($data['limitgoodtype'] == 1) && !empty($data['limitgoodids'])) {
+		if ($data['limitgoodtype'] == 1 && !empty($data['limitgoodids'])) {
 			$where .= ' and g.id in (' . $data['limitgoodids'] . ') ';
 		}
 
@@ -595,12 +596,12 @@ class My_EweiShopV2Page extends AppMobilePage
 		foreach ($goods as $i => &$row) {
 			$couponprice = (double) $row['minprice'];
 
-			if ($row['backtype'] == 0) {
+			if ($data['backtype'] == 0) {
 				$couponprice = $couponprice - (double) $data['deduct'];
 			}
 
-			if ($row['backtype'] == 1) {
-				$couponprice = ($couponprice * $data['discount']) / 10;
+			if ($data['backtype'] == 1) {
+				$couponprice = $couponprice * $data['discount'] / 10;
 			}
 
 			if ($couponprice < 0) {
@@ -612,7 +613,7 @@ class My_EweiShopV2Page extends AppMobilePage
 
 		unset($row);
 		$goods = set_medias($goods, 'thumb');
-		app_json(array('detail' => $data, 'goods' => $goods));
+		return app_json(array('detail' => $data, 'goods' => $goods));
 	}
 
 	public function showcoupons3()
@@ -644,26 +645,26 @@ class My_EweiShopV2Page extends AppMobilePage
 			}
 
 			$newgoods = array();
-			if (($row['coupontype'] == 0) || ($row['coupontype'] == 2)) {
+			if ($row['coupontype'] == 0 || $row['coupontype'] == 2) {
 				$row['title3'] = '优惠券';
 
 				if ($row['backtype'] == 0) {
-					$row['title1'] = '<span>￥</span>' . (double) $row['deduct'];
+					$row['title1'] = '￥' . (double) $row['deduct'];
 				}
 				else if ($row['backtype'] == 1) {
-					$row['title1'] = (double) $row['discount'] . '<span>折</span>';
+					$row['title1'] = (double) $row['discount'] . '折';
 				}
 				else {
 					if ($row['backtype'] == 2) {
-						if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+						if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 							$row['title1'] = '送' . $row['backmoney'] . '元余额';
 						}
 
-						if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+						if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 							$row['title1'] .= '送' . $row['backcredit'] . '积分';
 						}
 
-						if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+						if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 							$row['title1'] .= '送' . $row['backredpack'] . '元红包';
 						}
 					}
@@ -673,7 +674,7 @@ class My_EweiShopV2Page extends AppMobilePage
 				$params = array(':uniacid' => $_W['uniacid']);
 				$sql = 'select  distinct  g.*  from ';
 				$table = '';
-				if (($row['limitgoodcatetype'] == 1) && !empty($row['limitgoodcateids'])) {
+				if ($row['limitgoodcatetype'] == 1 && !empty($row['limitgoodcateids'])) {
 					$limitcateids = explode(',', $row['limitgoodcateids']);
 
 					if (0 < count($limitcateids)) {
@@ -701,7 +702,7 @@ class My_EweiShopV2Page extends AppMobilePage
 				}
 
 				$where = ' where  g.uniacid=:uniacid and g.bargain =0 and g.status =1 ';
-				if (($row['limitgoodtype'] == 1) && !empty($row['limitgoodids'])) {
+				if ($row['limitgoodtype'] == 1 && !empty($row['limitgoodids'])) {
 					$where .= ' and g.id in (' . $row['limitgoodids'] . ') ';
 				}
 
@@ -721,7 +722,7 @@ class My_EweiShopV2Page extends AppMobilePage
 					}
 
 					if ($row['backtype'] == 1) {
-						$couponprice = ($couponprice * $row['discount']) / 10;
+						$couponprice = $couponprice * $row['discount'] / 10;
 					}
 
 					if ($couponprice < 0) {
@@ -740,15 +741,15 @@ class My_EweiShopV2Page extends AppMobilePage
 				$row['title3'] = '充值卷';
 
 				if ($row['backtype'] == 2) {
-					if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+					if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 						$row['title1'] = '送' . $row['backmoney'] . '元余额';
 					}
 
-					if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+					if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 						$row['title1'] .= '送' . $row['backcredit'] . '积分';
 					}
 
-					if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+					if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 						$row['title1'] .= '送' . $row['backredpack'] . '元红包';
 					}
 				}
@@ -757,8 +758,7 @@ class My_EweiShopV2Page extends AppMobilePage
 			$new[] = array('id' => $row['id'], 'title1' => $row['title1'], 'title2' => $row['title2'], 'title3' => $row['title3'], 'goods' => $newgoods);
 		}
 
-		app_json(array('couponnum' => count($new), 'coupons' => $new));
-		include $this->template();
+		return app_json(array('couponnum' => count($new), 'coupons' => $new));
 	}
 
 	public function showcoupongoods()
@@ -768,14 +768,14 @@ class My_EweiShopV2Page extends AppMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$data = pdo_fetch('select c.*  from ' . tablename('ewei_shop_coupon_data') . '  cd inner join  ' . tablename('ewei_shop_coupon') . ' c on cd.couponid = c.id  where cd.id=:id and cd.uniacid=:uniacid and coupontype =0  limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 		if (empty($data)) {
 			if (empty($coupon)) {
-				app_error(AppError::$CouponRecordNotFound);
+				return app_error(AppError::$CouponRecordNotFound);
 			}
 		}
 
@@ -789,9 +789,9 @@ class My_EweiShopV2Page extends AppMobilePage
 			$data['couponname'] = mb_substr($data['couponname'], 0, 8, 'utf-8') . '..';
 		}
 
-		app_json(array(
-	'detail' => array('couponname' => $data['couponname'])
-	));
+		return app_json(array(
+			'detail' => array('couponname' => $data['couponname'])
+		));
 	}
 
 	public function get_list()
@@ -800,7 +800,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		$args = array('pagesize' => 10, 'page' => intval($_GPC['page']), 'isnew' => trim($_GPC['isnew']), 'ishot' => trim($_GPC['ishot']), 'isrecommand' => trim($_GPC['isrecommand']), 'isdiscount' => trim($_GPC['isdiscount']), 'istime' => trim($_GPC['istime']), 'issendfree' => trim($_GPC['issendfree']), 'keywords' => trim($_GPC['keywords']), 'cate' => trim($_GPC['cate']), 'order' => trim($_GPC['order']), 'by' => trim($_GPC['by']), 'couponid' => trim($_GPC['couponid']), 'merchid' => intval($_GPC['merchid']));
 		$plugin_commission = p('commission');
-		if ($plugin_commission && (0 < intval($_W['shopset']['commission']['level'])) && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {
+		if ($plugin_commission && 0 < intval($_W['shopset']['commission']['level']) && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {
 			$mid = intval($_GPC['mid']);
 
 			if (!empty($mid)) {
@@ -829,7 +829,7 @@ class My_EweiShopV2Page extends AppMobilePage
 		}
 
 		$goods = m('goods')->getListbyCoupon($args);
-		app_json(array('list' => $goods['list'], 'total' => $goods['total'], 'pagesize' => $args['pagesize']));
+		return app_json(array('list' => $goods['list'], 'total' => $goods['total'], 'pagesize' => $args['pagesize']));
 	}
 }
 

@@ -1,96 +1,161 @@
 <?php
-class Menu_EweiShopV2Page extends PluginWebPage 
+
+class MenuController extends PluginWebPage
 {
-	public function main() 
+	const TOP_MENU = 0;
+	const BOTTOM_MENU = 1;
+
+	/**
+     * @var PcModel
+     */
+	public $model;
+
+	public function main()
 	{
-		global $_W;
-		global $_GPC;
-		$type = intval($_GPC['type']);
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_pc_menu') . ' WHERE type=:type AND uniacid=:uniacid', array(':uniacid' => $_W['uniacid'], ':type' => $type));
 		include $this->template();
 	}
-	public function add() 
+
+	/**
+     * 顶部导航列表页
+     * @author: Vencenty
+     * @time: 2019/5/23 15:55
+     */
+	public function top()
+	{
+		global $_GPC;
+		global $_W;
+		$ret = $this->getList(static::TOP_MENU);
+		extract($ret);
+		include $this->template();
+	}
+
+	public function add()
 	{
 		$this->post();
 	}
-	public function edit() 
-	{
-		$this->post();
-	}
-	protected function post() 
+
+	/**
+     * 编辑方法
+     * @author: Vencenty
+     * @time: 2019/5/23 16:56
+     */
+	public function post()
 	{
 		global $_W;
 		global $_GPC;
-		$id = intval($_GPC['id']);
-		$type = intval($_GPC['type']);
-		if ($_W['ispost']) 
-		{
-			$data = array('uniacid' => $_W['uniacid'], 'title' => trim($_GPC['title']), 'link' => trim($_GPC['link']), 'enabled' => intval($_GPC['enabled']), 'displayorder' => intval($_GPC['displayorder']));
-			if (!(empty($id))) 
-			{
-				pdo_update('ewei_shop_pc_menu', $data, array('id' => $id));
-				plog("shop.menu.edit", '修改菜单 ID: ' . $id);
-			}
-			else 
-			{
-				$data['createtime'] = time();
-				$data['type'] = $type;
-				pdo_insert("ewei_shop_pc_menu", $data);
-				$id = pdo_insertid();
-				plog("shop.menu.add", '添加菜单 ID: ' . $id);
-			}
-			show_json(1, array("url" => webUrl("pc/menu", array("type" => $type))));
+		$id = $_GPC['id'];
+		$isEdit = !empty($id);
+		$map = array('top' => '顶部', 'bottom' => '底部');
+		$r = parse_url(referer());
+		$r = explode('&', $r['query']);
+		$r = explode('.', $r[count($r) - 1]);
+		$lastElement = end($r);
+		$desc = $map[$lastElement];
+
+		if ($isEdit) {
+			$item = pdo_get('ewei_shop_pc_menu', array('id' => $id));
 		}
-		$menu = pdo_fetch('select * from ' . tablename('ewei_shop_pc_menu') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+
+		if ($_W['ispost']) {
+			$data = array('displayorder' => (int) $_GPC['displayorder'], 'title' => (string) $_GPC['title'], 'link' => (string) $_GPC['link'], 'status' => (int) $_GPC['status'], 'type' => (int) $_GPC['type'], 'create_time' => time(), 'uniacid' => $_W['uniacid']);
+
+			if ($isEdit) {
+				$execResult = pdo_update('ewei_shop_pc_menu', $data, array('id' => $id));
+			}
+			else {
+				$execResult = pdo_insert('ewei_shop_pc_menu', $data);
+			}
+
+			$url = (int) $_GPC['type'] === 0 ? 'pc.menu.top' : 'pc.menu.bottom';
+
+			if ($execResult) {
+				show_json(1, array('url' => webUrl($url)));
+			}
+			else {
+				show_json(0, '操作失败');
+			}
+		}
+
 		include $this->template();
 	}
-	public function delete() 
+
+	/**
+     * 底部导航列表页
+     * @author: Vencenty
+     * @time: 2019/5/23 15:55
+     */
+	public function bottom()
 	{
-		global $_W;
 		global $_GPC;
-		$id = intval($_GPC['id']);
-		if (empty($id)) 
-		{
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
-		}
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_pc_menu') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
-		foreach ($items as $item ) 
-		{
-			pdo_delete('ewei_shop_pc_menu', array('id' => $item['id']));
-			plog("pc.menu.delete", '删除菜单 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
-		}
-		show_json(1, array("url" => referer()));
+		global $_W;
+		$ret = $this->getList(static::BOTTOM_MENU);
+		extract($ret);
+		include $this->template();
 	}
-	public function displayorder() 
+
+	/**
+     * 改变导航启用状态
+     * @author: Vencenty
+     * @time: 2019/5/23 16:23
+     */
+	public function switchChange()
 	{
 		global $_W;
 		global $_GPC;
-		$id = intval($_GPC['id']);
-		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_pc_menu') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
-		if (!(empty($item))) 
-		{
-			pdo_update('ewei_shop_pc_menu', array('displayorder' => $displayorder), array('id' => $id));
-			plog("pc.menu.edit", '修改菜单排序 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 排序: ' . $displayorder . ' ');
-		}
+		$status = $_GPC['status'];
+		$id = $_GPC['id'];
+		pdo_update('ewei_shop_pc_menu', array('status' => $status), array('id' => $id));
 		show_json(1);
 	}
-	public function enabled() 
+
+	/**
+     * 删除
+     * @author: Vencenty
+     * @time: 2019/6/12 10:31
+     */
+	public function delete()
 	{
-		global $_W;
 		global $_GPC;
-		$id = intval($_GPC['id']);
-		if (empty($id)) 
-		{
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+		$ids = $_GPC['ids'];
+		$id = $_GPC['id'];
+
+		if (empty($id)) {
+			$ids = implode(',', $ids);
 		}
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_pc_menu') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
-		foreach ($items as $item ) 
-		{
-			pdo_update('ewei_shop_pc_menu', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog("pc.menu.edit", (('修改菜单状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏'));
+		else {
+			$ids = $id;
 		}
-		show_json(1, array("url" => referer()));
+
+		$r = pdo_query('delete from ' . tablename('ewei_shop_pc_menu') . (' where id in (' . $ids . ')'));
+
+		if ($r) {
+			show_json(1);
+		}
+
+		show_json(0, '删除失败');
+	}
+
+	public function getList($type)
+	{
+		global $_GPC;
+		global $_W;
+		$searchCondition = '';
+		if (isset($_GPC['status']) && $_GPC['status'] != '') {
+			$searchCondition .= ' and status = ' . $_GPC['status'];
+		}
+
+		if (isset($_GPC['keyword'])) {
+			$searchCondition .= ' and title like \'%' . $_GPC['keyword'] . '%\'';
+		}
+
+		$pindex = isset($_GPC['page']) ? max(1, intval($_GPC['page'])) : 1;
+		$psize = 20;
+		$condition = ' and type = ' . $type . ' and uniacid = ' . $_W['uniacid'];
+		$list = pdo_fetchall('select *  from ' . tablename('ewei_shop_pc_menu') . (' where 1 ' . $condition . ' ' . $searchCondition . ' order by create_time desc '));
+		$total = pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_pc_menu') . (' where 1 ' . $condition . ' ' . $searchCondition));
+		$pager = pagination2($total, $pindex, $psize);
+		return compact('pager', 'list');
 	}
 }
+
 ?>

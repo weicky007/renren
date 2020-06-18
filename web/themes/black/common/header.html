@@ -1,4 +1,7 @@
 {template 'common/header-base'}
+{if user_is_vice_founder($_W['uid']) && $_W['iscontroller']}
+{template 'common/header-vice'}
+{else}
 <div class="skin-black {if !$_W['iscontroller']}skin-black--full{/if}" data-skin="black">
 <div class="head">
 	<nav class="navbar navbar-default" role="navigation">
@@ -239,3 +242,4 @@
 						<!-- end用户管理菜单和消息管理菜单特殊,走自己的we7-page-tab;平台/应用/我的账户无we7-page-table -->
 					{/if}
 {/if}
+					{/if}

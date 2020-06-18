@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,13 +10,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$select_category = (empty($_GPC['category']) ? '' : ' and a.article_category=' . intval($_GPC['category']) . ' ');
-		$select_title = (empty($_GPC['keyword']) ? '' : ' and a.article_title LIKE \'%' . $_GPC['keyword'] . '%\' ');
-		$page = (empty($_GPC['page']) ? '' : $_GPC['page']);
+		$select_category = empty($_GPC['category']) ? '' : ' and a.article_category=' . intval($_GPC['category']) . ' ';
+		$select_title = empty($_GPC['keyword']) ? '' : ' and a.article_title LIKE \'%' . $_GPC['keyword'] . '%\' ';
+		$page = empty($_GPC['page']) ? '' : $_GPC['page'];
 		$pindex = max(1, intval($page));
 		$psize = 20;
 		$articles = array();
-		$articles = pdo_fetchall('SELECT a.id,a.displayorder, a.article_title,a.article_category,a.article_keyword2,a.article_date,a.article_readnum,a.article_likenum,a.article_state,c.category_name FROM ' . tablename('ewei_shop_article') . ' a left join ' . tablename('ewei_shop_article_category') . ' c on c.id=a.article_category  WHERE a.uniacid= :uniacid ' . $select_title . $select_category . ' order by displayorder desc,article_date desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid']));
+		$articles = pdo_fetchall('SELECT a.id,a.displayorder, a.article_title,a.article_category,a.article_keyword2,a.article_date,a.article_readnum,a.article_likenum,a.article_state,c.category_name FROM ' . tablename('ewei_shop_article') . ' a left join ' . tablename('ewei_shop_article_category') . ' c on c.id=a.article_category  WHERE a.uniacid= :uniacid ' . $select_title . $select_category . ' order by displayorder desc,article_date desc LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_article') . ' a left join ' . tablename('ewei_shop_article_category') . ' c on c.id=a.article_category  WHERE a.uniacid= :uniacid ' . $select_title . $select_category, array(':uniacid' => $_W['uniacid']));
 		$pager = pagination2($total, $pindex, $psize);
 
@@ -68,7 +69,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 				$keyword = m('common')->keyExist($data['article_keyword2']);
 
 				if (!empty($keyword)) {
-					if ($keyword['name'] != ('ewei_shopv2:article:' . $aid)) {
+					if ($keyword['name'] != 'ewei_shopv2:article:' . $aid) {
 						show_json(0, '关键字"' . $data['article_keyword2'] . '"已存在!');
 					}
 				}
@@ -118,7 +119,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$article['article_rule_moneylast'] = 0;
 			$article['article_rule_creditreallast'] = 0;
 			$article['article_rule_moneyreallast'] = 0;
-			if ((0 < $article['article_rule_credittotal']) || (0 < $article['article_rule_moneytotal'])) {
+			if (0 < $article['article_rule_credittotal'] || 0 < $article['article_rule_moneytotal']) {
 				$firstreads = pdo_fetchcolumn('select count(distinct click_user) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 				$allreads = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 				$secreads = $allreads - $firstreads;
@@ -126,25 +127,27 @@ class Index_EweiShopV2Page extends PluginWebPage
 				if (0 < $article['article_rule_credittotal']) {
 					$creditout = pdo_fetchcolumn('select sum(add_credit) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 					$article['article_rule_creditreallast'] = $article['article_rule_credittotal'] - $creditout;
-					($article['article_rule_creditreallast'] <= 0) && $article['article_rule_creditreallast'] = 0;
+					$article['article_rule_creditreallast'] <= 0 && $article['article_rule_creditreallast'] = 0;
 
 					if (!empty($article['article_advance'])) {
-						$article['article_rule_creditlast'] = $article['article_rule_credittotal'] - (($firstreads + (empty($article['article_virtualadd']) ? 0 : $article['article_readnum_v'])) * $article['article_rule_creditm']) - ($secreads * $article['article_rule_creditm2']);
-						($article['article_rule_creditlast'] <= 0) && $article['article_rule_creditlast'] = 0;
+						$article['article_rule_creditlast'] = $article['article_rule_credittotal'] - ($firstreads + (empty($article['article_virtualadd']) ? 0 : $article['article_readnum_v'])) * $article['article_rule_creditm'] - $secreads * $article['article_rule_creditm2'];
+						$article['article_rule_creditlast'] <= 0 && $article['article_rule_creditlast'] = 0;
 					}
 				}
 
 				if (0 < $article['article_rule_moneytotal']) {
 					$moneyout = pdo_fetchcolumn('select sum(add_money) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 					$article['article_rule_moneyreallast'] = $article['article_rule_moneytotal'] - $moneyout;
-					($article['article_rule_moneyreallast'] <= 0) && $article['article_rule_moneyreallast'] = 0;
+					$article['article_rule_moneyreallast'] <= 0 && $article['article_rule_moneyreallast'] = 0;
 
 					if (!empty($article['article_advance'])) {
-						$article['article_rule_moneylast'] = $article['article_rule_moneytotal'] - (($firstreads + (empty($article['article_virtualadd']) ? 0 : $article['article_readnum_v'])) * $article['article_rule_moneym']) - ($secreads * $article['article_rule_moneym2']);
-						($article['article_rule_moneylast'] <= 0) && $article['article_rule_moneylast'] = 0;
+						$article['article_rule_moneylast'] = $article['article_rule_moneytotal'] - ($firstreads + (empty($article['article_virtualadd']) ? 0 : $article['article_readnum_v'])) * $article['article_rule_moneym'] - $secreads * $article['article_rule_moneym2'];
+						$article['article_rule_moneylast'] <= 0 && $article['article_rule_moneylast'] = 0;
 					}
 				}
 			}
+
+			$article['article_content'] = m('common')->html_to_images($article['article_content']);
 		}
 
 		$mp = pdo_fetch('SELECT acid,uniacid,name FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
@@ -167,10 +170,10 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,article_title,article_keyword2 FROM ' . tablename('ewei_shop_article') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,article_title,article_keyword2 FROM ' . tablename('ewei_shop_article') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_article', array('id' => $item['id']));
@@ -195,7 +198,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,article_title FROM ' . tablename('ewei_shop_article') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,article_title FROM ' . tablename('ewei_shop_article') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_article', array('displayorder' => $displayorder), array('id' => $id));
@@ -212,14 +215,14 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,article_title FROM ' . tablename('ewei_shop_article') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,article_title FROM ' . tablename('ewei_shop_article') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_article', array('article_state' => intval($_GPC['state'])), array('id' => $item['id']));
-			plog('article.edit', ('修改文章状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['article_title'] . '<br/>状态: ' . $_GPC['state']) == 1 ? '开启' : '关闭');
+			plog('article.edit', '修改文章状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['article_title'] . '<br/>状态: ' . $_GPC['state'] == 1 ? '开启' : '关闭');
 		}
 
 		show_json(1, array('url' => referer()));

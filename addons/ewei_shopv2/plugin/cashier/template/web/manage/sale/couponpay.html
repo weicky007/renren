@@ -6,7 +6,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">活动时间</label>
                 <div class="col-sm-4 col-xs-6">
-                    {php echo tpl_form_field_daterange('couponpaytime', array('starttime'=>date('Y-m-d H:i', !empty($item['couponpay']['time']['start'])?$item['couponpay']['time']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['couponpay']['time']['end'])?$item['couponpay']['time']['end']:time())),true);}
+                    {php echo tpl_form_field_eweishop_daterange('couponpaytime', array('starttime'=>date('Y-m-d H:i', !empty($item['couponpay']['time']['start'])?$item['couponpay']['time']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['couponpay']['time']['end'])?$item['couponpay']['time']['end']:time())),true);}
                 </div>
             </div>
 

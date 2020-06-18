@@ -1,8 +1,6 @@
 <?php
-//dezend by haha解密更新  维护群：468773368 
-?>
-<?php
-if (!(defined('IN_IA'))) {
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
@@ -17,25 +15,27 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$this->message('请使用新版本访问');
 		}
 
-
 		$error = NULL;
 		$auth = $this->model->getAuth();
 
 		if (is_error($auth)) {
 			$error = $auth['message'];
 		}
-		 else {
+		else {
 			$list = $this->model->getReleaseList();
 
 			if (is_error($list)) {
 				$error = $list['message'];
 			}
-			 else if (empty($list)) {
-				$error = '未查询到授权小程序';
+			else {
+				if (empty($list)) {
+					$error = '未查询到授权小程序';
+				}
 			}
-
 		}
 
+//        header('location: ' . webUrl('app.newrelease'));
+//        exit();
 		include $this->template();
 	}
 
@@ -45,10 +45,9 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$hasSysWxapp = @is_file(IA_ROOT . '/addons/ewei_shopwxapp/wxapp.php');
 
-		if (!($hasSysWxapp)) {
+		if (!$hasSysWxapp) {
 			$this->message('未安装系统小程序');
 		}
-
 
 		$wxapp_list = pdo_fetchall('SELECT we.uniacid, we.name, bind.uniacid as uniacid_account, bind.wxapp as uniacid_wxapp FROM ' . tablename('account_wxapp') . ' we LEFT JOIN ' . tablename('ewei_shop_wxapp_bind') . ' bind ON bind.wxapp=we.uniacid WHERE bind.id IS NULL OR bind.uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
 
@@ -59,17 +58,15 @@ class Index_EweiShopV2Page extends PluginWebPage
 			if (empty($bind)) {
 				pdo_insert('ewei_shop_wxapp_bind', array('uniacid' => $_W['uniacid'], 'wxapp' => $uniacid));
 			}
-			 else {
+			else {
 				pdo_update('ewei_shop_wxapp_bind', array('uniacid' => $_W['uniacid'], 'wxapp' => $uniacid), array('id' => $bind['id']));
 			}
 
 			show_json(1);
 		}
 
-
 		include $this->template();
 	}
 }
-
 
 ?>

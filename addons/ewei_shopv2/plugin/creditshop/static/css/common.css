@@ -407,3 +407,7 @@
     padding: 0 0.2rem;
     background: #fe5455;
 }
+/*iphonex*/
+.option-picker.iphonex .option-picker-inner{
+    padding-bottom: 1.7rem !important;
+}

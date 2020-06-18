@@ -14,7 +14,10 @@
 
 		<div class='fui-list-inner'>
 		    <div class='title'>{$log['logno']}</div>
-		    <div class='text'>订单金额: &yen;<span>{$goods['money']}</span>{$goods['credit']}</div>
+		    <div class='text'>订单金额:
+				{$ordercredit}{$_W['shopset']['trade']['credittext']}
+				{if $ordermoney > 0} + &yen; {$ordermoney}{/if}
+			</div>
 		</div>
 	    </div>
 	</div>
@@ -56,7 +59,9 @@
 			{if !empty($goods['optionid'])}<div class='subtitle'>{$goods['optiontitle']}</div>{/if}
 		    </div>
 		    <div class='fui-list-angle'>
-				￥<span class='marketprice'>{$goods['money']}{$goods['credit']}<br/>   x1
+				{$goods['credit']}{$_W['shopset']['trade']['credittext']}
+				{if $goods['money'] > 0} + &yen; {$goods['money']}{/if}
+				<br/>   x{$log['goods_num']}
 		    </div>
 
 		</div>

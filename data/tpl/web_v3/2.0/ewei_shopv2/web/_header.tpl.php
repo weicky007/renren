@@ -2,7 +2,16 @@
 
 <?php  $system=m('system')->init()?>
 <?php  $sysmenus = m('system')->getMenu(true)?>
-
+<?php  $notice_redis_click = m('common')->getSysset('notice_redis')?>
+<?php  $wxpaycert_view_click = m('common')->getSysset('wxpaycert_view')?>
+<!--多商户图片选择器删除图片没有方法解决  只能在此隐藏-->
+<?php  if(strpos( $_W['script_name'] , 'merchant' ) != false) { ?>
+<style>
+    .del{
+        opacity:0;
+    }
+</style>
+<?php  } ?>
 <div class="wb-header" style="position: fixed;">
     <div class="logo <?php  if(!empty($system['foldnav'])) { ?>small<?php  } ?>">
         <?php  if(!empty($copyright) && !empty($copyright['logo'])) { ?>
@@ -15,7 +24,7 @@
         </li>
         <li class="wb-shortcut"><a id="showmenu"><i class="icow icow-list"></i></a></li>
     </ul>
-    <div class="wb-topbar-search expand-search">
+    <div class="wb-topbar-search expand-search" id="navwidth">
         <form action="" id="topbar-search">
             <input type="hidden" name="c" value="site" />
             <input type="hidden" name="a" value="entry" />
@@ -35,28 +44,66 @@
     </div>
     <div class="wb-header-flex"></div>
 
-    <?php  if(empty($_W['shopset']['template']['close_v2'])) { ?>
-        <div class="switch-version-box">
-            <a class="switch-version" title="返回旧版" href="<?php  echo webUrl('switchversion', array('route'=>$_GET['r'], 'id'=>$_GET['id']))?>">返回旧版</a>
-        </div>
-    <?php  } ?>
-
     <ul>
         <?php  if($system['right_menu']['system']) { ?>
-            <li data-toggle="tooltip" data-placement="bottom" title="系统管理">
-                <a href="<?php  echo webUrl('system')?>"><i class="icow icow-syssetL"></i></a>
+            <li data-toggle="tooltip" data-placement="bottom" title="">
+                <a href="<?php  echo webUrl('system')?>">
+                    系统管理
+                </a>
             </li>
         <?php  } ?>
+        <?php  if(p('app')) { ?>
+            <?php  $appsets = p('app')->getGlobal()?>
+            <?php  if(!empty($appsets['mmanage']['qrcode'])) { ?>
+                <?php  $appqrcode = tomedia($appsets['mmanage']['qrcode'])?>
+            <?php  } ?>
+        <?php  } ?>
+
+		<?php  if(!empty($appqrcode)) { ?>
+	        <li   class="wxcode_box">
+	            <i class="icow icow-erweima2" style="margin-right: 10px"></i>手机管理后台
+	            <img src="../addons/ewei_shopv2/static/images/new.gif" alt=""  style="margin-top: -10px ">
+	            <div class="wx_code">
+	                <img src="<?php  echo $appqrcode;?>" alt="">
+	                <div class="text">扫码登录小程序管理后台</div>
+	            </div>
+	        </li>
+
+        <?php  } ?>
+        <?php  if($_W['role'] == 'founder') { ?>
+        <li>
+            <a href="<?php  echo webUrl('system')?>" target="_blank">
+                <i class="icow icow-icon_shoppingmall" style="margin-right: 10px;color: #f34347"></i>应用设置
+            </a>
+        </li>
+        <?php  } ?>
         <li class="dropdown <?php  if($system['merch']) { ?>auto<?php  } ?> ellipsis">
-            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><?php  echo $system['right_menu']['menu_title'];?><span></span></a>
-            <ul class="dropdown-menu">
+            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <?php  if(strlen($system['right_menu']['menu_title'])>60) { ?>
+                <?php  echo substr($system['right_menu']['menu_title'],0,60).'...'?>
+                <?php  } else { ?>
+                <?php  echo $system['right_menu']['menu_title'];?>
+                <?php  } ?>
+                <span></span>
+            </a>
+
+            <ul class="dropdown-menu" <?php  if($system['routes']['0']=='system') { ?>style="width:100%;left:0"<?php  } ?>>
+                <?php  if($system['routes']['0']!='system') { ?>
                 <?php  if(is_array($system['right_menu']['menu_items'])) { foreach($system['right_menu']['menu_items'] as $right_menu_item) { ?>
                     <?php  if(!is_array($right_menu_item)) { ?>
-                        <li class="divider"></li>
                     <?php  } else { ?>
-                        <li><a href="<?php  echo $right_menu_item['href'];?>" <?php  if($right_menu_item['blank']) { ?>target="_blank"<?php  } ?>> <?php  echo $right_menu_item['text'];?></a></li>
+                        <li>
+                            <a href="<?php  echo $right_menu_item['href'];?>" <?php  if($right_menu_item['blank']) { ?>target="_blank"<?php  } ?>>
+                                <i class="icow <?php  echo $right_menu_item['icow'];?> " style="font-size: 30px;"></i>
+                                <span style="display: block"><?php  echo $right_menu_item['text'];?></span>
+                            </a>
+                        </li>
                     <?php  } ?>
                 <?php  } } ?>
+                <li <?php  if($system['merch']) { ?> style="display: none" <?php  } ?>><a href="./index.php?c=account&a=display&">返回系统</a></li>
+                <?php  } else { ?>
+                <li style="margin-top: 0;height: 50px;line-height: 50px;<?php  if($system['merch']) { ?>display: none<?php  } ?>"><a href="./index.php?c=account&a=display&">返回系统</a></li>
+                <?php  } ?>
             </ul>
         </li>
         <li data-toggle="tooltip" data-placement="bottom" title="退出登录" data-href="<?php  echo $system['right_menu']['logout'];?>">
@@ -111,7 +158,7 @@
     <!-- 一级导航 -->
     <div class="wb-nav <?php  if(!empty($system['foldnav'])) { ?>fold<?php  } ?>">
         <p class="wb-nav-fold"><i class="icow icow-zhedie"></i></p>
-        <ul>
+        <ul id="navheight">
             <?php  if(is_array($sysmenus['menu'])) { foreach($sysmenus['menu'] as $sysmenu) { ?>
                 <li <?php  if($sysmenu['active']) { ?>class="active"<?php  } ?>>
                     <a href="<?php echo empty($sysmenu['index'])? webUrl($sysmenu['route']): webUrl($sysmenu['route']. '.'. $sysmenu['index'])?>">
@@ -124,13 +171,69 @@
                                 <i class="icow icow-<?php  echo $sysmenu['icon'];?>" <?php  if(!empty($sysmenu['iconcolor'])) { ?> style="color: <?php  echo $sysmenu['iconcolor'];?>"<?php  } ?>></i>
                             <?php  } ?>
                         <?php  } ?>
-                        <span class="wb-nav-title"><?php  echo $sysmenu['text'];?></span>
+                        <?php  if($sysmenu['route'] == 'sysset') { ?>
+                            <span class="wb-nav-title <?php  if(empty($notice_redis_click['notice_redis_click']) || !isset($notice_redis_click['notice_redis_click'])) { ?>point<?php  } ?>"><?php  echo $sysmenu['text'];?></span>
+                        <?php  } else { ?>
+                            <span class="wb-nav-title"><?php  echo $sysmenu['text'];?></span>
+                        <?php  } ?>
                     </a>
                     <span class="wb-nav-tip"><?php  echo $sysmenu['text'];?></span>
                 </li>
             <?php  } } ?>
+            <?php  if($_W['role'] == 'founder') { ?>
+            <?php  if($system['routes']['0']=='system') { ?>
+            <li class="sysset">
+                <?php  if(is_array($system['right_menu']['menu_items'])) { foreach($system['right_menu']['menu_items'] as $right_menu_item) { ?>
+                    <?php  if(!is_array($right_menu_item)) { ?>
+                    <?php  } else { ?>
+
+                        <a href="<?php  echo $right_menu_item['href'];?>" <?php  if($right_menu_item['blank']) { ?>target="_blank"<?php  } ?>>
+                            <i class="icow <?php  echo $right_menu_item['icow'];?>"></i>
+                            <span class="wb-nav-title"><?php  echo $right_menu_item['text'];?></span>
+                        </a>
+
+                    <?php  } ?>
+                <?php  } } ?>
+            </li>
+            <?php  } else { ?>
+            <li class="sysset">
+                <i class="icow icow-qiehuan"></i>
+
+                <span class="wb-nav-title" data-href="">系统管理</span>
+                <div class="syssetsub">
+                    <div class="syssettitle">系统管理</div>
+                    <a href="<?php  echo webUrl('system/plugin')?>"><i class="icow icow-plugins "></i>应用</a>
+                    <a href="<?php  echo webUrl('system/copyright')?>"><i class="icow icow-banquan"></i>版权</a>
+                    <a href="<?php  echo webUrl('system/data')?>"><i class="icow icow-statistics"></i>数据</a>
+                    <a href="<?php  echo webUrl('system/site')?>"><i class="icow icow-wangzhan"></i>网站</a>
+                    <a href="<?php  echo webUrl('system/auth')?>"><i class="icow icow-iconfont-shouquan"></i>授权</a>
+                    <a href="<?php  echo webUrl('system/auth/upgrade')?>"><i class="icow icow-gengxin"></i>更新</a>
+                    <span class="syssettips"></span>
+                </div>
+            </li>
+            <?php  } ?>
+            <?php  } ?>
         </ul>
+
+
     </div>
+    <!--低分辨率一级导航显示不全问题 start-->
+    <script>
+        var navheight = document.getElementById('navheight');
+        var navwidth = document.getElementById('navwidth')
+        var vh = document.body.clientHeight;
+        var vw = screen.width;
+        if(vh < 800){
+            navheight.classList.add("wb-navheight");
+        } else {
+            navheight.classList.remove("wb-navheight");
+        }
+        if(vw < 1300 ){
+            navwidth.classList.add("wb-navwidth");
+        }
+    </script>
+    <!--低分辨率一级导航显示不全问题 end-->
+
 
     <!-- 二级导航 -->
     <?php  if(!$no_left && !empty($sysmenus['submenu']['items'])) { ?>
@@ -141,7 +244,7 @@
           </div>
         </div>
     <?php  } ?>
-
+ 
     <?php  if(!$no_right) { ?>
         <div class="wb-panel <?php  if(empty($system['foldpanel'])) { ?>in<?php  } ?>">
             <div class="panel-group" id="panel-accordion">
@@ -253,7 +356,7 @@
                 </div>
                 <?php  } ?>
                 <!--系统更新-->
-                <?php  if($_W['isfounder'] && $_W['routes']!='system.auth.upgrade') { ?>
+                <?php  if($_W['isfounder'] && $_W['routes']!='system.auth.upgrade' && $_W['role'] !='vice_founder') { ?>
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingFive" data-toggle="collapse" data-parent="#panel-accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
                         <h4 class="panel-title">
@@ -283,4 +386,3 @@
         <div class="wb-panel-fold <?php  if(empty($system['foldpanel'])) { ?>in<?php  } ?>"><?php  if(!empty($system['foldpanel'])) { ?><i class="icow icow-info"></i> 消息提醒<?php  } else { ?><i class="fa fa-angle-double-right"></i> 收起面板<?php  } ?></div>
     <?php  } ?>
     <div class="wb-container <?php  if(!empty($system['foldpanel'])) { ?>right-panel<?php  } ?>">
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

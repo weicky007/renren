@@ -399,7 +399,7 @@
 
 
 
-
+/**/
 .fui-goods-tab {
     margin-top: 10px;
     display: -webkit-box;
@@ -517,6 +517,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    word-break: break-all;
 }
 .fui-goods-tab .main .item .inner .subtitle {
     height: 22px;

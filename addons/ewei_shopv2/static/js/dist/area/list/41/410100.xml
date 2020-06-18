@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="郑州" code="410100">
-<county name="中原" code="410102">
+<city name="郑州市" code="410100">
+<county name="中原区" code="410102">
     <street name="林山寨街道" code="410102001" />
     <street name="建设路街道" code="410102002" />
     <street name="棉纺路街道" code="410102003" />
@@ -20,7 +20,7 @@
     <street name="梧桐办事处" code="410102561" />
     <street name="双桥办事处" code="410102562" />
 </county>
-<county name="二七" code="410103">
+<county name="二七区" code="410103">
     <street name="淮河路街道" code="410103001" />
     <street name="解放路街道" code="410103002" />
     <street name="铭功路街道" code="410103003" />
@@ -37,7 +37,7 @@
     <street name="马寨镇" code="410103100" />
     <street name="侯寨乡" code="410103201" />
 </county>
-<county name="管城回族" code="410104">
+<county name="管城区" code="410104">
     <street name="北下街街道" code="410104001" />
     <street name="西大街街道" code="410104002" />
     <street name="南关街道" code="410104003" />
@@ -55,7 +55,7 @@
     <street name="京航街道" code="410104562" />
     <street name="商都路街道" code="410104570" />
 </county>
-<county name="金水" code="410105">
+<county name="金水区" code="410105">
     <street name="经八路街道" code="410105001" />
     <street name="花园路街道" code="410105002" />
     <street name="人民路街道" code="410105003" />
@@ -81,7 +81,7 @@
     <street name="龙源路街道" code="410105563" />
     <street name="金光路街道" code="410105564" />
 </county>
-<county name="上街" code="410106">
+<county name="上街区" code="410106">
     <street name="济源路街道" code="410106001" />
     <street name="中心路街道" code="410106002" />
     <street name="新安路街道" code="410106003" />
@@ -89,7 +89,7 @@
     <street name="矿山街道" code="410106005" />
     <street name="峡窝镇" code="410106100" />
 </county>
-<county name="惠济" code="410108">
+<county name="惠济区" code="410108">
     <street name="新城街道" code="410108001" />
     <street name="刘寨街道" code="410108002" />
     <street name="老鸦陈街道" code="410108003" />
@@ -99,7 +99,7 @@
     <street name="花园口镇" code="410108100" />
     <street name="古荥镇" code="410108101" />
 </county>
-<county name="中牟" code="410122">
+<county name="中牟县" code="410122">
     <street name="青年路街道" code="410122001" />
     <street name="东风路街道" code="410122002" />
     <street name="广惠街街道" code="410122003" />
@@ -125,7 +125,7 @@
     <street name="豫兴办事处" code="410122571" />
     <street name="滨河办事处" code="410122580" />
 </county>
-<county name="巩义" code="410181">
+<county name="巩义市" code="410181">
     <street name="新华路街道" code="410181001" />
     <street name="杜甫路街道" code="410181002" />
     <street name="永安路街道" code="410181003" />
@@ -147,7 +147,7 @@
     <street name="夹津口镇" code="410181115" />
     <street name="涉村镇" code="410181116" />
 </county>
-<county name="荥阳" code="410182">
+<county name="荥阳市" code="410182">
     <street name="索河街道" code="410182001" />
     <street name="京城路街道" code="410182002" />
     <street name="乔楼镇" code="410182101" />
@@ -163,7 +163,7 @@
     <street name="高村乡" code="410182201" />
     <street name="金寨回族乡" code="410182204" />
 </county>
-<county name="新密" code="410183">
+<county name="新密市" code="410183">
     <street name="青屏街街道" code="410183001" />
     <street name="新华路街道" code="410183002" />
     <street name="西大街街道" code="410183003" />
@@ -184,7 +184,7 @@
     <street name="尖山风景区管理委员会" code="410183401" />
     <street name="郑州曲梁产业集聚区管理委员会" code="410183402" />
 </county>
-<county name="新郑" code="410184">
+<county name="新郑市" code="410184">
     <street name="新建路街道" code="410184001" />
     <street name="新华路街道" code="410184002" />
     <street name="新烟街道" code="410184003" />
@@ -206,7 +206,7 @@
     <street name="中心城区新区建设管理委员会" code="410184403" />
     <street name="银河办事处" code="410184404" />
 </county>
-<county name="登封" code="410185">
+<county name="登封市" code="410185">
     <street name="嵩阳街道" code="410185001" />
     <street name="少林街道" code="410185002" />
     <street name="中岳街道" code="410185003" />
@@ -225,5 +225,8 @@
     <street name="唐庄乡" code="410185205" />
     <street name="送表矿区" code="410185400" />
 </county>
+    <county name="郑东新区" code="410186">
+        <street name="郑东新区街道" code="410186001" />
+    </county>
 </city>
 </address>

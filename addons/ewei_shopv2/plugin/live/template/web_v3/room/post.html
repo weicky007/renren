@@ -1,6 +1,6 @@
 {template '_header'}
 <style type="text/css">
-    {if empty($item['livetype'])}
+    /*{if empty($item['livetype'])}
     .identity_livetype0{display: block;}
     .identity_livetype1{display: none;}
     .identity_livetype2{display: none;}
@@ -15,7 +15,7 @@
     .identity_livetype0{display: none;}
     .identity_livetype1{display: none;}
     .identity_livetype2{display: block;}
-    {/if}
+    {/if}*/
     .region-goods-details {
         background: #fafafa;
         margin-bottom: 10px;
@@ -97,17 +97,55 @@
                 $(".tab_screen").show();
             }
         });
+        //将select通过clone方法保存
+        var select= $("select[name=liveidentity]").find(".identity_livetype").clone();
+        //删除所有的option
+        $("select[name=liveidentity]").find(".identity_livetype").remove();
+        var live_type = {php echo empty($item['livetype'])?0:$item['livetype']};
+        if(live_type==0){
+            $("select[name=liveidentity]").append(select[0]);
+            $("select[name=liveidentity]").append(select[1]);
+        }else if(live_type==1){
+            $("select[name=liveidentity]").append(select[2]);
+            $("select[name=liveidentity]").append(select[3]);
+            $("select[name=liveidentity]").append(select[4]);
+            $("select[name=liveidentity]").append(select[5]);
+            $("select[name=liveidentity]").append(select[6]);
+        }else{
+            $("select[name=liveidentity]").append(select[7]);
+            $("select[name=liveidentity]").append(select[8]);
+            $("select[name=liveidentity]").append(select[9]);
+        }
         $("input[name='livetype']").off("click").on("click",function () {
             var livetype = $(this).val();
-            $("select[name='liveidentity']").val('');
-            $(".identity_livetype").hide();
+            $("select[name=liveidentity]").find("option:selected").prop("selected","false");
+            $("select[name=liveidentity]").find(".identity_livetype").remove();
+            //查找出需要显示的option并复制
+            if(livetype==0){
+                $("select[name=liveidentity]").append(select[0]);
+                $("select[name=liveidentity]").append(select[1]);
+            }else if(livetype==1){
+                $("select[name=liveidentity]").append(select[2]);
+                $("select[name=liveidentity]").append(select[3]);
+                $("select[name=liveidentity]").append(select[4]);
+                $("select[name=liveidentity]").append(select[5]);
+                $("select[name=liveidentity]").append(select[6]);
+                console.log($("select[name=liveidentity]").find(".identity_livetype"));
+            }else{
+                $("select[name=liveidentity]").append(select[7]);
+                $("select[name=liveidentity]").append(select[8]);
+                $("select[name=liveidentity]").append(select[9]);
+            }
+            /*$(".identity_livetype").hide();
             $(".identity_livetype"+livetype+"").show();
+            */
             if(livetype==0){
                 $(".full_screen").hide();
                 $(".salf_screen input[name='screen']").prop("checked","true");
             }else{
                 $(".full_screen").show();
             };
+
             if(livetype==2){
                 $(".live-url").hide();
                 $(".live-video").show();

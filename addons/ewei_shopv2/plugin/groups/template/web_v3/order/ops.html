@@ -10,8 +10,10 @@
 {ifp 'groups.order.send'}
     <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send', array('id' => $item['id']))}">确认发货</a><br />
 {/if}
-{ifp 'groups.order.sendcancel'}
-    <a class="text-primary" data-toggle='ajaxModal'  href="{php echo webUrl('groups/order/sendcancel', array('id' => $item['id']))}" >取消发货</a><br />
+{if $item['sendtype'] > 0}
+    {ifp 'groups.order.sendcancel'}
+        <a class="text-primary" data-toggle='ajaxModal'  href="{php echo webUrl('groups/order/sendcancel', array('id' => $item['id']))}" >取消发货</a><br />
+    {/if}
 {/if}
 {/if}
     {/if}
@@ -49,7 +51,6 @@
 {/if}
     {/if}
 {/if}
-
 
 
 

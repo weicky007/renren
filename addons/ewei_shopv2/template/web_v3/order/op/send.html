@@ -25,12 +25,11 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label">快递公司</label>
 						<div class="col-sm-9 col-xs-12">
-							<select class="form-control" name="express" id="express">
-                                <option value="" data-name="">其他快递</option>
+							<select class="form-control" name="express" {if $item['city_express_state']==1}disabled="disabled"{/if} id="express">
+                                <option value="" data-name="">{if $item['city_express_state']==0}其他快递{else}同城配送{/if}</option>
                                 {loop $express_list $value}
-                                <option value="{$value['express']}" data-name="{$value['name']}">{$value['name']}</option>
+                                <option value="{$value['express']}" {if $item['express']==$value['express']}selected{/if} data-name="{$value['name']}">{$value['name']}</option>
                                 {/loop}
-
 							</select>
 							<input type='hidden' name='expresscom' id='expresscom' value="{$item['expresscom']}"/>
 						</div>
@@ -38,15 +37,15 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label must">快递单号</label>
 						<div class="col-sm-9 col-xs-12">
-							<input type="text" name="expresssn" class="form-control" value="{$item['expresssn']}" data-rule-required='true' />
+							<input type="text" name="expresssn" class="form-control" {if $item['city_express_state']==1}disabled="disabled"{/if} value="{$item['expresssn']}" data-rule-required='true' />
 						</div>
 					</div>
 				{if $order_goods}
 					<div class="form-group">
 						<label class="col-sm-2 control-label">发货类型</label>
 						<div class="col-sm-9 col-xs-12">
-							<label class="radio-inline"><input type="radio" name="sendtype" value="0" {if $item['sendtype']>0}disabled="disabled"{/if}  {if empty($item['sendtype'])}checked="true"{/if}/> 按订单发货</label>
-							<label class="radio-inline"><input type="radio" name="sendtype" value="1" {if $item['sendtype']>0}disabled="disabled"{/if} {if $item['sendtype']>0}checked="true"{/if}   /> 商品分包裹发货</label>
+							<label class="radio-inline"><input type="radio" name="sendtype" value="0" {if $item['sendtype']>0}disabled="disabled"{/if}  {if empty($item['sendtype'])}checked="true"{/if}  {if $item['city_express_state']==1}disabled="disabled"{/if}/> 按订单发货</label>
+							<label class="radio-inline"><input type="radio" name="sendtype" value="1" {if $item['sendtype']>0}disabled="disabled"{/if} {if $item['sendtype']>0}checked="true"{/if}     {if $item['city_express_state']==1}disabled="disabled"{/if}/> 商品分包裹发货</label>
 							<span class="help-block">选择商品发货类型</span>
 						</div>
 					</div>
@@ -196,7 +195,6 @@
     $("#express").change();
 
 </script>
-
 
 
 

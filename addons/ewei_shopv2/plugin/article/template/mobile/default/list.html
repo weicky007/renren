@@ -11,6 +11,12 @@
 		<div class="title">{if !empty($article_sys['article_title'])}{$article_sys['article_title']}{else}{$_W['shopset']['shop']['name']}{/if}</div>
 		<div class="fui-header-right"></div>
 	</div>
+	{else}
+		<div class="fui-header">
+			<div class="fui-header-left">
+				<a class="back"></a>
+			</div>
+		</div>
 	{/if}
 
 	<div class='fui-content'>

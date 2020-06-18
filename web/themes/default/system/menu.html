@@ -25,7 +25,7 @@
 						</div>
 						<div class="table-div__item name">{$menu['title']}</div>
 						<div class="table-div__item display">
-							{if in_array($permission_name, $not_operate_menu)}
+							{if !$menu['is_operate']}
 							<span class="color-gray">不可操作</span>
 							{else}
 							<span class="switch" ng-init="displayStatus['{$permission_name}'] = {php echo $menu['is_display'] ? 'true' : 'false'}" ng-click="changeDisplay('{$permission_name}')" ng-class="{'switchOn' : displayStatus['{$permission_name}'], 'switchOff' : !displayStatus['{$permission_name}']}"></span>

@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -31,13 +31,14 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		}
 
 		$condition .= ' AND g.`status` = 1 and g.`checked`=0 and g.`total`>0 and g.`deleted`=0 AND `type` !=20 AND `type` !=4';
-		$sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition;
+		$sql = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . ' group by g.id';
 		$total_all = pdo_fetchall($sql, $params);
 		$total = count($total_all);
 		unset($total_all);
 
 		if (!empty($total)) {
-			$sql = 'SELECT g.id, g.title, g.createtime, g.marketprice, g.thumb FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT g.id, g.title, g.createtime, g.marketprice, g.thumb FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . ' group by g.id ORDER BY g.`status` DESC, g.`displayorder` DESC,
+                g.`id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
 			$pager = pagination2($total, $pindex, $psize);
@@ -51,13 +52,18 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		}
 
 		$auth = $this->model->getAuth();
-		$is_auth = (!is_error($auth) && is_array($auth) ? $auth['is_auth'] : false);
+		$is_auth = !is_error($auth) && is_array($auth) ? $auth['is_auth'] : false;
+		$showcode = false;
 
 		if ($is_auth) {
 			$release = $this->model->getRelease($auth['id']);
+			$showcode = is_array($release) && !is_error($release) && $release['audit_status'] == 5;
 		}
 
-		$showcode = is_array($release) && !is_error($release) && ($release['audit_status'] == 5);
+		if (!is_error($auth) && empty($is_auth)) {
+			$showcode = true;
+		}
+
 		include $this->template();
 	}
 

@@ -23,8 +23,10 @@
         vertical-align: middle;
     }
     .page-header .inner .logo img {
-        max-height: 90px;
-        width: auto;
+        max-height: 68px;
+        height:68px;
+        width: 200px;
+        margin-top: 11px;
         vertical-align: middle;
     }
 
@@ -134,7 +136,7 @@
 <div class="page-header">
     <div class="inner">
         <div class="logo">
-            {if !empty($copyright['logo'])}
+            {if !empty($set['reglogo'])}
                 <img src="{php echo tomedia($set['reglogo'])}"/>
             {/if}
         </div>

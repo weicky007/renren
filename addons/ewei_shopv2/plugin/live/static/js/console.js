@@ -18,6 +18,8 @@ define([], function () {
         setInterval(function () {
             if (modal.wsConnected) {
                 modal.wsSend('communication', {toUser: 'system'})
+            }else{
+                modal.initWs();
             }
         }, 20000)
     };

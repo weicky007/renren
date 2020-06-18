@@ -16,6 +16,7 @@
         -ms-flex: 1;
         flex: 1;
     }
+    {if count($step_array)>4}.ui-step-4 li { width:20%;}{/if}
     .order-container-static{
         -webkit-box-flex: 1;
         -webkit-flex: 1;
@@ -210,7 +211,7 @@
 
                             <tr>
                                 <td>订单金额：</td>
-                                <td>￥{php echo number_format($refund['price'],2)} </td>
+                                <td>￥{php echo number_format($item['price']+$item['freight'],2)} </td>
                             </tr>
 
                             <tr>
@@ -353,8 +354,9 @@
                 <table class="table table-hover">
                     <thead class="navbar-inner">
                     <tr>
-                        <th style="width:200px">标题</th>
-                        <th>商品图片</th>
+                        <th style="width:70px">商品</th>
+                        <th></th>
+                        <th style="text-align: center;">规格</th>
                         <th style="text-align: center;">单价(元)</th>
                         <th  style="text-align: center;">数量</th>
                         <th style="text-align: center;">金额(元)</th>
@@ -366,11 +368,17 @@
                     </thead>
                     <tr class="trorder">
                         <td class='full'>
-                            {$refund['title']}
-                        </td>
-                        <td>
                             <img src="{php echo tomedia($refund['thumb'])}" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;' onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'">
                         </td>
+                        <td>
+                            {$refund['title']}
+                        </td>
+                        <td style="text-align: center;">
+                            <p style="white-space:normal;">
+                                {if !empty($refund['optiontitle'])}<span class="label label-primary" data-container="body" data-toggle="popover" data-placement="right" data-content="{$goods['optionname']}">{$refund['optiontitle']}</span>{else}无{/if}
+                            </p>
+                        </td>
+
                         <td  style="text-align: center;">
                             ¥ {$refund['groupsprice']}
                             <br/>
@@ -408,11 +416,11 @@
                     {/if}
                     <tfoot style="border: none;">
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="price">
-                                    <p> <span class="price-inner">  订单金额：</span><span style="font-weight: bold"> ¥ {php echo number_format($order['price']+$order['freight'],2)}</span></p>
+                                    <p> <span class="price-inner">  订单金额：</span><span style="font-weight: bold"> ¥ {php echo number_format($item['price']+$item['freight'],2)}</span></p>
                                     <p><span class="price-inner">商品小计：</span><span  style="font-weight: bold">￥{php echo number_format( $refund['price'] ,2)}</span></p>
-                                    <p><span class="price-inner">运费：</span><span>￥{php echo number_format( $refund['olddispatchprice'],2)}</span></p>
+                                    <p><span class="price-inner">运费：</span><span>￥{php echo number_format($refund['freight'],2)}</span></p>
                                     {if $order['discount']>0}
                                     <p><span class="price-inner">团长优惠：</span><span class="text-danger">- ¥{$order['discount']}</span></p>
                                     {/if}
@@ -448,4 +456,3 @@
     </form>
 </div>
 {template '_footer'}
-

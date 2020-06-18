@@ -55,7 +55,7 @@
      <div class="line">
          <div class="col<% if ((page+index)<4) %> icon-<%page+index%><%/if%>"><% if ((page+index)>3) %><%page+index%><%/if%></div>
          <div class="col">
-             <div class="face"><img src="<%row.avatar%>" /></div>
+             <div class="face"><img src="<%row.avatar%>" onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'" /></div>
              <div class="name"><%row.nickname%></div>
          </div>
          <div class="col index-1"><%row.credit1%></div>

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,9 +15,9 @@ class Address_EweiShopV2Page extends PluginMobileLoginPage
 		$psize = 20;
 		$condition = ' and openid=:openid and deleted=0 and  `uniacid` = :uniacid  ';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_address') . (' where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 		include $this->template();
 	}
@@ -32,15 +33,10 @@ class Address_EweiShopV2Page extends PluginMobileLoginPage
 		$new_area = intval($area_set['new_area']);
 		$address_street = intval($area_set['address_street']);
 		if ($_W['shopset']['trade']['shareaddress'] && is_weixin()) {
-			$account = WeAccount::create();
-
-			if (method_exists($account, 'getShareAddressConfig')) {
-				$shareaddress_config = $account->getShareAddressConfig();
-			}
 		}
 
 		$show_data = 1;
-		if ((!empty($new_area) && empty($address['datavalue'])) || (empty($new_area) && !empty($address['datavalue']))) {
+		if (!empty($new_area) && empty($address['datavalue']) || empty($new_area) && !empty($address['datavalue'])) {
 			$show_data = 0;
 		}
 

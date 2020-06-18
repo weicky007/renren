@@ -38,7 +38,11 @@
         </label>
         {/loop}
         {elseif $v1['data_type']==5}
-        {php echo tpl_form_field_multi_image2($field_data_name.$i, $f_data[$k1])}
+            {if $_W['plugin']=='merch' && !empty($_W['merchid'])}
+                {php echo tpl_form_field_multi_image2($field_data_name.$i, $f_data[$k1],array('dest_dir'=>'merch/'.$_W['merchid']))}
+            {else}
+                {php echo tpl_form_field_multi_image2($field_data_name.$i, $f_data[$k1])}
+            {/if}
 
         {elseif $v1['data_type']==6}
         <input type="tel" class='form-control' id='{$field_data_name}{php echo $i}' name='{$field_data_name}{php echo $i}' placeholder="请输入{$v1['tp_name']}"
@@ -49,7 +53,7 @@
         {php echo tpl_form_field_date($field_data_name.$i,$f_data[$k1])}
 
         {elseif $v1['data_type']==8}
-        {php echo tpl_form_field_daterange($field_data_name.$i,array('starttime'=>$f_data[$k1][0],'endtime'=>$f_data[$k1][1]))}
+        {php echo tpl_form_field_eweishop_daterange($field_data_name.$i,array('starttime'=>$f_data[$k1][0],'endtime'=>$f_data[$k1][1]))}
         {else if $v1['data_type'] == 9}
 
         <span>{php echo $f_data[$k1]['province']!='请选择省份'?$f_data[$k1]['province']:''}-{php echo $f_data[$k1]['city']!='请选择城市'?$f_data[$k1]['city']:''}{if !empty($f_data[$k1]['area'])}-{php echo $f_data[$k1]['area']}{/if}</span>
@@ -60,7 +64,7 @@
         <select id="sel-city{$i}" name='{$field_data_name}_city{$i}'  onchange="selectcounty(0,0,'{$i}')" class="form-control" style='width:150px;display: inline-block' >
             <option value="" selected="true">请选择城市</option>
         </select>
-        <select id="sel-area{$i}" name='{$field_data_name}_area{$i}'  class="form-control" style='width:150px;display: inline-block;{if empty($f_data[$k1]['area'])}display:none;{/if}' >
+        <select id="sel-area{$i}" name='{$field_data_name}_area{$i}'  class="form-control" style='width:150px;display: inline-block;' >
             <option value="" selected="true">请选择</option>
         </select>
         <script language='javascript'>
@@ -88,9 +92,14 @@
                style="width: 130px;display: inline-block;"
                {if $v1['tp_must'] == 1}data-rule-required='true'{/if}
         />
+        {elseif $v1['data_type']==14}
+            {loop $v1['tp_text'] $k2 $v2}
+            <label class="checkbox-inline">
+                <input type="radio" name='{$field_data_name}{php echo $i}[]' {if trim($v2)==trim($f_data[$k1])}checked{/if} value="{php echo $v2}"/> {php echo $v2}
+            </label>
+            {/loop}
         {/if}
     </div>
 </div>
 {php $i++}
 {/loop}
-

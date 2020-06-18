@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,11 +19,11 @@ class Recommand_EweiShopV2Page extends WebPage
 			show_json(1);
 		}
 
-		$goodsids = (isset($_W['shopset']['shop']['indexrecommands_wxapp']) ? implode(',', $_W['shopset']['shop']['indexrecommands_wxapp']) : '');
+		$goodsids = isset($_W['shopset']['shop']['indexrecommands_wxapp']) ? implode(',', $_W['shopset']['shop']['indexrecommands_wxapp']) : '';
 		$goods = false;
 
 		if (!empty($goodsids)) {
-			$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . ' where id in (' . $goodsids . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $goodsids . '\',id)');
+			$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . (' where id in (' . $goodsids . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $goodsids . '\',id)'));
 		}
 
 		$goodsstyle = $_W['shopset']['shop']['goodsstyle_wxapp'];

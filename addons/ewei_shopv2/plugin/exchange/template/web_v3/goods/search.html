@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-content" style="display: block;">
     <div class="page-heading">
-        {ifp 'exchange.goods.setting'}
+        {ifp 'exchange.goods.edit'}
     <span class="pull-right">
             <a class="btn btn-primary btn-sm" href="{php echo webUrl('exchange/goods/setting',array('id'=>0));}"><i class="fa fa-plus"></i> 添加商品兑换任务</a>
         </span>
@@ -106,7 +106,7 @@
             </td>
             <td>
                 <a class="btn btn-default btn-sm" title="查看" href="{php echo webUrl('exchange/goods/dno',array('id'=>$value['id']));}"><i class="fa fa-search"></i> 兑换码</a>
-                {ifp 'exchange.goods.setting'}
+                {ifp 'exchange.goods.edit'}
                 <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/goods/setting',array('id'=>$value['id']));}" title="编辑"><i class="fa fa-edit"></i> 编辑</a>
                 {/if}
                 {ifp 'exchange.goods.delete'}
@@ -120,4 +120,3 @@
     {$pager}
 </div>
 {template '_footer'}
-

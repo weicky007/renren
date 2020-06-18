@@ -173,7 +173,7 @@ function get_position_by_ip($ip = '') {
 }
 
 function buildframes($framename = '') {
-	global $_W, $_GPC, $top_nav;
+	global $_W, $_GPC;
 	load()->model('system');
 
 	if (!empty($GLOBALS['frames']) && !empty($_GPC['m'])) {
@@ -224,23 +224,20 @@ function buildframes($framename = '') {
 						}
 					}
 				}
-				
-				
-					if ('wxapp' != $nav_id && 'store' != $nav_id) {
-						$section_show = false;
-						$secion['if_fold'] = !empty($_GPC['menu_fold_tag:' . $section_id]) ? 1 : 0;
-						foreach ($secion['menu'] as $menu_id => $menu) {
-							if (!in_array($menu['permission_name'], $user_permission) && 'platform_module' != $section_id && 'phoneapp_profile' != $section_id) {
-								$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
-							} else {
-								$section_show = true;
-							}
-						}
-						if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
-							$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+				if ('wxapp' != $nav_id && 'store' != $nav_id) {
+					$section_show = false;
+					$secion['if_fold'] = !empty($_GPC['menu_fold_tag:' . $section_id]) ? 1 : 0;
+					foreach ($secion['menu'] as $menu_id => $menu) {
+						if (!in_array($menu['permission_name'], $user_permission) && 'platform_module' != $section_id && 'phoneapp_profile' != $section_id) {
+							$frames[$nav_id]['section'][$section_id]['menu'][$menu_id]['is_display'] = false;
+						} else {
+							$section_show = true;
 						}
 					}
-				
+					if (!isset($frames[$nav_id]['section'][$section_id]['is_display'])) {
+						$frames[$nav_id]['section'][$section_id]['is_display'] = $section_show;
+					}
+				}
 			}
 
 			if (ACCOUNT_MANAGE_NAME_EXPIRED == $_W['role'] && ('store' != $nav_id || 'system' != $nav_id)) {
@@ -255,14 +252,15 @@ function buildframes($framename = '') {
 			$frames['system']['section']['user']['menu']['system_user_founder_group']['is_display'] = false;
 		}
 	}
-
 		if (defined('FRAME') && (!in_array(FRAME, array('account', 'wxapp')))) {
 		$frames = frames_top_menu($frames);
-
 		return $frames[$framename];
 	}
 
 	if (defined('FRAME') && FRAME == 'account') {
+		if (!empty($_W['account']) && $_W['account']['type_sign'] == 'account' && $_W['account']['level'] == 1){
+			unset($frames[FRAME]['section']['platform']['menu']['platform_menu']);
+		}
 		$modules = uni_modules();
 		$sysmodules = module_system();
 		$status = permission_account_user_permission_exist($_W['uid'], $_W['uniacid']);
@@ -400,7 +398,7 @@ function buildframes($framename = '') {
 			$frames['account']['section']['platform_module_common']['menu']['platform_module_welcome'] = array(
 				'title' => '模块首页',
 				'icon' => 'wi wi-home',
-				'url' => url('module/welcome', array('m' => $modulename, 'uniacid' => $_GPC['uniacid'])),
+				'url' => url('module/welcome', array('m' => $modulename, 'uniacid' => intval($_GPC['uniacid']))),
 				'is_display' => empty($module['main_module']) ? true : false,
 				'module_welcome_display' => true,
 			);
@@ -570,7 +568,7 @@ function buildframes($framename = '') {
 			}
 		}
 		
-			if (!empty($entries['system_welcome']) && $_W['isfounder']) {
+			if (!empty($entries['system_welcome'])) {
 				$frames['account']['section']['platform_module_welcome']['title'] = '';
 				foreach ($entries['system_welcome'] as $key => $row) {
 					if (empty($row)) {
@@ -650,12 +648,11 @@ function frames_top_menu($frames) {
 		return array();
 	}
 		$is_vice_founder = user_is_vice_founder();
-	$founders = explode(',', $_W['config']['setting']['founder']);
 	foreach ($frames as $menuid => $menu) {
-		if ((!empty($menu['founder']) || in_array($menuid, array('module_manage', 'site', 'advertisement', 'appmarket'))) && !in_array($_W['uid'], $founders) ||
+		if ((!empty($menu['founder']) || in_array($menuid, array('module_manage', 'site', 'advertisement', 'appmarket'))) && !$_W['isadmin'] ||
 			ACCOUNT_MANAGE_NAME_CLERK == $_W['highest_role'] && in_array($menuid, array('account', 'wxapp', 'system', 'platform', 'welcome', 'account_manage')) ||
-			!$is_vice_founder && !in_array($_W['uid'], $founders) && in_array($menuid, array('user_manage', 'permission')) ||
-			'myself' == $menuid && in_array($_W['uid'], $founders) ||
+			!$is_vice_founder && !$_W['isadmin'] && in_array($menuid, array('user_manage', 'permission')) ||
+			'myself' == $menuid && $_W['isadmin'] ||
 			!$menu['is_display']) {
 			continue;
 		}

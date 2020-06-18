@@ -39,11 +39,10 @@ function welcome_notices_get() {
 }
 
 function welcome_database_backup_days() {
-	global $_W;
 	$cachekey = cache_system_key('back_days');
 	$cache = cache_load($cachekey);
-	if (!empty($cache)) {
-		return $cache;
+	if (!empty($cache) && $cache['expire'] > TIMESTAMP) {
+		return $cache['data'];
 	}
 	$reductions = system_database_backup();
 	if (!empty($reductions)) {
@@ -54,10 +53,10 @@ function welcome_database_backup_days() {
 			}
 			$last_backup_time = $reduction['time'];
 		}
+		$backup_days = floor((time() - $last_backup_time) / (3600 * 24));
 	} else {
-		$last_backup_time = $_W['setting']['site']['createtime'];
+		$backup_days = -1;
 	}
-	$backup_days = floor((time() - $last_backup_time) / (3600 * 24));
 
 	cache_write($cachekey, $backup_days, 12 * 3600);
 	return $backup_days;

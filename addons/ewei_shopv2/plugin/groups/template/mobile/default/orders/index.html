@@ -1,17 +1,18 @@
 {template '_header'}
-<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css" />
+<link rel="stylesheet" href="../addons/ewei_shopv2/plugin/groups/template/mobile/default/css/style.css?v=2018530" />
 <style type="text/css">
-#container{margin:0;background: none;}
-.fui-list-angle span.text-danger{color: #ef4f4f;}
+	#container{margin:0;background: none;}
+	.fui-list-angle span.text-danger{color: #ef4f4f;}
+	.order-list-page .order-list .status:after{content: none;}
 </style>
 <div class='fui-page order-list-page'>
-    <div class="fui-header">
-	<div class="fui-header-left">
-	    <a class="back" href="{php echo mobileUrl('orders')}"></a>
+	<div class="fui-header">
+		<div class="fui-header-left">
+			<a class="back" href="{php echo mobileUrl('orders')}"></a>
+		</div>
+		<div class="title">我的订单</div>
+		<div class="fui-header-right">&nbsp;</div>
 	</div>
-	<div class="title">我的订单</div>
-	<div class="fui-header-right">&nbsp;</div>
-    </div>
 	<div class="fui-tab fui-tab-danger" id="tab">
 		<a class="active" data-tab='status'>全部</a>
 		<a href="javascript:void(0)" data-tab='status0'>待付款</a>
@@ -19,7 +20,7 @@
 		<a href="javascript:void(0)" data-tab='status2'>待收货</a>
 		<a href="javascript:void(0)" data-tab='status3'>已完成</a>
 	</div>
-    <div class='fui-content navbar order-list' style="padding-bottom:0;">
+	<div class='fui-content navbar order-list' style="padding-bottom:0;">
 		<div class='fui-content-inner'>
 			<div class='content-loading'>
 				<span class='fui-preloader'></span>
@@ -30,7 +31,7 @@
 			</div>
 			<div class="fui-according-group" id="container"></div>
 		</div>
-    </div>
+	</div>
 	<script id='tpl_groups_order_list' type='text/html'>
 		<%each list as order%>
 		<div class='lynn_order_item'>
@@ -45,7 +46,11 @@
 					</div>
 					<div class="fui-list-inner">
 						<div class="lynn_order_list_title"><%order.title%></div>
-						<div class="lynn_order_list_subtitle"></div>
+						<%if order.is_ladder =='1' %>
+						<%/if%>
+						<%if order.more_spec == '1' %>
+						<span style="font-size: 0.6rem;color: #999"> <%order.option_name%></span>
+						<%/if%>
 					</div>
 					<div class='fui-list-angle'>
 						<span class='marketprice text-danger'>
@@ -56,7 +61,7 @@
 				</div>
 				<div class='lynn_order_price'>
 					<span class='status'>
-						运费: <span class='text-danger'>¥ <%order.freight%></span>元, 共 <span class='text-danger'>1</span> 个商品
+						共 <span class='text-danger'><%if order.units%><%order.goodsnum%><%else%>1<%/if%></span> 件商品
 						总额: <span class='text-danger'>¥ <%order.amount%></span>元
 					</span>
 				</div>
@@ -83,7 +88,7 @@
 					</div>
 				</span>
 				<%/if%>
-				<%if order.status==2%>
+				<%if order.status==2 && order.isverify==0%>
 				<span class='status'>
 					<a class="lynn_btn lynn_btn_finish order-finish" data-orderid="<%order.id%>" href="">确认收货</a>
 				</span>
@@ -101,9 +106,9 @@
 		<%/each%>
 	</script>
 	<script type='text/javascript'>
-		require(['../addons/ewei_shopv2/plugin/groups/static/js/orders.js'], function (modal) {
-			modal.init({fromDetail:false});
-		});
+        require(['../addons/ewei_shopv2/plugin/groups/static/js/orders.js'], function (modal) {
+            modal.init({fromDetail:false});
+        });
 	</script>
 	{if com('verify')}
 	{template 'groups/orders/verify'}

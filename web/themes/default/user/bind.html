@@ -18,8 +18,13 @@
 		<td>{{bindmobile.third_nickname}}</td>
 		<td>
 			<div class="link-group">
-			<a href="javascript:;"  data-toggle="modal" data-target="#myModal" ng-if="bindmobile.third_type == 3">解绑手机号</a>
-			<a href="javascript:;"  data-toggle="modal" data-target="#myModal" ng-if="bindmobile.third_type != 3">绑定手机号</a>
+				<a href="javascript:;"  data-toggle="modal" data-target="#myModal" ng-if="bindmobile.third_type == 3">解绑手机</a>
+				<a href="javascript:;"  data-toggle="modal" data-target="#myModal" ng-if="bindmobile.third_type != 3">绑定手机</a>
+				{if $_W['isadmin']}
+				<a href="javascript:;"  data-toggle="modal" data-target="#founderModal" ng-if="bindmobile.third_type == 3">更换手机</a>
+				{else}
+				<a href="{php echo url('user/profile/change_mobile')}" ng-if="bindmobile.third_type == 3">更换手机</a>
+				{/if}
 			</div>
 		</td>
 	</tr>
@@ -83,6 +88,32 @@
 			</div>
 		</div>
 	</div>
+	{if $_W['isadmin']}
+	<div class="modal fade basic" id="founderModal" tabindex="-1" role="dialog" aria-labelledby="founderModalLabel">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="founderModalLabel">
+						<span>选择验证方式</span>
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div class="sms-change-tip">
+						<p >创始人绑定的原始手机<span class="color-default">{{bindmobile.third_nickname | mobile}}</span>是否还在使用</p>
+						<p class="color-gray">如果手机号还能用，发送短信即可完成验证</p>
+					</div>
+					<a href="javascript:;" class="sms-change-type" style="display: none"　data-dismiss="modal" aria-label="Close">
+						手机号已停用
+					</a>
+					<a href="{php echo url('user/profile/change_mobile')}" class="sms-change-type">
+						手机号可以正常使用
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	{/if}
 	<!--end  账号绑定-->
 </table>
 </div>

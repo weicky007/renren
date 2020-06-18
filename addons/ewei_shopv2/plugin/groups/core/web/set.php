@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,7 +14,10 @@ class Set_EweiShopV2Page extends PluginWebPage
 		$set = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_set') . ' WHERE uniacid = :uniacid ', array(':uniacid' => $uniacid));
 
 		if ($_W['ispost']) {
-			$data2 = (is_array($_GPC['data2']) ? $_GPC['data2'] : array());
+			$goodsid = htmlspecialchars_decode($_GPC['goodsid']);
+			$goodsid = json_decode($goodsid, true);
+			$goodsid = array_keys($goodsid);
+			$data2 = is_array($_GPC['data2']) ? $_GPC['data2'] : array();
 			$exchangekeyword = $data2['exchangekeyword'];
 			$keyword = m('common')->keyExist($exchangekeyword);
 
@@ -37,7 +41,7 @@ class Set_EweiShopV2Page extends PluginWebPage
 			}
 
 			$this->updateSet($data2);
-			$data = array('uniacid' => $uniacid, 'groups' => intval($_GPC['data']['groups']), 'followurl' => trim($_GPC['data']['followurl']), 'followqrcode' => trim($_GPC['data']['followqrcode']), 'groupsurl' => trim($_GPC['data']['groupsurl']), 'share_title' => trim($_GPC['data']['share_title']), 'share_icon' => trim($_GPC['data']['share_icon']), 'share_desc' => trim($_GPC['data']['share_desc']), 'share_url' => trim($_GPC['data']['share_url']), 'groups_description' => m('common')->html_images($_GPC['groups_description']), 'rules' => m('common')->html_images($_GPC['rules']), 'description' => intval($_GPC['data']['description']), 'creditdeduct' => intval($_GPC['data']['creditdeduct']), 'credit' => intval($_GPC['data']['credit']), 'groupsdeduct' => intval($_GPC['data']['groupsdeduct']), 'groupsmoney' => $_GPC['data']['groupsmoney'], 'refund' => intval($_GPC['data']['refund']), 'refundday' => intval($_GPC['data']['refundday']), 'receive' => intval($_GPC['data']['receive']), 'discount' => intval($_GPC['data']['discount']), 'headstype' => intval($_GPC['headstype']), 'headsmoney' => floatval($_GPC['headsmoney']), 'headsdiscount' => intval($_GPC['headsdiscount']), 'goodsid' => !empty($_GPC['goodsid']) ? implode(',', $_GPC['goodsid']) : 0);
+			$data = array('uniacid' => $uniacid, 'groups' => intval($_GPC['data']['groups']), 'followurl' => trim($_GPC['data']['followurl']), 'followqrcode' => trim($_GPC['data']['followqrcode']), 'groupsurl' => trim($_GPC['data']['groupsurl']), 'share_title' => trim($_GPC['data']['share_title']), 'share_icon' => trim($_GPC['data']['share_icon']), 'share_desc' => trim($_GPC['data']['share_desc']), 'share_url' => trim($_GPC['data']['share_url']), 'groups_description' => m('common')->html_images($_GPC['groups_description']), 'rules' => m('common')->html_images($_GPC['rules']), 'description' => intval($_GPC['data']['description']), 'creditdeduct' => intval($_GPC['data']['creditdeduct']), 'credit' => intval($_GPC['data']['credit']), 'groupsdeduct' => intval($_GPC['data']['groupsdeduct']), 'groupsmoney' => $_GPC['data']['groupsmoney'], 'refund' => intval($_GPC['data']['refund']), 'refundday' => intval($_GPC['data']['refundday']), 'receive' => intval($_GPC['data']['receive']), 'discount' => intval($_GPC['data']['discount']), 'headstype' => intval($_GPC['headstype']), 'headsmoney' => floatval($_GPC['headsmoney']), 'headsdiscount' => intval($_GPC['headsdiscount']), 'goodsid' => !empty($goodsid) ? implode(',', $goodsid) : 0, 'followbar' => intval($_GPC['data']['followbar']));
 
 			if (!empty($set)) {
 				$set_update = pdo_update('ewei_shop_groups_set', $data, array('id' => $set['id'], 'uniacid' => $uniacid));
@@ -59,9 +63,16 @@ class Set_EweiShopV2Page extends PluginWebPage
 		$sys_data = m('common')->getPluginset('sale');
 		$data2 = $this->set;
 		$data = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_groups_set') . ' WHERE uniacid = :uniacid ', array(':uniacid' => $uniacid));
+		$data['rules'] = m('common')->html_to_images($data['rules']);
+
+		if (empty($data['rules'])) {
+			$data['rules'] = '<p style=\'color: #ccc;font-size: 14px;\'>发起拼团支付成功后，可邀请好友进行参团，在拼团有效时间内达到成团人数则拼团成功。</p><p style=\'color: #ccc;font-size: 14px;\'>若在拼团有效期内未凑齐人数，即为拼团失败。对于拼团失败的订单，系统会将支付的货款原路退回，具体到账时间以各银行为准。</p>';
+		}
 
 		if ($data['goodsid']) {
-			$goods = pdo_fetchall('SELECT id,title,thumb FROM ' . tablename('ewei_shop_groups_goods') . "\r\n                    WHERE uniacid = :uniacid and id in (" . $data['goodsid'] . ') ', array(':uniacid' => $uniacid));
+			$goods = pdo_fetchall('SELECT *,groupsprice as marketprice  FROM ' . tablename('ewei_shop_groups_goods') . ('
+                    WHERE uniacid = :uniacid and id in (' . $data['goodsid'] . ') '), array(':uniacid' => $uniacid), 'id');
+			$goods = set_medias($goods, 'thumb');
 		}
 
 		include $this->template();
@@ -82,7 +93,7 @@ class Set_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title,rights,thumb FROM ' . tablename('ewei_shop_groups_goods') . ' WHERE 1 ' . $condition . ' order by createtime desc', $params);
+		$ds = pdo_fetchall('SELECT id,title,rights,thumb FROM ' . tablename('ewei_shop_groups_goods') . (' WHERE 1 ' . $condition . ' order by createtime desc'), $params);
 		$ds = set_medias($ds, array('thumb', 'share_icon'));
 
 		if ($_GPC['suggest']) {

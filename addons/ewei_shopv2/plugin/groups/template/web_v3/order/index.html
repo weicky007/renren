@@ -100,7 +100,8 @@
     }
 </style>
 <div class="page-header">
-    当前位置：<span class="text-primary">订单管理 </span>
+    当前位置：<span class="text-primary">订单管理</span>
+    <span>订单数:  <span class='text-danger'>{php echo $total}</span> 订单金额:  <span class='text-danger'>{php echo "￥"."$totalmoney"}</span>
 </div>
 <div class="page-content">
     <div class="main">
@@ -114,7 +115,7 @@
             <div class="page-toolbar m-b-sm m-t-sm">
                 <div class="col-sm-5">
                     <div class="btn-group btn-group-sm" style='float:left'>
-                        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                        {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                     </div>
                 </div>
                 <div class="col-sm-7 pull-right">
@@ -147,7 +148,7 @@
                             </select>
                         </div>
                         <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"/>
-                    <span class="input-group-btn">
+                        <span class="input-group-btn">
                         <button class="btn btn-primary" type="submit"> 搜索</button>
                         <button type="submit" name="export" value="1" class="btn btn-success">导出</button>
                     </span>
@@ -179,28 +180,36 @@
                 <td colspan='4' style='text-align:right;font-size:12px;' class='aops'>
 
 
+                    {ifp 'groups.order.delete'}
+                    <a class='op'  data-toggle='ajaxPost' href="{php echo webUrl('groups/order/delete',array('id'=>$item['id']))}" data-confirm="删除后无法恢复，确认删除订单吗？" >
+                        <i class="icow icow-shanchu1"  style="color: #999;display: inline-block;vertical-align: middle;"></i>
+                        删除订单
+                        &nbsp
+                    </a>
+                    {/if}
+
                     {ifp 'groups.order.remarksaler'}
 
                     <a class='op'  data-toggle="ajaxModal" href="{php echo webUrl('groups/order/remarksaler', array('id' => $item['id']))}">
                         {if !empty($item['remark'])}
-                    <i class="icow icow-flag-o" style="color: #df5254;display: inline-block;vertical-align: middle" title="  查看备注"></i>
-                    备注
-                    &nbsp
-                    {else}
-                    <i class="icow icow-yibiaoji" style="color: #999;display: inline-block;vertical-align: middle" title="  添加备注" ></i>
-                    备注
-                    &nbsp
-                    {/if}
+                        <i class="icow icow-flag-o" style="color: #df5254;display: inline-block;vertical-align: middle" title="  查看备注"></i>
+                        备注
+                        &nbsp
+                        {else}
+                        <i class="icow icow-yibiaoji" style="color: #999;display: inline-block;vertical-align: middle" title="  添加备注" ></i>
+                        备注
+                        &nbsp
+                        {/if}
                     </a>
                     {/if}
                     {if !empty($item['expresssn']) && $item['status']>=2 && !empty($item['addressid'])}
-                    <a class='op' data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}">
+                    <a class='op' data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'], 'mobile'=>$item['addressdata']['mobile']))}">
                         <i class="icow icow-wuliu" style="color: #999;display: inline-block;vertical-align: middle;"></i>
                         查看物流
                         &nbsp
                     </a>
                     {/if}
-                    {if $item['status'] >= 0 && $item['status'] < 3 }
+                    {if $item['status'] == 0 }
                     {ifp 'groups.order.close'}
                     <a class='op'  data-toggle='ajaxModal' href="{php echo webUrl('groups/order/close',array('id'=>$item['id']))}" >
                         <i class="icow icow-shutDown"  style="color: #999;display: inline-block;vertical-align: middle;"></i>
@@ -213,14 +222,16 @@
             </tr>
             <tr class='trbody'>
                 <td style='overflow:hidden;'><img src="{php echo tomedia($item['thumb'])}" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;'></td>
-                <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}</td>
+                <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}<br/>
+                    <span style="color: #999"> {if !empty($item['optiontitle'])}{$item['optiontitle']}{/if}{$item['goodssn']}</span>
+                </td>
                 <td style='text-align:right;border-left:none;'>
                     {if !$item['title'] && !$item['thumb']}
                     {php echo number_format($item['price'],2)}
                     {else}
                     ¥ {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
                     {/if}
-                    <br/>x1
+                    <br/>x{$item['goodsnum']}
                 </td>
                 <td  style='text-align: center;' >
                     {if $item['pay_type']=='system'}系统虚拟{/if}
@@ -345,40 +356,47 @@
                 </td>
                 <td style='text-align:center' >
                     <a class='op text-primary'  href="{php echo webUrl('groups/order/detail', array('orderid' => $item['id']))}" >查看详情</a>
+                    <br/>
+                    {if !empty($item['refundid'])}
+                    <a class='op  text-primary'  href="{php echo webUrl('groups/refund/detail', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a>
+                    {/if}
                 </td>
                 <td  class='ops' style='line-height:20px;text-align:center' >
                     {if $item['status'] == 0}<span class='text-warning'>待付款</span>{/if}
                     {if $item['is_team']==1}
-                        {if $item['status'] == 1 && $item['success'] == 0}<span class='text-success'>已付款</span>{/if}
-                        {if $item['status'] == 1 && $item['success'] == 1}
-                        {if $item['isverify'] == 1}
-                        <span class='text-warning'>待核销</span>{else}
-                        <span class='text-warning'>待发货</span>
-                        {/if}{/if}
-                        {if $item['status'] == 1 && $item['success'] == -1}<span class='text-warning'>待退款</span>{/if}
+                    {if $item['status'] == 1 && $item['success'] == 0}<span class='text-success'>已付款</span>{/if}
+                    {if $item['status'] == 1 && $item['success'] == 1}
+                    {if $item['isverify'] == 1}
+                    <span class='text-warning'>待核销</span>{else}
+                    <span class='text-warning'>待发货</span>
+                    {/if}{/if}
+                    {if $item['status'] == 1 && $item['success'] == -1}<span class='text-warning'>待退款</span>{/if}
                     {else}
-                        {if $item['status'] == 1}
-                            {if $item['isverify'] == 1}<span class='text-warning'>待核销</span>{else}
-                            <span class='text-warning'>待发货</span>
-                            {/if}
-                        {/if}
+                    {if $item['status'] == 1}
+                    {if $item['isverify'] == 1}<span class='text-warning'>待核销</span>{else}
+                    <span class='text-warning'>待发货</span>
+                    {/if}
+                    {/if}
                     {/if}
                     {if $item['deleted'] == 1}
-                        <span class='text-default'>用户已删除</span>
+                    <span class='text-default'>用户已删除</span>
                     {else}
-                        {if $item['status'] == 2}<span class='text-warning'>待收货</span>{/if}
-                        {if $item['status'] == 3}<span class='text-success'>已完成</span>{/if}
-                        {if $item['status'] == -1}<span class='text-default'>已取消</span>{/if}
+                    {if $item['status'] == 2}<span class='text-warning'>待收货</span>{/if}
+                    {if $item['status'] == 3}<span class='text-success'>已完成</span>{/if}
+                    {if $item['status'] == -1}<span class='text-default'>已取消</span>{/if}
                     {/if}
                     <br />
                     {template 'groups/order/ops'}
                 </td>
             </tr>
             <tr style="border-bottom:none;background:#f9f9f9;">
-                <td colspan='8' style='text-align:left;height:0;padding:0'></td>
+                <td colspan='8' style='text-align:left;height:0;padding:0'>
+                    {if !empty($item['message'])} <span style="color: #ff5555">买家备注: {$item['message']}</span>{/if}
+                </td>
             </tr>
             {/loop}
         </table>
+
         <div style="text-align:right;width:100%;">
             {$pager}
         </div>

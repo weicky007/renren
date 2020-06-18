@@ -2,32 +2,37 @@
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/sign/static/css/sign.css?v=2.0.0">
 
 {if !empty($set['maincolor']) && $set['maincolor']!='#24b2f4'}
-    <style>
-        .member-page .headinfo,
-        .advaward .body .award-body .item .iconn.candraw,
-        .btn.btn-warning.btn-know {background: {$set['maincolor']};}
-        .calendar .title,
-        .select-date,
-        .advaward .body .award-body .item .days.candraw,
-        .advaward .body .award-body .item .text.candraw,
-        .calendar .body .week .day .signed {color: {$set['maincolor']};}
-        .calendar .body .week .day.today:before,
-        .advaward .body .award-body .item .text.candraw {border-color: {$set['maincolor']};}
-    </style>
+<style>
+    .member-page .headinfo,
+    .advaward .body .award-body .item .iconn.candraw,
+    .btn.btn-warning.btn-know {background: {$set['maincolor']};}
+    .calendar .title,
+    .select-date,
+    .advaward .body .award-body .item .days.candraw,
+    .advaward .body .award-body .item .text.candraw,
+    .calendar .body .week .day .signed {color: {$set['maincolor']};}
+    .calendar .body .week .day.today:before,
+    .advaward .body .award-body .item .text.candraw {border-color: {$set['maincolor']};}
+</style>
 {/if}
 
 <div class='fui-page fui-page-current'>
     <div class="fui-header">
+        {if !$_SESSION['sign_xcx_isminiprogram']}
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
+        {/if}
         <div class="title">{$set['textcredit']}{$set['textsign']}</div>
         <div class="fui-header-right">
+            {if !$_SESSION['sign_xcx_isminiprogram']}
             <a href="{php echo mobileUrl()}" class="external">
                 <i class="icon icon-home"></i>
             </a>
+            {/if}
         </div>
     </div>
+
     <div class='fui-content member-page navbar'>
 
         <div class="headinfo">
@@ -63,14 +68,14 @@
                     </select>
                 </span>
                 {if !empty($set['sign_rule'])}
-                    <span class="rule" id="signrule">{$set['textsign']}规则</span>
+                <span class="rule" id="signrule">{$set['textsign']}规则</span>
                 {/if}
             </div>
             <div class="body" id="calendar">
                 {template 'sign/calendar'}
             </div>
             {if !empty($set['signold'])}
-                <div class="fui-title" style="background: #fff; margin: 0; padding-bottom: 0.5rem">提示：点击{$set['textsignforget']}日期可{$set['textsignold']}哦~</div>
+            <div class="fui-title" style="background: #fff; margin: 0; padding-bottom: 0.5rem">提示：点击{$set['textsignforget']}日期可{$set['textsignold']}哦~</div>
             {/if}
         </div>
         <div id="advaward">
@@ -97,11 +102,11 @@
         </div>
     </div>
     {if p('lottery')}
-        <div id="changesmodel" style="display: none;width: 90%">
-            <div id="changescontent" onclick="" class="task-model" style="background: url('../addons/ewei_shopv2/plugin/lottery/static/images/changes.png');background-size: cover; width: 90%; height: 16rem;  background-size: cover;position: relative;margin: 0 auto; margin-bottom: 55%;">
+    <div id="changesmodel" style="display: none;width: 90%">
+        <div id="changescontent" onclick="" class="task-model" style="background: url('../addons/ewei_shopv2/plugin/lottery/static/images/changes.png');background-size: cover; width: 90%; height: 16rem;  background-size: cover;position: relative;margin: 0 auto; margin-bottom: 55%;">
             <span class="changes-btn-close" style="border: 1px solid dodgerblue; color: dodgerblue; border-radius: 50%; position: absolute;right: 5px; padding: 0.2rem 0.4rem;top: 5px;z-index: 10"><i class="icon icon-close"></i><span>
-            </div>
         </div>
+    </div>
     {/if}
     <script language='javascript'>
         require(['../addons/ewei_shopv2/plugin/sign/static/js/index.js'],function(modal){modal.init({$json});});
@@ -109,3 +114,4 @@
 </div>
 {php $this->footerMenus(null, false, $texts)}
 {template '_footer'}
+<!--4000097827-->

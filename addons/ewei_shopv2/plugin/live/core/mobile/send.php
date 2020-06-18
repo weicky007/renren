@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -37,7 +38,9 @@ class Send_EweiShopV2Page extends PluginMobilePage
 			return false;
 		}
 
-		com('coupon')->poster($member, $couponid, 1, 12);
+		if (com('coupon')) {
+			com('coupon')->poster($member, $couponid, 1, 12);
+		}
 	}
 
 	/**

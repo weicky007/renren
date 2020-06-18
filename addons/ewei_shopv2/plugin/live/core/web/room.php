@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -48,9 +49,13 @@ class Room_EweiShopV2Page extends PluginWebPage
 			$params[':isrecommand'] = intval($_GPC['isrecommand']);
 		}
 
-		$sql = 'SELECT l.*,lc.name FROM ' . tablename('ewei_shop_live') . " as l\n\t\t        left join " . tablename('ewei_shop_live_category') . " as lc on lc.id = l.category\n\t\t        where  1 and " . $condition . ' ORDER BY l.displayorder DESC,l.id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT l.*,lc.name FROM ' . tablename('ewei_shop_live') . ' as l
+		        left join ' . tablename('ewei_shop_live_category') . (' as lc on lc.id = l.category
+		        where  1 and ' . $condition . ' ORDER BY l.displayorder DESC,l.id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_live') . " as l\n\t\t        left join " . tablename('ewei_shop_live_category') . " as lc on lc.id = l.category\n\t\t        where  1 and " . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_live') . ' as l
+		        left join ' . tablename('ewei_shop_live_category') . (' as lc on lc.id = l.category
+		        where  1 and ' . $condition), $params);
 
 		foreach ($list as $key => &$value) {
 			if ($value['covertype'] == 1) {
@@ -101,14 +106,27 @@ class Room_EweiShopV2Page extends PluginWebPage
 			$coupon = array();
 
 			if (!empty($item['couponid'])) {
-				$coupon = pdo_fetchall('select c.couponname,c.thumb,c.id,lc.coupontotal,lc.couponlimit from ' . tablename('ewei_shop_live_coupon') . " as lc\n                        left join " . tablename('ewei_shop_coupon') . " as c on c.id = lc.couponid\n                        where lc.uniacid = " . $uniacid . ' and lc.roomid = ' . $id . ' and lc.couponid in(' . $item['couponid'] . ')  ');
+				$coupon = pdo_fetchall('select c.couponname,c.thumb,c.id,lc.coupontotal,lc.couponlimit from ' . tablename('ewei_shop_live_coupon') . ' as lc
+                        left join ' . tablename('ewei_shop_coupon') . ' as c on c.id = lc.couponid
+                        where lc.uniacid = ' . $uniacid . ' and lc.roomid = ' . $id . ' and lc.couponid in(' . $item['couponid'] . ')  ');
 			}
 
 			$couponid = $item['couponid'];
 		}
 
+		$goodsarr = json_decode(htmlspecialchars_decode($_GPC['goodsarr']), true);
+		$goodsid = array();
+
+		if (!empty($goodsarr)) {
+			foreach ($goodsarr as $goods) {
+				$goodsid[] = $goods['id'];
+			}
+		}
+
+		$goodsids = implode(',', $goodsid);
+
 		if ($_W['ispost']) {
-			$data = array('displayorder' => intval($_GPC['displayorder']), 'uniacid' => $uniacid, 'title' => trim($_GPC['title']), 'liveidentity' => trim($_GPC['liveidentity']), 'url' => trim($_GPC['url']), 'video' => trim($_GPC['video']), 'thumb' => save_media($_GPC['thumb']), 'cover' => save_media($_GPC['cover']), 'covertype' => intval($_GPC['covertype']), 'goodsid' => $_GPC['goodsid'], 'iscoupon' => intval($_GPC['iscoupon']), 'couponid' => $_GPC['couponid'], 'livetype' => intval($_GPC['livetype']), 'screen' => intval($_GPC['screen']), 'category' => intval($_GPC['category']), 'livetime' => strtotime($_GPC['livetime']), 'recommend' => intval($_GPC['recommend']), 'hot' => intval($_GPC['hot']), 'status' => intval($_GPC['status']), 'introduce' => m('common')->html_images($_GPC['introduce']), 'packetmoney' => floatval($_GPC['packetmoney']), 'packettotal' => intval($_GPC['packettotal']), 'packetprice' => floatval($_GPC['packetprice']), 'packetdes' => trim($_GPC['packetdes']), 'invitation_id' => intval($_GPC['invitation_id']), 'showlevels' => is_array($_GPC['showlevels']) ? implode(',', $_GPC['showlevels']) : '', 'showgroups' => is_array($_GPC['showgroups']) ? implode(',', $_GPC['showgroups']) : '', 'showcommission' => is_array($_GPC['showcommission']) ? implode(',', $_GPC['showcommission']) : '', 'jurisdiction_url' => trim($_GPC['jurisdiction_url']), 'jurisdictionurl_show' => intval($_GPC['jurisdictionurl_show']), 'notice' => trim($_GPC['notice']), 'notice_url' => trim($_GPC['notice_url']), 'followqrcode' => trim($_GPC['followqrcode']), 'share_title' => trim($_GPC['share_title']), 'share_icon' => trim($_GPC['share_icon']), 'share_desc' => trim($_GPC['share_desc']), 'share_url' => trim($_GPC['share_url']));
+			$data = array('displayorder' => intval($_GPC['displayorder']), 'uniacid' => $uniacid, 'title' => trim($_GPC['title']), 'liveidentity' => trim($_GPC['liveidentity']), 'url' => trim($_GPC['url']), 'video' => trim($_GPC['video']), 'thumb' => save_media($_GPC['thumb']), 'cover' => save_media($_GPC['cover']), 'covertype' => intval($_GPC['covertype']), 'goodsid' => $goodsids, 'iscoupon' => intval($_GPC['iscoupon']), 'couponid' => $_GPC['couponid'], 'livetype' => intval($_GPC['livetype']), 'screen' => intval($_GPC['screen']), 'category' => intval($_GPC['category']), 'livetime' => strtotime($_GPC['livetime']), 'recommend' => intval($_GPC['recommend']), 'hot' => intval($_GPC['hot']), 'status' => intval($_GPC['status']), 'introduce' => m('common')->html_images($_GPC['introduce']), 'packetmoney' => floatval($_GPC['packetmoney']), 'packettotal' => intval($_GPC['packettotal']), 'packetprice' => floatval($_GPC['packetprice']), 'packetdes' => trim($_GPC['packetdes']), 'invitation_id' => intval($_GPC['invitation_id']), 'showlevels' => is_array($_GPC['showlevels']) ? implode(',', $_GPC['showlevels']) : '', 'showgroups' => is_array($_GPC['showgroups']) ? implode(',', $_GPC['showgroups']) : '', 'showcommission' => is_array($_GPC['showcommission']) ? implode(',', $_GPC['showcommission']) : '', 'jurisdiction_url' => trim($_GPC['jurisdiction_url']), 'jurisdictionurl_show' => intval($_GPC['jurisdictionurl_show']), 'notice' => trim($_GPC['notice']), 'notice_url' => trim($_GPC['notice_url']), 'followqrcode' => trim($_GPC['followqrcode']), 'share_title' => trim($_GPC['share_title']), 'share_icon' => trim($_GPC['share_icon']), 'share_desc' => trim($_GPC['share_desc']), 'share_url' => trim($_GPC['share_url']));
 			$nestable = $_GPC['nestable'];
 			$tabs = array(
 				'interaction' => array('name' => trim($_GPC['dtab']['tabtitle']), 'isshow' => 1),
@@ -118,7 +136,7 @@ class Room_EweiShopV2Page extends PluginWebPage
 				'customname2' => array('name' => trim($_GPC['dtab']['customname2']), 'type' => trim($_GPC['dtab']['customtype2']), 'url' => $_GPC['dtab']['customurl2'], 'introduce' => m('common')->html_images($_GPC['dtab']['customintroduce2']), 'isshow' => in_array('customname2', $nestable) ? 1 : 0),
 				'customname3' => array('name' => trim($_GPC['dtab']['customname3']), 'type' => trim($_GPC['dtab']['customtype3']), 'url' => $_GPC['dtab']['customurl3'], 'introduce' => m('common')->html_images($_GPC['dtab']['customintroduce3']), 'isshow' => in_array('customname3', $nestable) ? 1 : 0),
 				'customname4' => array('name' => trim($_GPC['dtab']['customname4']), 'type' => trim($_GPC['dtab']['customtype4']), 'url' => $_GPC['dtab']['customurl4'], 'introduce' => m('common')->html_images($_GPC['dtab']['customintroduce4']), 'isshow' => in_array('customname4', $nestable) ? 1 : 0)
-				);
+			);
 			$tab_total = !intval($tabs['goods']['isshow']) + !intval($tabs['introduce']['isshow']) + intval($tabs['customname1']['isshow']) + intval($tabs['customname2']['isshow']) + intval($tabs['customname3']['isshow']) + intval($tabs['customname4']['isshow']);
 
 			if (4 < $tab_total) {
@@ -166,9 +184,8 @@ class Room_EweiShopV2Page extends PluginWebPage
 				show_json(0, '直播地址不能为空！');
 			}
 
-			if (!empty($_GPC['goodsid'])) {
-				$goodsid = $data['goodsid'];
-				$data['goodsid'] = is_array($_GPC['goodsid']) ? implode(',', $_GPC['goodsid']) : 0;
+			if (!empty($goodsid)) {
+				$data['goodsid'] = is_array($goodsid) ? implode(',', $goodsid) : 0;
 			}
 
 			if (!empty($data['couponid'])) {
@@ -209,56 +226,49 @@ class Room_EweiShopV2Page extends PluginWebPage
 				plog('live.room.add', '添加直播间 ID: ' . $id . '  <br/>全返名称: ' . $data['title']);
 			}
 
-			$option = $_GPC['livegoods'];
 			$goodsliveid = $item['goodsid'];
 
-			if (!empty($goodsid)) {
-				foreach ($goodsid as $key => $value) {
-					$good_data = pdo_fetch("select title,thumb,marketprice,goodssn,productsn,hasoption\n                            from " . tablename('ewei_shop_goods') . ' where id = ' . $value . ' and uniacid = ' . $uniacid . ' ');
+			if (!empty($goodsarr)) {
+				foreach ($goodsarr as $key => $value) {
+					$good_data = pdo_fetch('select title,thumb,marketprice,goodssn,productsn,hasoption
+                            from ' . tablename('ewei_shop_goods') . ' where id = ' . $value['id'] . ' and uniacid = ' . $uniacid . ' ');
 
 					if (empty($data['thumb'])) {
 						$data['thumb'] = save_media($good_data['thumb']);
 					}
 
-					$good_data['option'] = $option[$value] ? $option[$value] : '';
-					if ($good_data['hasoption'] && empty($good_data['option'])) {
-						show_json(0, '请选择商品规格！');
-					}
+					if (!empty($value['options'])) {
+						pdo_delete('ewei_shop_live_goods_option', array('goodsid' => $value['id'], 'uniacid' => $uniacid, 'liveid' => intval($id)));
 
-					$liveprice = floatval($_GPC['liveprice' . $value . '']);
-
-					if (!empty($good_data['option'])) {
-						$liveOption = array_filter(explode(',', $good_data['option']));
-						pdo_delete('ewei_shop_live_goods_option', array('goodsid' => $value, 'uniacid' => $uniacid, 'liveid' => intval($id)));
-
-						foreach ($liveOption as $val) {
-							$livegoodsoption = $_GPC['livegoodsoption' . $val . ''];
-							$optionData = array('uniacid' => $uniacid, 'goodsid' => $value, 'optionid' => intval($val), 'liveid' => $id, 'liveprice' => floatval($livegoodsoption));
+						foreach ($value['options'] as $options) {
+							$live_price = $options['column']['liveprice'] == NULL ? $options['marketprice'] : $options['column']['liveprice'];
+							$optionData = array('uniacid' => $uniacid, 'goodsid' => $value['id'], 'optionid' => intval($options['id']), 'liveid' => $id, 'liveprice' => floatval($live_price));
 							pdo_insert('ewei_shop_live_goods_option', $optionData);
 						}
 
-						$livegoods_option = pdo_fetch('select min(liveprice) as minliveprice,max(liveprice) as maxliveprice from ' . tablename('ewei_shop_live_goods_option') . ' where goodsid = ' . $value . ' and liveid = ' . $id . ' ');
+						$livegoods_option = pdo_fetch('select min(liveprice) as minliveprice,max(liveprice) as maxliveprice from ' . tablename('ewei_shop_live_goods_option') . ' where goodsid = ' . $value['id'] . ' and liveid = ' . $id . ' ');
 						$minliveprice = $livegoods_option['minliveprice'];
 						$maxliveprice = $livegoods_option['maxliveprice'];
 						$liveprice = $livegoods_option['minliveprice'];
 					}
 					else {
-						$liveprice = floatval($_GPC['goods' . $value . '']);
+						$live_price = $value['column']['liveprice'] == NULL ? $value['marketprice'] : $value['column']['liveprice'];
+						$liveprice = floatval($live_price);
 						$minliveprice = $maxliveprice = $liveprice;
 					}
 
-					if (strpos($goodsliveid, $value) !== false) {
-						$goodsliveid = str_replace($value, '', $goodsliveid);
+					if (strpos($goodsliveid, $value['id']) !== false) {
+						$goodsliveid = str_replace($value['id'], '', $goodsliveid);
 					}
 
-					$live_goods = pdo_fetch('select * from ' . tablename('ewei_shop_live_goods') . ' where goodsid = ' . $value . ' and uniacid = ' . $uniacid . ' and liveid = ' . $id . ' ');
+					$live_goods = pdo_fetch('select * from ' . tablename('ewei_shop_live_goods') . ' where goodsid = ' . $value['id'] . ' and uniacid = ' . $uniacid . ' and liveid = ' . $id . ' ');
 
 					if (empty($live_goods)) {
-						$live_goods_data = array('uniacid' => $uniacid, 'goodsid' => $value, 'liveid' => $id, 'minliveprice' => floatval($minliveprice), 'liveprice' => floatval($liveprice), 'maxliveprice' => floatval($maxliveprice), 'liveid' => $id);
+						$live_goods_data = array('uniacid' => $uniacid, 'goodsid' => $value['id'], 'liveid' => $id, 'minliveprice' => floatval($minliveprice), 'liveprice' => floatval($liveprice), 'maxliveprice' => floatval($maxliveprice), 'liveid' => $id);
 						pdo_insert('ewei_shop_live_goods', $live_goods_data);
 					}
 					else {
-						pdo_update('ewei_shop_live_goods', array('minliveprice' => floatval($minliveprice), 'liveprice' => floatval($minliveprice), 'maxliveprice' => floatval($maxliveprice)), array('uniacid' => $uniacid, 'goodsid' => intval($value), 'liveid' => $id));
+						pdo_update('ewei_shop_live_goods', array('minliveprice' => floatval($minliveprice), 'liveprice' => floatval($minliveprice), 'maxliveprice' => floatval($maxliveprice)), array('uniacid' => $uniacid, 'goodsid' => intval($value['id']), 'liveid' => $id));
 					}
 
 					unset($liveprice);
@@ -288,7 +298,7 @@ class Room_EweiShopV2Page extends PluginWebPage
 			$nestables = array('interaction', 'goods', 'introduce');
 		}
 
-		$isInvitation = (p('invitation') ? true : false);
+		$isInvitation = p('invitation') ? true : false;
 		$invitation = array();
 
 		if ($isInvitation) {
@@ -303,8 +313,8 @@ class Room_EweiShopV2Page extends PluginWebPage
 
 		unset($l);
 		$levels = array_merge(array(
-	array('id' => 0, 'key' => 'default', 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
-	), $levels);
+			array('id' => 0, 'key' => 'default', 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
+		), $levels);
 		$groups = m('member')->getGroups();
 
 		if ($item['showlevels'] != '') {
@@ -328,7 +338,6 @@ class Room_EweiShopV2Page extends PluginWebPage
 		}
 
 		$liveidentity = array(
-			array('type' => 0, 'identity' => 'shuidi', 'name' => '水滴直播'),
 			array('type' => 0, 'identity' => 'qlive', 'name' => '青果直播'),
 			array('type' => 0, 'identity' => 'ys7', 'name' => '萤石直播'),
 			array('type' => 1, 'identity' => 'panda', 'name' => '熊猫直播'),
@@ -339,21 +348,27 @@ class Room_EweiShopV2Page extends PluginWebPage
 			array('type' => 2, 'identity' => 'tencentcloud', 'name' => '腾讯云直播'),
 			array('type' => 2, 'identity' => 'alicloud', 'name' => '阿里云直播'),
 			array('type' => 2, 'identity' => 'other', 'name' => '其他直播')
-			);
+		);
 		$category = pdo_fetchall('select * from ' . tablename('ewei_shop_live_category') . ' where uniacid = ' . $uniacid . ' and enabled = 1 ');
-		if ((0 < $id) && !empty($item['goodsid'])) {
-			$goods = pdo_fetchall('select g.id,g.title,g.marketprice,lg.liveprice,lg.minliveprice,lg.maxliveprice,g.thumb,g.hasoption,lg.liveid from ' . tablename('ewei_shop_live_goods') . " as lg \n            left join " . tablename('ewei_shop_goods') . " as g on lg.goodsid = g.id and lg.uniacid = g.uniacid\n            where lg.liveid = " . $id . ' and lg.uniacid = ' . $uniacid . ' ');
+		if (0 < $id && !empty($item['goodsid'])) {
+			$goods = pdo_fetchall('select g.id,g.title,g.marketprice,lg.liveprice,lg.minliveprice,lg.maxliveprice,g.thumb,g.hasoption,lg.liveid,g.total  from ' . tablename('ewei_shop_live_goods') . ' as lg 
+            left join ' . tablename('ewei_shop_goods') . ' as g on lg.goodsid = g.id and lg.uniacid = g.uniacid
+            where lg.liveid = ' . $id . ' and lg.uniacid = ' . $uniacid . ' ');
 
 			foreach ($goods as $key => $value) {
+				$goods[$key]['thumb'] = tomedia($goods[$key]['thumb']);
+
 				if (0 < $value['hasoption']) {
-					$goods[$key]['option'] = pdo_fetchall('SELECT go.id,go.title,go.marketprice,go.specs,lgo.liveprice,lgo.liveid,lgo.optionid FROM ' . tablename('ewei_shop_goods_option') . " as go\n                    left join " . tablename('ewei_shop_live_goods_option') . ' as lgo on lgo.optionid = go.id and lgo.goodsid = go.goodsid and lgo.uniacid = go.uniacid and lgo.liveid = ' . $id . "\n                    WHERE go.uniacid = :uniacid and go.goodsid = :goodsid  ORDER BY go.displayorder DESC,go.id DESC ", array(':uniacid' => $uniacid, 'goodsid' => $value['id']));
-					$optionid = array();
+					$goods[$key]['options'] = pdo_fetchall('SELECT go.id,lgo.liveprice FROM ' . tablename('ewei_shop_live_goods_option') . ' as lgo
+                    left join ' . tablename('ewei_shop_goods_option') . ' as go on lgo.optionid=go.id and lgo.goodsid=go.goodsid and lgo.uniacid=go.uniacid and lgo.liveid = ' . $id . '
+                    WHERE go.uniacid = :uniacid and go.goodsid = :goodsid  ORDER BY go.displayorder DESC,go.id DESC ', array(':uniacid' => $uniacid, 'goodsid' => $value['id']));
 
-					foreach ($goods[$key]['option'] as $k => $val) {
-						Array_push($optionid, $val['optionid']);
+					foreach ($goods[$key]['options'] as $k => $val) {
+						$goods[$key]['options'][$k]['column']['liveprice'] = $goods[$key]['options'][$k]['liveprice'];
 					}
-
-					$goods[$key]['optionid'] = implode(',', $optionid);
+				}
+				else {
+					$goods[$key]['column']['liveprice'] = $goods[$key]['liveprice'];
 				}
 			}
 		}
@@ -428,7 +443,10 @@ class Room_EweiShopV2Page extends PluginWebPage
 
 		$list = array();
 		$order = array();
-		$order = pdo_fetchall('select og.goodsid,og.price,og.total,g.title from ' . tablename('ewei_shop_order') . " as o \n                left join " . tablename('ewei_shop_order_goods') . " as og on og.orderid = o.id \n                left join " . tablename('ewei_shop_goods') . " as g on og.goodsid = g.id\n                where o.uniacid = " . $uniacid . ' and o.liveid = ' . $roomid . ' and o.createtime >= ' . $start . ' and o.createtime <= ' . $end . ' and o.status >= 1 and o.refundid = 0  ');
+		$order = pdo_fetchall('select og.goodsid,og.price,og.total,g.title from ' . tablename('ewei_shop_order') . ' as o 
+                left join ' . tablename('ewei_shop_order_goods') . ' as og on og.orderid = o.id 
+                left join ' . tablename('ewei_shop_goods') . ' as g on og.goodsid = g.id
+                where o.uniacid = ' . $uniacid . ' and o.liveid = ' . $roomid . ' and o.createtime >= ' . $start . ' and o.createtime <= ' . $end . ' and o.status >= 1 and o.refundid = 0  ');
 		$len = count($order);
 		$total = 0;
 		$allprice = 0;
@@ -457,8 +475,8 @@ class Room_EweiShopV2Page extends PluginWebPage
 
 		foreach ($list as $key => $value) {
 			$list[$key]['price'] = price_format($value['price'], 2);
-			$list[$key]['totalpro'] = number_format(($value['total'] / $total) * 100, 0);
-			$list[$key]['pricepro'] = number_format(($value['price'] / $allprice) * 100, 0);
+			$list[$key]['totalpro'] = number_format($value['total'] / $total * 100, 0);
+			$list[$key]['pricepro'] = number_format($value['price'] / $allprice * 100, 0);
 		}
 
 		include $this->template();
@@ -475,10 +493,13 @@ class Room_EweiShopV2Page extends PluginWebPage
 		$params = array(':uniacid' => $uniacid, ':goodsid' => $goodsid);
 
 		if (empty($id)) {
-			$goods = pdo_fetch('select id,title,marketprice,hasoption from ' . tablename('ewei_shop_goods') . "\n                        where id = " . $goodsid . ' and uniacid = ' . $uniacid . ' ');
+			$goods = pdo_fetch('select id,title,marketprice,hasoption from ' . tablename('ewei_shop_goods') . '
+                        where id = ' . $goodsid . ' and uniacid = ' . $uniacid . ' ');
 		}
 		else {
-			$goods = pdo_fetch('select g.id,g.title,g.marketprice,lg.liveprice,g.hasoption from ' . tablename('ewei_shop_live_goods') . " as lg\n                    left join " . tablename('ewei_shop_goods') . " as g on g.id = lg.goodsid and g.uniacid = lg.uniacid\n                    where lg.goodsid = " . $goodsid . ' and lg.uniacid = ' . $uniacid . ' ');
+			$goods = pdo_fetch('select g.id,g.title,g.marketprice,lg.liveprice,g.hasoption from ' . tablename('ewei_shop_live_goods') . ' as lg
+                    left join ' . tablename('ewei_shop_goods') . ' as g on g.id = lg.goodsid and g.uniacid = lg.uniacid
+                    where lg.goodsid = ' . $goodsid . ' and lg.uniacid = ' . $uniacid . ' ');
 		}
 
 		$option = array();
@@ -487,10 +508,15 @@ class Room_EweiShopV2Page extends PluginWebPage
 			$hasoption = 1;
 
 			if (empty($id)) {
-				$option = pdo_fetchall("SELECT go.id,go.title,go.marketprice,go.specs\n                FROM " . tablename('ewei_shop_goods_option') . " as go \n                WHERE go.uniacid = :uniacid and go.goodsid = :goodsid group by go.id  ORDER BY go.displayorder DESC,go.id DESC ", $params);
+				$option = pdo_fetchall('SELECT go.id,go.title,go.marketprice,go.specs
+                FROM ' . tablename('ewei_shop_goods_option') . ' as go 
+                WHERE go.uniacid = :uniacid and go.goodsid = :goodsid group by go.id  ORDER BY go.displayorder DESC,go.id DESC ', $params);
 			}
 			else {
-				$option = pdo_fetchall("SELECT go.id,go.title,go.marketprice,go.specs,lgo.liveprice\n                FROM " . tablename('ewei_shop_goods_option') . " as go \n                left join " . tablename('ewei_shop_live_goods_option') . ' as lgo on lgo.optionid = go.id and lgo.goodsid = go.goodsid and lgo.uniacid = go.uniacid and lgo.liveid = ' . $id . "\n                WHERE go.uniacid = :uniacid and go.goodsid = :goodsid group by go.id  ORDER BY go.displayorder DESC,go.id DESC ", $params);
+				$option = pdo_fetchall('SELECT go.id,go.title,go.marketprice,go.specs,lgo.liveprice
+                FROM ' . tablename('ewei_shop_goods_option') . ' as go 
+                left join ' . tablename('ewei_shop_live_goods_option') . ' as lgo on lgo.optionid = go.id and lgo.goodsid = go.goodsid and lgo.uniacid = go.uniacid and lgo.liveid = ' . $id . '
+                WHERE go.uniacid = :uniacid and go.goodsid = :goodsid group by go.id  ORDER BY go.displayorder DESC,go.id DESC ', $params);
 			}
 		}
 		else {
@@ -505,9 +531,10 @@ class Room_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$uniacid = intval($_W['uniacid']);
-		$options = (is_array($_GPC['option']) ? implode(',', array_filter($_GPC['option'])) : 0);
+		$options = is_array($_GPC['option']) ? implode(',', array_filter($_GPC['option'])) : 0;
 		$options = intval($options);
-		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . "\n            WHERE uniacid = " . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
+		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . '
+            WHERE uniacid = ' . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
 		show_json(1, $option);
 	}
 
@@ -518,10 +545,10 @@ class Room_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_live') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_live') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_live', array('id' => $item['id']));
@@ -563,9 +590,11 @@ class Room_EweiShopV2Page extends PluginWebPage
 			$params[':keywords'] = '%' . $kwd . '%';
 		}
 
-		$goods = pdo_fetchall("SELECT id,title,thumb,marketprice,total,hasoption\n            FROM " . tablename('ewei_shop_goods') . "\n            WHERE 1 " . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$goods = pdo_fetchall('SELECT id,title,thumb,marketprice,total,hasoption
+            FROM ' . tablename('ewei_shop_goods') . ('
+            WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' ', $params);
-		$pager = pagination($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
+		$pager = pagination2($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
 		$goods = set_medias($goods, array('thumb'));
 		include $this->template();
 	}
@@ -602,19 +631,15 @@ class Room_EweiShopV2Page extends PluginWebPage
 		if ($item['livetype'] < 2) {
 			$getVideo = $this->model->getLiveInfo($item['url'], $item['liveidentity']);
 			if (!is_error($getVideo) && !empty($getVideo['hls_url'])) {
-				$url = $getVideo['hls_url'];
+				$url = urlencode($getVideo['hls_url']);
 			}
 		}
 		else {
-			$url = $item['url'];
+			$url = urlencode($item['url']);
 		}
 
 		$this_url = $_W['siteroot'];
-
-		if (!empty($url)) {
-			$url = 'https://live.cloud.tencent.com/live/play.html?url=' . $url . '&width=482&height=465';
-		}
-
+		$url = urldecode($url);
 		$emojiList = $this->model->getEmoji();
 		$uid = 'console' . '_' . $_W['uid'] . '_' . $_W['role'] . '_' . $_W['uniacid'];
 		$nickname = '管理员' . $_W['username'];
@@ -657,7 +682,7 @@ class Room_EweiShopV2Page extends PluginWebPage
 		$pushid = intval($_GPC['pushid']);
 		$type = intval($_GPC['type']);
 		if (!empty($id) && !empty($pushid)) {
-			$type = ($type == 2 ? 'coupon' : 'redpack');
+			$type = $type == 2 ? 'coupon' : 'redpack';
 			$table_redpack = $this->model->getRedisTable($type . '_list_' . $pushid, $id);
 			$list = redis()->hGetAll($table_redpack);
 		}
@@ -697,7 +722,7 @@ class Room_EweiShopV2Page extends PluginWebPage
 
 			if ($type == 'status') {
 				$typestr = '状态';
-				$statusstr = ($value == 1 ? '显示' : '关闭');
+				$statusstr = $value == 1 ? '显示' : '关闭';
 			}
 			else if ($type == 'displayorder') {
 				$typestr = '排序';
@@ -705,12 +730,12 @@ class Room_EweiShopV2Page extends PluginWebPage
 			}
 			else if ($type == 'hot') {
 				$typestr = '是否热门';
-				$statusstr = ($value == 1 ? '是' : '否');
+				$statusstr = $value == 1 ? '是' : '否';
 			}
 			else {
 				if ($type == 'recommend') {
 					$typestr = '是否推荐';
-					$statusstr = ($value == 1 ? '是' : '否');
+					$statusstr = $value == 1 ? '是' : '否';
 				}
 			}
 

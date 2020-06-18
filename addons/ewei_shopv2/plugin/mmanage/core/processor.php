@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,7 +20,7 @@ class MmanageProcessor extends PluginProcessor
 		$content = $obj->message['content'];
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-		if (($msgtype == 'text') || ($event == 'click')) {
+		if ($msgtype == 'text' || $event == 'click') {
 			$data = m('common')->getPluginset('mmanage');
 
 			if (empty($data)) {

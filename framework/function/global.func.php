@@ -420,9 +420,6 @@ if (!function_exists('murl')) {
 			$url = './';
 		}
 		$str = '';
-		if (uni_is_multi_acid()) {
-			$str .= "&j={$_W['acid']}";
-		}
 		if (!empty($_W['account']) && $_W['account']['type'] == ACCOUNT_TYPE_WEBAPP_NORMAL) {
 			$str .= '&a=webapp';
 		}
@@ -597,6 +594,9 @@ function tomedia($src, $local_path = false, $is_cahce = false) {
 
 	if (strexists($src, 'addons/')) {
 		return $_W['siteroot'] . substr($src, strpos($src, 'addons/'));
+	}
+	if (strexists($src, 'app/themes/')) {
+		return $_W['siteroot'] . substr($src, strpos($src, 'app/themes/'));
 	}
 		if (strexists($src, $_W['siteroot']) && !strexists($src, '/addons/')) {
 		$urls = parse_url($src);

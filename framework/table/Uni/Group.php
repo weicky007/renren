@@ -42,8 +42,8 @@ class Group extends \We7Table {
 		return $data;
 	}
 
-	public function searchWithUniacidAndUid($uniacid = 0, $uid = 0) {
-		return $this->where('u.uniacid', $uniacid)->where('u.uid', $uid);
+	public function searchWithUid($uid = 0) {
+		return $this->where('u.uid', $uid);
 	}
 
 	public function searchWithName($name) {

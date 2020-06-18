@@ -11,17 +11,12 @@
         <div class="form-group">
             <label class="col-lg control-label must" >模板消息ID</label>
             <div class="col-sm-9 ">
-                {ife 'tmessage' $list}
                 <input type="text"  id="tp_template_id" name="tp_template_id" class="form-control" value="{$list['template_id']}" placeholder="模版消息ID，例：P8MxRKmW7wdejmZl14-swiGmsJVrFJiWYM7zKSPXq4I" data-rule-required='true' />
-                {else}
-                <div class='form-control-static'>{$list['template_id']}</div>
-                {/if}
             </div>
         </div>
         <div class="form-group">
             <label class="col-lg control-label must" >头部标题</label>
 
-            {ife 'tmessage' $list}
             <div class="col-sm-8 title" style='padding-right:0' >
 
                 <textarea name="tp_first" class="form-control" value="" data-rule-required='true' placeholder="{{first.DATA}}" rows="5">{$list['first']}</textarea>
@@ -32,18 +27,11 @@
                 <input type="color" name="firstcolor" value="{$list['firstcolor']}" style="width:32px;height:32px;" />
 
             </div>
-            {else}
-            <div class="col-sm-3">
-                <div class='form-control-static'>{$list['first']} 颜色: {$list['firstcolor']}</div>
-            </div>
-            {/if}
-
         </div>
 
         {loop $data $list2}
         {template 'sysset/tmessage/tpl'}
         {/loop}
-        {ife 'tmessage' $list}
         <div id="type-items"></div>
         <div class="form-group">
             <label class="col-lg control-label" ></label>
@@ -53,27 +41,16 @@
                         </span>
             </div>
         </div>
-        {/if}
 
         <div class="form-group">
             <label class="col-lg control-label" >尾部描述</label>
-            {ife 'tmessage' $list}
             <div class="col-sm-8 title" style='padding-right:0' >
                 <textarea name="tp_remark" class="form-control" placeholder="{{remark.DATA}}" rows="5" >{$list['remark']}</textarea>
                 <span class='help-block'>填充模板 {{remark.DATA}} 的值</span>
             </div>
             <div class="col-sm-1" style='padding-left:0' >
-
                 <input type="color" name="remarkcolor" value="{$list['remarkcolor']}" style="width:32px;height:32px;" />
-
             </div>
-
-            {else}
-            <div class="col-sm-3">
-                <div class='form-control-static'>{$list['remark']} 颜色: {$list['remarkcolor']}</div>
-            </div>
-            {/if}
-
         </div>
     </div>
     <div class="col-sm-4" style="max-width:350px;">
@@ -146,6 +123,16 @@
                         {if cv('lottery')}
                         <option value="lottery">游戏中心类</option>
                         {/if}
+                        {if cv('task')}
+                        <option value="task">任务中心类</option>
+                        {/if}
+                        {if cv('groups')}
+                        <option value="groups">拼团类</option>
+                        {/if}
+                        {if cv('friendcoupon')}
+                        <option value="friendcoupon">好友瓜分券类</option>
+                        {/if}
+                        <option value="verification">核销类</option>
                     </select>
                 </div>
                 <div class="panel-body tm tm-upgrade" style="display:none">
@@ -207,6 +194,9 @@
                     <a href='JavaScript:' class="btn btn-default btn-sm">虚拟卡密自动发货内容</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">自提码</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">备注信息</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">积分变动</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">积分余额</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">积分获得时间</a>
 
                 </div>
                 <div class="panel-heading tm tm-order" style="display:none">
@@ -406,6 +396,59 @@
                 <div class="panel-heading tm tm-lottery" style="display:none">获得抽奖通知</div>
                 <div class="panel-body tm tm-lottery" style="display:none">
                     <a href='JavaScript:' class="btn btn-default btn-sm">活动名称</a>
+                </div>
+
+                <div class="panel-heading tm tm-task" style="display:none">通用任务</div>
+                <div class="panel-body tm tm-task" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">当前时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">接取时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">截止时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">任务名称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">分数进度</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">任务所有者昵称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">已完成数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">待完成数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">总需求数</a>
+                </div>
+                <div class="panel-heading tm tm-task" style="display:none">海报任务</div>
+                <div class="panel-body tm tm-task" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">关注者昵称</a>
+                </div>
+                <!--拼团相关-->
+                <div class="panel-heading tm tm-groups" style="display:none">拼团订单</div>
+                <div class="panel-body tm tm-groups" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">商城名称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">粉丝昵称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">订单号</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">订单金额</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">运费</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">商品详情</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">快递公司</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">快递单号</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">下单时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">支付时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">发货时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">收货时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">拼团成功时间</a>
+                </div>
+                <!-- 核销类-->
+                <div class="panel-heading tm tm-verification" style="display:none">核销类</div>
+                <div class="panel-body tm tm-verification" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">核销时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">当前记次</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">剩余次数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">总核销次数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">门店名称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">核销员</a>
+                </div>
+
+                <div class="panel-heading tm tm-friendcoupon" style="display:none">好友瓜分券类</div>
+                <div class="panel-body tm tm-friendcoupon" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">活动名称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">活动开始时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">活动结束时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">瓜分券领取时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">瓜分券名称</a>
                 </div>
 
                 <div class="panel-body">

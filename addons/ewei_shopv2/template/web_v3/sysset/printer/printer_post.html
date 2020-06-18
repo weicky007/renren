@@ -443,6 +443,77 @@
     {/if}
 </div>
 </div>
+
+<!--易联云AUTH2.0接口打印机-->
+<div id="printer_yilianyun_auth2" class="printer" {if $list['type']!='6'}style="display: none"{/if}>
+    <div class="form-group">
+        <label class="col-lg control-label" >终端号</label>
+        {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+        <div class="col-sm-9 title" style='padding-right:0' >
+            <input type="text" name="printer_yilianyun_auth2[machine_code]" class="form-control" value="{$printer_yilianyun_auth2['machine_code']}"/>
+            <span class='help-block'>打印机终端号(支持K4,W1,M1,K2S,K3S) , 之前已接入商城并正常使用的无需在此重新设置</span>
+        </div>
+        {else}
+        <div class="col-sm-3">
+            <div class='form-control-static'>{$printer_yilianyun_auth2['machine_code']}</div>
+        </div>
+        {/if}
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label" >密钥</label>
+        {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+        <div class="col-sm-9 title" style='padding-right:0' >
+            <input type="text" name="printer_yilianyun_auth2[msign]" class="form-control" value="{$printer_yilianyun_auth2['msign']}"/>
+            <span class='help-block'>打印机终端密钥</span>
+        </div>
+        {else}
+        <div class="col-sm-3">
+            <div class='form-control-static'>{$printer_yilianyun_auth2['msign']}</div>
+        </div>
+        {/if}
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label" >应用ID</label>
+        {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+        <div class="col-sm-9 title" style='padding-right:0' >
+            <input type="text" name="printer_yilianyun_auth2[partner]" class="form-control" value="{$printer_yilianyun_auth2['partner']}"/>
+            <span class='help-block'>应用id（易联云开发者中心应用管理里获取）,须为自有型应用</span>
+        </div>
+        {else}
+        <div class="col-sm-3">
+            <div class='form-control-static'>{$printer_yilianyun_auth2['partner']}</div>
+        </div>
+        {/if}
+    </div>
+    <div class="form-group">
+        <label class="col-lg control-label" >应用密钥</label>
+        {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+        <div class="col-sm-9 title" style='padding-right:0' >
+            <input type="text" name="printer_yilianyun_auth2[apikey]" class="form-control" value="{$printer_yilianyun_auth2['apikey']}"/>
+            <span class='help-block'>应用密钥</span>
+        </div>
+        {else}
+        <div class="col-sm-3">
+            <div class='form-control-static'>{$printer_yilianyun_auth2['apikey']}</div>
+        </div>
+        {/if}
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label" >打印联数</label>
+        {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+        <div class="col-sm-9 title" style='padding-right:0' >
+            <input type="text" name="printer_yilianyun_auth2[times]" class="form-control" value="{$printer_yilianyun_auth2['times']}"/>
+            <span class='help-block'>同一订单，打印的次数</span>
+        </div>
+        {else}
+        <div class="col-sm-3">
+            <div class='form-control-static'>{$printer_yilianyun_auth2['times']}</div>
+        </div>
+        {/if}
+    </div>
+</div>
+
 <div class="form-group"></div>
 <div class="form-group">
     <label class="col-lg control-label" ></label>
@@ -477,6 +548,7 @@
                 case '3':$("#printer_365_s1").show();break;
                 case '4':$("#printer_yilianyun_new").show();break;
                 case '5':$("#printer_feie_new").show();break;
+                case '6':$("#printer_yilianyun_auth2").show();break;
             }
         });
         require(['jquery.caret'],function(){
@@ -497,4 +569,3 @@
     </script>
 
 {template '_footer'}
-

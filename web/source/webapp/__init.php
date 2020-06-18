@@ -9,7 +9,7 @@ $account_api = WeAccount::createByUniacid();
 
 if ('manage' != $action && 'switch' != $do) {
 	if (is_error($account_api)) {
-		message($account_api['message'], url('account/display'));
+		message($account_api['message'], $_W['siteroot'] . 'web/home.php');
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {

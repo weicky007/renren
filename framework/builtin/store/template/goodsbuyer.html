@@ -1,6 +1,9 @@
 {template 'header'}
 {if $operate == 'display'}
 	{if !in_array($type, array(STORE_TYPE_PACKAGE, STORE_TYPE_USER_PACKAGE, STORE_TYPE_ACCOUNT_PACKAGE))}
+	{if $type == STORE_TYPE_USER_RENEW}
+		<div class="we7-page-title">账号有效期</div>
+	{/if}
 	{if $type == 'module' || isset($module_types[$type])}
 	<div class="we7-page-title">{if $is_wish}预购应用{else}应用模块{/if}</div>
 	{elseif $type == 'account_num'}
@@ -10,7 +13,6 @@
 	{elseif $type == STORE_TYPE_API}
 	<div class="we7-page-title">应用访问流量(API)</div>
 	{/if}
-
 	{if $type == 'module' || isset($module_types[$type])}
 	<!-- 搜索 start -->
 	<div class="clearfix">
@@ -45,7 +47,7 @@
 			<div class="wish-goods-box">
 				{if $goods['type'] == STORE_TYPE_API}
 				<div class="icon icon-api logo"><span class="wi wi-api"></span></div>
-				{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW))}
+				{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW, STORE_TYPE_USER_RENEW))}
 				<div class="icon icon-wi logo"><span class="wi wi-appjurisdiction"></span></div>
 				{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE}
 				<div class="icon icon-wi logo"><span class="wi wi-userjurisdiction"></span></div>
@@ -69,6 +71,9 @@
 						￥{$goods['price']}元
 						{if !in_array($goods['type'], array_keys($store_goods_types['account_num']))}
 							/
+							{if $goods['type'] == STORE_TYPE_USER_RENEW}
+								{$goods['account_num']}
+							{/if}
 							{if $goods['unit'] == 'month'}
 								{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
 									{$goods['account_num']}
@@ -92,6 +97,13 @@
 									{$goods['wxapp_num']}
 								{/if}
 								年
+							{elseif $goods['unit'] == 'week'}
+								{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+									{$goods['account_num']}
+								{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+									{$goods['wxapp_num']}
+								{/if}
+								周
 							{/if}
 						{/if}
 					</div>
@@ -124,7 +136,7 @@
 				<div class="icon icon-api logo"><span class="wi wi-appjurisdiction"></span></div>
 				<div class="info text-over">
 					<div class="title text-over">{$module_groups[$goods['module_group']]['name']}</div>
-					<div class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</div>
+					<div class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{elseif $goods['unit'] == 'week'}周{/if}{/if}</div>
 					<div class="support">
 						<!-- 适用 <i class="wi wi-wxapp"></i> -->
 					</div>
@@ -145,7 +157,7 @@
 				<div class="icon icon-api logo"><span class="wi wi-userjurisdiction"></span></div>
 				<div class="info text-over">
 					<div class="title text-over">{$user_groups[$goods['user_group']]['name']}</div>
-					<div class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</div>
+					<div class="price">¥ {$goods['price']}元/{if $goods['type'] != STORE_TYPE_API}{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{elseif $goods['unit'] == 'week'}周{/if}{/if}</div>
 					<div class="support">
 						<!-- 适用 <i class="wi wi-wxapp"></i> -->
 					</div>
@@ -166,7 +178,7 @@
 				<div class="icon icon-api logo"><span class="wi wi-userjurisdiction"></span></div>
 				<div class="info text-over">
 					<div class="title text-over">{$account_groups[$goods['account_group']]['group_name']}</div>
-					<div class="price">¥ {$goods['price']}元/{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}</div>
+					<div class="price">¥ {$goods['price']}元</div>
 					<div class="support">
 						<!-- 适用 <i class="wi wi-wxapp"></i> -->
 					</div>
@@ -199,7 +211,7 @@
 		<div class="wish-goods-info">
 			{if $goods['type'] == STORE_TYPE_API}
 			<div class="logo"><span class="icon-box"><i class="wi wi-api"></i></span></div>
-			{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW))}
+			{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW, STORE_TYPE_USER_RENEW))}
 			<div class="logo"><span class="icon-box"><i class="wi wi-appjurisdiction"></i></span></div>
 			{elseif $goods['type'] == STORE_TYPE_USER_PACKAGE || $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
 			<div class="logo"><span class="icon-box"><i class="wi wi-userjurisdiction"></i></span></div>
@@ -208,7 +220,7 @@
 			{/if}
 			<div class="info">
 				<div class="title">
-					{if $all_type_info[$goods['type']]['group'] == 'module'}
+					{if in_array($all_type_info[$goods['type']]['group'], array('module', 'user_renew'))}
 					{$goods['title']}
 					{elseif $goods['type'] == STORE_TYPE_WXAPP}
 					创建{$goods['wxapp_num']}个小程序
@@ -225,7 +237,7 @@
 					{/if}
 				</div>
 				<div class="support">
-					{if $goods_type_info['group'] == 'module'}
+					{if in_array($all_type_info[$goods['type']]['group'], array('module', 'user_renew'))}
 					{$goods_type_info['title']}
 					{elseif in_array($goods['type'], array_keys($all_type_info['account_num']))}
 					增加创建{$all_type_info['account_num'][$goods['type']]['title']}数量
@@ -245,13 +257,35 @@
 					<span class="fee">
 						{$goods['price']} 元
 					</span>
-					{if $goods['type'] != STORE_TYPE_API && !in_array($goods['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}/{if $goods['unit'] == 'month'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}月
-					{elseif $goods['unit'] == 'day'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}日
-					{elseif $goods['unit'] == 'year'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}年
+					{if $goods['type'] != STORE_TYPE_API && $goods['type'] != STORE_TYPE_ACCOUNT_PACKAGE && !in_array($goods['type'], array(STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP))}/{if $goods['type'] == STORE_TYPE_USER_RENEW}{$goods['account_num']}{/if}
+					{if $goods['unit'] == 'month'}
+						{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+							{$goods['account_num']}
+						{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+							{$goods['wxapp_num']}
+						{/if}月
+					{elseif $goods['unit'] == 'day'}
+						{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+							{$goods['account_num']}
+						{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+							{$goods['wxapp_num']}
+						{/if}日
+					{elseif $goods['unit'] == 'year'}
+						{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+							{$goods['account_num']}
+						{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+							{$goods['wxapp_num']}
+						{/if}年
+					{elseif $goods['unit'] == 'week'}
+						{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+							{$goods['account_num']}
+						{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+							{$goods['wxapp_num']}
+						{/if}周
 					{/if}
 					{/if}
 				</div>
-				{if $all_type_info[$goods['type']]['group'] == 'module' || in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE, STORE_TYPE_ACCOUNT_PACKAGE))}
+				{if $all_type_info[$goods['type']]['group'] == 'module' || in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_USER_PACKAGE))}
 				<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalBuy">立即购买</button>
 				{elseif $goods['type'] == STORE_TYPE_API}
 				<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#BuyApi">立即购买</button>
@@ -324,19 +358,83 @@
 						<ul class="clearfloat">
 							<li>
 								<div class="type"><div>公众号</div><i class="wi wi-account"></i></div>
-								<div class="num">{$group_info['maxaccount']}</div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['account_num']}
+									{else}
+									{$group_info['maxaccount']}
+									{/if}
+								</div>
 							</li>
 							<li>
 								<div class="type"><div>小程序</div><span><i class="wi wi-wxapp"></i></span></div>
-								<div class="num">{$group_info['maxwxapp']}</div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['wxapp_num']}
+									{else}
+									{$group_info['maxwxapp']}
+									{/if}
+								</div>
 							</li>
 							<li>
 								<div class="type"><div>PC应用</div><i class="wi wi-pc"></i></div>
-								<div class="num">{$group_info['maxwebapp']}</div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['webapp_num']}
+									{else}
+									{$group_info['maxwebapp']}
+									{/if}
+								</div>
 							</li>
 							<li>
 								<div class="type"><div>APP</div><i class="wi wi-app"></i></div>
-								<div class="num">{$group_info['maxphoneapp']}</div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['phoneapp_num']}
+									{else}
+									{$group_info['maxphoneapp']}
+									{/if}
+								</div>
+							</li>
+							<li>
+								<div class="type"><div>熊掌号</div><i class="wi wi-xzapp"></i></div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['xzapp_num']}
+									{else}
+									{$group_info['maxxzapp']}
+									{/if}
+								</div>
+							</li>
+							<li>
+								<div class="type"><div>支付宝小程序</div><i class="wi wi-aliapp"></i></div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['aliapp_num']}
+									{else}
+									{$group_info['maxaliapp']}
+									{/if}
+								</div>
+							</li>
+							<li>
+								<div class="type"><div>百度小程序</div><i class="wi wi-baiduapp"></i></div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['baiduapp_num']}
+									{else}
+									{$group_info['maxbaiduapp']}
+									{/if}
+								</div>
+							</li>
+							<li>
+								<div class="type"><div>头条小程序</div><i class="wi wi-toutiaoapp"></i></div>
+								<div class="num">
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
+									{$goods['toutiaoapp_num']}
+									{else}
+									{$group_info['maxtoutiaoapp']}
+									{/if}
+								</div>
 							</li>
 						</ul>
 					</div>
@@ -390,6 +488,14 @@
 					</div>
 					{/if}
 				</div>
+			</div>
+		</div>
+		{elseif $goods['type'] == STORE_TYPE_USER_RENEW}
+		<div class="wish-goods-more">
+			<!-- 预购应用提示判断 -->
+			<div class="header">介绍</div>
+			<div class="content show">
+				<div class="color-gray">购买商品后您的到期时间将会在原有基础上增加套餐所包含的时间。</div>
 			</div>
 		</div>
 		{else}
@@ -458,9 +564,33 @@
 						<div class="form-group">
 							<label class="control-label col-sm-2">应用单价</label>
 							<div class="col-sm-8 form-control-static">￥{$goods['price']}{if $goods['type'] != STORE_TYPE_API}/
-								{if $goods['unit'] == 'month'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}月
-								{elseif $goods['unit'] == 'day'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}日
-								{elseif $goods['unit'] == 'year'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}{$goods['wxapp_num']}{/if}年
+								{if $goods['type'] == STORE_TYPE_USER_RENEW}
+								{$goods['account_num']}
+								{/if}
+								{if $goods['unit'] == 'month'}
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+										{$goods['account_num']}
+									{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+										{$goods['wxapp_num']}
+									{/if}月
+								{elseif $goods['unit'] == 'day'}
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+										{$goods['account_num']}
+									{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+										{$goods['wxapp_num']}
+									{/if}日
+								{elseif $goods['unit'] == 'year'}
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+										{$goods['account_num']}
+									{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+										{$goods['wxapp_num']}
+									{/if}年
+								{elseif $goods['unit'] == 'week'}
+									{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+										{$goods['account_num']}
+									{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+										{$goods['wxapp_num']}
+									{/if}周
 								{/if}
 								{/if}</div>
 						</div>
@@ -470,10 +600,31 @@
 								<div class="clearfix we7-margin-bottom-sm" style="line-height: 34px;">
 									<input type="number" class="form-control pull-left" style="width: 80px;" value="1" ng-model="duration"/>&nbsp;
 									{if $goods['type'] != STORE_TYPE_API}
-									{if $goods['unit'] == 'month'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}*{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}*{$goods['wxapp_num']}{/if}月
-									{elseif $goods['unit'] == 'day'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}*{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}*{$goods['wxapp_num']}{/if}日
-									{elseif $goods['unit'] == 'year'}{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}*{$goods['account_num']}{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}*{$goods['wxapp_num']}{/if}年
-									{/if}
+										{if $goods['unit'] == 'month'}
+											{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+												*{$goods['account_num']}
+											{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+												*{$goods['wxapp_num']}
+											{/if}月
+										{elseif $goods['unit'] == 'day'}
+											{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+												*{$goods['account_num']}
+											{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+												*{$goods['wxapp_num']}
+											{/if}日
+										{elseif $goods['unit'] == 'year'}
+											{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+												*{$goods['account_num']}
+											{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+												*{$goods['wxapp_num']}
+											{/if}年
+										{elseif $goods['unit'] == 'week'}
+											{if $goods['type'] == STORE_TYPE_ACCOUNT_RENEW}
+												*{$goods['account_num']}
+											{elseif $goods['type'] == STORE_TYPE_WXAPP_RENEW}
+												*{$goods['wxapp_num']}
+											{/if}周
+										{/if}
 									{/if}
 									{if $goods['type'] == STORE_TYPE_MODULE || $goods['type'] == STORE_TYPE_WXAPP_MODULE}
 									,有效期至{{ expiretime }}
@@ -567,7 +718,22 @@
 					<form action="" method="get" class="we7-form">
 						<div class="form-group">
 							<label class="control-label col-sm-2">应用单价</label>
-							<div class="col-sm-8 form-control-static">￥{$goods['price']}{if $goods['type'] != STORE_TYPE_API && $goods['type'] != STORE_TYPE_ACCOUNT && $goods['type'] != STORE_TYPE_WXAPP}/{if $goods['unit'] == 'month'}月{elseif $goods['unit'] == 'day'}日{elseif $goods['unit'] == 'year'}年{/if}{/if}</div>
+							<div class="col-sm-8 form-control-static">￥{$goods['price']}
+								{if $goods['type'] != STORE_TYPE_API && $goods['type'] != STORE_TYPE_ACCOUNT_PACKAGE && $goods['type'] != STORE_TYPE_ACCOUNT && $goods['type'] != STORE_TYPE_WXAPP}/
+								{if $goods['type'] == STORE_TYPE_USER_RENEW}
+								{$goods['account_num']}
+								{/if}
+								{if $goods['unit'] == 'month'}
+								月
+								{elseif $goods['unit'] == 'day'}
+								日
+								{elseif $goods['unit'] == 'year'}
+								年
+								{elseif $goods['unit'] == 'week'}
+								周
+								{/if}
+								{/if}
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="control-label col-sm-2">费用明细</label>

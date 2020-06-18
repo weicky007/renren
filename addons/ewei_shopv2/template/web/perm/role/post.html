@@ -33,10 +33,10 @@
                     <div class="col-sm-11 col-xs-12">
                          {ife 'perm.role' $item}
                         <label class='radio-inline'>
-                            <input type='radio' name='status' value=1' {if $item['status']==1}checked{/if} /> 启用
+                            <input type='radio' name='status' value='1' {if $item['status']==1}checked{/if} /> 启用
                         </label>
                         <label class='radio-inline'> 
-                            <input type='radio' name='status' value=0' {if $item['status']==0}checked{/if} /> 禁用
+                            <input type='radio' name='status' value='0' {if $item['status']==0}checked{/if} /> 禁用
                         </label>
                         <span class="help-block">如果禁用，则当前角色的操作员全部会禁止使用</span>
                         {else}

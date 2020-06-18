@@ -136,13 +136,13 @@
         <div class="ui-step-title">买家付款</div>
         <div class="ui-step-meta">{if 1<=$order['status']}{php echo date('Y-m-d',$order['paytime'])}<br/>{php echo date('H:i:s',$order['paytime'])}{/if}</div>
         </li>
-        <li {if $order['status']>=2}class="ui-step-done"{/if}>
-        <div class="ui-step-number" >3</div>
-        <div class="ui-step-title">卖家发货</div>
-        <div class="ui-step-meta" >{if 2<=$order['status']}{php echo date('Y-m-d',$order['sendtime'])}<br/>{php echo date('H:i:s',$order['sendtime'])}{/if}</div>
-        </li>
+        <!--<li {if $order['status']>=2}class="ui-step-done"{/if}>-->
+        <!--<div class="ui-step-number" >3</div>-->
+        <!--<div class="ui-step-title">卖家发货</div>-->
+        <!--<div class="ui-step-meta" >{if 2<=$order['status']}{php echo date('Y-m-d',$order['sendtime'])}<br/>{php echo date('H:i:s',$order['sendtime'])}{/if}</div>-->
+        <!--</li>-->
         <li {if $order['status']>=3}class="ui-step-done"{/if}>
-        <div class="ui-step-number" >4</div>
+        <div class="ui-step-number" >3</div>
         <div class="ui-step-title">订单完成</div>
         <div class="ui-step-meta">{if 3<=$order['status']}{php echo date('Y-m-d',$order['finishtime'])}<br/>{php echo date('H:i:s',$order['finishtime'])}{/if}</div>
         </li>
@@ -478,11 +478,11 @@
                             {if $order['status'] == 0}
                             <span class="text-warning font20">待付款</span>
                             {/if}
-                            {if $order['status'] == 1}
+                            {if $order['status'] == 1 && $order['success']==0}
                             <span class="text-success font20">已付款</span>
                             {/if}
                             {if $order['status'] == 1 && $order['success']==1}
-                            <span class="text-warning font20">待发货</span>
+                            <span class="text-warning font20">待核销</span>
                             {/if}
                             {if $order['status'] == 2}<span class="text-warning font20">待收货</span>{/if}
                             {if $order['status'] == 3}<span class="text-success font20">交易完成</span>{/if}
@@ -583,6 +583,7 @@
                 <tr class="trorder">
                     <th style="width:70px">商品</th>
                     <th></th>
+                    <th style="text-align: center;">规格</th>
                     <th style="text-align: center;">单价(元)</th>
                     <th style="text-align: center;">数量</th>
                     <th style="text-align: center;">金额(元)</th>
@@ -597,6 +598,11 @@
                     </td>
                     <td>
                         {$order['title']}
+                    </td>
+                    <td style="text-align: center;">
+                        <p style="white-space:normal;">
+                            {if !empty($order['optiontitle'])}<span class="label label-primary" data-container="body" data-toggle="popover" data-placement="right" data-content="{$goods['optionname']}">{$order['optiontitle']}</span>{else}无{/if}
+                        </p>
                     </td>
                     <td style="text-align: center;">
                         {if $order['is_team']==1}

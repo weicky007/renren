@@ -39,7 +39,7 @@
         {ife 'sns.board' $item}
         <select name='postlevels[]' class='form-control select2' multiple=''>
 
-            <option value="0"  {if $item['postlevels']!='' && is_array($item['postlevels'])  && in_array('0', $item['postlevels'])}selected{/if}>普通等级</option>
+            <option value="0"  {if $item['postlevels']!='' && is_array($item['postlevels'])  && in_array('0', $item['postlevels'])}selected{/if}>{$default_name}</option>
             {loop $levels $level}
             <option value="{$level['id']}" {if is_array($item['postlevels']) && in_array($level['id'], $item['postlevels'])}selected{/if}>{$level['levelname']}</option>
             {/loop}

@@ -132,7 +132,7 @@
             </td>
             <td style='text-align:center;'>
                 {ifp 'goods.edit'}
-                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'displayorder','id'=>$item['id']))}" >{$item['displayorder']}</a>
+                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'merchdisplayorder','id'=>$item['id']))}" >{$item['merchdisplayorder']}</a>
                 <i class="icow icow-weibiaoti-- " data-toggle="ajaxEdit2"></i>
                 {else}
                 {$item['displayorder']}
@@ -237,28 +237,27 @@
                 data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'new','data'=>0,'id'=>$item['id']))}'
                 {/if}
                 >新品</a>
-                <a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'
-                {ifp 'goods.property'}
-                data-toggle='ajaxSwitch'
-                data-switch-value='{$item['ishot']}'
-                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'hot', 'data'=>1,'id'=>$item['id']))}'
-                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'hot','data'=>0,'id'=>$item['id']))}'
-                {/if}
-                >热卖</a>
-                <a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'
-                {ifp 'goods.property'}
-                data-toggle='ajaxSwitch'
-                data-switch-value='{$item['isrecommand']}'
-                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'recommand', 'data'=>1,'id'=>$item['id']))}'
-                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'recommand','data'=>0,'id'=>$item['id']))}'
-                {/if}
-                >推荐</a>
+                <!--<a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'-->
+                <!--{ifp 'goods.property'}-->
+                <!--data-toggle='ajaxSwitch'-->
+                <!--data-switch-value='{$item['ishot']}'-->
+                <!--data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'hot', 'data'=>1,'id'=>$item['id']))}'-->
+                <!--data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'hot','data'=>0,'id'=>$item['id']))}'-->
+                <!--{/if}-->
+                <!--&gt;热卖</a>-->
+                <!--<a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'-->
+                <!--{ifp 'goods.property'}-->
+                <!--data-toggle='ajaxSwitch'-->
+                <!--data-switch-value='{$item['isrecommand']}'-->
+                <!--data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'recommand', 'data'=>1,'id'=>$item['id']))}'-->
+                <!--data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'recommand','data'=>0,'id'=>$item['id']))}'-->
+                <!--{/if}-->
+                <!--&gt;推荐</a>-->
                 <a class='{if $item['isdiscount']==1}text-danger{else}text-default{/if}'
                 {ifp 'goods.property'}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$item['isdiscount']}'
-                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'discount', 'data'=>1,'id'=>$item['id']))}'
-                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'discount','data'=>0,'id'=>$item['id']))}'
+
                 {/if}
                 >促销</a>
                 <a class='{if $item['issendfree']==1}text-danger{else}text-default{/if}'
@@ -273,17 +272,15 @@
                 {ifp 'goods.property'}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$item['istime']}'
-                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'time', 'data'=>1,'id'=>$item['id']))}'
-                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'time','data'=>0,'id'=>$item['id']))}'
+
                 {/if}
                 >限时卖</a>
                 <a class='{if $item['isnodiscount']==1}text-danger{else}text-default{/if}'
                 {ifp 'goods.property'}
-                data-toggle='ajaxSwitch'
                 data-switch-value='{$item['isnodiscount']}'
                 data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'nodiscount', 'data'=>1,'id'=>$item['id']))}'
                 data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'nodiscount','data'=>0,'id'=>$item['id']))}'
-                {/if}
+                {/if} title="多商户商品默认不参与商城会员折扣"
                 >不参与折扣</a>
             </td>
             <td  style="overflow:visible;position:relative">
@@ -305,7 +302,7 @@
                 {/if}
                 {/if}
 
-                {if $_GPC['goodsfrom']=='cycle'}
+                {if $goodsfrom =='cycle'}
                 {ifp 'goods.restore'}
                 <a  class='btn  btn-op btn-operation' data-toggle='ajaxRemove' href="{php echo webUrl('goods/restore', array('id' => $item['id']))}" data-confirm='确认要恢复?'>
                                  <span data-toggle="tooltip" data-placement="top" title="" data-original-title="恢复">
@@ -334,7 +331,7 @@
                 {/if}
 
 
-                {if $_GPC['goodsfrom']!='cycle'}
+                {if $goodsfrom !='cycle'}
                 <a href="javascript:;" class='btn  btn-op btn-operation js-clip' data-url="{php echo mobileUrl('goods/detail', array('id' => $item['id']),true)}">
                                  <span data-toggle="tooltip" data-placement="top"  data-original-title="复制链接">
                                        <i class='icow icow-lianjie2'></i>
@@ -401,5 +398,74 @@
                           </div>
                           {/if}
 </div>
-{template '_footer'}
+<script>
+    $(document).on("click", '[data-toggle="ajaxEdit2"]',
+        function (e) {
+            var _this = $(this)
+            $(this).addClass('hidden')
+            var obj = $(this).parent().find('a'),
+                url = obj.data('href') || obj.attr('href'),
+                data = obj.data('set') || {},
+                html = $.trim(obj.text()),
+                required = obj.data('required') || true,
+                edit = obj.data('edit') || 'input';
+            var oldval = $.trim($(this).text());
+            e.preventDefault();
 
+            submit = function () {
+                e.preventDefault();
+                var val = $.trim(input.val());
+                if (required) {
+                    if (val == '') {
+                        tip.msgbox.err(tip.lang.empty);
+                        return;
+                    }
+                }
+                if (val == html) {
+                    input.remove(), obj.html(val).show();
+                    //obj.closest('tr').find('.icow').css({visibility:'visible'})
+                    return;
+                }
+                if (url) {
+                    $.post(url, {
+                        value: val
+                    }, function (ret) {
+
+                        ret = eval("(" + ret + ")");
+                        if (ret.status == 1) {
+                            obj.html(val).show();
+
+                        } else {
+                            tip.msgbox.err(ret.result.message, ret.result.url);
+                        }
+                        input.remove();
+                    }).fail(function () {
+                        input.remove(), tip.msgbox.err(tip.lang.exception);
+                    });
+                } else {
+                    input.remove();
+                    obj.html(val).show();
+                }
+                obj.trigger('valueChange', [val, oldval]);
+            },
+                obj.hide().html('<i class="fa fa-spinner fa-spin"></i>');
+            var input = $('<input type="text" class="form-control input-sm" style="width: 80%;display: inline;" />');
+            if (edit == 'textarea') {
+                input = $('<textarea type="text" class="form-control" style="resize:none;" rows=3 width="100%" ></textarea>');
+            }
+            obj.after(input);
+
+            input.val(html).select().blur(function () {
+                submit(input);
+                _this.removeClass('hidden')
+
+            }).keypress(function (e) {
+                if (e.which == 13) {
+                    submit(input);
+                    _this.removeClass('hidden')
+                }
+            });
+
+        })
+</script>
+{template '_footer'}

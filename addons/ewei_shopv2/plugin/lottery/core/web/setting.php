@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,8 +21,8 @@ class Setting_EweiShopV2Page extends PluginWebPage
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery_task') . ' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_lottery_task') . ' where 1 ' . $condition . ' ', $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery_task') . (' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_lottery_task') . (' where 1 ' . $condition . ' '), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -51,7 +52,7 @@ class Setting_EweiShopV2Page extends PluginWebPage
 				'task_data'  => array(),
 				'updatetime' => '',
 				'addtime'    => ''
-				);
+			);
 			$starttime = time();
 			$endtime = strtotime(date('Y-m-d H:i', $starttime) . '+30 days');
 		}
@@ -62,9 +63,9 @@ class Setting_EweiShopV2Page extends PluginWebPage
 		}
 
 		$condition = ' AND `status`=1 AND uniacid= ' . $_W['uniacid'];
-		$tasklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_task_poster') . ' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT 15');
+		$tasklist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_task_poster') . (' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT 15'));
 		$condition = ' AND `is_delete`=0 AND uniacid= ' . $_W['uniacid'];
-		$lotterylist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery') . ' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT 15');
+		$lotterylist = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_lottery') . (' WHERE 1 ' . $condition . ' ORDER BY addtime desc LIMIT 15'));
 
 		if ($_W['ispost']) {
 			$data = array('uniacid' => $_W['uniacid'], 'title' => trim($_GPC['title']), 'start_time' => strtotime($_GPC['time']['start']), 'end_time' => strtotime($_GPC['time']['end']), 'updatetime' => time());
@@ -137,10 +138,10 @@ class Setting_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$posters = pdo_fetchall('SELECT `id`,`title` FROM ' . tablename('ewei_shop_lottery_task') . ' WHERE `id` in ( ' . $id . ' ) and `uniacid`=' . $_W['uniacid']);
+		$posters = pdo_fetchall('SELECT `id`,`title` FROM ' . tablename('ewei_shop_lottery_task') . (' WHERE `id` in ( ' . $id . ' ) and `uniacid`=') . $_W['uniacid']);
 
 		foreach ($posters as $poster) {
 			pdo_update('ewei_shop_lottery_task', array('is_delete' => 1), array('id' => $poster['id'], 'uniacid' => $_W['uniacid']));
@@ -206,7 +207,7 @@ class Setting_EweiShopV2Page extends PluginWebPage
 					pdo_update('rule_keyword', $keyword_data, array('id' => $keyword['id']));
 				}
 
-				$cover_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'ewei_shopv2', 'title' => $default['title'], 'description' => $default['desc'], 'thumb' => $default['thumb'], 'url' => mobileUrl('lottery'));
+				$cover_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'ewei_shopv2', 'title' => $default['title'], 'description' => $default['desc'], 'thumb' => $default['thumb'], 'url' => mobileUrl('lottery', NULL, 1));
 
 				if (empty($cover)) {
 					pdo_insert('cover_reply', $cover_data);
@@ -267,7 +268,7 @@ class Setting_EweiShopV2Page extends PluginWebPage
 					pdo_update('rule_keyword', $keyword_data, array('id' => $keyword['id']));
 				}
 
-				$cover_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'ewei_shopv2', 'title' => $default['title'], 'description' => $default['desc'], 'thumb' => $default['thumb'], 'url' => mobileUrl('lottery'));
+				$cover_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'ewei_shopv2', 'title' => $default['title'], 'description' => $default['desc'], 'thumb' => $default['thumb'], 'url' => mobileUrl('lottery', NULL, 1));
 
 				if (empty($cover)) {
 					pdo_insert('cover_reply', $cover_data);
@@ -302,7 +303,7 @@ class Setting_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			ca('sysset.notice.edit');
-			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
 			m('common')->updateSysset(array('notice' => $data));
 			plog('sysset.notice.edit', '修改系统设置-模板消息通知设置');
 			$set['lotteryinfo'] = serialize($_GPC['lotteryinfo']);

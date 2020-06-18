@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -48,17 +49,21 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 			}
 		}
 
-		if (($member['isagent'] != 1) || ($member['status'] != 1)) {
-			$set = p('commission')->getSet();
+		if ($member['isagent'] != 1 || $member['status'] != 1) {
+			$set = array();
+
+			if (p('commission')) {
+				$set = p('commission')->getSet();
+			}
 
 			if (empty($poster['isopen'])) {
-				$opentext = (!empty($poster['opentext']) ? $poster['opentext'] : '您还不是我们' . $set['texts']['agent'] . '，去努力成为' . $set['texts']['agent'] . '，拥有你的专属海报吧!');
+				$opentext = !empty($poster['opentext']) ? $poster['opentext'] : '您还不是我们' . $set['texts']['agent'] . '，去努力成为' . $set['texts']['agent'] . '，拥有你的专属海报吧!';
 				m('message')->sendCustomNotice($openid, $opentext, trim($poster['openurl']));
 				exit();
 			}
 		}
 
-		$waittext = (!empty($poster['waittext']) ? htmlspecialchars_decode($poster['waittext'], ENT_QUOTES) : '您的专属海报正在拼命生成中，请等待片刻...');
+		$waittext = !empty($poster['waittext']) ? htmlspecialchars_decode($poster['waittext'], ENT_QUOTES) : '您的专属海报正在拼命生成中，请等待片刻...';
 		$waittext = str_replace('"', '\\"', $waittext);
 		m('message')->sendCustomNotice($openid, $waittext);
 		$qr = $this->model->getQR($poster, $member, $goodsid);

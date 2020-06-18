@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="上海" code="310100">
-<county name="黄浦" code="310101">
+<city name="上海市" code="310100">
+<county name="黄浦区" code="310101">
     <street name="南京东路街道" code="310101002" />
     <street name="外滩街道" code="310101013" />
     <street name="半淞园路街道" code="310101015" />
@@ -13,7 +13,7 @@
     <street name="淮海中路街道" code="310101022" />
     <street name="瑞金二路街道" code="310101023" />
 </county>
-<county name="徐汇" code="310104">
+<county name="徐汇区" code="310104">
     <street name="天平路街道" code="310104003" />
     <street name="湖南路街道" code="310104004" />
     <street name="斜土路街道" code="310104007" />
@@ -29,7 +29,7 @@
     <street name="华泾镇" code="310104103" />
     <street name="漕河泾新兴技术开发区" code="310104501" />
 </county>
-<county name="长宁" code="310105">
+<county name="长宁区" code="310105">
     <street name="华阳路街道" code="310105001" />
     <street name="江苏路街道" code="310105002" />
     <street name="新华路街道" code="310105004" />
@@ -41,7 +41,7 @@
     <street name="北新泾街道" code="310105011" />
     <street name="新泾镇" code="310105102" />
 </county>
-<county name="静安" code="310106">
+<county name="静安区" code="310106">
     <street name="江宁路街道" code="310106006" />
     <street name="石门二路街道" code="310106011" />
     <street name="南京西路街道" code="310106012" />
@@ -57,7 +57,7 @@
     <street name="芷江西路街道" code="310108016" />
     <street name="彭浦镇" code="310108101" />
 </county>
-<county name="普陀" code="310107">
+<county name="普陀区" code="310107">
     <street name="曹杨新村街道" code="310107005" />
     <street name="长风新村街道" code="310107014" />
     <street name="长寿路街道" code="310107015" />
@@ -69,9 +69,9 @@
     <street name="长征镇" code="310107102" />
     <street name="桃浦镇" code="310107103" />
 </county>
-<county name="闸北" code="310108">
+<county name="闸北区" code="310108">
 </county>
-<county name="虹口" code="310109">
+<county name="虹口区" code="310109">
     <street name="欧阳路街道" code="310109009" />
     <street name="曲阳路街道" code="310109010" />
     <street name="广中路街道" code="310109011" />
@@ -81,7 +81,7 @@
     <street name="提篮桥街道" code="310109018" />
     <street name="江湾镇街道" code="310109019" />
 </county>
-<county name="杨浦" code="310110">
+<county name="杨浦区" code="310110">
     <street name="定海路街道" code="310110001" />
     <street name="平凉路街道" code="310110006" />
     <street name="江浦路街道" code="310110008" />
@@ -95,7 +95,7 @@
     <street name="新江湾城街道" code="310110020" />
     <street name="五角场镇" code="310110101" />
 </county>
-<county name="闵行" code="310112">
+<county name="闵行区" code="310112">
     <street name="江川路街道" code="310112001" />
     <street name="古美街道" code="310112006" />
     <street name="新虹街道" code="310112008" />
@@ -111,7 +111,7 @@
     <street name="浦江镇" code="310112114" />
     <street name="莘庄工业区" code="310112501" />
 </county>
-<county name="宝山" code="310113">
+<county name="宝山区" code="310113">
     <street name="友谊路街道" code="310113003" />
     <street name="吴淞街道" code="310113007" />
     <street name="张庙街道" code="310113008" />
@@ -126,7 +126,7 @@
     <street name="淞南镇" code="310113113" />
     <street name="宝山城市工业园区" code="310113501" />
 </county>
-<county name="嘉定" code="310114">
+<county name="嘉定区" code="310114">
     <street name="新成路街道" code="310114001" />
     <street name="真新街道" code="310114002" />
     <street name="菊园新区管委会" code="310114003" />
@@ -140,7 +140,7 @@
     <street name="江桥镇" code="310114118" />
     <street name="嘉定工业区" code="310114501" />
 </county>
-<county name="浦东" code="310115">
+<county name="浦东新区" code="310115">
     <street name="潍坊新村街道" code="310115004" />
     <street name="陆家嘴街道" code="310115005" />
     <street name="周家渡街道" code="310115007" />
@@ -184,7 +184,7 @@
     <street name="金桥经济技术开发区" code="310115502" />
     <street name="张江高科技园区" code="310115503" />
 </county>
-<county name="金山" code="310116">
+<county name="金山区" code="310116">
     <street name="石化街道" code="310116001" />
     <street name="朱泾镇" code="310116101" />
     <street name="枫泾镇" code="310116102" />
@@ -197,7 +197,7 @@
     <street name="山阳镇" code="310116113" />
     <street name="金山工业区" code="310116503" />
 </county>
-<county name="松江" code="310117">
+<county name="松江区" code="310117">
     <street name="岳阳街道" code="310117001" />
     <street name="永丰街道" code="310117002" />
     <street name="方松街道" code="310117003" />
@@ -219,7 +219,7 @@
     <street name="佘山度假区" code="310117504" />
     <street name="上海松江出口加工区" code="310117507" />
 </county>
-<county name="青浦" code="310118">
+<county name="青浦区" code="310118">
     <street name="夏阳街道" code="310118001" />
     <street name="盈浦街道" code="310118002" />
     <street name="香花桥街道" code="310118003" />
@@ -232,7 +232,7 @@
     <street name="重固镇" code="310118109" />
     <street name="白鹤镇" code="310118110" />
 </county>
-<county name="奉贤" code="310120">
+<county name="奉贤区" code="310120">
     <street name="南桥镇" code="310120101" />
     <street name="奉城镇" code="310120102" />
     <street name="庄行镇" code="310120104" />
@@ -246,7 +246,7 @@
     <street name="金海社区" code="310120504" />
     <street name="上海海港综合经济开发区" code="310120505" />
 </county>
-<county name="崇明" code="310230">
+<county name="崇明县" code="310230">
     <street name="城桥镇" code="310230101" />
     <street name="堡镇" code="310230102" />
     <street name="新河镇" code="310230103" />

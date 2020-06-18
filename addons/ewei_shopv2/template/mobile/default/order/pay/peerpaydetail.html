@@ -32,11 +32,13 @@
         <div class="blank"></div>
 
         <div class="fui-list-group-title fui-payfor-group-title">来自{$member['nickname']}的代付订单</div>
+        {loop $goods  $goods}
         <div class="fui-list fui-payfor-list">
             <div class="fui-list-media">
                 <img src="{php echo tomedia($goods['thumb'])}" alt="{$goods['title']}">
             </div>
             <div class="fui-list-inner fui-payfor-info">
+
                 <span class="fui-payfor-info-title">{$goods['title']}</span>
                 <div class="fui-list" style="padding:0;">
                     <div class="fui-list-inner">
@@ -47,7 +49,7 @@
                         <span></span>
                         <span></span>
                         {/if}
-                        <span class="fui-payfor-info-price">&yen;{$peerpay['peerpay_realprice']}</span>
+                        <span class="fui-payfor-info-price">&yen;{$goods['price']}</span>
                     </div>
                     <div class="fui-list-media">
                         <a href="{php echo mobileUrl('goods/detail',array('id'=>$goods['id']))}" class="btn btn-sm btn-default fui-payfor-btn">查看商品</a>
@@ -56,6 +58,7 @@
 
             </div>
         </div>
+        {/loop}
 {if $peerpay['peerpay_type'] == 1}
         {loop $message $mk $mv}
         <div class="peerpay-message-box">

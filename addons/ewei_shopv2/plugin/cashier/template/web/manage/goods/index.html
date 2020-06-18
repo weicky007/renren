@@ -440,15 +440,24 @@
             html += '<td style="text-align: left;">';
             if (data.option!=0){
                 html += '<select class="form-control input-sm select-option">';
+                html += '<option value="0">请选择</option>';
                 $.each(goods.options,function (index,item) {
                     html += '<option value="'+item.id+'">'+item.title+'</option>';
                 });
                 html += '</select>';
+                html += '<td class="col-sm-3">';
+                html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
             }else{
                 html += '无';
+                html += '<td class="col-sm-3">';
+                if(goods.marketprice == undefined){
+                    html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
+                }else{
+                    html += '<input type="number" class="form-control input-sm price" value="'+goods.marketprice+'"  style="text-align: center;"/>';
+                }
+
             }
-            html += '<td class="col-sm-3">';
-            html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
+
             html += '</td>';
             html += '<td class="col-sm-4">';
             html += '<div class="input-group input-group-sm">';
@@ -525,6 +534,18 @@
 
         //表单提交
         $('form').submit(function (e) {
+            var brck=0;
+            $(".select-option").each(function(i){
+                if($(this).val()==0){
+                    brck=1;
+                    return;
+                }
+            },this);
+            if(brck){
+                $('form').attr('stop',1);
+                tip.msgbox.err("请选择规格!");
+                return false;
+            }
             e.preventDefault();
             $('input[type="submit"]').attr('disabled',true);
             var $this = $(this);
@@ -591,6 +612,12 @@
                 } else if (data.status == -101) {
                     ordre_status.hide();
                     tip.msgbox.err(data.result.message);
+                    $('input[type="submit"]').attr('disabled',false);
+                    return false;
+                }else if(data.status == -1){
+                    ordre_status.hide();
+                    tip.msgbox.err(data.result.message);
+                    $('input[type="submit"]').attr('disabled',false);
                     return false;
                 }
             }, 'json')
@@ -658,7 +685,12 @@
                 money += parseFloat($item.find(':input.price').val())*parseInt($item.find(':input.total').val());
             });
         }
-        $(':input[name="data[money]"]').val(money.toFixed(2));
+        if(isNaN(money)){
+            $(':input[name="data[money]"]').val('0.00');
+        }else{
+            $(':input[name="data[money]"]').val(money.toFixed(2));
+        }
+
     }
 
     function log(log) {

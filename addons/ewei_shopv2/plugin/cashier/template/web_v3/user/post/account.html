@@ -47,7 +47,7 @@
     </label>
     {ife 'goods' $item}
     <div class="col-sm-4 col-xs-6">
-        {php echo tpl_form_field_daterange('lifetime', array('starttime'=>date('Y-m-d H:i', !empty($item['lifetimestart'])?$item['lifetimestart']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['lifetimeend'])?$item['lifetimeend']:time()+365*24*3600)),true);}
+        {php echo tpl_form_field_eweishop_daterange('lifetime', array('starttime'=>date('Y-m-d H:i', !empty($item['lifetimestart'])?$item['lifetimestart']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['lifetimeend'])?$item['lifetimeend']:time()+365*24*3600)),true);}
     </div>
     {else}
     <div class="col-sm-6 col-xs-6">

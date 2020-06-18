@@ -23,7 +23,7 @@
             <div class="col-sm-6">
                 <div class='input-group'>
                     <a class='btn btn-primary btn-sm' style="margin-right: 10px" href="{php echo webUrl('system/plugin/plugingrant/add')}"><i class='fa fa-plus'></i> 添加授权</a>
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </div>
             </div>
             <div class="col-sm-6 pull-right">
@@ -63,7 +63,7 @@
             <th style="width:100px;">授权时长</th>
             <th style="width: 100px;">上次授权</th>
             <th style="width: 100px;text-align: center;">状态</th>
-            <th style="width: 65px;text-align: center;">操作</th>
+            <th style="width: 165px;text-align: center;">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -94,8 +94,13 @@
             <td style="text-align: center;">
                 <a class='btn btn-default btn-sm btn-op btn-operation' href="{php echo webUrl('system/plugin/plugingrant/edit',array('id' => $row['id']));}" >
                      <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
-                        <i class="icow icow-bianji2"></i>
+                          <i class="icow icow-bianji2"></i>
                      </span>
+                </a>
+                <a class="btn btn-op btn-operation" data-toggle='ajaxRemove' href="{php echo webUrl('system/plugin/plugingrant/delete',array('id' => $row['id']));}" data-confirm="确定要删除吗？">
+                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                           <i class='icow icow-shanchu1'></i>
+                        </span>
                 </a>
             </td>
         </tr>
@@ -117,4 +122,3 @@
     {/if}
 </div>
 {template '_footer'}
-

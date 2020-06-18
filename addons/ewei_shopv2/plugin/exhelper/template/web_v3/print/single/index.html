@@ -25,7 +25,7 @@
 			<div class="col-sm-12 select-1">
 				<div class='input-group'>
 					<span class="input-group-select">
-					{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+					{php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
 				</span>
 					<span class="input-group-select">
 					<select name='searchtime'  class='form-control'    >
@@ -83,7 +83,7 @@
 							<option value='goodssn'>商品编码</option>
 						</select>
 					</span>
-					<input type="text" class="form-control"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词"/>
+					<input type="text" class="form-control"  name="keyword1" value="{$_GPC['keyword1']}" placeholder="请输入关键词"/>
 					<span class="input-group-btn">
 						<span class="btn btn-primary" onclick="search()" id="search-btn"> 搜索</span>
 					</span>
@@ -113,7 +113,7 @@
 			alert(LodopTip);
 		}
 	});
-	// 执行搜索 
+	// 执行搜索
     function search(){
         var data = {
         	paytype: $.trim($("select[name='paytype'] option:selected").val()),
@@ -124,12 +124,12 @@
         	starttime: $.trim($("input[name='time[start]']").val()),
         	endtime: $.trim($("input[name='time[end]']").val()),//
         	searchfield: $.trim($("select[name='searchfield'] option:selected").val()),
-        	keyword: $.trim($("input[name='keyword']").val())
+        	keyword1: $.trim($("input[name='keyword1']").val())
         };
-        
-        $('#search-btn').html("<i class='fa fa-spinner fa-spin'></i> 正在搜索"); 
+
+        $('#search-btn').html("<i class='fa fa-spinner fa-spin'></i> 正在搜索");
         $("#result-tip .panel-body").html("<i class='fa fa-spinner fa-spin'></i> 正在搜索...");
-        
+
         $.ajax({
             url: "{php echo webUrl('exhelper/print/single/getdata')}",
             data: data,
@@ -137,7 +137,7 @@
             success:function(html){
             	$('#search-btn').html("<i class='fa fa-search'></i> 搜索")
                 $('#result').html(html);
-                
+
                 $('.result-item').click(function(){
                        $('#result-order').html("<p style='line-height: 100px; text-align: center;'><i class='fa fa-spinner fa-spin'></i> 正在加载...</p>")
                     $.ajax({
@@ -153,11 +153,10 @@
                       });
 
                   })
-                  
+
             }
         });
-    }  
+    }
 </script>
 
 {template '_footer'}
-

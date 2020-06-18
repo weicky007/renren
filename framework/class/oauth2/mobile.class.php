@@ -121,6 +121,21 @@ class Mobile extends OAuth2Client {
 			return error(-1, '请先登录');
 		}
 		$user_profile = table('users_profile')->getByUid($_W['uid']);
+		$user_bind = table('users_bind')->getByTypeAndUid(USER_REGISTER_TYPE_MOBILE, $_W['uid']);
+		$need_checkcaptcha = true;
+		if (isset($_GPC['need_checkcaptcha']) && empty($_GPC['need_checkcaptcha'])) {
+			$need_checkcaptcha = false;
+		}
+		if (!$need_checkcaptcha && !empty($user_bind)) {
+			$check_authcode = safe_gpc_string($_GPC['check_authcode']);
+			if (empty($check_authcode)) {
+				return error(-1, '请先验证旧手机！');
+			}
+			$old_mobile = authcode($check_authcode);
+			if ($old_mobile != $user_bind['bind_sign']) {
+				return error(-1, '请先验证旧手机！');
+			}
+		}
 
 		$param_validate = $this->paramValidate();
 
@@ -133,7 +148,11 @@ class Mobile extends OAuth2Client {
 		} else {
 			pdo_update('users_profile', array('mobile' => $mobile), array('id' => $user_profile['id']));
 		}
+		if (empty($user_bind)) {
 		pdo_insert('users_bind', array('uid' => $_W['uid'], 'bind_sign' => $mobile, 'third_type' => USER_REGISTER_TYPE_MOBILE, 'third_nickname' => $mobile));
+		} else {
+			table('users_bind')->where(array('uid' => $_W['uid'], 'third_type' => USER_REGISTER_TYPE_MOBILE))->fill(array('bind_sign' => $mobile, 'third_nickname' => $mobile))->save();
+		}
 
 		return error(0, '绑定成功');
 	}
@@ -168,20 +187,23 @@ class Mobile extends OAuth2Client {
 		$mobile = trim($_GPC['mobile']);
 		$image_code =trim($_GPC['imagecode']);
 		$sms_code = trim($_GPC['smscode']);
-
+		$need_checkcaptcha = true;
+		if (isset($_GPC['need_checkcaptcha']) && empty($_GPC['need_checkcaptcha'])) {
+			$need_checkcaptcha = false;
+		}
 		if (empty($sms_code)) {
 			return error(-1, '短信验证码不能为空');
 		}
 
-		if (empty($image_code)) {
+		if ($need_checkcaptcha && empty($image_code)) {
 			return error(-1, '图形验证码不能为空');
 		}
-
+		if ($need_checkcaptcha) {
 		$captcha = checkcaptcha($image_code);
 		if (empty($captcha)) {
 			return error(-1, '图形验证码错误,请重新获取');
 		}
-
+		}
 		load()->model('utility');
 		$verify_info = utility_smscode_verify(0, $mobile, $sms_code);
 		if (is_error($verify_info)) {

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -223,7 +224,7 @@ class PosterModel extends PluginModel
 	{
 		load()->func('communication');
 		$resp = ihttp_request($imgurl);
-		if (($resp['code'] == 200) && !empty($resp['content'])) {
+		if ($resp['code'] == 200 && !empty($resp['content'])) {
 			return imagecreatefromstring($resp['content']);
 		}
 
@@ -231,7 +232,7 @@ class PosterModel extends PluginModel
 
 		while ($i < 3) {
 			$resp = ihttp_request($imgurl);
-			if (($resp['code'] == 200) && !empty($resp['content'])) {
+			if ($resp['code'] == 200 && !empty($resp['content'])) {
 				return imagecreatefromstring($resp['content']);
 			}
 
@@ -255,8 +256,13 @@ class PosterModel extends PluginModel
 	{
 		$font = IA_ROOT . '/addons/ewei_shopv2/static/fonts/msyh.ttf';
 		$colors = $this->hex2rgb($data['color']);
+
+		if ($data['type'] == 'nickname') {
+			$data['top'] = (int) $data['top'] + $data['size'] * 2.3999999999999999;
+		}
+
 		$color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
-		imagettftext($target, $data['size'], 0, $data['left'], $data['top'] + $data['size'], $color, $font, $text);
+		imagettftext($target, $data['size'], 0, $data['left'], $data['top'] - $data['size'], $color, $font, $text);
 		return $target;
 	}
 
@@ -293,7 +299,7 @@ class PosterModel extends PluginModel
 		}
 
 		if (!empty($qr['goodsid'])) {
-			$goods = pdo_fetch('select id,title,thumb,commission_thumb,marketprice,productprice from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $qr['goodsid'], ':uniacid' => $_W['uniacid']));
+			$goods = pdo_fetch('select id,title,thumb,commission_thumb,marketprice,productprice,minprice from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $qr['goodsid'], ':uniacid' => $_W['uniacid']));
 
 			if (empty($goods)) {
 				m('message')->sendCustomNotice($member['openid'], '未找到商品，无法生成海报');
@@ -303,13 +309,17 @@ class PosterModel extends PluginModel
 
 		$md5 = md5(json_encode(array('siteroot' => $_W['siteroot'], 'openid' => $member['openid'], 'goodsid' => $qr['goodsid'], 'bg' => $poster['bg'], 'data' => $poster['data'], 'version' => 1)));
 		$file = $md5 . '.png';
-		if (!is_file($path . $file) || ($qr['qrimg'] != $qr['current_qrimg'])) {
+		if (!is_file($path . $file) || $qr['qrimg'] != $qr['current_qrimg']) {
 			set_time_limit(0);
 			@ini_set('memory_limit', '256M');
 			$target = imagecreatetruecolor(640, 1008);
 			$bg = $this->createImage(tomedia($poster['bg']));
-			imagecopy($target, $bg, 0, 0, 0, 0, 640, 1008);
-			imagedestroy($bg);
+
+			if (!empty($bg)) {
+				imagecopy($target, $bg, 0, 0, 0, 0, 640, 1008);
+				imagedestroy($bg);
+			}
+
 			$data = json_decode(str_replace('&quot;', '\'', $poster['data']), true);
 
 			foreach ($data as $d) {
@@ -331,14 +341,22 @@ class PosterModel extends PluginModel
 				else {
 					if (!empty($goods)) {
 						if ($d['type'] == 'title') {
-							$target = $this->mergeText($target, $d, $goods['title']);
+							$title_width = (int) ($d['width'] / $d['size'] / 1.2);
+							$width_left = 0;
+
+							while ($width_left < strlen($goods['title'])) {
+								$title = mb_substr($goods['title'], $width_left, $title_width, 'utf-8');
+								$width_left += $title_width;
+								$d['top'] += $d['size'] * 2;
+								$target = $this->mergeText($target, $d, $title);
+							}
 						}
 						else if ($d['type'] == 'thumb') {
-							$thumb = (!empty($goods['commission_thumb']) ? tomedia($goods['commission_thumb']) : tomedia($goods['thumb']));
+							$thumb = !empty($goods['commission_thumb']) ? tomedia($goods['commission_thumb']) : tomedia($goods['thumb']);
 							$target = $this->mergeImage($target, $d, $thumb);
 						}
 						else if ($d['type'] == 'marketprice') {
-							$target = $this->mergeText($target, $d, $goods['marketprice']);
+							$target = $this->mergeText($target, $d, $goods['minprice']);
 						}
 						else {
 							if ($d['type'] == 'productprice') {
@@ -363,7 +381,7 @@ class PosterModel extends PluginModel
 			return $img;
 		}
 
-		if (($qr['qrimg'] != $qr['current_qrimg']) || empty($qr['mediaid']) || empty($qr['createtime']) || ((($qr['createtime'] + (3600 * 24 * 3)) - 7200) < time())) {
+		if ($qr['qrimg'] != $qr['current_qrimg'] || empty($qr['mediaid']) || empty($qr['createtime']) || $qr['createtime'] + 3600 * 24 * 3 - 7200 < time()) {
 			$mediaid = $this->uploadImage($path . $file);
 			$qr['mediaid'] = $mediaid;
 			pdo_update('ewei_shop_poster_qr', array('mediaid' => $mediaid, 'createtime' => time()), array('id' => $qr['id']));
@@ -450,6 +468,12 @@ class PosterModel extends PluginModel
 			pdo_insert('ewei_shop_member', $member);
 			$member['id'] = pdo_insertid();
 			$member['isnew'] = true;
+
+			if (method_exists(m('member'), 'memberRadisCountDelete')) {
+				m('member')->memberRadisCountDelete();
+			}
+
+			$_SESSION['eweishop']['poster_member'] = true;
 		}
 		else {
 			$member['nickname'] = $userinfo['nickname'];

@@ -124,18 +124,18 @@
 
                 var recmoney = parseFloat($(':input[name=recmoney]').val());
                 if( recmoney>0 ){
-                    if(recmoney<1){
+                    if(recmoney<0.3){
                         $(':input[name=recmoney]').focus();
-                        tip.msgbox.err('微信企业付款需支付1元以上!');
+                        tip.msgbox.err('微信企业付款需支付0.3元以上!');
                         $('form').attr('stop',1);
                         return false;
                     }
                 }
                 var submoney = parseFloat($(':input[name=submoney]').val());
                 if(submoney>0){
-                    if(submoney<1){
+                    if(submoney<0.3){
                         $(':input[name=submoney]').focus();
-                        tip.msgbox.err('微信企业付款需支付1元以上!');
+                        tip.msgbox.err('微信企业付款需支付0.3元以上!');
                         $('form').attr('stop',1);
                         return false;
                     }
@@ -181,8 +181,8 @@
             }else if(type==3){
                 d.type=3;
                 d.num=obj.data('value');
-                if(d.num<1){
-                    tip.msgbox.err('微信企业付款需支付1元以上!');
+                if(d.num<0.3){
+                    tip.msgbox.err('微信企业付款需支付0.3元以上!');
                     $('form').attr('stop',1);
                     return false;
                 }
@@ -226,8 +226,8 @@
             }else if(type==3){
                 d.type=3;
                 d.num=obj.data('value');
-                if(d.num<1){
-                    tip.msgbox.err('微信企业付款需支付1元以上!');
+                if(d.num<0.3){
+                    tip.msgbox.err('微信企业付款需支付0.3元以上!');
                     $('form').attr('stop',1);
                     return false;
                 }
@@ -547,4 +547,3 @@
 
 </script>
 {template '_footer'}
-

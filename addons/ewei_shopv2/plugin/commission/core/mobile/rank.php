@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -66,7 +67,7 @@ class Rank_EweiShopV2Page extends CommissionMobileLoginPage
 		$psize = 20;
 
 		if ($this->commission_rank['num'] <= $pindex * $psize) {
-			$psize = (($this->commission_rank['num'] % $psize) == 0 ? 20 : $this->commission_rank['num'] % $psize);
+			$psize = $this->commission_rank['num'] % $psize == 0 ? 20 : $this->commission_rank['num'] % $psize;
 			$pindex = ceil($this->commission_rank['num'] / $psize);
 			$this->len = 0;
 		}
@@ -94,7 +95,7 @@ class Rank_EweiShopV2Page extends CommissionMobileLoginPage
 	protected function commissionTotal($pindex, $psize)
 	{
 		global $_W;
-		$limit = ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$limit = ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$result = pdo_fetchall('SELECT id,uid,nickname,avatar,commission_total FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = :uniacid ORDER BY commission_total DESC ' . $limit, array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($result)) {
@@ -119,7 +120,7 @@ class Rank_EweiShopV2Page extends CommissionMobileLoginPage
 	protected function commissionPay($pindex, $psize)
 	{
 		global $_W;
-		$limit = ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$limit = ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$result = pdo_fetchall('SELECT c.id,c.mid,SUM(c.commission_pay)  as commission_pay,m.nickname,m.avatar FROM ' . tablename('ewei_shop_commission_apply') . ' c LEFT JOIN ' . tablename('ewei_shop_member') . ' m ON c.mid=m.id WHERE c.uniacid = :uniacid AND c.status=3  GROUP BY c.mid ORDER BY commission_pay DESC' . $limit, array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($result)) {

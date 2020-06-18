@@ -39,7 +39,7 @@
                 <label class="col-lg control-label">首页导航图片</label>
                 <div class="col-sm-9 col-xs-12">
                     {ife 'shop.nav' $item}
-                        {php echo tpl_form_field_image2('icon', $item['icon'])}
+                        {php echo tpl_form_field_image2('icon', $item['icon'],'',array('dest_dir'=>'merch/'.$_W['merchid']))}
                         <span class='help-block'>建议尺寸:100 * 100 , 请将所有首页导航图片尺寸保持一致</span>
                     {else}
                         {if !empty($item['icon'])}

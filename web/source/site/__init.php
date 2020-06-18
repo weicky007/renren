@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 if ('entry' != $action) {
 	$account_api = WeAccount::createByUniacid();
 	if (is_error($account_api)) {
-		itoast('', url('account/display'));
+		itoast('', $_W['siteroot'] . 'web/home.php');
 	}
 	$check_manange = $account_api->checkIntoManage();
 

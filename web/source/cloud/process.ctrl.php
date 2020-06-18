@@ -47,11 +47,18 @@ if ('scripts' == $step && $_W['ispost']) {
 $has_new_support = intval($_GPC['has_new_support']);
 if (!empty($_GPC['m'])) {
 	$m = safe_gpc_string($_GPC['m']);
+	$application_type = intval($_GPC['application_type']);
+	$module_info = table('modules')->getByName($m);
 	$type = 'module';
-	$is_upgrade = intval($_GPC['is_upgrade']);
-	$packet = cloud_m_build($m, $is_upgrade ? 'upgrade' : '');
-		if (!empty($packet) && !json_encode($packet['scripts'])) {
-		itoast('模块安装脚本有代码错误，请联系开发者解决！', referer(), 'error');
+	if (APPLICATION_TYPE_TEMPLATES == $module_info['application_type'] || APPLICATION_TYPE_TEMPLATES == $application_type) {
+		$is_upgrade = intval($_GPC['is_upgrade']);
+		$packet = cloud_t_build($m);
+	} else {
+		$is_upgrade = intval($_GPC['is_upgrade']);
+		$packet = cloud_m_build($m, $is_upgrade ? 'upgrade' : '');
+				if (!empty($packet) && !json_encode($packet['scripts'])) {
+			itoast('模块安装脚本有代码错误，请联系开发者解决！', referer(), 'error');
+		}
 	}
 } elseif (!empty($_GPC['t'])) {
 	$m = $_GPC['t'];

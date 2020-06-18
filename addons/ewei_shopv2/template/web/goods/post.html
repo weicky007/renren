@@ -9,6 +9,9 @@
     .tab-goods .nav li {width: 120px; text-align: right;}
     .spec_item_thumb {position: relative; width: 30px; height: 20px; padding: 0; border-left: none;}
     .spec_item_thumb i {position: absolute; top: -5px; right: -5px;}
+    {if $item['type']==4}
+    .type-4 {display: none;}
+    {/if}
 </style>
 
 
@@ -162,13 +165,21 @@
                 if ($('#virtual').val() == '0') {
                     $('.choosetemp').show();
                 }
+                // 商品类型如果为虚拟卡密则不允许修改库存
+                $('#weight').attr('readonly',true);
+                $('#total').attr('readonly',true);
             }
             if (window.type == '2' || window.type == '3'|| window.type == '5') {
                 $(':checkbox[name=cash]').attr("checked",false);
                 $(':checkbox[name=cash]').parent().hide();
             } else {
                 $(':checkbox[name=cash]').parent().show();
+            }
 
+            if(window.type=='4'){
+                $('.type-4').hide();
+            }else{
+                $('.type-4').show();
             }
         })
 
@@ -673,7 +684,8 @@
 			 $('#product').hide();
 			 $('#type_virtual').hide();
 			 $("#tab_nav_verify").hide();
-
+             $("[for|='totalcnf2']").show();
+             $("[for|='totalcnf3']").show();
 		}else
 		 {
 			 $(".showverifygoods").hide();
@@ -685,6 +697,8 @@
             $('#type_virtual').hide();
             $('.entity').show();
             $("#tab_nav_verify").show();
+            $("[for|='totalcnf2']").show();
+            $("[for|='totalcnf3']").show();
         } else if(type == 2) {
             $('#product').hide();
             $('#type_virtual').hide();
@@ -694,18 +708,23 @@
             }else{
                 $("#tab_nav_verify").show();
             }
+            $("[for|='totalcnf2']").show();
+            $("[for|='totalcnf3']").show();
         } else if(type == 3) {
             $('#type_virtual').show();
             $('.entity').hide();
             $("#tab_nav_verify").hide();
+            $("[for|='totalcnf2']").hide();
+            $("[for|='totalcnf3']").hide();
         }else if(type == 10) {
             $('#type_virtual').hide();
             $('#product').hide();
             $('.entity').hide();
             $("#tab_nav_verify").hide();
+            $("[for|='totalcnf2']").show();
+            $("[for|='totalcnf3']").show();
         }
     }
-
 
 </script>
 

@@ -1,15 +1,31 @@
 <script type="text/html" id="tpl_navs">
-    <nav class="btn btn-link" data-id="page"><i class="fa fa-cog"></i> {if $pagetype=='mod'}模块{else}页面{/if}设置</nav>
-    <%each initnav as nav %>
-        <nav class="btn btn-link <%if nav.type==type%>special<%/if%>" data-id="<%nav.id%>"><i class="fa fa-plus"></i> <%nav.name%></nav>
-    <%/each%>
-</script>
 
-<script type="text/html" id="edit-del">
-    <div class="btn-edit-del">
-        <div class="btn-edit">编辑</div>
-        <div class="btn-del">删除</div>
+    <nav class="btn btn-link page-setup" data-id="page"><i class="fa fa-cog"></i> 页面设置</nav>
+    <%if navpageType != 5%>
+        <div class="btns-global">
+            <div class="title" >全局</div>
+            <%each global as nav %>
+            <nav class="btn btn-link <%if nav.type==type%>special<%/if%>" data-id="<%nav.id%>"> <%nav.name%></nav>
+            <%/each%>
+        </div>
+    <%/if%>
+    <div class="btns-local">
+        <div class="title">基础</div>
+        <div style="<%if navpageType != 5%>border-left: 1px solid #ededed;<%/if%>padding-left: 24px;" id="">
+            <%each basic as nav %>
+            <nav class="btn btn-link <%if nav.type==type%>special<%/if%>" data-id="<%nav.id%>"> <%nav.name%></nav>
+            <%/each%>
+        </div>
     </div>
+</script>
+<style>
+    .pull-right.btn-uploader{float:left!important;width:100%;}
+</style>
+<script type="text/html" id="edit-del">
+     <!--<div class="btn-edit-del"> -->
+        <!--<div class="btn-edit">编辑</div>-->
+        <!--<div class="btn-del">删除</div>-->
+     <!--</div>-->
 </script>
 
 
@@ -28,7 +44,7 @@
         <div class="col-sm-2 control-label">页面名称</div>
         <div class="col-sm-10">
             <input class="form-control input-sm diy-bind" data-bind="name" data-placeholder="请输入名称" placeholder="请输入名称" value="<%page.name%>" />
-            <div class="help-block">注意：页面名称是便于后台查找，页面标题是手机端标题。</div>
+            <div class="help-block">注意：页面名称是便于后台查找。</div>
         </div>
     </div>
 
@@ -113,6 +129,7 @@
         </div>
     </div>
 
+    <%if page.type!=8 && page.type!=4 && page.type!=6 && page.type!=7%>
     <div class="form-group">
         <div class="col-sm-2 control-label">关注条</div>
         <div class="col-sm-10">
@@ -121,6 +138,7 @@
             <div class="help-block">提示：关注条样式请至 <a href="{php echo webUrl('diypage/shop/followbar')}" target="_blank">自定义关注条</a> 中设置 未设置则不显示</div>
         </div>
     </div>
+    <%/if%>
 
     <div class="line"></div>
 
@@ -136,7 +154,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" style="display:{if $_GPC['type'] == 4 ||  $_GPC['type'] == 7 || $_GPC['type'] == 8}none;{else}block{/if}">
         <div class="col-sm-2 control-label">下单提醒</div>
         <div class="col-sm-10">
             <label class="radio-inline"><input type="radio" name="danmu" value="1" class="diy-bind" data-bind="danmu" <%if page.danmu=='1'%>checked="checked"<%/if%>> 显示</label>
@@ -202,7 +220,25 @@
             </div>
         <%/if%>
     <%/if%>
-
+    <%if page.seckill%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">秒杀样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="seckillstyle" value="style1" class="diy-bind" data-bind="style"  data-bind-child="seckill"<%if page.seckill.style=='style1'%>checked="checked"<%/if%> > 样式一</label>
+            <label class="radio-inline"><input type="radio" name="seckillstyle" value="style2" class="diy-bind" data-bind="style"   data-bind-child="seckill"<%if page.seckill.style=='style2'%>checked="checked"<%/if%> > 样式二</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">秒杀风格颜色</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="seckillcolor" value="red" class="diy-bind" data-bind="color"  data-bind-child="seckill"  <%if page.seckill.color=='red'%>checked="checked"<%/if%> > 红</label>
+            <label class="radio-inline"><input type="radio" name="seckillcolor" value="blue" class="diy-bind" data-bind="color"  data-bind-child="seckill" <%if page.seckill.color=='blue'%>checked="checked"<%/if%> > 蓝</label>
+            <label class="radio-inline"><input type="radio" name="seckillcolor" value="purple" class="diy-bind" data-bind="color"  data-bind-child="seckill"  <%if page.seckill.color=='purple'%>checked="checked"<%/if%> > 紫</label>
+            <label class="radio-inline"><input type="radio" name="seckillcolor" value="pink" class="diy-bind" data-bind="color"  data-bind-child="seckill"  <%if page.seckill.color=='pink'%>checked="checked"<%/if%> > 粉</label>
+            <label class="radio-inline"><input type="radio" name="seckillcolor" value="orange" class="diy-bind" data-bind="color"  data-bind-child="seckill"  <%if page.seckill.color=='orange'%>checked="checked"<%/if%> > 橙</label>
+        </div>
+    </div>
+    <%/if%>
 </script>
 
 <script type="text/html" id="tpl_edit_banner">
@@ -315,6 +351,53 @@
     <div class="alert alert-danger" style="margin-top: 10px; margin-bottom: 0;">注意：页面程序使用JS引擎，请勿将富文本里再填写JS代码块</div>
 
 </script>
+
+<script type="text/html" id="tpl_edit_video">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">视频样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="ratio" value="0" class="diy-bind" data-bind-child="style" data-bind="ratio" data-bind-init="true" <%if style.ratio=='0'%>checked="checked"<%/if%>> 16:9</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="1" class="diy-bind" data-bind-child="style" data-bind="ratio" data-bind-init="true" <%if style.ratio=='1'%>checked="checked"<%/if%>> 4:3</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="2" class="diy-bind" data-bind-child="style" data-bind="ratio" data-bind-init="true" <%if style.ratio=='2'%>checked="checked"<%/if%>> 1:1</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">视频封面</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="poster" data-bind-init="true" value="<%params.poster%>" id="poster" placeholder="请选择图片或输入图片地址" />
+                <span data-input="#poster" data-img="#showposter" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
+            </div>
+            <div class="input-group " style="margin-top:.5em;">
+                <img src="<%imgsrc params.poster%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" width="150" id="showposter">
+            </div>
+            <div class="form-control-static">请上传<%if style.ratio=='0'%>16:9<%/if%><%if style.ratio=='1'%>4:3<%/if%><%if style.ratio=='2'%>1:1<%/if%>比例的图片</div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择视频</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="videourl" data-bind-init="true" value="<%params.videourl%>" data-url="<%imgsrc params.videourl%>" id="videourl" placeholder="请选择视频或输入视频地址" />
+                <span data-input="#videourl" data-img="#showvideo" data-toggle="selectVideo" data-network="true" class="input-group-addon btn btn-default">选择视频</span>
+            </div>
+            <% if params.videourl%>
+            <div class="input-group">
+                <div class="multi-item" style="display: block" title="预览视频" data-toggle="previewVideo" data-input="#videourl">
+                    <div class="img-responsive img-thumbnail img-video" style="width: 100px; height: 100px; position: relative; text-align: center; cursor: pointer;" src="">
+                        <i class="fa fa-play-circle" style="font-size: 60px; line-height: 90px; color: #999;"></i>
+                    </div>
+                    <em class="close" title="移除视频" data-toggle="setNull" data-element="#videourl">×</em>
+                </div>
+            </div>
+            <%/if%>
+            <div class="form-control-static">可上传视频或输入视频地址,不支持提取网络视频</div>
+        </div>
+    </div>
+</script>
+
 
 <script type="text/html" id="tpl_edit_notice">
 
@@ -672,7 +755,6 @@
 </script>
 
 <script type="text/html" id="tpl_edit_menu">
-
     <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
         <div class="col-sm-4">
@@ -1366,7 +1448,7 @@
                 <div class="item" data-id="<%itemid%>">
                     <span class="btn-del" title="删除"></span>
                     <div class="item-image square">
-                        <div class="text goods-selector" data-goodstype="<%params.goodstype%>">选择商品</div>
+                        <div class="text goods-selector" data-goodstype="<%params.goodstype%>" data-pagetype ="<%params.pagetype%>" >选择商品</div>
                         <img src="<%imgsrc child.thumb%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
                         <input type="hidden" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" value="<%child.imgurl%>" />
                     </div>
@@ -1442,6 +1524,78 @@
         </div>
     </div>
     <%/if%>
+
+</script>
+
+<script type="text/html" id="tpl_edit_groupsgoods">
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="liststyle" value="block" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle=='block'%>checked="checked"<%/if%> > 样式一</label>
+            <label class="radio-inline"><input type="radio" name="liststyle" value="" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle==''%>checked="checked"<%/if%>> 样式二</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品原价颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="productpricecolor" value="<%style.productpricecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">拼团价格颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">拼团标签颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="buybtncolor" value="<%style.buybtncolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">拼团角标颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="groupscorner" value="<%style.groupscorner%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f3f3f3').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">显示数量</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%params.goodsnum%>" data-min="1" data-max="20"></div>
+                <div class="col-sm-4 control-labe count"><span><%params.goodsnum%></span>个</div>
+                <input class="diy-bind input" data-bind-child="params" data-bind="goodsnum" value="<%params.goodsnum%>" type="hidden" />
+            </div>
+        </div>
+    </div>
 
 </script>
 
@@ -1705,42 +1859,6 @@
 
     <div class="line"></div>
 
-    <div class="form-group">
-        <div class="col-sm-2 control-label">边框颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bordercolor" value="<%style.bordercolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fafafa').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部边框</div>
-        <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="bordertop" value="0" class="diy-bind" data-bind-child="params" data-bind="bordertop" data-bind-init="true" <%if params.bordertop=='0' || params.bordertop==''%>checked="checked"<%/if%>> 不显示</label>
-            <label class="radio-inline"><input type="radio" name="bordertop" value="1" class="diy-bind" data-bind-child="params" data-bind="bordertop" data-bind-init="true" <%if params.bordertop=='1'%>checked="checked"<%/if%>> 显示</label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">底部边框</div>
-        <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="borderbottom" value="0" class="diy-bind" data-bind-child="params" data-bind="borderbottom" data-bind-init="true" <%if params.borderbottom=='0' || params.borderbottom==''%>checked="checked"<%/if%>> 不显示</label>
-            <label class="radio-inline"><input type="radio" name="borderbottom" value="1" class="diy-bind" data-bind-child="params" data-bind="borderbottom" data-bind-init="true" <%if params.borderbottom=='1'%>checked="checked"<%/if%>> 显示</label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">中间边框</div>
-        <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="border" value="0" class="diy-bind" data-bind-child="params" data-bind="border" data-bind-init="true" <%if params.border=='0' || params.border==''%>checked="checked"<%/if%>> 不显示</label>
-            <label class="radio-inline"><input type="radio" name="border" value="1" class="diy-bind" data-bind-child="params" data-bind="border" data-bind-init="true" <%if params.border=='1'%>checked="checked"<%/if%>> 显示</label>
-        </div>
-    </div>
-
-    <div class="line"></div>
-
     <div class="form-items indent" data-min="3" data-max="10">
         <div class="inner" id="form-items">
             <%each data as child itemid %>
@@ -1879,6 +1997,7 @@
     <div class="col-sm-10">
         <label class="radio-inline"><input type="radio" name="style" value="default1" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default1' || params.style==''%>checked="checked"<%/if%>> 样式一</label>
         <label class="radio-inline"><input type="radio" name="style" value="default2" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default2'%>checked="checked"<%/if%> > 样式二</label>
+        <label class="radio-inline"><input type="radio" name="style" value="default3" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default3'%>checked="checked"<%/if%> > 样式三</label>
     </div>
     </div>
 
@@ -1980,13 +2099,96 @@
 
 </script>
 
+<script type="text/html" id="tpl_edit_commission_block">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">价格颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff8000').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">按钮颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btncolor" value="<%style.btncolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff8000').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="tpl_edit_commission_sharecode">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择图标</div>
+        <div class="col-sm-4">
+            <div class="input-group form-group" style="margin: 0; display: block; width: 140px;">
+                <span data-input="#sharecodeicon" data-toggle="selectIcon" class="input-group-addon btn btn-default">选择图标</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).next().val('icon-link').trigger('change');">重置</span>
+                <input class="diy-bind" type="hidden" data-bind-child="params" data-bind="iconclass" value="icon-qiandao" id="sharecodeicon">
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">图标颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="iconcolor" value="<%style.iconcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff8000').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/html" id="tpl_edit_blockgroup">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">显示样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="newstyle" value="0" class="diy-bind" data-bind-child="params" data-bind="newstyle" data-bind-init="true" <%if params.newstyle=='0' || !params.newstyle%>checked="checked"<%/if%>> 竖排</label>
+            <%if params.rownum==2%>
+                <label class="radio-inline"><input type="radio" name="newstyle" value="1" class="diy-bind" data-bind-child="params" data-bind="newstyle" data-bind-init="true" <%if params.newstyle=='1'%>checked="checked"<%/if%>> 横排</label>
+            <%/if%>
+        </div>
+    </div>
+
     <div class="form-group">
         <div class="col-sm-2 control-label">每行数量</div>
         <div class="col-sm-10">
             <label class="radio-inline"><input type="radio" name="rownum" value="2" class="diy-bind" data-bind-child="params" data-bind="rownum" data-bind-init="true" <%if params.rownum=='2'%>checked="checked"<%/if%>> 2个</label>
-            <label class="radio-inline"><input type="radio" name="rownum" value="3" class="diy-bind" data-bind-child="params" data-bind="rownum" data-bind-init="true" <%if params.rownum=='3' || params.rownum==''%>checked="checked"<%/if%>> 3个</label>
-            <label class="radio-inline"><input type="radio" name="rownum" value="4" class="diy-bind" data-bind-child="params" data-bind="rownum" data-bind-init="true" <%if params.rownum=='4' || params.rownum==''%>checked="checked"<%/if%>> 4个</label>
+            <%if params.rownum!=1%>
+                <label class="radio-inline"><input type="radio" name="rownum" value="3" class="diy-bind" data-bind-child="params" data-bind="rownum" data-bind-init="true" <%if params.rownum=='3' || params.rownum==''%>checked="checked"<%/if%>> 3个</label>
+                <label class="radio-inline"><input type="radio" name="rownum" value="4" class="diy-bind" data-bind-child="params" data-bind="rownum" data-bind-init="true" <%if params.rownum=='4' || params.rownum==''%>checked="checked"<%/if%>> 4个</label>
+            <%/if%>
         </div>
     </div>
 
@@ -2257,7 +2459,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timecolor" data-bind-init="true" value="<%style.timecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fff2e2').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2266,7 +2468,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timetextcolor" data-bind-init="true" value="<%style.timetextcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff8000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2516,7 +2718,7 @@
         <div class="col-sm-10">
             <div class="input-group input-group-sm">
                 <span class="input-group-addon">文字</span>
-                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="liketext" value="<%params.liketext||'关注'%>" data-placeholder="关注" maxlength="3" />
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="liketext" value="<%params.liketext||'关注'%>" data-placeholder="关注" maxlength="4" />
                 <span class="input-group-addon" style="border-left: 0; border-right: 0;">图标</span>
                 <span class="form-control" style="border-right: 0; line-height: 28px; text-align: center;"><i class="icon <%params.likeiconclass||'icon-like'%>" id="showlikeicon"></i></span>
                 <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#likeiconclass" data-element="#showlikeicon">选择图标</span>
@@ -2554,7 +2756,7 @@
         <div class="col-sm-10">
             <div class="input-group input-group-sm">
                 <span class="input-group-addon">文字</span>
-                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="shoptext" value="<%params.shoptext||'店铺'%>" data-placeholder="店铺" maxlength="3" />
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="shoptext" value="<%params.shoptext||'店铺'%>" data-placeholder="店铺" maxlength="4" />
                 <span class="input-group-addon" style="border-left: 0; border-right: 0;">图标</span>
                 <span class="form-control" style="border-right: 0; line-height: 28px; text-align: center;"><i class="icon <%params.shopiconclass||'icon-shop'%>" id="showshopicon"></i></span>
                 <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#shopiconclass" data-element="#showshopicon">选择图标</span>
@@ -2592,7 +2794,7 @@
         <div class="col-sm-10">
             <div class="input-group input-group-sm">
                 <span class="input-group-addon">文字</span>
-                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="carttext" value="<%params.carttext||'购物车'%>" data-placeholder="购物车" maxlength="3" />
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="carttext" value="<%params.carttext||'购物车'%>" data-placeholder="购物车" maxlength="4" />
                 <span class="input-group-addon" style="border-left: 0; border-right: 0;">图标</span>
                 <span class="form-control" style="border-right: 0; line-height: 28px; text-align: center;"><i class="icon <%params.carticonclass||'icon-cart'%>" id="showcarticon"></i></span>
                 <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#carticonclass" data-element="#showcarticon">选择图标</span>
@@ -2629,7 +2831,7 @@
         </div>
     </div>
 
-    <div class="alert alert-primary" style="margin-bottom: 0; margin-top: 10px;">提示：左侧图标最多输入3个字，购买按钮最多输入4个字</div>
+    <div class="alert alert-primary" style="margin-bottom: 0; margin-top: 10px;">小贴士：建议左侧图标命名为3个字以内，若以4个字命名，请注意添加的图标数量不要超过2个，避免影响页面正常显示。购买按钮最多输入4个字</div>
 </script>
 
 <script type="text/html" id="tpl_edit_detail_comment">
@@ -3005,194 +3207,16 @@
 </script>
 
 <script type="text/html" id="tpl_edit_detail_seckill">
-
     <div class="form-group">
-        <div class="col-sm-2 control-label">左侧背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgleft" value="<%style.bgleft%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">右侧背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgright" value="<%style.bgright%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffef32').trigger('propertychange')">重置</span>
-            </div>
+        <div class="col-sm-2 control-label">颜色</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="detailseckillcolor" value="red" class="diy-bind" data-bind="theme"  data-bind-child="style"  <%if style.theme=='red'%>checked="checked"<%/if%> ><%style.bgleft%>红</label>
+            <label class="radio-inline"><input type="radio" name="detailseckillcolor" value="blue" class="diy-bind" data-bind="theme"  data-bind-child="style" <%if style.theme=='blue'%>checked="checked"<%/if%> > 蓝</label>
+            <label class="radio-inline"><input type="radio" name="detailseckillcolor" value="purple" class="diy-bind" data-bind="theme"  data-bind-child="style"  <%if style.theme=='purple'%>checked="checked"<%/if%> > 紫</label>
+            <label class="radio-inline"><input type="radio" name="detailseckillcolor" value="pink" class="diy-bind" data-bind="theme"  data-bind-child="style"  <%if style.theme=='pink'%>checked="checked"<%/if%> > 粉</label>
+            <label class="radio-inline"><input type="radio" name="detailseckillcolor" value="orange" class="diy-bind" data-bind="theme"  data-bind-child="style"  <%if style.theme=='orange'%>checked="checked"<%/if%> > 橙</label>
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">标签文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="tagcolor" value="<%style.tagcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">状态文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="statuscolor" value="<%style.statuscolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">价格颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">原价文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="marketpricecolor" value="<%style.marketpricecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f7a7a7').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">时间颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timecolor" value="<%style.timecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">时间背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timebgcolor" value="<%style.timebgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#582e19').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">已售颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="processtextcolor" value="<%style.processtextcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">进度条文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="processcolor" value="<%style.processcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#efd74f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="line"></div>
-
-
-
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待左侧背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgleftwait" value="<%style.bgleftwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#00b950').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">等待右侧背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgrightwait" value="<%style.bgrightwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#00b950').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待标签颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="tagcolorwait" value="<%style.tagcolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">等待状态文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="statuscolorwait" value="<%style.statuscolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待时间颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timecolorwait" value="<%style.timecolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#003718').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">等待时间背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timebgcolorwait" value="<%style.timebgcolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#582e19').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待价格</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolorwait" value="<%style.pricecolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">等待原价</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="marketpricecolorwait" value="<%style.marketpricecolorwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7fdca7').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待购买按钮颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="buybtntextwait" value="<%style.buybtntextwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-
-        <div class="col-sm-2 control-label">等待购买按钮背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="buybtnbgwait" value="<%style.buybtnbgwait%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#00b950').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待购买文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="buybtn" value="<%params.buybtn%>" type="text" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('原价购买').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-
-    </div>
-
 
 </script>
 <script type="text/html" id="tpl_edit_seckillgroup">
@@ -3284,7 +3308,7 @@
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2 control-label">商品原价颜色</div>
+        <div class="col-sm-2 control-label">商品现价颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="marketpricecolor" value="<%style.marketpricecolor%>" type="color" />
@@ -3294,7 +3318,7 @@
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2 control-label">商品现价颜色</div>
+        <div class="col-sm-2 control-label">商品原价颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="productpricecolor" value="<%style.productpricecolor%>" type="color" />
@@ -3635,290 +3659,12 @@
 
 
 <script type="text/html" id="tpl_edit_seckill_times">
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部边距</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgcolor" value="<%style.bgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="color" value="<%style.color%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#3333333').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">焦点背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="selectedbgcolor" value="<%style.selectedbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">焦点文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="selectedcolor" value="<%style.selectedcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#3333333').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
 </script>
-
-
-
-
 <script type="text/html" id="tpl_edit_seckill_rooms">
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部边距</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgcolor" value="<%style.bgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="color" value="<%style.color%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#3333333').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">焦点背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="selectedbgcolor" value="<%style.selectedbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">焦点文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="selectedcolor" value="<%style.selectedcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
 </script>
 <script type="text/html" id="tpl_edit_seckill_advs">
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部边距</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">底部边距</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.marginbottom%>" data-min="0" data-max="50"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.marginbottom%></span>px(像素)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="marginbottom" value="<%style.marginbottom%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgcolor" value="<%style.bgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-
 </script>
-
-
 <script type="text/html" id="tpl_edit_seckill_list">
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部边距</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bgcolor" value="<%style.bgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">顶部背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="topbgcolor" value="<%style.topbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f0f2f5').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">顶部文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="topcolor" value="<%style.topcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#464553').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">时间背景颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timebgcolor" value="<%style.timebgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">时间文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timecolor" value="<%style.timecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">标题颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlecolor" value="<%style.titlecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">价格颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">原价颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="marketpricecolor" value="<%style.marketpricecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#949598').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">去抢购背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btnbgcolor" value="<%style.btnbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">去抢购文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btncolor" value="<%style.btncolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">等待抢购背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btnwaitbgcolor" value="<%style.btnwaitbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#04be02').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">等待抢购文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btnwaitcolor" value="<%style.btnwaitcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#04be02').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">已抢完背景</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btnoverbgcolor" value="<%style.btnoverbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f7f7f7').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">已抢完文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="btnovercolor" value="<%style.btnovercolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">进度文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="processtextcolor" value="<%style.processtextcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#d0d1d2').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-        <div class="col-sm-2 control-label">进度文字</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="processbgcolor" value="<%style.processbgcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff8f8f').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
 </script>
 
 <script type="text/html" id="tpl_edit_coupon">
@@ -4149,7 +3895,7 @@
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="searchtextcolor" value="<%style.searchtextcolor%>" type="color" />
                 <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
             </div>
-            <div class="help-block">提示：此处是搜索文字颜色并不是提示文字颜色</div>
+            <div class="help-block">提示：此处设置搜索框输入的文字颜色,并不是提示文字颜色</div>
         </div>
     </div>
     <div class="form-group">
@@ -4166,7 +3912,7 @@
             <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="placeholder" value="<%params.placeholder%>" data-placeholder="请输入关键字进行搜索" placeholder="请输入关键字进行搜索" />
         </div>
     </div>
-    <div class="alert alert-danger" style="margin-bottom: 0;">注意：由于搜索框固定在页面顶部，有可能遮挡底层元素，建议页面首个元素放置幻灯片等较高高度的元素。</div>
+    <div class="alert alert-danger" style="margin-bottom: 0;">注意：由于搜索框固定在页面顶部，有可能遮挡底层元素，建议页面首个元素放置幻灯片等较高高度的元素。<br>如果您在本页面添加了顶部菜单，那么此搜索框会被隐藏。</div>
 </script>
 
 <script type="text/html" id="tpl_edit_exchange_banner">
@@ -4490,10 +4236,82 @@
     </div>
 </script>
 
+<!--选项卡-->
 <script type="text/html" id="tpl_edit_tabbar">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="ratio" value="1" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='1'%>checked="checked"<%/if%>>样式一</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="2" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='2'%>checked="checked"<%/if%>>样式二</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="color" value="<%style.color%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">激活背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activebackground" value="<%style.activebackground%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">激活文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activecolor" value="<%style.activecolor%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+    <div class="line"></div>
+    <div class="form-items indent" data-min="1" data-max="20">
+        <div class="inner" id="form-items">
+            <%define index=0%>
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image square drag-btn square" style="height: 70px; line-height: 70px;">拖动排序</div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <span class="input-group-addon">选项卡文字</span>
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" placeholder="请输入选项卡文字最大5字" value="<%child.text%>" maxlength="5" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择数据" value="<%child.linkurl%>" disabled="disabled" style="background: #eee;" readonly/>
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>" data-type="topmenu_data" data-callback="callbackData">选择数据</span>
+                    </div>
+                </div>
+            </div>
+            <%define index++%>
+            <%/each%>
+        </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
+</script>
 
-    <div class="alert alert-primary">提示：当访问页面链接等于选项卡中的链接时高亮, 选项卡个数超过三个自动滚动</div>
-
+<!--顶部菜单-->
+<script type="text/html" id="tpl_edit_topmenu">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="ratio" value="1" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='1'%>checked="checked"<%/if%>>样式一</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="2" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='2'%>checked="checked"<%/if%>>样式二</label>
+        </div>
+    </div>
     <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
         <div class="col-sm-4">
@@ -4530,28 +4348,34 @@
 
     <div class="line"></div>
 
-    <div class="form-items indent" data-min="1" data-max="8">
+    <div class="form-items indent" data-min="1" data-max="20">
         <div class="inner" id="form-items">
+            <%define index=0%>
             <%each data as child itemid %>
-            <div class="item" data-id="<%itemid%>">
+            <div class="item <% if index == 0 %>nodrag<%/if%>" data-id="<%itemid%>">
+                <% if index != 0 %>
                 <span class="btn-del" title="删除"></span>
                 <div class="item-image square drag-btn square" style="height: 70px; line-height: 70px;">拖动排序</div>
+                <%/if%>
                 <div class="item-form">
                     <div class="input-group" style="margin-bottom:0px; ">
-                        <span class="input-group-addon">选项卡文字</span>
+                        <span class="input-group-addon">文字</span>
                         <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" placeholder="请输入选项卡文字最大5字" value="<%child.text%>" maxlength="5" />
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
-                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="<% if index != 0 %>请选择数据或选择链接地址<%else%>请选择数据<%/if%>" value="<%child.linkurl%>" readonly/>
+                        <% if index != 0 %>
+                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>" data-type="topmenu">选择链接</span>
+                        <%/if%>
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>" data-type="topmenu_data" data-callback="callbackData">选择数据</span>
                     </div>
                 </div>
             </div>
+            <%define index++%>
             <%/each%>
         </div>
         <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
     </div>
-
 </script>
 
 <script type="text/html" id="tpl_edit_wxcard">
@@ -4621,8 +4445,8 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">样式选择</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="style" value="" class="diy-bind" data-bind-child="params" data-bind="style" <%if params.style==''||!params.style%>checked<%/if%>> 样式一</label>
-            <label class="radio-inline"><input type="radio" name="style" value="style2" class="diy-bind" data-bind-child="params" data-bind="style" <%if params.style=='style2'%>checked<%/if%>> 样式二</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="0" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='0'%>checked="checked"<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="ratio" value="1" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='1'%>checked="checked"<%/if%> > 样式二</label>
         </div>
     </div>
     <div class="form-group">

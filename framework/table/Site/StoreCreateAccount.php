@@ -33,25 +33,30 @@ class StoreCreateAccount extends \We7Table {
 		if ($uid > 0) {
 			$query->where('a.uid', intval($uid));
 		}
-		if ($type > 0) {
-			$query->where('a.type', intval($type));
+		if (!is_array($type) && $type > 0) {
+			$type = array(intval($type));
+		}
+		if (is_array($type)) {
+			$query->where('a.type', $type);
 		}
 		return $query;
 	}
 
-	public function getUserCreateAccountNum($uid) {
-		return $this->getQueryJoinAccountTable($uid, ACCOUNT_TYPE_OFFCIAL_NORMAL)->getcolumn('count(*)');
-	}
-
-	public function getUserCreateWxappNum($uid) {
-		return $this->getQueryJoinAccountTable($uid, ACCOUNT_TYPE_APP_NORMAL)->getcolumn('count(*)');
+	public function getUserCreateNumByType($uid, $type)
+	{
+		$account_all_type_sign = uni_account_type_sign();
+		$contain_type = $account_all_type_sign[$type]['contain_type'];
+		return $this->getQueryJoinAccountTable($uid, $contain_type)->getcolumn('count(*)');
 	}
 
 	public function getUserDeleteNum($uid, $type) {
+		if (!is_array($type)) {
+			$type = array(intval($type));
+		}
 		$sql = "SELECT COUNT(*) FROM "
 			. tablename($this->tableName)
 			. " as a LEFT JOIN " . tablename('account')
-			. " as b ON a.uniacid = b.uniacid WHERE a.uid = :uid AND a.type = :type AND (b.isdeleted = 1 OR b.uniacid is NULL)";
+			. " as b ON a.uniacid = b.uniacid WHERE a.uid = :uid AND a.type IN :type AND (b.isdeleted = 1 OR b.uniacid is NULL)";
 		return pdo_fetchcolumn($sql, array(':uid' => $uid, ':type' => $type));
 	}
 }

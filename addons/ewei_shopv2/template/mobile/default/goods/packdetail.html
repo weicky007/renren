@@ -27,7 +27,7 @@
 	     <i class='icon icon-cart'></i><br/>购物车空空如也~<br/><a href="{php echo mobileUrl()}" class='btn btn-default-o external'>主人快去给我找点东西吧</a>
 	</div>-->
 	{if count($packgoods)>0}
-	<div class="fui-list-group" id="container">  
+	<div class="fui-list-group" id="container">
 	    {loop $packgoods $index $item}
 		<div class="fui-list goods-item align-start" id="goodsid{$index}" data-goodsid="{$item['goodsid']}">
 			<div class="fui-list-media image-media">

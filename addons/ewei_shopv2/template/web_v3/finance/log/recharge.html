@@ -103,7 +103,7 @@
                         {/if}
                     </td>
                     <td data-toggle='tooltip' title='{$row['nickname']}'>
-                    {ifp 'member.list.detail'}
+                    {ifp 'member.list.edit'}
                     <a  href="{php echo webUrl('member/list/detail',array('id' => $row['mid']));}" target='_blank'>
                         <img class="radius50" src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' / onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'"> {$row['nickname']}
                     </a>

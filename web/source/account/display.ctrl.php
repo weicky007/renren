@@ -9,14 +9,10 @@ load()->model('miniapp');
 load()->model('phoneapp');
 
 $dos = array('rank', 'display', 'list', 'switch', 'platform', 'history', 'setting_star', 'setting_star_rank', 'list_star', 'account_num', 'welcome_link', 'account_modules');
-$do = in_array($_GPC['do'], $dos) ? $do : 'display';
+$do = in_array($_GPC['do'], $dos) ? $do : 'platform';
 
 if ('platform' == $do) {
-	if ($_W['isfounder']) {
-		$url = url('account/display');
-	} else {
-		$url = $_W['siteroot'] . 'web/home.php';
-	}
+	$url = $_W['siteroot'] . 'web/home.php';
 	$last_uniacid = switch_get_account_display();
 	if (empty($last_uniacid)) {
 		itoast('', $url, 'info');
@@ -42,15 +38,12 @@ if ('platform' == $do) {
 	}
 	itoast('', $url);
 }
-if ('display' == $do) {
-	itoast('', $_W['siteroot'] . 'web/home.php');
-}
-if ('display' == $do || 'list' == $do) {
+if ('list' == $do) {
 	$account_info = uni_account_create_info();
 	$user_founder_info = table('users_founder_own_users')->getFounderByUid($_W['uid']);
 	$user_founder_uid = !empty($user_founder_info) && !empty($user_founder_info['founder_uid']) ? $user_founder_info['founder_uid'] : 0;
 
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		$founders = pdo_getall('users', array('founder_groupid' => 2), array('uid', 'username'), 'uid');
 		$founder_id = intval($_GPC['founder_id']);
 	}
@@ -135,7 +128,7 @@ if ('display' == $do || 'list' == $do) {
 	$list = $table->searchAccountList(false);
 	$total = $table->getLastQueryTotal();
 	if (!empty($list)) {
-		if (!user_is_founder($_W['uid'])) {
+		if (!$_W['isfounder']) {
 			$account_user_roles = table('uni_account_users')->where('uid', $_W['uid'])->getall('uniacid');
 		}
 		foreach ($list as $k => &$account) {
@@ -205,16 +198,8 @@ if ('display' == $do || 'list' == $do) {
 			$list = array_values($list);
 		}
 	}
-	if ('list' == $do) {
-		iajax(0, $list);
-	}
-	if ($_W['ispost']) {
-		iajax(0, $list);
-	}
-	template('account/display');
+	iajax(0, $list);
 }
-
-
 if ('switch' == $do) {
 	$uniacid = intval($_GPC['uniacid']);
 	$module_name = safe_gpc_string($_GPC['module_name']);
@@ -225,7 +210,7 @@ if ('switch' == $do) {
 		}
 		$account_info = uni_fetch($uniacid);
 
-		if (USER_ENDTIME_GROUP_EMPTY_TYPE != $account_info['endtime'] && USER_ENDTIME_GROUP_UNLIMIT_TYPE != $account_info['endtime'] && TIMESTAMP > $account_info['endtime'] && !user_is_founder($_W['uid'], true)) {
+		if (USER_ENDTIME_GROUP_EMPTY_TYPE != $account_info['endtime'] && USER_ENDTIME_GROUP_UNLIMIT_TYPE != $account_info['endtime'] && TIMESTAMP > $account_info['endtime'] && !$_W['isadmin']) {
 			$type_sign = $account_info->typeSign;
 			$expired_message_settings = setting_load('account_expired_message');
 			$expired_message_settings = $expired_message_settings['account_expired_message'][$type_sign];
@@ -444,7 +429,7 @@ if ('list_star' == $do) {
 }
 if ('account_num' == $do) {
 	$result = array('max_total' => 0, 'created_total' => 0, 'limit_total' => 0);
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		iajax(0, array('max_total' => '不限', 'created_total' => '不限', 'limit_total' => '不限'));
 	}
 	$user_founder_info = table('users_founder_own_users')->getFounderByUid($_W['uid']);
@@ -461,7 +446,7 @@ if ('account_num' == $do) {
 	iajax(0, $result);
 }
 if ('welcome_link' == $do) {
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		iajax(0, array());
 	}
 	$welcome_link_info = array(
@@ -480,7 +465,7 @@ if ('account_modules' == $do) {
 	$account_type_sign = table('account')->getByUniacid($uniacid);
 	$account_type_sign = $account_all_type[$account_type_sign['type']]['type_sign'];
 	$uni_user_accounts = uni_user_accounts($_W['uid'], $account_type_sign);
-	if (!in_array($uniacid, array_keys($uni_user_accounts)) && !user_is_founder($_W['uid'], true)) {
+	if (!in_array($uniacid, array_keys($uni_user_accounts)) && !$_W['isadmin']) {
 		iajax(-1, '您没有该账号的权限！');
 	}
 	$account_modules = uni_modules_by_uniacid($uniacid);
@@ -518,7 +503,6 @@ if ('account_modules' == $do) {
 	$pindex = max(1, intval($_GPC['page']));
 	$psize = 40;
 	$page_result = array_slice($result, ($pindex - 1) * $psize, $psize);
-
 	$message = array(
 		'total' => count($result),
 		'page' => $pindex,

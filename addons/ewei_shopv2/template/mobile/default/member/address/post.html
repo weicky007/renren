@@ -16,19 +16,19 @@
         <div class="fui-header-right"><a data-toggle="delete" data-addressid="{$address['id']}">{if !empty($address)}删除{/if}</a></div>
     </div>
     <div class='fui-content'>
-        {if is_weixin() && $_W['shopset']['trade']['shareaddress']}
-        <div class="fui-cell-group order-info noborder">
-            <a class="fui-cell" id="btn-address">
-                <div class="fui-cell-text">
-                    从微信选择地址
-                </div>
-                <div class="fui-cell-remark text-danger">
-                </div>
-            </a>
+        <!--{if is_weixin() && $_W['shopset']['trade']['shareaddress']}-->
+        <!--<div class="fui-cell-group order-info noborder">-->
+            <!--<a class="fui-cell" id="btn-address">-->
+                <!--<div class="fui-cell-text">-->
+                    <!--从微信选择地址-->
+                <!--</div>-->
+                <!--<div class="fui-cell-remark text-danger">-->
+                <!--</div>-->
+            <!--</a>-->
 
 
-        </div>
-        {/if}
+        <!--</div>-->
+        <!--{/if}-->
         <form method='post' class='form-ajax' >
             <input type='hidden' id='addressid' value="{$address['id']}"/>
             <div class='fui-cell-group'>
@@ -45,7 +45,7 @@
 
                 <div class='fui-cell'>
                     <div class='fui-cell-label'>所在地区</div>
-                    <div class='fui-cell-info c000'><input type="text" id='areas'  name='areas' data-value="{if !empty($show_data) && !empty($address)}{$address['datavalue']}{/if}" value="{if !empty($show_data) && !empty($address)}{$address['province']} {$address['city']} {$address['area']}{/if}" placeholder="所在地区"  class="fui-input" readonly=""/></div>
+                    <div class='fui-cell-info c000'><input type="text" id='areas'  name='areas' data-value="{if !empty($show_data) && !empty($address)}{$address['datavalue']}{/if}" value="{if !empty($address)}{$address['province']} {$address['city']} {$address['area']}{/if}" placeholder="所在地区"  class="fui-input" readonly=""/></div>
                 </div>
 
                 {if !empty($new_area) && !empty($address_street)}
@@ -86,6 +86,45 @@
     </div>
     <script language='javascript' type="text/javascript">
 
+//        if(queryArr.indexOf('is_from_wx=1')!=-1 &&  sessionStorage.getItem('addressParams')){
+//           var  res =  JSON.parse(sessionStorage.getItem('addressParams'))
+//            $("#realname").val(res.userName);
+//            $('#mobile').val(res.telNumber);
+//            $('#address').val(res.detailInfo);
+//            $('#areas').val(res.provinceName + " " + res.cityName + " " + res.countryName);
+//            var provinceName = res.provinceName, cityName = res.cityName, countyName = res.countryName;
+//            var province_code = 0, city_code = 0, county_code = 0;
+//            var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/AreaNew.xml?v=5';
+//            xmlDoc = loadXmlFile(xmlfile);
+//            if (window.ActiveXObject) {
+//                TopnodeList = xmlDoc.selectSingleNode("address").childNodes
+//            } else {
+//                TopnodeList = xmlDoc.childNodes[0].getElementsByTagName("province")
+//            }
+//            if (TopnodeList.length > 0) {
+//                for (var province_index = 0; province_index < TopnodeList.length; province_index++) {
+//                    province = TopnodeList[province_index];
+//                    if (province.getAttribute("name") == provinceName && provinceName != null && provinceName.trim().length > 0) {
+//                        province_code = province.getAttribute("code");
+//                        citys = TopnodeList[province_index].getElementsByTagName("city");
+//                        for (var citys_index = 0; citys_index < citys.length; citys_index++) {
+//                            if (citys[citys_index].getAttribute("name") == cityName && cityName != null && cityName.trim().length > 0) {
+//                                city_code = citys[citys_index].getAttribute("code");
+//                                county = TopnodeList[province_index].getElementsByTagName("city")[citys_index].getElementsByTagName("county");
+//                                for (var county_index = 0; county_index < county.length; county_index++) {
+//                                    if (county[county_index].getAttribute("name") == countyName && countyName != null && countyName.trim().length > 0) {
+//                                        county_code = county[county_index].getAttribute("code")
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            $("#areas").attr("data-value", province_code + " " + city_code + " " + county_code);
+//
+//        }
+//        sessionStorage.setItem('addressParams','')
         require(['biz/member/address'], function (modal) {
             modal.initPost({new_area: {php echo $new_area}, address_street: {php echo $address_street}});
         });

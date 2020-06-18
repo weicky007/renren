@@ -18,7 +18,7 @@ if (in_array($do, array('display', 'all_read'))) {
 		$types = array(MESSAGE_ORDER_TYPE, MESSAGE_ORDER_APPLY_REFUND_TYPE);
 	}
 
-	if (empty($type) && (!user_is_founder($_W['uid']) || user_is_vice_founder())) {
+	if (empty($type) && (!$_W['isfounder'] || user_is_vice_founder())) {
 		$types = array(MESSAGE_ACCOUNT_EXPIRE_TYPE, MESSAGE_WECHAT_EXPIRE_TYPE, MESSAGE_WEBAPP_EXPIRE_TYPE, MESSAGE_USER_EXPIRE_TYPE, MESSAGE_WXAPP_MODULE_UPGRADE);
 	}
 }
@@ -37,7 +37,7 @@ if ('display' == $do) {
 		$message_table->searchWithIsRead($is_read);
 	}
 
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		if (!empty($types)) {
 			$message_table->searchWithType($types);
 		} else {
@@ -80,7 +80,7 @@ if ('change_read_status' == $do) {
 }
 
 if ('event_notice' == $do) {
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		message_store_notice();
 	}
 	$message = message_event_notice_list();
@@ -134,7 +134,7 @@ if ('setting' == $do) {
 }
 
 if ('wechat_setting' == $do) {
-	if (!user_is_founder($_W['uid'], true)) {
+	if (!$_W['isadmin']) {
 		itoast('无权限', referer(), 'error');
 	}
 	$uniacid = intval($_GPC['uniacid']);

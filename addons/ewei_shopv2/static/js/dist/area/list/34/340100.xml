@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="合肥" code="340100">
-<county name="瑶海" code="340102">
+<city name="合肥市" code="340100">
+<county name="瑶海区" code="340102">
     <street name="明光路街道" code="340102001" />
     <street name="车站街道" code="340102002" />
     <street name="胜利路街道" code="340102003" />
@@ -21,7 +21,7 @@
     <street name="瑶海区工业园" code="340102400" />
     <street name="合肥龙岗综合经济开发区" code="340102401" />
 </county>
-<county name="庐阳" code="340103">
+<county name="庐阳区" code="340103">
     <street name="亳州路街道" code="340103001" />
     <street name="双岗街道" code="340103002" />
     <street name="杏林街道" code="340103003" />
@@ -34,7 +34,7 @@
     <street name="三十岗乡" code="340103200" />
     <street name="庐阳工业区（林店街道）" code="340103400" />
 </county>
-<county name="蜀山" code="340104">
+<county name="蜀山区" code="340104">
     <street name="三里庵街道" code="340104001" />
     <street name="稻香村街道" code="340104002" />
     <street name="琥珀街道" code="340104003" />
@@ -54,7 +54,7 @@
     <street name="海恒社区管理委员会" code="340104405" />
     <street name="临湖社区管理管委会" code="340104406" />
 </county>
-<county name="包河" code="340111">
+<county name="包河区" code="340111">
     <street name="骆岗街道" code="340111001" />
     <street name="常青街道" code="340111002" />
     <street name="芜湖路街道" code="340111003" />
@@ -66,7 +66,7 @@
     <street name="淝河镇" code="340111100" />
     <street name="大圩镇" code="340111102" />
 </county>
-<county name="长丰" code="340121">
+<county name="长丰县" code="340121">
     <street name="水湖镇" code="340121100" />
     <street name="庄墓镇" code="340121101" />
     <street name="杨庙镇" code="340121102" />
@@ -84,7 +84,7 @@
     <street name="双凤开发区" code="340121400" />
     <street name="安徽省水家湖农场" code="340121401" />
 </county>
-<county name="肥东" code="340122">
+<county name="肥东县" code="340122">
     <street name="店埠镇" code="340122100" />
     <street name="撮镇镇" code="340122101" />
     <street name="梁园镇" code="340122102" />
@@ -106,7 +106,7 @@
     <street name="肥东新城开发区" code="340122401" />
     <street name="合肥循环经济示范园" code="340122402" />
 </county>
-<county name="肥西" code="340123">
+<county name="肥西县" code="340123">
     <street name="上派镇" code="340123100" />
     <street name="三河镇" code="340123101" />
     <street name="高刘镇" code="340123102" />
@@ -123,7 +123,7 @@
     <street name="桃花工业园管委会" code="340123400" />
     <street name="紫蓬山管委会" code="340123401" />
 </county>
-<county name="巢湖" code="341400">
+<county name="巢湖市" code="341400">
     <street name="中庙街道" code="340181001" />
     <street name="亚父街道" code="340181002" />
     <street name="卧牛山街道" code="340181003" />
@@ -143,7 +143,7 @@
     <street name="坝镇镇" code="340181110" />
     <street name="庙岗乡" code="340181200" />
 </county>
-<county name="庐江" code="341421">
+<county name="庐江县" code="341421">
     <street name="庐城镇" code="340124100" />
     <street name="冶父山镇" code="340124101" />
     <street name="万山镇" code="340124102" />
@@ -165,6 +165,24 @@
     <street name="安徽省白湖监狱管理分局" code="340124401" />
     <street name="安徽省白湖阀门厂有限公司" code="340124402" />
     <street name="安徽省罪犯技术培训中心" code="340124403" />
+</county>
+<county name="北城新区" code="340105">
+    <street name="北城新区" code="34010500" />
+</county>
+<county name="高新技术开发区" code="340106">
+    <street name="高新技术开发区" code="34010600" />
+</county>
+<county name="滨湖新区" code="340107">
+    <street name="滨湖新区" code="34010700" />
+</county>
+<county name="新站综合开发试验区" code="340108">
+    <street name="新站综合开发试验区" code="34010800" />
+</county>
+<county name="政务文化新区" code="340109">
+    <street name="政务文化新区" code="34010900" />
+</county>
+<county name="经济技术开发区" code="340110">
+    <street name="经济技术开发区" code="34011000" />
 </county>
 </city>
 </address>

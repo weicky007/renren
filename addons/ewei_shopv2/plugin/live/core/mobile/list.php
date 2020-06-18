@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -46,12 +47,13 @@ class List_EweiShopV2Page extends PluginMobileLoginPage
 			$condition .= ' and title like \'%' . $keywords . '%\' ';
 		}
 
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_live') . ' where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_live') . (' where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT id,title,thumb,livetime,covertype,cover,subscribe,living FROM ' . tablename('ewei_shop_live') . "\r\n            \t\twhere 1 " . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT id,title,thumb,livetime,covertype,cover,subscribe,living FROM ' . tablename('ewei_shop_live') . '
+            		where 1 ' . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb,cover');
 
@@ -60,10 +62,9 @@ class List_EweiShopV2Page extends PluginMobileLoginPage
 					$row['thumb'] = $row['cover'];
 				}
 
-				$row['subscribe'] = 0;
 				$row['livetime'] = date('Y-m-d H:i:s', $row['livetime']);
 				$favorite = pdo_fetch('select deleted from ' . tablename('ewei_shop_live_favorite') . ' where uniacid = ' . $uniacid . ' and openid = \'' . $openid . '\' and roomid = ' . $row['id'] . ' and deleted = 0  ');
-				$row['subscribe'] = ($favorite['deleted'] == 1) || empty($favorite) ? 0 : 1;
+				$row['is_subscribe'] = empty($favorite) ? 0 : 1;
 			}
 
 			unset($row);

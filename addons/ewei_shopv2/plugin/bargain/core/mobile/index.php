@@ -1,4 +1,7 @@
 <?php
+
+error_reporting(32767 & ~8);
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -77,10 +80,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$res2 = pdo_fetchall('SELECT * FROM' . tablename('ewei_shop_bargain_goods') . 'WHERE account_id = :account_id AND status =\'0\' ORDER BY id DESC', array(':account_id' => $_W['uniacid']));
 
 		foreach ($res2 as $i => $value) {
-			if (time() < strtotime($res2[$i]['start_time'])) {
-				continue;
-			}
-
 			if (strtotime($res2[$i]['end_time']) < time()) {
 				continue;
 			}
@@ -157,7 +156,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 
 			if (empty($ewei_detail)) {
 				unset($goods[$i]);
-				++$i;
 				continue;
 			}
 
@@ -170,6 +168,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$goods[$i][0]['content'] = $ewei_detail['content'];
 			$goods[$i][0]['actor_id'] = $act[$i]['id'];
 			$goods[$i][0]['now_price'] = $act[$i]['now_price'];
+			$goods[$i][0]['order'] = $act[$i]['order'];
 			++$i;
 		}
 
@@ -222,7 +221,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 
 			if (empty($ewei_detail)) {
 				unset($goods[$i]);
-				++$i;
 				continue;
 			}
 
@@ -248,7 +246,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$goods[$i][0]['now_price'] = intval($goods[$i][0]['now_price']);
 			}
 
-			if (((strtotime($act[$i]['created_time']) + ($goods[$i][0]['time_limit'] * 3600)) < time()) && ($goods[$i][0]['time_limit'] != '0')) {
+			if (strtotime($act[$i]['created_time']) + $goods[$i][0]['time_limit'] * 3600 < time() && $goods[$i][0]['time_limit'] != '0') {
 				$goods[$i][0]['label_swi'] = 1;
 			}
 
@@ -309,7 +307,18 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$res['stock'] = $ewei_detail['total'];
 		$res['images'] = unserialize($ewei_detail['thumb_url']);
 		$res['content'] = $ewei_detail['content'];
-		if (($res['type'] == 1) && ($res['mode'] == 1)) {
+		$res['content'] = m('ui')->lazy($res['content']);
+
+		if ($ewei_detail['thumb_first']) {
+			array_unshift($res['images'], $ewei_detail['thumb']);
+		}
+
+		if (!empty($ewei_detail['thumb']) && empty($res['images'])) {
+			array_unshift($res['images'], $ewei_detail['thumb']);
+		}
+
+		$res['images'] = array_values($res['images']);
+		if ($res['type'] == 1 && $res['mode'] == 1) {
 			$m_swi = 1;
 		}
 		else {
@@ -339,7 +348,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$swi = 2;
 		}
 		else {
-			if (($res['stock'] <= 0) && ($swi == 0)) {
+			if ($res['stock'] <= 0 && $swi == 0) {
 				$swi = 3;
 			}
 		}
@@ -427,6 +436,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$res2['sold'] = $ewei_detail['sales'];
 		$res2['stock'] = $ewei_detail['total'];
 		$res2['images'] = json_encode(array($ewei_detail['thumb']));
+		$ewei_detail['content'] = m('ui')->lazy($ewei_detail['content']);
 		$res2['content'] = $ewei_detail['content'];
 		if (!$res || !$res2) {
 			include $this->template('bargain/lost');
@@ -454,7 +464,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$type = $res['type'];
 
 		if (0 < $res2['time_limit']) {
-			$showtime = strtotime($res['created_time']) + ($res2['time_limit'] * 3600);
+			$showtime = strtotime($res['created_time']) + $res2['time_limit'] * 3600;
 			$showtime = date('Y-m-d H:i:s', $showtime);
 			$year = substr($showtime, 0, 4);
 			$month = substr($showtime, 5, 2);
@@ -473,8 +483,14 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$status = 3;
-		if (($res2['type'] == 1) && ($res2['mode'] == 1) && ($res2['end_price'] < $res['now_price'])) {
+		if ($res2['type'] == 1 && $res2['mode'] == 1 && $res2['end_price'] < $res['now_price']) {
 			$trade_swi = 4;
+		}
+
+		$endStauts = 0;
+
+		if ($res['now_price'] <= $res2['end_price']) {
+			$endStauts = 1;
 		}
 
 		if (0 < $start_time) {
@@ -488,8 +504,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$account_set['partin'] *= -1;
-		$res3 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_bargain_record') . ' WHERE actor_id = :actor_id ORDER BY id DESC LIMIT 0,10', array(':actor_id' => $id));
-		$res4 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_bargain_actor') . ' WHERE bargain_price <= \'' . $account_set['partin'] . '\' AND account_id=:uniacid and goods_id = ' . $res2['id'] . ' ORDER BY bargain_price ASC LIMIT 10', array(':uniacid' => $_W['uniacid']));
+		$res3 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_bargain_record') . ' WHERE actor_id = :actor_id ORDER BY id DESC', array(':actor_id' => $id));
+		$res4 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_bargain_actor') . (' WHERE goods_id = ' . $res2['id'] . ' AND account_id=:uniacid and bargain_price <= \'' . $account_set['partin'] . '\' ORDER BY bargain_price ASC limit 20'), array(':uniacid' => $_W['uniacid']));
 		$min_price = $res2['end_price'];
 		$max_price = $res2['start_price'];
 
@@ -500,14 +516,14 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 		else {
 			if ($res2['stock'] <= 0) {
-				if (($trade_swi != 2) && ($trade_swi != 1)) {
+				if ($trade_swi != 2 && $trade_swi != 1) {
 					$trade_swi = 3;
 				}
 			}
 		}
 
 		if (!empty($res2['time_limit'])) {
-			$time_limit = (($res2['time_limit'] * 3600) + strtotime($res['created_time'])) - time();
+			$time_limit = $res2['time_limit'] * 3600 + strtotime($res['created_time']) - time();
 		}
 		else {
 			$time_limit = $time3;
@@ -550,7 +566,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			else {
 				if ($type == 0) {
 					if (!empty($share_res['bargain_title'])) {
-						$weikan = $res2['start_price'] - $res['bargain_price'];
+						$weikan = $res2['start_price'] + $res['bargain_price'];
 						$share_res['bargain_title'] = str_replace('[已砍]', $res['bargain_price'], $share_res['bargain_title']);
 						$share_res['bargain_title'] = str_replace('[未砍]', $weikan, $share_res['bargain_title']);
 						$share_res['bargain_title'] = str_replace('[现价]', $res['now_price'], $share_res['bargain_title']);
@@ -582,7 +598,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$account_set['partin'] *= -1;
 			$myself_swi = 0;
 			$myself_count = pdo_get('ewei_shop_bargain_record', array('openid' => $_W['openid'], 'actor_id' => $res['id']), 'id');
-			if (empty($myself_count['id']) && (0 < $res2['myself'])) {
+			if (empty($myself_count['id']) && 0 < $res2['myself']) {
 				$myself_swi = 1;
 			}
 
@@ -608,6 +624,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		if (!empty($res['initiate'])) {
+			$count = pdo_get('ewei_shop_bargain_actor', array('goods_id' => $goods_id, 'openid' => $_W['openid'], 'status' => 0, 'order' => 0), 'id');
+
 			if (!empty($count['id'])) {
 				echo '<script>window.location.href = \'' . mobileUrl('bargain/bargain', array('id' => $count['id'])) . '\'</script>';
 				exit();
@@ -688,7 +706,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			return '砍价已结束！';
 		}
 
-		if (($each_time <= count($record_res)) || ($total_time <= count($all_record))) {
+		if ($each_time <= count($record_res) || $total_time <= count($all_record)) {
 			return '砍价机会已用完！';
 		}
 
@@ -733,12 +751,12 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$cut_price = -1 * $cut_price;
 			$this->sendBargainResult($now_price['openid'], $cut_price, $now_price['now_price'], $info['nickname'], '砍掉', '成功', $lastbargain);
 			pdo_query('UPDATE ' . tablename('ewei_shop_bargain_actor') . ' SET bargain_times = bargain_times + 1 WHERE id = :id', array(':id' => $actor_id));
-			return '成功砍掉' . $cut_price . '元！';
+			return '成功砍掉' . $cut_price . '元';
 		}
 
 		if (0 < $cut_price) {
 			$now_price['now_price'] += $cut_price;
-			$this->sendBargainResult($now_price['openid'], $cut_price, $now_price['now_price'], $info['nickname'], '增加', '失败');
+			$this->sendBargainResult($now_price['openid'], $cut_price, $now_price['now_price'], $info['nickname'], '增加', '成功');
 			pdo_query('UPDATE ' . tablename('ewei_shop_bargain_actor') . ' SET bargain_times = bargain_times + 1 WHERE id = :id', array(':id' => $actor_id));
 			return '难度增加' . $cut_price . '元！';
 		}
@@ -778,27 +796,55 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$datas[] = array('name' => '砍掉或增加', 'value' => $iORr);
 		$datas[] = array('name' => '成功或失败', 'value' => $sORf);
 		$url = mobileUrl('bargain/bargain', array('id' => $_GPC['id']), 1);
-		$remark = "\n<a href='" . $url . '\'>点击查看详情</a>';
+		$remark = '
+<a href=\'' . $url . '\'>点击查看详情</a>';
 
 		if ($last == 1) {
 			$tag = 'bargain_fprice';
-			$text = "砍到底价通知：\n\n[砍价人昵称]帮您砍到底价了，\n砍价结果：[砍掉或增加]了[砍价金额]元\n砍价时间：[砍价时间]\n当前成交价：[当前金额]元\n\n<a href='" . $url . '\'>点击查看详情</a>';
+			$text = '砍到底价通知：
+
+[砍价人昵称]帮您砍到底价了，
+砍价结果：[砍掉或增加]了[砍价金额]元
+砍价时间：[砍价时间]
+当前成交价：[当前金额]元
+
+<a href=\'' . $url . '\'>点击查看详情</a>';
 			$message = array(
-				'first'    => array('value' => "砍到底价通知\n", 'color' => '#000000'),
-				'keyword1' => array('title' => '任务名称', 'value' => $nickname . '帮你砍到底价', 'color' => '#000000'),
-				'keyword2' => array('title' => '通知类型', 'value' => '砍到底价通知', 'color' => '#000000'),
-				'remark'   => array('value' => '砍价金额：' . $iORr . '了' . $cut_price . "元\n砍价时间：" . $time . "\n当前价格：" . $now_price . "元\n\n点击立即下单", 'color' => '#000000')
-				);
+				'first'    => array('value' => '砍到底价通知
+', 'color' => '#000000'),
+				'keyword1' => array('title' => '业务类型', 'value' => '砍到底价通知', 'color' => '#000000'),
+				'keyword2' => array('title' => '业务内容', 'value' => $nickname . '帮你砍到底价', 'color' => '#000000'),
+				'keyword3' => array('title' => '处理结果', 'value' => '砍到底价', 'color' => '#000000'),
+				'keyword4' => array('title' => '操作时间', 'value' => date('Y-m-d H:i:s', time()), 'color' => '#000000'),
+				'remark'   => array('value' => '砍价金额：' . $iORr . '了' . $cut_price . '元
+砍价时间：' . $time . '
+当前价格：' . $now_price . '元
+
+点击立即下单', 'color' => '#000000')
+			);
 		}
 		else {
 			$tag = 'bargain_message';
-			$text = "砍价成功通知：\n\n" . $nickname . '帮您砍价' . $sORf . "，\n砍价结果：" . $iORr . '了' . $cut_price . "元\n砍价时间：" . $time . "\n当前成交价：" . $now_price . "元\n" . $remark;
+			$text = '砍价成功通知：
+
+' . $nickname . '帮您砍价' . $sORf . '，
+砍价结果：' . $iORr . '了' . $cut_price . '元
+砍价时间：' . $time . ('
+当前成交价：' . $now_price . '元
+') . $remark;
 			$message = array(
-				'first'    => array('value' => '砍价' . $sORf . "通知\n", 'color' => '#000000'),
-				'keyword1' => array('title' => '任务名称', 'value' => $nickname . '帮你砍价' . $sORf, 'color' => '#000000'),
-				'keyword2' => array('title' => '通知类型', 'value' => '砍价' . $sORf . '通知', 'color' => '#000000'),
-				'remark'   => array('value' => '砍价金额：' . $iORr . '了' . $sORf . "元\n砍价时间：" . $time . "\n当前价格：" . $now_price . "元\n\n点击立即下单", 'color' => '#000000')
-				);
+				'first'    => array('value' => '砍价' . $sORf . '通知
+', 'color' => '#000000'),
+				'keyword1' => array('title' => '业务类型', 'value' => '砍价' . $sORf . '通知', 'color' => '#000000'),
+				'keyword2' => array('title' => '业务内容', 'value' => $nickname . '帮你砍价' . $sORf, 'color' => '#000000'),
+				'keyword3' => array('title' => '处理结果', 'value' => '砍价成功', 'color' => '#000000'),
+				'keyword4' => array('title' => '操作时间', 'value' => date('Y-m-d H:i:s', time()), 'color' => '#000000'),
+				'remark'   => array('value' => '砍价金额：' . $iORr . '了' . $sORf . '元
+砍价时间：' . $time . '
+当前价格：' . $now_price . '元
+
+点击立即下单', 'color' => '#000000')
+			);
 		}
 
 		$this->sendNotice(array('openid' => $openid, 'tag' => $tag, 'default' => $message, 'cusdefault' => $text, 'url' => $url, 'datas' => $datas));
@@ -808,8 +854,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
-		$tag = (isset($params['tag']) ? $params['tag'] : '');
-		$touser = (isset($params['openid']) ? $params['openid'] : '');
+		$tag = isset($params['tag']) ? $params['tag'] : '';
+		$touser = isset($params['openid']) ? $params['openid'] : '';
 
 		if (empty($touser)) {
 			return NULL;
@@ -823,11 +869,11 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 
 		$tm_temp = $tm[$tag . '_template'];
 		$templateid = $tm_temp;
-		$datas = (isset($params['datas']) ? $params['datas'] : array());
-		$default_message = (isset($params['default']) ? $params['default'] : array());
+		$datas = isset($params['datas']) ? $params['datas'] : array();
+		$default_message = isset($params['default']) ? $params['default'] : array();
 		$cusdefault_message = $this->replaceTemplate(isset($params['cusdefault']) ? $params['cusdefault'] : '', $datas);
-		$url = (isset($params['url']) ? $params['url'] : '');
-		$account = (isset($params['account']) ? $params['account'] : m('common')->getAccount());
+		$url = isset($params['url']) ? $params['url'] : '';
+		$account = isset($params['account']) ? $params['account'] : m('common')->getAccount();
 
 		if (!empty($tm[$tag . '_close_advanced'])) {
 			return NULL;
@@ -840,7 +886,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$template_message = array(
 					'first'  => array('value' => $this->replaceTemplate($template['first'], $datas), 'color' => $template['firstcolor']),
 					'remark' => array('value' => $this->replaceTemplate($template['remark'], $datas), 'color' => $template['remarkcolor'])
-					);
+				);
 				$data = iunserializer($template['data']);
 
 				foreach ($data as $d) {

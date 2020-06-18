@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,7 +26,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params[':type'] = intval($_GPC['type']);
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_poster') . ' WHERE 1 ' . $condition . ' ORDER BY isdefault desc,createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_poster') . (' WHERE 1 ' . $condition . ' ORDER BY isdefault desc,createtime desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
 
 		foreach ($list as &$row) {
 			$row['times'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_poster_scan') . ' where posterid=:posterid and uniacid=:uniacid', array(':posterid' => $row['id'], ':uniacid' => $_W['uniacid']));
@@ -33,7 +34,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		}
 
 		unset($row);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_poster') . ' where 1 ' . $condition . ' ', $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_poster') . (' where 1 ' . $condition . ' '), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -58,16 +59,34 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if (!empty($item)) {
 			$data = json_decode(str_replace('&quot;', '\'', $item['data']), true);
+
+			foreach ($data as &$v) {
+				if ($v['type'] == 'productprice' || $v['type'] == 'marketprice') {
+					$v['top'] = intval(substr($v['top'], 0, -2)) - 50 . 'px';
+				}
+			}
 		}
 
 		if ($_W['ispost']) {
 			load()->model('account');
 			$acid = pdo_fetchcolumn('select acid from ' . tablename('account_wechats') . ' where uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
-			$data = array('uniacid' => $_W['uniacid'], 'title' => trim($_GPC['title']), 'type' => intval($_GPC['type']), 'keyword2' => trim($_GPC['keyword2']), 'bg' => save_media($_GPC['bg']), 'data' => htmlspecialchars_decode($_GPC['data']), 'resptype' => trim($_GPC['resptype']), 'resptext' => trim($_GPC['resptext']), 'resptitle' => trim($_GPC['resptitle']), 'respthumb' => trim($_GPC['respthumb']), 'respdesc' => trim($_GPC['respdesc']), 'respurl' => trim($_GPC['respurl']), 'isdefault' => intval($_GPC['isdefault']), 'createtime' => time(), 'oktext' => trim($_GPC['oktext']), 'waittext' => trim($_GPC['waittext']), 'subcredit' => intval($_GPC['subcredit']), 'submoney' => $_GPC['submoney'], 'reccredit' => intval($_GPC['reccredit']), 'recmoney' => $_GPC['recmoney'], 'subtext' => trim($_GPC['subtext']), 'bedown' => intval($_GPC['bedown']), 'beagent' => intval($_GPC['beagent']), 'isopen' => intval($_GPC['isopen']), 'opentext' => trim($_GPC['opentext']), 'openurl' => trim($_GPC['openurl']), 'paytype' => intval($_GPC['paytype']), 'subpaycontent' => trim($_GPC['subpaycontent']), 'recpaycontent' => trim($_GPC['recpaycontent']), 'templateid' => trim($_GPC['templateid']), 'entrytext' => trim($_GPC['entrytext']));
+			$data = array('uniacid' => $_W['uniacid'], 'title' => trim($_GPC['title']), 'type' => intval($_GPC['type']), 'keyword2' => trim($_GPC['keyword2']), 'bg' => save_media($_GPC['bg']), 'data' => htmlspecialchars_decode($_GPC['data']), 'resptype' => trim($_GPC['resptype']), 'resptext' => trim($_GPC['resptext']), 'resptitle' => trim($_GPC['resptitle']), 'respthumb' => trim($_GPC['respthumb']), 'respdesc' => trim($_GPC['respdesc']), 'respurl' => trim($_GPC['respurl']), 'isdefault' => intval($_GPC['isdefault']), 'createtime' => time(), 'oktext' => trim($_GPC['oktext']), 'waittext' => trim($_GPC['waittext']), 'subcredit' => intval($_GPC['subcredit']), 'submoney' => $_GPC['submoney'], 'reccredit' => intval($_GPC['reccredit']), 'recmoney' => $_GPC['recmoney'], 'subtext' => trim($_GPC['subtext']), 'bedown' => intval($_GPC['bedown']), 'beagent' => intval($_GPC['beagent']), 'isopen' => intval($_GPC['isopen']), 'opentext' => trim($_GPC['opentext']), 'openurl' => trim($_GPC['openurl']), 'paytype' => intval($_GPC['paytype']), 'subpaycontent' => trim($_GPC['subpaycontent']), 'recpaycontent' => trim($_GPC['recpaycontent']), 'templateid' => trim($_GPC['templateid']), 'entrytext' => trim($_GPC['entrytext']), 'ismembergroup' => intval($_GPC['ismembergroup']));
+
+			if (empty($data['type'])) {
+				show_json(0, '请选择海报类型!');
+			}
+
+			if ($data['type'] == 4) {
+				$data['membergroupid'] = intval($_GPC['membergroupid']);
+			}
+			else {
+				$data['membergroupid'] = 0;
+			}
+
 			$reward_totle = array('reccredit_totle' => intval($_GPC['reccredit_totle']), 'recmoney_totle' => floatval($_GPC['recmoney_totle']));
 			$keyword = m('common')->keyExist($data['keyword2']);
-			if (($item['keyword2'] != $data['keyword2']) && !empty($keyword)) {
-				if ($keyword['name'] != ('ewei_shopv2:poster:' . $data['type'])) {
+			if ($item['keyword2'] != $data['keyword2'] && !empty($keyword)) {
+				if ($keyword['name'] != 'ewei_shopv2:poster:' . $data['type']) {
 					show_json(0, '关键字已存在!');
 				}
 			}
@@ -106,8 +125,12 @@ class Index_EweiShopV2Page extends PluginWebPage
 				pdo_insert('rule_keyword', $keyword_data);
 			}
 			else {
-				$content = ($data['type'] == 3 ? '^' . trim($data['keyword2']) . '\\+*[0-9]{1,}$' : trim($data['keyword2']));
-				pdo_update('rule_keyword', array('content' => $content), array('rid' => $rule['id']));
+				$isDefault = pdo_fetchcolumn('select `isdefault` from ' . tablename('ewei_shop_poster') . ' where uniacid = :uniacid and id=:id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
+
+				if ($isDefault) {
+					$content = $data['type'] == 3 ? '^' . trim($data['keyword2']) . '\\+*[0-9]{1,}$' : trim($data['keyword2']);
+					pdo_update('rule_keyword', array('content' => $content), array('rid' => $rule['id']));
+				}
 			}
 
 			$ruleauto = pdo_fetch('select * from ' . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name  limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':name' => 'ewei_shopv2:poster:auto'));
@@ -133,7 +156,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$imgroot = $_W['attachurl_remote'];
 		}
 
-		$reward_totle = (!empty($item['reward_totle']) ? json_decode($item['reward_totle'], true) : array());
+		$reward_totle = !empty($item['reward_totle']) ? json_decode($item['reward_totle'], true) : array();
 		$item['reccredit_totle'] = intval($reward_totle['reccredit_totle']);
 		$item['recmoney_totle'] = floatval($reward_totle['recmoney_totle']);
 		$groups = m('member')->getGroups();
@@ -160,17 +183,17 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$posters = pdo_fetchall('SELECT id,title,keyword,keyword2 FROM ' . tablename('ewei_shop_poster') . ' WHERE id in ( ' . $id . ' ) and uniacid=' . $_W['uniacid']);
+		$posters = pdo_fetchall('SELECT id,title,keyword,keyword2 FROM ' . tablename('ewei_shop_poster') . (' WHERE id in ( ' . $id . ' ) and uniacid=') . $_W['uniacid']);
 
 		foreach ($posters as $poster) {
 			if (empty($poster['keyword'])) {
 				$poster['keyword'] = $poster['keyword2'];
 			}
 
-			$rule = pdo_fetchall('SELECT id,rid FROM ' . tablename('rule_keyword') . ' WHERE uniacid=:uniacid AND content IN (\'' . $poster['keyword'] . '\',\'' . $poster['keyword2'] . '\')', array(':uniacid' => $_W['uniacid']), 'rid');
+			$rule = pdo_fetchall('SELECT id,rid FROM ' . tablename('rule_keyword') . (' WHERE uniacid=:uniacid AND content IN (\'' . $poster['keyword'] . '\',\'' . $poster['keyword2'] . '\')'), array(':uniacid' => $_W['uniacid']), 'rid');
 			$rule = array_keys($rule);
 			m('common')->delrule($rule);
 			pdo_delete('ewei_shop_poster', array('id' => $poster['id'], 'uniacid' => $_W['uniacid']));
@@ -199,14 +222,16 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$poster = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_poster') . ' WHERE id = \'' . $id . '\'');
+		$poster = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_poster') . (' WHERE id = \'' . $id . '\''));
 
 		if (empty($poster)) {
 			show_json(0, '抱歉，海报不存在或是已经被删除！');
 		}
 
+		$rule = pdo_fetch('select * from ' . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name  limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':name' => 'ewei_shopv2:poster:' . $poster['type']));
 		pdo_update('ewei_shop_poster', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'isdefault' => 1, 'type' => $poster['type']));
 		pdo_update('ewei_shop_poster', array('isdefault' => 1), array('uniacid' => $_W['uniacid'], 'id' => $poster['id']));
+		pdo_update('rule_keyword', array('content' => $poster['keyword2']), array('rid' => $rule['id']));
 		plog('poster.setdefault', '设置默认超级海报 ID: ' . $id . ' 海报名称: ' . $poster['title']);
 		show_json(1);
 	}

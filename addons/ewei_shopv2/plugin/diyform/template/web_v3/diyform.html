@@ -11,7 +11,7 @@
     {else if $value['data_type'] == 3}
         {if !empty($datas[$key])}
             {loop $datas[$key] $k1 $v1}
-                 {php echo $v1}
+                 {php echo $v1.'<br />'}
             {/loop}
         {else}
         未填写
@@ -47,7 +47,7 @@
         {/if}
     {/if}
 
-    {else if ($value['data_type'] == 7 || $value['data_type'] == 11)}
+    {else if ($value['data_type'] == 7 || $value['data_type'] == 11 || $value['data_type'] == 14)}
 
      {php echo !empty($datas[$key])?$datas[$key]:'未填写'}
 
@@ -68,4 +68,3 @@
     <br/>
     {php echo $datas[$key]['name2']}
     {/if}
-

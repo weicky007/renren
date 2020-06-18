@@ -70,7 +70,7 @@ if ('confirm' == $do) {
 	$level = intval($_GPC['level']);
 	$uniacid = intval($_GPC['uniacid']);
 
-	if (user_is_founder($_W['uid'])) {
+	if ($_W['isfounder']) {
 		$user_accounts = table('account')->getAll();
 	} else {
 		$user_accounts = uni_user_accounts($_W['uid'], 'wxapp');

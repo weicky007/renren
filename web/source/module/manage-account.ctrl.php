@@ -45,7 +45,7 @@ if ('display' == $do) {
 	$modules = $displayorder = array();
 	if (!empty($modulelist)) {
 		foreach ($modulelist as $name => $row) {
-			if (!empty($row['issystem'])) {
+			if (!empty($row['issystem']) || APPLICATION_TYPE_TEMPLATES == $row['application_type']) {
 				continue;
 			}
 			if (!empty($_GPC['keyword']) && !strexists($row['title'], $_GPC['keyword'])) {

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,9 +23,13 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 			$i = 0;
 			$colsIndex = array();
 
-			foreach ($rows[0] as $cols => $col) {
+			foreach ($rows[1] as $cols => $col) {
 				if ($col == 'title') {
 					$colsIndex['title'] = $i;
+				}
+
+				if ($col == 'sku_barcode') {
+					$colsIndex['sku_barcode'] = $i;
 				}
 
 				if ($col == 'price') {
@@ -56,7 +61,7 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 
 			$filename = $_FILES['excelfile']['name'];
 			$filename = substr($filename, 0, strpos($filename, '.'));
-			$rows = array_slice($rows, 2, count($rows) - 2);
+			$rows = array_slice($rows, 3, count($rows) - 3);
 			$items = array();
 			$this->get_zip_originalsize($_FILES['zipfile']['tmp_name'], '../attachment/images/' . $_W['uniacid'] . '/' . date('Y') . '/' . date('m') . '/');
 			$num = 0;
@@ -67,6 +72,7 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 				$item['marketprice'] = $col[$colsIndex[price]];
 				$item['total'] = $col[$colsIndex[num]];
 				$item['content'] = $col[$colsIndex[description]];
+				$item['goodssn'] = $col[$colsIndex[sku_barcode]];
 				$picContents = $col[$colsIndex[picture]];
 				$allpics = explode(';', $picContents);
 				$pics = array();
@@ -79,7 +85,7 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 
 					$picDetail = explode('|', $imgurl);
 					$picDetail = explode(':', $picDetail[0]);
-					$imgurl = 'http://' . $_SERVER['SERVER_NAME'] . '/attachment/images/' . $_W['uniacid'] . '/' . date('Y') . '/' . date('m') . '/' . $picDetail[0] . '.png';
+					$imgurl = $_W['siteroot'] . 'attachment/images/' . $_W['uniacid'] . '/' . date('Y') . '/' . date('m') . '/' . $picDetail[0] . '.png';
 
 					if (@fopen($imgurl, 'r')) {
 						if ($picDetail[1] == 1) {
@@ -99,6 +105,7 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 
 			session_start();
 			$_SESSION['taobaoCSV'] = $items;
+			m('cache')->set('taobaoCSV', $items, $_W['uniacid']);
 			$uploadStart = '1';
 			$uploadnum = $num;
 		}
@@ -109,11 +116,17 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 	public function fetch()
 	{
 		global $_GPC;
+		global $_W;
 		set_time_limit(0);
 		$num = intval($_GPC['num']);
 		$totalnum = intval($_GPC['totalnum']);
 		session_start();
 		$items = $_SESSION['taobaoCSV'];
+
+		if (empty($items)) {
+			$items = m('cache')->get('taobaoCSV', $_W['uniacid']);
+		}
+
 		$ret = $this->model->save_taobaocsv_goods($items[$num]);
 		plog('taobaoCSV.main', '淘宝CSV宝贝批量导入' . $ret[goodsid]);
 
@@ -147,7 +160,7 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 				if (!is_dir($file_name)) {
 					$file_size = zip_entry_filesize($dir_resource);
 
-					if ($file_size < (1024 * 1024 * 10)) {
+					if ($file_size < 1024 * 1024 * 10) {
 						$file_content = zip_entry_read($dir_resource, $file_size);
 						$ext = strrchr($file_name, '.');
 

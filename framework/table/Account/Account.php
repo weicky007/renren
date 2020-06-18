@@ -137,23 +137,24 @@ class Account extends \We7Table {
 		if (empty($title)) {
 			return $this;
 		}
-		if ($title == 'admin' && user_is_founder($_W['uid'], true)) {
+		if ($title == 'admin' && $_W['isadmin']) {
 			$this->query->where('ISNULL(c.uid)', true);
 		} else {
-			if (user_is_founder($_W['uid'], true) || user_is_vice_founder($_W['uid'])){
-				$users = table('uni_account_users')
+			if ($_W['isfounder']){
+				$user = table('uni_account_users')
 					->searchWithUsers()
 					->where('a.role', 'owner')
 					->where('b.username', $title);
 				if (user_is_vice_founder($_W['uid'])) {
 					$uids = table('users_founder_own_users')->where('founder_uid', $_W['uid'])->getall('uid');
 					if (!empty($uid)) {
-						$users->where('a.uid', array_keys($uids));
+						$user->where('a.uid', array_keys($uids));
 					}
 				}
-				$users = $users->getall();
+				$user = $user->get();
 			}
-			!empty($users) ? $this->query->where('CONCAT(a.name,u.username) LIKE', "%{$title}%")->where('c.role', 'owner') : $this->query->where('a.name LIKE', "%{$title}%");
+			!empty($user) && user_is_founder($user['uid'], true) ? $user = array() : $user;
+			!empty($user) ? $this->query->where('CONCAT(a.name,u.username) LIKE', "%{$title}%")->where('c.role', 'owner') : $this->query->where('a.name LIKE', "%{$title}%");
 		}
 		return $this;
 	}
@@ -177,7 +178,7 @@ class Account extends \We7Table {
 
 	public function accountRankOrder() {
 		global $_W;
-		if (!user_is_founder($_W['uid'], true)) {
+		if (!$_W['isadmin']) {
 			$this->query->orderby('c.rank', 'desc');
 		} else {
 			$this->query->orderby('a.rank', 'desc');
@@ -220,13 +221,15 @@ class Account extends \We7Table {
 			$site_store_buy_package = table('site_store_order')->getUserBuyPackage($uniacid);
 			$packageids = array_merge($packageids, array_keys($site_store_buy_package));
 		
-		$uni_groups = $this->query->from('uni_group')->where('uniacid', $uniacid)->whereor('id', $packageids)->getall('modules');
-		if (!empty($uni_groups)) {
+		$uni_groups = $this->query->from('uni_group')->where('id', $packageids)->getall();
+		$uni_account_extra_modules = table('uni_account_extra_modules')->where('uniacid', $uniacid)->getall();
+		$acount_modules = array_merge($uni_groups, $uni_account_extra_modules);
+		if (!empty($acount_modules)) {
 			if (empty($type)) {
 				$account = table('account')->getByUniacid($uniacid);
 				$type = $account['type'];
 			}
-			foreach ($uni_groups as $group) {
+			foreach ($acount_modules as $group) {
 				$group_module = (array)iunserializer($group['modules']);
 				if (empty($group_module)) {
 					continue;

@@ -22,7 +22,7 @@ input[type=checkbox].team-check{vertical-align:middle;margin:0 4px 0 0;}
                         <option value=''>不按时间</option>
                         <option value='starttime' {if $_GPC['searchtime']=='starttime'}selected{/if}>开团时间</option>
                     </select>
-                    {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                    {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                 </div>
             </div>
             <div class="col-sm-6 pull-right">

@@ -1,7 +1,7 @@
 var version = +new Date();
 require.config({
     urlArgs: 'v=' + version, 
-    baseUrl: '../addons/ewei_shopv2/static/js/app',
+    baseUrl: '../addons/ewei_shopv2/static/js/app/',
     paths: {
         'jquery': '../dist/jquery/jquery-1.11.1.min',
         'jquery.gcjs': '../dist/jquery/jquery.gcjs',
@@ -15,6 +15,7 @@ require.config({
         'ydb':'../dist/Ydb/YdbOnline',
         'swiper':'../dist/swiper/swiper.min',
         'jquery.fly': '../dist/jquery/jquery.fly',
+        'clipboard':'../dist/clipboard.min'
 
     },
     shim: {

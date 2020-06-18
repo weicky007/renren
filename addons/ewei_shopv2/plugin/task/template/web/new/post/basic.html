@@ -24,7 +24,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label must">开放时间</label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_form_field_daterange('opentime',array('starttime'=>substr($task['starttime'],0,-3),'endtime'=>substr($task['endtime'],0,-3)),true)}
+            {php echo tpl_form_field_eweishop_daterange('opentime',array('starttime'=>substr($task['starttime'],0,-3),'endtime'=>substr($task['endtime'],0,-3)),true)}
             <span class="help-block">在这个时间段内可以接任务，完成任务的截止时间与此时间段无关</span>
         </div>
     </div>
@@ -33,10 +33,11 @@
         <label class="col-sm-2 control-label">任务需求</label>
         <div class="col-sm-9 col-xs-12">
             <div class="input-group">
-                <span class="input-group-addon" id="verb">推荐</span>
+                <span class="input-group-addon" {if $task['type'] == 'poster'}{else}id="verb"{/if}>{if !empty($task['verb'])}{$task['verb']}{else}{$poster_text['verb']}{/if}</span>
                 <input type="number"  value="{$task['demand']}" name="requirenumber" class="form-control" autocomplete="off" id="number">
-                <span class="input-group-addon" id="unit" style="display: none">人</span>
+                <span class="input-group-addon" {if $task['type'] == 'poster'}{else}id="unit"{/if}>{if !empty($task['unit'])}{$task['unit']}{else}{$poster_text['unit']}{/if}</span>
             </div>
+            <span class="help-block text-danger" id="see" style="display: none">分销商人数从领取任务后开始计算</span>
         </div>
     </div>
 
@@ -45,11 +46,54 @@
     <div class="col-sm-9 col-xs-12">
         <div class="input-group">
             <span class="input-group-addon">前缀：</span>
-            <input type="text"  value="{$poster_text['verb']}" name="diy[verb]" class="form-control" autocomplete="off">
+            <input type="text"  value="{$task['verb']}" name="diy[verb]" class="form-control" autocomplete="off">
             <span class="input-group-addon">后缀：</span>
-            <input type="text"  value="{$poster_text['unit']}" name="diy[unit]" class="form-control" autocomplete="off">
+            <input type="text"  value="{$task['unit']}" name="diy[unit]" class="form-control" autocomplete="off">
         </div>
         <span class="help-block text-danger">“转发”与“吸引”等描述词汇可能在微信中涉嫌诱导分享，微信可能会因敏感词汇封杀您的域名，您可以把前缀和后缀自定义为更委婉的词汇。</span>
+    </div>
+</div>
+<div class="form-group justposter">
+    <label class="col-sm-2 control-label">关键字触发</label>
+    <div class="col-sm-9 col-xs-12">
+        <input type="text" class="form-control" value="{$task['keyword_pick']}" name="keyword_pick">
+        <span class="help-block ">回复关键字将接取到本任务</span>
+    </div>
+</div>
+<div class="form-group justposter">
+    <label class="col-sm-2 control-label">指定会员等级</label>
+    <div class="col-sm-9 col-xs-12">
+        <select name="member_level" class="select2 form-control" placeholder="">
+            <option value="">默认扫描后不加入任何会员等级</option>
+            {loop $member_levels $member_level}
+            <option value="{$member_level['id']}" {if $task['member_level'] == $member_level['id']}selected{/if}>{$member_level['levelname']}</option>
+            {/loop}
+        </select>
+        <span class="help-block ">扫描关注公众号的人将加入指定会员等级</span>
+    </div>
+</div>
+<div class="form-group justposter">
+    <label class="col-sm-2 control-label">指定标签组</label>
+    <div class="col-sm-9 col-xs-12">
+        <select name="member_group[]" class="select2 form-control" multiple placeholder="默认扫描后不加入任何标签组">
+            {loop $member_groups $member_group}
+            <option value="{$member_group['id']}" {if in_array($member_group['id'],explode(',',$task['member_group']))}selected{/if}>{$member_group['groupname']}</option>
+            {/loop}
+        </select>
+        <span class="help-block ">扫描关注公众号的人将进入指定标签组</span>
+    </div>
+</div>
+
+<div class="form-group justposter">
+    <label class="col-sm-2 control-label">自动接任务</label>
+    <div class="col-sm-9 col-xs-12">
+        <label class="radio-inline">
+            <input type="radio" name="auto_pick" value="1" {if $task['auto_pick'] == 1}checked{/if}>开启
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="auto_pick" value="0" {if $task['auto_pick'] == 0}checked{/if}>关闭
+        </label>
+        <span class="help-block text-danger">通过扫描本任务海报关注公众号的人将自动获得一个海报任务</span>
     </div>
 </div>
 
@@ -57,7 +101,11 @@
     <div class="form-group" style="display: none" id="requiregoods">
         <label class="col-sm-2 control-label must">指定商品</label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_selector('requiregoods',array('preview'=>true,'readonly'=>true, 'required'=>'true', 'multi'=>1,'url'=>webUrl('goods/query'),'items'=>$goods,'buttontext'=>'选择商品','placeholder'=>'请选择商品'))}
+            {if $task['type'] == 'poster'}
+            {php echo tpl_goods_selector('requiregoods','');}
+            {else}
+            {php echo tpl_goods_selector('requiregoods',$task['design_data']);}
+            {/if}
         </div>
     </div>
     <div class="form-group hide">
@@ -68,7 +116,8 @@
                 手动接取 （必须先接任务再完成）</label><br>
             <label class="radio-inline">
                 <input type="radio" name="picktype" value="1" id="globalpickup" {if $task['picktype'] == 1}checked{/if}>
-                无需接取 （完成即可领奖，无需先接任务）</label><br>
+                无需接取 （完成即可领奖，无需先接任务）
+            </label><br>
             <!--<label class="radio-inline">-->
                 <!--<input type="radio" name="picktype" value="2" {if $task['picktype'] == 2}checked{/if}>-->
                 <!--关注公众号自动接取</label>-->
@@ -161,5 +210,3 @@
             </div>
         </div>
     </div>
-
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

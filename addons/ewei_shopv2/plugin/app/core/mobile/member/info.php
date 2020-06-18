@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Info_EweiShopV2Page extends AppMobilePage
 {
 	protected $member;
@@ -62,12 +62,12 @@ class Info_EweiShopV2Page extends AppMobilePage
 		$result = array(
 			'member'  => $memberArr,
 			'diyform' => array('template_flag' => $diyform_data['template_flag'], 'f_data' => $diyform_data['f_data'], 'fields' => $diyform_data['fields'])
-			);
+		);
 		if (!empty($_W['shopset']['app']['openbind']) || !empty($_W['shopset']['wap']['open'])) {
 			$result['openbind'] = 1;
 		}
 
-		app_json($result);
+		return app_json($result);
 	}
 
 	public function submit()
@@ -111,10 +111,6 @@ class Info_EweiShopV2Page extends AppMobilePage
 			}
 		}
 		else {
-			if (!empty($_W['shopset']['wap']['open']) && isset($memberdata['mobile'])) {
-				unset($memberdata['mobile']);
-			}
-
 			if (!empty($memberdata['birthday']) && strexists($memberdata['birthday'], '-')) {
 				$birthday = explode('-', $memberdata['birthday']);
 				$memberdata['birthyear'] = $birthday[0];
@@ -123,6 +119,11 @@ class Info_EweiShopV2Page extends AppMobilePage
 			}
 
 			$arr = array('realname' => trim($memberdata['realname']), 'weixin' => trim($memberdata['weixin']), 'birthyear' => intval($memberdata['birthyear']), 'birthmonth' => intval($memberdata['birthmonth']), 'birthday' => intval($memberdata['birthday']), 'province' => trim($memberdata['province']), 'city' => trim($memberdata['city']), 'datavalue' => trim($memberdata['datavalue']));
+
+			if (is_numeric($memberdata['mobile'])) {
+				$arr['mobile'] = trim($memberdata['mobile']);
+			}
+
 			pdo_update('ewei_shop_member', $arr, array('openid' => $_W['openid'], 'uniacid' => $_W['uniacid']));
 
 			if (!empty($this->member['uid'])) {
@@ -134,7 +135,7 @@ class Info_EweiShopV2Page extends AppMobilePage
 			}
 		}
 
-		app_json();
+		return app_json();
 	}
 
 	public function face()
@@ -156,10 +157,10 @@ class Info_EweiShopV2Page extends AppMobilePage
 			}
 
 			pdo_update('ewei_shop_member', array('avatar' => $avatar, 'nickname' => $nickname), array('id' => $member['id'], 'uniacid' => $_W['uniacid']));
-			app_json();
+			return app_json();
 		}
 
-		app_json($member);
+		return app_json($member);
 	}
 }
 

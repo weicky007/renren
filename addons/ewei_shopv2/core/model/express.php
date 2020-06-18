@@ -1,11 +1,11 @@
 <?php
-if (!(defined('IN_IA'))) 
+
+class Express_EweiShopV2Model
 {
-	exit('Access Denied');
-}
-class Express_EweiShopV2Model 
-{
-	public function getExpressList() 
+	/**
+     * 获取快递列表
+     */
+	public function getExpressList()
 	{
 		global $_W;
 		$sql = 'select * from ' . tablename('ewei_shop_express') . ' where status=1 order by displayorder desc,id asc';
@@ -13,4 +13,9 @@ class Express_EweiShopV2Model
 		return $data;
 	}
 }
+
+if (!defined('IN_IA')) {
+	exit('Access Denied');
+}
+
 ?>

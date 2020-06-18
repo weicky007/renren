@@ -4,7 +4,7 @@
 </div>
 
 <div class="page-content">
-        <form action="./index.php"  class="form-horizontal">
+        <form action="./index.php" method="get"   class="form-horizontal form-search" role="form">
             <input type="hidden" name="c" value="site" />
             <input type="hidden" name="a" value="entry" />
             <input type="hidden" name="m" value="ewei_shopv2" />
@@ -40,13 +40,13 @@
                                  </select>
                              </div>
                              <div class="btn-group">
-                                 <a class="btn btn-primary" type="submit" style="height: 30px;"> 搜索</a>
+                                 <button class="btn  btn-primary" type="submit"> 搜索</button>
                              </div>
                          </div>
                 </div>
             </div>
         </form>
-  
+
         <div class="panel panel-default">
             <div class="panel-heading">趋势图示例</div>
             <div class="panel-body">
@@ -56,27 +56,27 @@
 </div>
 <script language="javascript" src="{EWEI_SHOPV2_STATIC}js/dist/highcharts/highcharts.js"></script>
 <script type="text/javascript">
-   
+    
    function checkform(){
- 
-       if($('#days').val()==''){    
-           if($('#year').val()==''){    
+
+       if($('#days').val()==''){
+           if($('#year').val()==''){
                alert('请选择年份!');
                return false;
            }
        }
        return true;
    }
- 
+
       $('#days').change(function(){
-            if($(this).val()!=''){ 
+            if($(this).val()!=''){
                 $('#year').val('');
                 $('#month').val('').attr('disabled',true);;
             }
-          
+
         })
        $('#year').change(function(){
-            if($(this).val()==''){ 
+            if($(this).val()==''){
                 $('#month').val('').attr('disabled',true);
             }
             else{
@@ -84,11 +84,11 @@
                 $('#month').removeAttr('disabled');
             }
         })
-        
+
     $(function () {
-   
-        
-        
+
+
+
         $('#container').highcharts({
         chart: {
             type: 'line'
@@ -137,7 +137,7 @@
                ]
             } ]
     });
-    
+
 });
 </script>
 {template '_footer'}

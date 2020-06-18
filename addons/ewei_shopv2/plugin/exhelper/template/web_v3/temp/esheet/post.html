@@ -102,7 +102,7 @@
 					<select class="form-control" name="templatesize" id="templatesize">
 						{loop $esheettemp_list $temp}
 
-							<option value="{if $temp['isdefault']==0}{$temp['size']}{/if}" {if $item['templatesize']==$temp['size']} selected {/if} ">{$temp['style']}{$temp['spec']}</option>
+							<option value="{if $temp['isdefault']==0}{$temp['size']}{else}0{/if}" {if $item['templatesize']==$temp['size'] || ($temp['isdefault']==1 && empty($item['templatesize']))}selected{/if}>{$temp['style']}{$temp['spec']}</option>
 						{/loop}
 					</select>
 				{else}

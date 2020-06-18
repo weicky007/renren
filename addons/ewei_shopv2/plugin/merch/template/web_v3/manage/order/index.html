@@ -12,11 +12,11 @@
                 </div>
                 <div class="summary flex">
                     <div class="flex1 flex column" style="border-right: 1px solid #efefef">
-                        成交量
+                        成交量/交易量
                         <h2 class="no-margins today-count">--</h2>
                     </div >
                     <div class="flex1 flex column">
-                        成交额
+                        成交额/交易额
                         <h2 class="no-margins text-danger">¥ <span class="today-price">--</span></h2>
                     </div>
 
@@ -31,11 +31,11 @@
                 </div>
                 <div class="summary flex">
                     <div class="flex1 flex column" style="border-right: 1px solid #efefef">
-                        成交量
+                        成交量/交易量
                         <h2 class="no-margins yesterday-count">--</h2>
                     </div >
                     <div class="flex1 flex column">
-                        成交额
+                        成交额/交易额
                         <h2 class="no-margins text-danger">¥ <span class="yesterday-price">--</span></h2>
                     </div>
 
@@ -51,11 +51,11 @@
                 </div>
                 <div class="summary flex">
                     <div class="flex1 flex column" style="border-right: 1px solid #efefef">
-                        成交量
+                        成交量/交易量
                         <h2 class="no-margins seven-count">--</h2>
                     </div >
                     <div class="flex1 flex column">
-                        成交额
+                        成交额/交易额
                         <h2 class="no-margins text-danger">¥ <span class="seven-price">--</span></h2>
                     </div>
 
@@ -71,11 +71,11 @@
                 </div>
                 <div class="summary flex">
                     <div class="flex1 flex column" style="border-right: 1px solid #efefef">
-                        成交量
+                        成交量/交易量
                         <h2 class="no-margins month-count">--</h2>
                     </div >
                     <div class="flex1 flex column">
-                        成交额
+                        成交额/交易额
                         <h2 class="no-margins text-danger">¥ <span class="month-price">--</span></h2>
                     </div>
 
@@ -91,7 +91,7 @@
                 <div class="ibox-content">
                     <div class="echarts" id="echarts-line-chart" style="display: none"></div>
 
-                    <div class="spiner-example" id="echarts-line-chart-loading">
+                    <div class="spiner-example ibox-loading" id="echarts-line-chart-loading">
                         <div class="sk-spinner sk-spinner-wave">
                             <div class="sk-rect1"></div>
                             <div class="sk-rect2"></div>
@@ -112,105 +112,183 @@
     $(function(){
         $.ajax({
             type: "GET",
-            url: "{php echo merchUrl('order/ajaxorder')}",
+            url: "{php echo webUrl('order/ajaxorder')}&day=0",
             dataType: "json",
             success: function (data) {
                 var json = data.result;
-                $(".today-count").text(json.order0.count);
-                $(".today-price").text(json.order0.price);
-                $(".today-avg").text(json.order0.avg);
-
-                $(".yesterday-count").text(json.order1.count);
-                $(".yesterday-price").text(json.order1.price);
-                $(".yesterday-avg").text(json.order1.avg);
-
-                $(".seven-count").text(json.order7.count);
-                $(".seven-price").text(json.order7.price);
-                $(".seven-avg").text(json.order7.avg);
-
-                $(".month-count").text(json.order30.count);
-                $(".month-price").text(json.order30.price);
-                $(".month-avg").text(json.order30.avg);
-                ajaxtransaction();
+                $(".today-count").text(json.order.order_count+"/"+json.order.allorder_count);
+                $(".today-price").text(json.order.order_price +"/"+json.order.allorder_price);
+                $(".today-avg").text(json.order.avg);
             }
         });
 
-        function ajaxtransaction() {
-            $.ajax({
-                type: "GET",
-                url: "{php echo merchUrl('order/ajaxtransaction')}",
-                dataType: "json",
-                success: function (json) {
-                    myrequire(['echarts'],function(){
-                        var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
-                        var lineoption = {
-                            title : {
-                                text: '最近7日交易走势'
-                            },
-                            tooltip : {
-                                trigger: 'axis'
-                            },
-                            legend: {
-                                data:['成交额','成交量']
-                            },
-                            grid:{
-                                x:50,
-                                x2:50,
-                                y2:30
-                            },
-                            calculable : true,
-                            xAxis : [
-                                {
-                                    type : 'category',
-                                    boundaryGap : false,
-                                    data : json.price_key
+        $.ajax({
+            type: "GET",
+            url: "{php echo webUrl('order/ajaxorder')}&day=1",
+            dataType: "json",
+            success: function (data) {
+                var json = data.result;
+                $(".yesterday-count").text(json.order.order_count+"/"+json.order.allorder_count);
+                $(".yesterday-price").text(json.order.order_price +"/"+json.order.allorder_price);
+                $(".yesterday-avg").text(json.order.avg);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "{php echo webUrl('order/ajaxorder')}&day=7",
+            dataType: "json",
+            success: function (data) {
+                var json = data.result;
+                $(".seven-count").text(json.order.order_count+"/"+json.order.allorder_count);
+                $(".seven-price").text(json.order.order_price +"/"+json.order.allorder_price);
+                $(".seven-avg").text(json.order.avg);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "{php echo webUrl('order/ajaxorder')}&day=30",
+            dataType: "json",
+            success: function (data) {
+                var json = data.result;
+                $(".month-count").text(json.order.order_count+"/"+json.order.allorder_count);
+                $(".month-price").text(json.order.order_price +"/"+json.order.allorder_price);
+                $(".month-avg").text(json.order.avg);
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "{php echo merchUrl('order/ajaxtransaction')}",
+            dataType: "json",
+            success: function (json) {
+                myrequire(['echarts'],function(){
+                    var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+                    var lineoption = {
+                        title : {
+                            text: '最近7日交易走势'
+                        },
+                        tooltip : {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['交易量','成交量','交易额','成交额']
+                        },
+                        grid:{
+                            x:50,
+                            x2:50,
+                            y2:30
+                        },
+                        calculable : true,
+                        xAxis : [
+                            {
+                                type : 'category',
+                                boundaryGap : false,
+                                data : json.price_key
+                            }
+                        ],
+                        yAxis : [
+                            {
+                                type : 'value',
+                                axisLabel : {
+                                    formatter: '{value}'
                                 }
-                            ],
-                            yAxis : [
-                                {
-                                    type : 'value',
-                                    axisLabel : {
-                                        formatter: '{value}'
-                                    }
-                                }
-                            ],
-                            series : [
-                                {
-                                    name:'成交额',
-                                    type:'line',
-                                    data:json.price_value,
-                                    markPoint : {
-                                        data : [
-                                            {type : 'max', name: '最大值'},
-                                            {type : 'min', name: '最小值'}
-                                        ]
-                                    },
-                                    markLine : {
-                                        data : [
-                                            {type : 'average', name : '平均值'}
-                                        ]
-                                    }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '交易额',
+                                type: 'line',
+                                data: json.allprice_value,
+                                markPoint: {
+                                    data: [
+                                        {
+                                            type: 'max',
+                                            name: '最大值'
+                                        },
+                                        {
+                                            type: 'min', name: '最小值'
+                                        }
+                                    ]
                                 },
-                                {
-                                    name:'成交量',
-                                    type:'line',
-                                    data:json.count_value,
-                                    markLine : {
-                                        data : [
-                                            {type : 'average', name : '平均值'}
-                                        ]
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#ffc000'
                                     }
                                 }
-                            ]
-                        };
-                        lineChart.setOption(lineoption);
-                        lineChart.resize();
-                    });
-                    $("#echarts-line-chart-loading").hide();
-                    $("#echarts-line-chart").show();
-                }
-            });
-        }
+                            },
+                            {
+                                name: '成交额',
+                                type: 'line',
+                                data: json.price_value,
+                                markPoint: {
+                                    data: [
+                                        {
+                                            type: 'max',
+                                            name: '最大值'
+                                        },
+                                        {
+                                            type: 'min', name: '最小值'
+                                        }
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#ff5555'
+                                    }
+                                }
+                            },
+                            {
+                                name: '交易量',
+                                type: 'line',
+                                data: json.allcount_value,
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#44abf7'
+                                    }
+                                }
+                            },
+                            {
+                                name: '成交量',
+                                type: 'line',
+                                data: json.count_value,
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: '#30af84'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    lineChart.setOption(lineoption);
+                    lineChart.resize();
+                });
+                $("#echarts-line-chart-loading").hide();
+                $("#echarts-line-chart").show();
+            }
+        });
+
     });
 </script>
 {template '_footer'}

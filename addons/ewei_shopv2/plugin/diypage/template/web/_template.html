@@ -291,7 +291,221 @@
                     <%/if%>
                     <%/if%>
                     <%if item.bargain>0%>
-                    <span class="buy" style="background-color: <%style.buybtncolor%>;">砍</span>
+                    <span class="buy bargain-btn" style="background-color: <%style.buybtncolor%>;">砍</span>
+                    <%/if%>
+                    <%if params.goodstype==1%>
+                    <span class="buy buybtn-3" style="background-color: <%style.buybtncolor%>;"><%if item.ctype==1%>抽奖<%else%>兑换<%/if%></span>
+                    <%/if%>
+                </div>
+                <%/if%>
+            </div>
+
+            <%if params.saleout>-1%>
+            <%if params.saleout==0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>
+            <%if params.saleout==1%><div class="salez diy" style="background-image: url('../addons/ewei_shopv2/plugin/diypage/static/images/default/saleout-<%style.saleoutstyle%>.png'); "></div><%/if%>
+            <%/if%>
+        </div>
+        <%/each%>
+        <%/if%>
+        <%if params.goodsdata>0%>
+        <%each data=["c","d"] as item%>
+        <div class="fui-goods-item">
+            <div class="image <%if params.showicon=='1'%><%style.iconstyle%><%/if%>" style="background-image: url('../addons/ewei_shopv2/plugin/diypage/static/images/default/goods-1.jpg');"
+                 data-text="
+                                <%if params.showicon=='1'%>
+                                        <%if style.goodsicon=='recommand'%>推荐<%/if%>
+                                        <%if style.goodsicon=='hotsale'%>热销<%/if%>
+                                        <%if style.goodsicon=='isnew'%>新上<%/if%>
+                                        <%if style.goodsicon=='sendfree'%>包邮<%/if%>
+                                        <%if style.goodsicon=='istime'%>限时卖<%/if%>
+                                        <%if style.goodsicon=='bigsale'%>促销<%/if%>
+                                <%/if%>
+                        ">
+                <%if params.showicon=='2'%>
+                <div class="goodsicon <%params.iconposition%>"
+                <%if params.iconposition=='left top'%> style="top: <%style.iconpaddingtop%>px; left: <%style.iconpaddingleft%>px; text-align: left;"<%/if%>
+                <%if params.iconposition=='right top'%> style="top: <%style.iconpaddingtop%>px; right: <%style.iconpaddingleft%>px; text-align: right;"<%/if%>
+                <%if params.iconposition=='left bottom'%> style="bottom: <%style.iconpaddingtop%>px; left: <%style.iconpaddingleft%>px; text-align: left;"<%/if%>
+                <%if params.iconposition=='right bottom'%> style="bottom: <%style.iconpaddingtop%>px; right: <%style.iconpaddingleft%>px; text-align: right;"<%/if%>
+                >
+                <%if params.showicon=='1'%>
+                <img src="../addons/ewei_shopv2/plugin/diypage/static/images/default/goodsicon-<%style.goodsicon%>.png" style="width: <%style.iconzoom||'100'%>%;" />
+                <%/if%>
+
+                <%if params.showicon=='2' && params.goodsiconsrc%>
+                <img src="<%imgsrc params.goodsiconsrc%>" onerror="this.src=''" style="width: <%style.iconzoom||'100'%>%;" />
+                <%/if%>
+            </div>
+            <%/if%>
+        </div>
+        <div class="detail">
+            <%if params.showtitle=='1'%>
+            <div class="name">
+                <%if params.goodstype==1 && params.showtag>0%>
+                <label style="background-color: <%style.tagbackground%>; padding: 0px 2px; color: #fff; font-size: 0.6rem">
+                    <%if params.showtag==1%>￥69<%/if%>
+                    <%if params.showtag==2%>优惠券<%/if%>
+                    <%if params.showtag==3%><%if item.ctype==1%>抽奖<%else%>兑换<%/if%><%/if%>
+                </label>
+                <%/if%>
+                这里是商品标题(商品从设定<%if params.goodsdata=='1'%>分类<%/if%><%if params.goodsdata=='2'%>分组<%/if%><%if params.goodsdata=='3'%>新品商品<%/if%><%if params.goodsdata=='4'%>热卖商品<%/if%><%if params.goodsdata=='5'%>推荐商品<%/if%><%if params.goodsdata=='6'%>促销商品<%/if%><%if params.goodsdata=='7'%>包邮商品<%/if%><%if params.goodsdata=='8'%>限时卖商品<%/if%><%if params.goodsdata=='9'%>积分兑换商品<%/if%><%if params.goodsdata=='10'%>积分抽奖商品<%/if%>读取)</div>
+            <%/if%>
+            <%if params.showprice=='1'%>
+            <p class="productprice <%if (params.showproductprice !=1) && (params.showsales !=1)%>noheight<%/if%>">
+                <%if (params.showproductprice==1)||(params.showsales==1)%>
+                <%if params.showproductprice==1%>
+                <span style="color: <%style.productpricecolor%>;"><%params.productpricetext||'原价'%>:<span <%if params.productpriceline=='1'%>style="text-decoration: line-through;"<%/if%>>￥99</span></span>
+                <%/if%>
+                <%if params.showsales==1%>
+                <span style="color: <%style.salescolor%>;"><%params.salestext||'销量'%>:99</span>
+                <%/if%>
+                <%/if%>
+            </p>
+            <div class="price">
+                                    <span class="text" style="color: <%style.pricecolor%>;">
+                                        <p class="minprice">
+                                            <%if params.goodstype==0||!params.goodstype%>
+                                            ￥20.00
+                                            <%else%>
+                                            10<small>积分</small>+20<small>元</small>
+                                            <%/if%>
+                                        </p>
+                                    </span>
+                <%if style.buystyle!='' && (params.goodstype==0||!params.goodstype)%>
+                <%if style.buystyle=='buybtn-1'%>
+                <span class="buy" style="border-color: <%style.buybtncolor%>;color:<%style.buybtncolor%> ">购买</span>
+                <%/if%>
+                <%if style.buystyle=='buybtn-2'%>
+                <span class="buy buy buybtn-2" style="border-color: <%style.buybtncolor%>;background-color: <%style.buybtncolor%>;">购买</span>
+                <%/if%>
+                <%if style.buystyle=='buybtn-3'%>
+                <span class="buy buybtn-3" style="background-color: <%style.buybtncolor%>; border-color: <%style.buybtncolor%>;"><i class="icon icon-cartfill"></i></span>
+                <%/if%>
+                <%if style.buystyle=='buybtn-4'%>
+                <span class="buy buybtn-4" style="border-color: <%style.buybtncolor%>;"><i class="icon icon-cart" style="color: <%style.buybtncolor%>;"></i></span>
+                <%/if%>
+                <%if style.buystyle=='buybtn-5'%>
+                <span class="buy buybtn-5" style="border-color: <%style.buybtncolor%>;"><i class="icon icon-add" style="color: <%style.buybtncolor%>;"></i></span>
+                <%/if%>
+                <%if style.buystyle=='buybtn-6'%>
+                <span class="buy buybtn-6" style="background-color: <%style.buybtncolor%>; border-color: <%style.buybtncolor%>;"><i class="icon icon-add"></i></span>
+                <%/if%>
+                <%/if%>
+                <%if params.goodstype==1%>
+                <span class="buy buybtn-3" style="background-color: <%style.buybtncolor%>;">兑换</span>
+                <%/if%>
+            </div>
+            <%/if%>
+        </div>
+
+        <%if params.saleout>-1%>
+        <%if params.saleout==0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>
+        <%if params.saleout==1%><div class="salez diy" style="background-image: url('../addons/ewei_shopv2/plugin/diypage/static/images/default/saleout-<%style.saleoutstyle%>.png'); "></div><%/if%>
+        <%/if%>
+    </div>
+    <%/each%>
+    <%/if%>
+    </div>
+    </div>
+</script>
+
+<script type="text/html" id="tpl_show_groupsgoods">
+    <div class="drag" data-itemid="<%itemid%>">
+        <div class="fui-goods-group <%style.liststyle%>" style="background: <%style.background%>;">
+            <%if params.goodsdata=='0'%>
+            <%each data as item%>
+            <div class="fui-goods-item" data-goodsid="<%item.gid%>">
+                <div class="image <%if params.showicon=='1'%><%style.iconstyle%><%/if%>" style="background-image: url('<%imgsrc item.thumb%>');"
+                     data-text="
+                                <%if params.showicon=='1'%>
+                                        <%if style.goodsicon=='recommand'%>推荐<%/if%>
+                                        <%if style.goodsicon=='hotsale'%>热销<%/if%>
+                                        <%if style.goodsicon=='isnew'%>新上<%/if%>
+                                        <%if style.goodsicon=='sendfree'%>包邮<%/if%>
+                                        <%if style.goodsicon=='istime'%>限时卖<%/if%>
+                                        <%if style.goodsicon=='bigsale'%>促销<%/if%>
+                                <%/if%>
+                        ">
+                    <%if params.showicon=='2'%>
+                    <div class="goodsicon <%params.iconposition%>"
+                    <%if params.iconposition=='left top'%> style="top: <%style.iconpaddingtop%>px; left: <%style.iconpaddingleft%>px; text-align: left;"<%/if%>
+                    <%if params.iconposition=='right top'%> style="top: <%style.iconpaddingtop%>px; right: <%style.iconpaddingleft%>px; text-align: right;"<%/if%>
+                    <%if params.iconposition=='left bottom'%> style="bottom: <%style.iconpaddingtop%>px; left: <%style.iconpaddingleft%>px; text-align: left;"<%/if%>
+                    <%if params.iconposition=='right bottom'%> style="bottom: <%style.iconpaddingtop%>px; right: <%style.iconpaddingleft%>px; text-align: right;"<%/if%>
+                    >
+                    <%if params.showicon=='1'%>
+                    <img src="../addons/ewei_shopv2/plugin/diypage/static/images/default/goodsicon-<%style.goodsicon%>.png" style="width: <%style.iconzoom||'100'%>%;" />
+                    <%/if%>
+
+                    <%if params.showicon=='2' && params.goodsiconsrc%>
+                    <img src="<%imgsrc params.goodsiconsrc%>" onerror="this.src=''" style="width: <%style.iconzoom||'100'%>%;" />
+                    <%/if%>
+
+                </div>
+                <%/if%>
+            </div>
+            <div class="detail">
+                <%if params.showtitle=='1'%>
+                <div class="name" style="color: <%style.titlecolor%>;">
+                    <%if item.bargain>0%>
+                    <label style="background-color: <%style.buybtncolor%>; padding: 0px 2px; color: #fff; font-size: 0.6rem">砍价</label>
+                    <%/if%>
+                    <%if params.goodstype==1 && params.showtag>0%>
+                    <label style="background-color: <%style.tagbackground%>; padding: 0px 2px; color: #fff; font-size: 0.6rem">
+                        <%if params.showtag==1%>￥69<%/if%>
+                        <%if params.showtag==2%><%if item.gtype==1%>商品<%/if%><%if item.gtype==2%>优惠券<%/if%><%if item.gtype==3%>红包<%/if%><%if item.gtype==4%>余额<%/if%><%/if%>
+                        <%if params.showtag==3%><%if item.ctype==1%>抽奖<%else%>兑换<%/if%><%/if%>
+                    </label>
+                    <%/if%>
+                    <%item.title%>
+                </div>
+                <%/if%>
+                <%if params.showprice=='1'%>
+                <p class="productprice  <%if (params.showproductprice !=1) && (params.showsales !=1)%>noheight<%/if%>" >
+                    <%if params.showproductprice==1 && item.productprice>0%>
+                    <span style="color: <%style.productpricecolor%>;"><%params.productpricetext||'原价'%>:<span <%if params.productpriceline==1%>style="text-decoration: line-through;"<%/if%>>￥<%item.productprice%></span></span>
+                    <%/if%>
+                    <%if params.showsales==1&&item.sales>=0%>
+                    <span style="color: <%style.salescolor%>;"><%params.salestext||'销量'%>:<%item.sales%></span>
+                    <%/if%>
+                </p>
+                <div class="price">
+                                    <span class="text" style="color: <%style.pricecolor%>;">
+                                        <p class="minprice">
+                                            <%if params.goodstype==0||!params.goodstype%>
+                                            ￥<%item.price%>
+                                            <%else%>
+                                            <%if item.price==0&&item.credit==0%>免费<%/if%>
+                                            <%if item.price>0&&item.credit==0%><%item.price%><small>元</small><%/if%>
+                                            <%if item.price==0&&item.credit>0%><%item.credit%><small>积分</small><%/if%>
+                                            <%if item.price>0&&item.credit>0%><%item.credit%><small>积分</small>+<%item.price%><small>元</small><%/if%>
+                                            <%/if%>
+                                        </p>
+
+
+                                    </span>
+                    <%if style.buystyle!='' && item.bargain==0 && (params.goodstype==0||!params.goodstype)%>
+                    <%if style.buystyle=='buybtn-1'%>
+                    <span class="buy" style="border-color: <%style.buybtncolor%>;color:<%style.buybtncolor%> ">购买</span>
+                    <%/if%>
+                    <%if style.buystyle=='buybtn-2'%>
+                    <span class="buy buy buybtn-2" style="border-color: <%style.buybtncolor%>;background-color: <%style.buybtncolor%>;">购买</span>
+                    <%/if%>
+                    <%if style.buystyle=='buybtn-3'%>
+                    <span class="buy buybtn-3" style="background-color: <%style.buybtncolor%>; border-color: <%style.buybtncolor%>;"><i class="icon icon-cartfill"></i></span>
+                    <%/if%>
+                    <%if style.buystyle=='buybtn-4'%>
+                    <span class="buy buybtn-4" style="border-color: <%style.buybtncolor%>;"><i class="icon icon-cart" style="color: <%style.buybtncolor%>;"></i></span>
+                    <%/if%>
+                    <%if style.buystyle=='buybtn-5'%>
+                    <span class="buy buybtn-5" style="border-color: <%style.buybtncolor%>;"><i class="icon icon-add" style="color: <%style.buybtncolor%>;"></i></span>
+                    <%/if%>
+                    <%if style.buystyle=='buybtn-6'%>
+                    <span class="buy buybtn-6" style="background-color: <%style.buybtncolor%>; border-color: <%style.buybtncolor%>;"><i class="icon icon-add"></i></span>
+                    <%/if%>
+                    <%/if%>
+                    <%if item.bargain>0%>
+                    <span class="buy bargain-btn" style="background-color: <%style.buybtncolor%>;">砍</span>
                     <%/if%>
                     <%if params.goodstype==1%>
                     <span class="buy buybtn-3" style="background-color: <%style.buybtncolor%>;"><%if item.ctype==1%>抽奖<%else%>兑换<%/if%></span>
@@ -1054,7 +1268,7 @@
             <%each data as item%>
             <div class="fui-list">
                 <div class="fui-list-media">
-                    <img src="<%item.thumb||'../addons/ewei_shopv2/plugin/diypage/static/images/default/logo.jpg'%>" class="round">
+                    <img src="<%item.thumb? imgsrc(item.thumb): '../addons/ewei_shopv2/plugin/diypage/static/images/default/logo.jpg'%>" class="round">
                 </div>
                 <div class="fui-list-inner">
                     <div class="title" style="color: <%style.titlecolor%>;"><%item.name%></div>
@@ -1214,7 +1428,7 @@
                 <div class="swiper-wrapper">
                     <div class="swiper-slide time-slide " data-index="0" style="color:<%style.color%>;">
                         <span class="time">18:00</span>
-                        <span class="text">已开抢</span>
+                        <span class="text">已结束</span>
                     </div>
                     <div class="swiper-slide time-slide curent" data-index="1" style="color:<%style.selectedcolor%>;background:<%style.selectedbgcolor%>">
                         <span class="time">19:00</span>

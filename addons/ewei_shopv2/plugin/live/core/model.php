@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,12 +15,12 @@ class LiveModel extends PluginModel
 		global $_W;
 
 		if (!empty($day)) {
-			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
+			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
+			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
 		}
 
 		$condition = '';
@@ -80,14 +81,17 @@ class LiveModel extends PluginModel
 			$datas[] = array('name' => '任务名称', 'value' => '【' . $room['title'] . '】订阅成功');
 			$url = mobileUrl('live/room', array('id' => $roomid), true);
 			$tag = 'livefollow';
-			$remark = "\n<a href='" . $url . '\'>点击查看详情</a>';
-			$text = '您已订阅【' . $room['title'] . "】！\n" . $remark;
+			$remark = '
+<a href=\'' . $url . '\'>点击查看详情</a>';
+			$text = '您已订阅【' . $room['title'] . '】！
+' . $remark;
 			$message = array(
 				'first'    => array('value' => '您好，您有新的直播订阅', 'color' => '#ff0000'),
 				'keyword1' => array('title' => '任务名称', 'value' => '直播间订阅消息提醒', 'color' => '#000000'),
 				'keyword2' => array('title' => '通知类型', 'value' => '已订阅', 'color' => '#000000'),
-				'remark'   => array('value' => $text . "\n感谢您的支持", 'color' => '#000000')
-				);
+				'remark'   => array('value' => $text . '
+感谢您的支持', 'color' => '#000000')
+			);
 		}
 		else {
 			if ($type == 'liveroom') {
@@ -96,14 +100,17 @@ class LiveModel extends PluginModel
 				$url = str_replace('addons/ewei_shopv2/plugin/live/task/', '', $_W['siteroot']);
 				$url = $url . 'app/index.php?i=' . $_W['uniacid'] . '&c=entry&m=ewei_shopv2&do=mobile&r=live.room&id=' . $room['id'];
 				$tag = 'livefollow';
-				$remark = "\n<a href='" . $url . '\'>点击查看详情</a>';
-				$text = '您订阅的【' . $room['title'] . '】将在' . $room['livetime'] . "开播！\n" . $remark;
+				$remark = '
+<a href=\'' . $url . '\'>点击查看详情</a>';
+				$text = '您订阅的【' . $room['title'] . '】将在' . $room['livetime'] . '开播！
+' . $remark;
 				$message = array(
 					'first'    => array('value' => '您好，您订阅的直播有新消息', 'color' => '#ff0000'),
 					'keyword1' => array('title' => '任务名称', 'value' => '您订阅的【' . $room['title'] . '】将在' . $room['livetime'] . '开播！', 'color' => '#000000'),
 					'keyword2' => array('title' => '通知类型', 'value' => '已订阅', 'color' => '#000000'),
-					'remark'   => array('value' => $text . "\n感谢您的支持", 'color' => '#000000')
-					);
+					'remark'   => array('value' => $text . '
+感谢您的支持', 'color' => '#000000')
+				);
 			}
 		}
 
@@ -120,7 +127,7 @@ class LiveModel extends PluginModel
 		global $_W;
 
 		if (!empty($roomid)) {
-			$live = pdo_fetch('SELECT id FROM ' . tablename('ewei_shop_live') . ' WHERE id=:id AND uniacid=:uniacid AND status=1 AND living=1 LIMIT 1', array(':id' => $roomid, ':uniacid' => $_W['uniacid']));
+			$live = pdo_fetch('SELECT id FROM ' . tablename('ewei_shop_live') . ' WHERE id=:id AND uniacid=:uniacid  LIMIT 1', array(':id' => $roomid, ':uniacid' => $_W['uniacid']));
 
 			if (!empty($live)) {
 				return true;
@@ -165,7 +172,7 @@ class LiveModel extends PluginModel
      */
 	public function getLiveList()
 	{
-		return array('panda' => '熊猫直播', 'douyu' => '斗鱼直播', 'huajiao' => '花椒直播', 'yizhibo' => '一直播', 'inke' => '映客直播', 'shuidi' => '水滴直播', '360.' => '水滴直播', 'qlive' => '青果直播', 'ys7' => '萤石直播');
+		return array('panda' => '熊猫直播', 'douyu' => '斗鱼直播', 'huajiao' => '花椒直播', 'yizhibo' => '一直播', 'inke' => '映客直播', '360.' => '水滴直播', 'qlive' => '青果直播', 'ys7' => '萤石直播');
 	}
 
 	/**
@@ -203,8 +210,8 @@ class LiveModel extends PluginModel
 
 		$table = $this->getRedisTable('chat_records', $roomid);
 		$table_length = redis()->lLen($table);
-		$records_num = ($manage ? 100 : 30);
-		$start_index = ($table_length < $records_num ? 0 : $table_length - $records_num);
+		$records_num = $manage ? 100 : 30;
+		$start_index = $table_length < $records_num ? 0 : $table_length - $records_num;
 		$records = redis()->lRange($table, $start_index, $table_length);
 
 		if (empty($records)) {
@@ -222,7 +229,7 @@ class LiveModel extends PluginModel
 			}
 
 			$record = json_decode($record, true);
-			if (($record['type'] == 'image') && !empty($record['text'])) {
+			if ($record['type'] == 'image' && !empty($record['text'])) {
 				$imgurl = tomedia($record['text']);
 
 				if ($manage) {
@@ -238,8 +245,8 @@ class LiveModel extends PluginModel
 				}
 				else {
 					$drawstatus = $this->getDrawStatus('redpack', $record['pushid'], $roomid);
-					$redpacksubtitle = ($drawstatus == 1 ? '已领取' : '立即领取');
-					$redpackdrew = ($drawstatus == 1 ? 'drew' : '');
+					$redpacksubtitle = $drawstatus == 1 ? '已领取' : '立即领取';
+					$redpackdrew = $drawstatus == 1 ? 'drew' : '';
 					$record['text'] = '<div class="redpack ' . $redpackdrew . '" data-pushid="' . $record['pushid'] . '" data-title="' . $record['text'] . '"><p class="name">' . $record['text'] . '</p><p class="desc">' . $redpacksubtitle . '</p></div>';
 				}
 			}
@@ -249,8 +256,8 @@ class LiveModel extends PluginModel
 				}
 				else {
 					$drawstatus = $this->getDrawStatus('coupon', $record['pushid'], $roomid);
-					$couponsubtitle = ($drawstatus == 1 ? '已领取' : '立即领取');
-					$coupondrew = ($drawstatus == 1 ? 'drew' : '');
+					$couponsubtitle = $drawstatus == 1 ? '已领取' : '立即领取';
+					$coupondrew = $drawstatus == 1 ? 'drew' : '';
 					$record['text'] = '<div class="coupon ' . $coupondrew . '" data-pushid="' . $record['pushid'] . '" data-title="' . $record['text'] . '"><p class="name">' . $record['text'] . '</p><p class="desc">' . $couponsubtitle . '</p></div>';
 				}
 			}
@@ -362,7 +369,8 @@ class LiveModel extends PluginModel
 		if ($type == 'auto') {
 			foreach ($liveList as $key => $val) {
 				if (strexists($url, $key)) {
-					if (($key == 'huajiao') && strexists($url, 'shuidi')) {
+					if ($key == 'huajiao') {
+						$type = $key;
 						continue;
 					}
 
@@ -397,6 +405,10 @@ class LiveModel extends PluginModel
 			}
 
 			$apiResult = json_decode($apiResult['content'], true);
+			$apiother = ihttp_get('https://api.m.panda.tv/ajax_stream_pull_get?roomid=' . $roomid . '&lite=1&roomkey=' . $apiResult['data']['videoinfo']['room_key'] . '&definition_option=1&hardware=1');
+			$apiotherResult = json_decode($apiother['content'], true);
+			$sign = $apiotherResult['data']['sign'];
+			$ts = $apiotherResult['data']['ts'];
 
 			if (!empty($apiResult['errno'])) {
 				return error(2, '获取房间信息失败');
@@ -406,7 +418,7 @@ class LiveModel extends PluginModel
 				$resultArr = array('status' => $apiResult['data']['roominfo']['playstatus'] == 1 ? 1 : 0, 'poster' => $apiResult['data']['roominfo']['photo'], 'hls_url' => $apiResult['data']['videoinfo']['hlsurl']);
 			}
 			else {
-				$resultArr = array('status' => $apiResult['data']['roominfo']['status'] == 2 ? 1 : 0, 'poster' => $apiResult['data']['roominfo']['pictures']['img'], 'hls_url' => $apiResult['data']['videoinfo']['address']);
+				$resultArr = array('status' => $apiResult['data']['roominfo']['status'] == 2 ? 1 : 0, 'poster' => $apiResult['data']['roominfo']['pictures']['img'], 'hls_url' => $apiResult['data']['videoinfo']['address'] . '?sign=' . $sign . '' . $ts);
 			}
 
 			break;
@@ -430,7 +442,7 @@ class LiveModel extends PluginModel
 				return error(2, $apiResult['data']);
 			}
 
-			$resultArr = array('status' => $apiResult['data']['error'] == 0 ? 1 : 0, 'poster' => '', 'hls_url' => $apiResult['data']['hls_url']);
+			$resultArr = array('status' => $apiResult['data']['error'] == 0 ? 1 : 0, 'poster' => '../addons/ewei_shopv2/static/images/nopic.png', 'hls_url' => $apiResult['data']['hls_url']);
 
 			if (!empty($resultArr['status'])) {
 				$html = $apiResult = ihttp_get('https://m.douyu.com/' . $roomid);
@@ -474,13 +486,20 @@ class LiveModel extends PluginModel
 			preg_match('@covers:"(.*?)",@is', $html, $poster);
 			preg_match('@status:(.*?),@is', $html, $status);
 			$resultArr = array('status' => $status[1] == 10 ? 1 : 0, 'poster' => $poster[1], 'hls_url' => $hls_url[1]);
+			$resultArr['hls_url'] = str_replace('http', 'https', $resultArr['hls_url']);
 			break;
 
 		case 'inke':
-			preg_match('/.*id=(\\d+)/is', $url, $matchs);
+			$url = str_replace('share_uid', 'share', $url);
+			preg_match('/.*liveid=(\\d+)/is', $url, $matchs);
+			preg_match('/.*id=(\\d+)/is', $url, $matchs_bak);
 
 			if (empty($matchs)) {
-				return error(1, '视频地址参数错误或所选来源错误');
+				if (empty($matchs_bak)) {
+					return error(1, '视频地址参数错误或所选来源错误');
+				}
+
+				$matchs = $matchs_bak;
 			}
 
 			$roomid = $matchs[1];
@@ -502,43 +521,27 @@ class LiveModel extends PluginModel
 					$resultArr['poster'] = $userInfo['data']['image'];
 				}
 			}
+			else {
+				preg_match('/.*uid=(\\d+)/is', $url, $matchs);
+				$uid = $matchs[1];
+				$resultArr['hls_url'] = $roomInfo['data']['live_addr'][0]['hls_stream_addr'];
+				$resultArr['hls_url'] = str_replace('rtmp://', 'http://', $resultArr['hls_url']);
+				$resultArr['rtmp_url'] = $roomInfo['data']['file'][0];
+				$userInfo = ihttp_get('http://webapi.busi.inke.cn/mobile/mobile_share_api?uid=' . $uid . '&liveid=' . $roomid);
+				$userInfo = json_decode($userInfo['content'], true);
+				$resultArr['hls_url'] = $userInfo['data']['media_info']['file'][0];
+				$resultArr['poster'] = $userInfo['data']['media_info']['image'];
+				$resultArr['status'] = 1;
 
-			break;
-
-		case 'shuidi':
-			preg_match('/.*view.html\\?.*sn=([0-9A-Z]*)/i', $url, $matchs);
-
-			if (empty($matchs)) {
-				return error(1, '视频地址参数错误或所选来源错误');
+				if (empty($userInfo['data']['media_info']['file'])) {
+					$userInfo = ihttp_get('http://webapi.busi.inke.cn/web/live_share_pc?uid=' . $uid . '&id=' . $roomid);
+					$userInfo = json_decode($userInfo['content'], true);
+					$resultArr['hls_url'] = $userInfo['data']['file']['record_url'];
+					$resultArr['poster'] = $userInfo['data']['file']['pic'];
+					$resultArr['status'] = 1;
+				}
 			}
 
-			$roomid = $matchs[1];
-			$apiResult = ihttp_get('https://live2.jia.360.cn/public/getInfoAndPlayV2?from=mpc_ipcam_web&sn=' . $roomid);
-			$apiResult = json_decode($apiResult['content'], true);
-
-			if (empty($apiResult['publicInfo'])) {
-				return error(2, '获取房间信息失败');
-			}
-
-			$resultArr = array('status' => $apiResult['publicInfo']['online'], 'poster' => $apiResult['playInfo']['imageUrl'], 'hls_url' => $apiResult['playInfo']['hls'], 'rtmp_url' => $apiResult['playInfo']['rtmp']);
-			break;
-
-		case '360.':
-			preg_match('/.*view.html\\?.*sn=([0-9A-Z]*)/i', $url, $matchs);
-
-			if (empty($matchs)) {
-				return error(1, '视频地址参数错误或所选来源错误');
-			}
-
-			$roomid = $matchs[1];
-			$apiResult = ihttp_get('https://live2.jia.360.cn/public/getInfoAndPlayV2?from=mpc_ipcam_web&sn=' . $roomid);
-			$apiResult = json_decode($apiResult['content'], true);
-
-			if (empty($apiResult['publicInfo'])) {
-				return error(2, '获取房间信息失败');
-			}
-
-			$resultArr = array('status' => $apiResult['publicInfo']['online'], 'poster' => $apiResult['playInfo']['imageUrl'], 'hls_url' => $apiResult['playInfo']['hls'], 'rtmp_url' => $apiResult['playInfo']['rtmp']);
 			break;
 
 		case 'qlive':
@@ -550,32 +553,28 @@ class LiveModel extends PluginModel
 
 			$roomid = $matchs[1];
 			$apiResult = ihttp_get('https://qlive.163.com/live/square/cameraDetail?deviceId=' . $roomid . '&relateNum=0');
+			load()->func('communication');
+			$res = ihttp_request('https://qlive.163.com/live/square/camera/play', '{"deviceId":"' . $roomid . '"}', array('Content-Type' => 'application/json'));
+			$res = json_decode($res['content'], true);
 			$apiResult = json_decode($apiResult['content'], true);
 
 			if (empty($apiResult['result']['cameraDetail'])) {
 				return error(2, '获取房间信息失败');
 			}
 
-			$resultArr = array('status' => $apiResult['result']['cameraDetail']['canView'], 'poster' => $apiResult['result']['cameraDetail']['coverFileName'], 'hls_url' => 'http://v.smartcamera.163.com/qingguo-public/' . $roomid . '/playlist.m3u8');
+			$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+			$resultArr = array('status' => $apiResult['result']['cameraDetail']['canView'], 'poster' => $apiResult['result']['cameraDetail']['coverFileName'], 'hls_url' => empty($res['hlsUrl']) ? 'http://v.smartcamera.163.com/qingguo-public/' . $roomid . '/playlist.m3u8' : $res['hlsUrl']);
 			break;
 
 		case 'ys7':
-			preg_match('/.*\\?cameraId=(\\d+)/is', $url, $matchs);
+			preg_match('/.*open.ys7.com\\/openlive\\/(\\w+)/is', $url, $matchs);
 
 			if (empty($matchs)) {
 				return error(1, '视频地址参数错误或所选来源错误');
 			}
 
-			$roomid = $matchs[1];
-			$apiResult = ihttp_post('http://square.ys7.com/H5/square/get', array('ids' => $roomid));
-			$apiResult = json_decode($apiResult['content'], true);
-
-			if (empty($apiResult['data'])) {
-				return error(2, '获取房间信息失败');
-			}
-
-			$apiResult = $apiResult['data'][0];
-			$resultArr = array('status' => $apiResult['isPlay'], 'poster' => $apiResult['videoCoverUrl'], 'hls_url' => $apiResult['hlsVideoUrl']);
+			$resultArr = array('status' => 1, 'poster' => '', 'hls_url' => $url);
+			$resultArr['hls_url'] = str_replace('http', 'https', $resultArr['hls_url']);
 			break;
 		}
 
@@ -778,7 +777,16 @@ class LiveModel extends PluginModel
 		$goodslist = array();
 
 		if (!empty($liveid)) {
-			$goodslist = pdo_fetchall('SELECT lg.*,sg.id as id,lg.id as livegid,sg.marketprice,sg.thumb,sg.title FROM ' . tablename('ewei_shop_live_goods') . ' lg LEFT JOIN ' . tablename('ewei_shop_goods') . ' sg ON sg.id=lg.goodsid WHERE lg.liveid=:liveid AND lg.uniacid=:uniacid', array(':liveid' => $liveid, ':uniacid' => $_W['uniacid']));
+			$goods = pdo_fetch('select goodsid from ' . tablename('ewei_shop_live') . ' where id = :liveid and uniacid = :uniacid ', array(':liveid' => $liveid, ':uniacid' => $_W['uniacid']));
+			$goodsid = array();
+
+			if (!empty($goods['goodsid'])) {
+				$goodsid = explode(',', $goods['goodsid']);
+
+				foreach ($goodsid as $key => $value) {
+					$goodslist[$key] = pdo_fetch('SELECT lg.*,sg.id as id,lg.id as livegid,sg.marketprice,sg.thumb,sg.title FROM ' . tablename('ewei_shop_live_goods') . ' lg LEFT JOIN ' . tablename('ewei_shop_goods') . ' sg ON sg.id=lg.goodsid WHERE lg.liveid=:liveid AND lg.goodsid = :goodsid AND lg.uniacid=:uniacid', array(':liveid' => $liveid, ':goodsid' => $value, ':uniacid' => $_W['uniacid']));
+				}
+			}
 		}
 
 		return $goodslist;
@@ -797,7 +805,7 @@ class LiveModel extends PluginModel
 		}
 
 		require_once $file;
-		$ws = (SOCKET_SERVER_SSL ? 'wss://' : 'ws://');
+		$ws = SOCKET_SERVER_SSL ? 'wss://' : 'ws://';
 		return $ws . SOCKET_CLIENT_IP . ':' . SOCKET_SERVER_PORT;
 	}
 }

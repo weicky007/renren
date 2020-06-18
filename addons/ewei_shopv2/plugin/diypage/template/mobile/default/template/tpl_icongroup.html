@@ -1,7 +1,6 @@
 {if !empty($diyitem['data'])}
     <div class="fui-icon-group noborder col-{$diyitem['params']['rownum']} selecter" style="background-color: {$diyitem['style']['background']};
-        {if $diyitem['params']['bordertop']==1}border-top: 1px solid {$diyitem['style']['bordercolor']};{else}border-top: none;{/if}
-        {if $diyitem['params']['borderbottom']==1}border-bottom: 1px solid {$diyitem['style']['bordercolor']};{else}border-bottom: none;{/if}">
+        border-top: none; border-bottom: none">
         {php $iconindex=0}
         {loop $diyitem['data'] $iconitem}
             <a class="fui-icon-col" style="{if $diyitem['params']['border']==1&&($iconindex>0)}border-left: 1px solid {$diyitem['style']['bordercolor']};{else}border-left: none;{/if}" href="{$iconitem['linkurl']}" data-nocache="true">

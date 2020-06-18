@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,6 +19,15 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 
 		if (empty($item)) {
 			show_json(0, '未找到订单');
+		}
+
+		if (!empty($item['merchid'])) {
+			if ($_W['isajax']) {
+				show_json(0, '您不能处理商户订单');
+			}
+			else {
+				$this->message('您不能处理商户订单');
+			}
 		}
 
 		return $item;
@@ -95,7 +105,7 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 			$address_info = $user['address'];
 			$user_address = $user['address'];
 			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['street'] . ' ' . $user['address'];
-			$item['addressdata'] = $oldaddress = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
+			$item['addressdata'] = $oldaddress = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address'], 'order' => $item);
 		}
 
 		if ($_W['ispost']) {
@@ -187,49 +197,76 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		if ($_W['ispost']) {
-			$expresssn = trim($_GPC['expresssn']);
+			if ($item['city_express_state'] == 0) {
+				$expresssn = trim($_GPC['expresssn']);
 
-			if (empty($expresssn)) {
-				show_json(0, '请输入快递单号');
-			}
-
-			$express = trim($_GPC['express']);
-			$expresscom = trim($_GPC['expresscom']);
-			$time = time();
-			$data = array('sendtype' => 0 < $item['sendtype'] ? $item['sendtype'] : intval($_GPC['sendtype']), 'express' => $express, 'expresscom' => $expresscom, 'expresssn' => $expresssn, 'sendtime' => $time);
-			$sendtype = intval($_GPC['sendtype']);
-
-			if (!empty($sendtype)) {
-				$goodsids = trim($_GPC['sendgoodsids']);
-
-				if (empty($goodsids)) {
-					show_json(0, '请选择发货商品');
+				if (empty($expresssn)) {
+					show_json(0, '请输入快递单号');
 				}
 
-				$ogoods = array();
-				$ogoods = pdo_fetchall('select sendtype from ' . tablename('ewei_shop_order_goods') . "\r\n                    where orderid = " . $item['id'] . ' and uniacid = ' . $_W['uniacid'] . ' order by sendtype desc ');
-				$senddata = array('sendtype' => $ogoods[0]['sendtype'] + 1, 'sendtime' => $data['sendtime']);
-				$data['sendtype'] = $ogoods[0]['sendtype'] + 1;
-				$goodsid = trim($_GPC['sendgoodsid']);
-				$goodsids = explode(',', $goodsids);
+				$express = trim($_GPC['express']);
+				$expresscom = trim($_GPC['expresscom']);
+				$time = time();
+				$data = array('sendtype' => 0 < $item['sendtype'] ? $item['sendtype'] : intval($_GPC['sendtype']), 'express' => $express, 'expresscom' => $expresscom, 'expresssn' => $expresssn, 'sendtime' => $time);
+				$sendtype = intval($_GPC['sendtype']);
 
-				if ($goodsids) {
-					foreach ($goodsids as $key => $value) {
-						pdo_update('ewei_shop_order_goods', $data, array('orderid' => $item['id'], 'goodsid' => $value, 'uniacid' => $_W['uniacid']));
+				if (!empty($sendtype)) {
+					$goodsids = trim($_GPC['sendgoodsids']);
+
+					if (empty($goodsids)) {
+						show_json(0, '请选择发货商品');
 					}
+
+					$ogoods = array();
+					$ogoods = pdo_fetchall('select sendtype from ' . tablename('ewei_shop_order_goods') . '
+                            where orderid = ' . $item['id'] . ' and uniacid = ' . $_W['uniacid'] . ' order by sendtype desc ');
+					$senddata = array('sendtype' => $ogoods[0]['sendtype'] + 1, 'sendtime' => $data['sendtime']);
+					$data['sendtype'] = $ogoods[0]['sendtype'] + 1;
+					$goodsid = trim($_GPC['sendgoodsid']);
+					$goodsids = explode(',', $goodsids);
+
+					if ($goodsids) {
+						foreach ($goodsids as $key => $value) {
+							pdo_update('ewei_shop_order_goods', $data, array('orderid' => $item['id'], 'goodsid' => $value, 'uniacid' => $_W['uniacid']));
+						}
+					}
+
+					$send_goods = pdo_fetch('select * from ' . tablename('ewei_shop_order_goods') . '
+                            where orderid = ' . $item['id'] . ' and sendtype = 0 and uniacid = ' . $_W['uniacid'] . ' limit 1 ');
+
+					if (empty($send_goods)) {
+						$senddata['status'] = 2;
+					}
+
+					pdo_update('ewei_shop_order', $senddata, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 				}
-
-				$send_goods = pdo_fetch('select * from ' . tablename('ewei_shop_order_goods') . "\r\n                    where orderid = " . $item['id'] . ' and sendtype = 0 and uniacid = ' . $_W['uniacid'] . ' limit 1 ');
-
-				if (empty($send_goods)) {
-					$senddata['status'] = 2;
+				else {
+					$data['status'] = 2;
+					pdo_update('ewei_shop_order', $data, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 				}
-
-				pdo_update('ewei_shop_order', $senddata, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 			}
 			else {
-				$data['status'] = 2;
-				pdo_update('ewei_shop_order', $data, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
+				$cityexpress = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_city_express') . ' WHERE uniacid=:uniacid AND merchid=:merchid', array(':uniacid' => $_W['uniacid'], ':merchid' => 0));
+
+				if ($cityexpress['express_type'] == 1) {
+					$dada = m('order')->dada_send($item);
+
+					if ($dada['state'] == 0) {
+						show_json(0, $dada['result']);
+					}
+					else {
+						$data['status'] = 2;
+						$data['refundid'] = 0;
+						$data['sendtime'] = time();
+						pdo_update('ewei_shop_order', $data, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
+					}
+				}
+				else {
+					$data['status'] = 2;
+					$data['refundid'] = 0;
+					$data['sendtime'] = time();
+					pdo_update('ewei_shop_order', $data, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
+				}
 			}
 
 			if (!empty($item['refundid'])) {
@@ -291,7 +328,7 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		$item = $this->getOrder($orderid);
-		if (($item['status'] != 2) && ($item['sendtype'] == 0)) {
+		if ($item['status'] != 2 && $item['sendtype'] == 0) {
 			show_json(0, '订单未发货，不需取消发货！');
 		}
 
@@ -301,7 +338,8 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 			$remark = trim($_GPC['remark']);
 
 			if (!empty($item['remarksend'])) {
-				$remark = $item['remarksend'] . "\r\n" . $remark;
+				$remark = $item['remarksend'] . '
+' . $remark;
 			}
 
 			$data = array('sendtime' => 0, 'remarksend' => $remark);
@@ -504,8 +542,27 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
+		m('verifygoods')->createverifygoods($item['id']);
 		plog('order.op.pay', '订单确认付款 ID: ' . $item['id'] . ' 订单号: ' . $item['ordersn']);
 		show_json(1);
+	}
+
+	protected function opData()
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+
+		if (empty($item)) {
+			if ($_W['isajax']) {
+				show_json(0, '未找到订单!');
+			}
+
+			show_json(0, '未找到订单!');
+		}
+
+		return array('id' => $id, 'item' => $item);
 	}
 
 	public function changeprice()
@@ -514,14 +571,147 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 		global $_GPC;
 
 		if (!cv('order.op.pay')) {
-			show_json(0, '您没有订单付款权限');
+			show_json(0, '您没有订单付款权限!');
 		}
 
-		$orderid = intval($_GPC['id']);
+		$opdata = $this->opData();
+		extract($opdata);
+		$is_peerpay = false;
+		$is_peerpay = m('order')->checkpeerpay($item['id']);
 
-		if (empty($orderid)) {
-			show_json(0, '参数错误');
+		if (!empty($is_peerpay)) {
+			if ($_W['isajax']) {
+				show_json(0, '代付订单不能改价!');
+			}
+			else {
+				$this->message('代付订单不能改价');
+			}
 		}
+
+		if ($_W['ispost']) {
+			$changegoodsprice = $_GPC['changegoodsprice'];
+
+			if (!is_array($changegoodsprice)) {
+				show_json(0, '未找到改价内容!');
+			}
+
+			if (0 < $item['parentid']) {
+				$parent_order = array();
+				$parent_order['id'] = $item['parentid'];
+			}
+
+			$changeprice = 0;
+
+			foreach ($changegoodsprice as $ogid => $change) {
+				$changeprice += floatval($change);
+			}
+
+			$dispatchprice = floatval($_GPC['changedispatchprice']);
+
+			if ($dispatchprice < 0) {
+				$dispatchprice = 0;
+			}
+
+			$orderprice = $item['price'] + $changeprice;
+			$changedispatchprice = 0;
+
+			if ($dispatchprice != $item['dispatchprice']) {
+				$changedispatchprice = $dispatchprice - $item['dispatchprice'];
+				$orderprice += $changedispatchprice;
+			}
+
+			if ($orderprice < 0) {
+				if ($_W['isajax']) {
+					show_json(0, '订单实际支付价格不能小于0元!');
+				}
+				else {
+					$this->message('订单实际支付价格不能小于0元');
+				}
+			}
+
+			foreach ($changegoodsprice as $ogid => $change) {
+				$og = pdo_fetch('select price,realprice from ' . tablename('ewei_shop_order_goods') . ' where id=:ogid and uniacid=:uniacid limit 1', array(':ogid' => $ogid, ':uniacid' => $_W['uniacid']));
+
+				if (!empty($og)) {
+					$realprice = $og['realprice'] + $change;
+
+					if ($realprice < 0) {
+						if ($_W['isajax']) {
+							show_json(0, '单个商品不能优惠到负数');
+						}
+						else {
+							$this->message('单个商品不能优惠到负数');
+						}
+					}
+				}
+			}
+
+			$ordersn2 = $item['ordersn2'] + 1;
+
+			if (99 < $ordersn2) {
+				if ($_W['isajax']) {
+					show_json(0, '超过改价次数限额');
+				}
+				else {
+					$this->message('超过改价次数限额');
+				}
+			}
+
+			$orderupdate = array();
+
+			if ($orderprice != $item['price']) {
+				$orderupdate['price'] = $orderprice;
+				$orderupdate['ordersn2'] = $item['ordersn2'] + 1;
+
+				if (0 < $item['parentid']) {
+					$parent_order['price_change'] = $orderprice - $item['price'];
+				}
+			}
+
+			$orderupdate['changeprice'] = $item['changeprice'] + $changeprice;
+
+			if ($dispatchprice != $item['dispatchprice']) {
+				$orderupdate['dispatchprice'] = $dispatchprice;
+				$orderupdate['changedispatchprice'] += $changedispatchprice;
+
+				if (0 < $item['parentid']) {
+					$parent_order['dispatch_change'] = $changedispatchprice;
+				}
+			}
+
+			if (!empty($orderupdate)) {
+				pdo_update('ewei_shop_order', $orderupdate, array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
+			}
+
+			if (0 < $item['parentid']) {
+				if (!empty($parent_order)) {
+					m('order')->changeParentOrderPrice($parent_order);
+				}
+			}
+
+			foreach ($changegoodsprice as $ogid => $change) {
+				$og = pdo_fetch('select price,realprice,changeprice from ' . tablename('ewei_shop_order_goods') . ' where id=:ogid and uniacid=:uniacid limit 1', array(':ogid' => $ogid, ':uniacid' => $_W['uniacid']));
+
+				if (!empty($og)) {
+					$realprice = $og['realprice'] + $change;
+					$changeprice = $og['changeprice'] + $change;
+					pdo_update('ewei_shop_order_goods', array('realprice' => $realprice, 'changeprice' => $changeprice), array('id' => $ogid));
+				}
+			}
+
+			$pluginc = p('commission');
+
+			if ($pluginc) {
+				$pluginc->calculate($item['id'], true);
+			}
+
+			plog('order.op.changeprice', '订单号： ' . $item['ordersn'] . ' <br/> 价格： ' . $item['price'] . ' -> ' . $orderprice);
+			m('notice')->sendOrderChangeMessage($item['openid'], array('title' => '订单金额', 'orderid' => $item['id'], 'ordersn' => $item['ordersn'], 'olddata' => $item['price'], 'data' => round($orderprice, 2), 'type' => 1), 'orderstatus');
+			show_json(1);
+		}
+
+		$order_goods = pdo_fetchall('select og.id,g.title,g.thumb,g.goodssn,og.goodssn as option_goodssn, g.productsn,og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.oldprice from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $item['id']));
+		include $this->template();
 	}
 
 	public function fetch()
@@ -585,7 +775,8 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 
 		$log .= ' ID: ' . $item['id'] . ' 订单号: ' . $item['ordersn'];
 		m('order')->setGiveBalance($item['id'], 1);
-		m('member')->upgradeLevel($item['openid']);
+		m('order')->setStocksAndCredits($item['id'], 3);
+		m('member')->upgradeLevel($item['openid'], $item['id']);
 		m('notice')->sendOrderMessage($item['id']);
 
 		if (p('commission')) {
@@ -621,7 +812,8 @@ class Op_EweiShopV2Page extends MmanageMobilePage
 			p('ccard')->setBegin($item['id'], $item['ccardid']);
 		}
 
-		m('member')->upgradeLevel($item['openid']);
+		m('order')->setStocksAndCredits($item['id'], 3);
+		m('member')->upgradeLevel($item['openid'], $item['id']);
 		m('order')->setGiveBalance($item['id'], 1);
 		m('notice')->sendOrderMessage($item['id']);
 		com_run('printer::sendOrderMessage', $item['id']);

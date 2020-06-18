@@ -3,13 +3,13 @@
 
     <!-- 商品可用优惠券 -->
     {if com('coupon')&&$coupons}
-    <div class="fui-cell-group fui-cell-click fui-sale-group noborder" style="background: {$diyitem['style']['background']};">
+    <div class="fui-cell-group fui-cell-click fui-sale-group noborder" style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']};">
         <div class="fui-cell">
             <div class="fui-cell-text coupon-selector">
                 <span style="margin-right: 0.25rem; color: {$diyitem['style']['textcolor']};">优惠券</span>
                 {loop $coupons $index $couponmini}
                 {if $index<5}
-                <span class="coupon-mini">{if $couponmini['backpre']}&yen;{/if}{php echo price_format($couponmini['backmoney'])}{if $couponmini['backtype']==1}折{/if}</span>
+                <span class="coupon-mini" style="background: {$diyitem['style']['textcolorhigh']};">{if $couponmini['backpre']}&yen;{/if}{php echo price_format($couponmini['backmoney'])}{if $couponmini['backtype']==1}折{/if}</span>
                 {/if}
                 {/loop}
             </div>
@@ -95,7 +95,7 @@
                 <!--全返-->
                 {if !empty($fullbackgoods) && $isfullback}
                 <div class="sale-line" style="color: {$diyitem['style']['textcolor']};">
-                    <span class="sale-tip" style="color: {$diyitem['style']['textcolorhigh']}; border-color: {$diyitem['style']['textcolorhigh']};">全返</span>
+                    <span class="sale-tip" style="color: {$diyitem['style']['textcolorhigh']}; border-color: {$diyitem['style']['textcolorhigh']};">{php m('sale')->getFullBackText(true)}</span>
                     <span>
                     该商品享受
                     {if $fullbackgoods['type']>0}
@@ -123,7 +123,7 @@
                             {/if}
                         </span>
                     {/if}
-                    的全返
+                    的{php m('sale')->getFullBackText(true)}
                 </span>
                 </div>
                 {/if}
@@ -134,6 +134,20 @@
         {/if}
     </div>
 
+    {if !empty($goods['city_express_state'])}
+    <div class="fui-cell-group fui-cell-click fui-sale-group noborder" style="background: {$diyitem['style']['background']};">
+        <a class="external fui-cell"  href="{php echo mobileUrl('shop/cityexpress/map')}">
+            <div class="fui-cell-text">
+                <span style="vertical-align:middle;margin-right: 0.25rem; color: {$diyitem['style']['textcolor']};">配送</span>
+                <span class="sale-line">
+                        <span class="sale-tip">同城</span>
+                        <span>查看商家位置</span>
+                </span>
+            </div>
+            <div class="fui-cell-remark"></div>
+        </a>
+    </div>
+    {/if}
 
     <!--赠品-->
     {if $gifts && $goods['total'] > 0}
@@ -188,7 +202,7 @@
     {/if}
 
     <!--配送区域完成-->
-    {if $has_city}
+    {if $has_city && $goods['type']!=5 && $goods['isverify']!=2}
     <div class='fui-cell-group fui-cell-click fui-sale-group noborder'  id="city-picker" style="background: {$diyitem['style']['background']};">
         <div class='fui-cell'>
             <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};font-size: 0.7rem;line-height: 0.7rem">{if empty($onlysent)}不{else}只{/if}配送区域:

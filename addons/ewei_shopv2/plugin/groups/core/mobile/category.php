@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -28,6 +29,7 @@ class Category_EweiShopV2Page extends PluginMobilePage
 				$category_name['name'] = '全部活动';
 			}
 
+			$groupsset = pdo_fetch('SELECT followbar FROM ' . tablename('ewei_shop_groups_set') . ' WHERE uniacid = :uniacid ', array(':uniacid' => $uniacid));
 			$this->model->groupsShare();
 			include $this->template();
 		}
@@ -61,11 +63,12 @@ class Category_EweiShopV2Page extends PluginMobilePage
 				$condition .= ' AND title like \'%' . $keyword . '%\' ';
 			}
 
-			$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_goods') . ' where 1 ' . $condition;
+			$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_groups_goods') . (' where 1 ' . $condition);
 			$total = pdo_fetchcolumn($sql, $params);
 
 			if (!empty($total)) {
-				$sql = 'SELECT id,title,thumb,price,groupnum,groupsprice,category,isindex,goodsnum,units,sales,description FROM ' . tablename('ewei_shop_groups_goods') . "\r\n\t\t\t\t\t\twhere 1 " . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+				$sql = 'SELECT id,title,thumb,price,groupnum,groupsprice,category,isindex,goodsnum,is_ladder,more_spec,units,sales,description FROM ' . tablename('ewei_shop_groups_goods') . '
+						where 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 				$list = pdo_fetchall($sql, $params);
 				$list = set_medias($list, 'thumb');
 			}

@@ -25,7 +25,7 @@
 	    <span class="sorting">
 		<i class="icon icon-sanjiao2"></i>
 		<i class="icon icon-sanjiao1"></i>
-		
+
 	    </span>
 	</div>
 	<div class="item"  data-order="filter"><span class='text'>筛选 <i class="icon icon-filter "></i></span> </div>
@@ -88,22 +88,49 @@
 	</div>
     </div>
 
-<script type='text/html' id='tpl_goods_list'>
-     <%each list as g%>
-	 <div class="fui-goods-item" data-goodsid="<%g.id%>" data-type="<%g.type%>">
-	  <a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%else%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%/if%>>
-	  <div class="image" data-lazy-background="<%g.thumb%>">
-		  <%if g.total<=0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>
-	  </div>
+<script type='text/html' id='tpl_goods_list_promotion'>
+    <%each list as g%>
+	<div class="fui-goods-item" data-goodsid="<%g.id%>" data-type="<%g.type%>">
+		<a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
+		    <div class="image" data-lazy-background="<%g.thumb%>">
+
+				{if !empty($_W['shopset']['shop']['saleout'])}
+				<%if g.total<=0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>
+				{else}
+				<%if g.total<=0%><div class="salez" style="background-image: url('{php echo '../addons/ewei_shopv2/static/images/shouqin.png'}'); "></div><%/if%>
+				{/if}
+
+				<!--分销佣金-->
+				<%if g.cansee>0 && g.seecommission>0%>
+				<div class="goods-Commission"><%g.seetitle || "预计最高佣金"%>￥<%g.seecommission%> </div>
+				<%/if%>
+			</div>
         </a>
-	<div class="detail">
-	   <a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%else%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%/if%>>
-	           <div class="name"><%g.title%></div>
-	   </a>
-	           <div class="price">
-		   <span class="text">￥<%g.minprice%></span>
-           <span class="buy" data-type="<%g.type%>" ><%if g.bargain >0%>砍价活动<%else%>购买<%/if%></span></div>
- 	    </div>
+
+		<div class="detail">
+			<a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
+		           <div class="name"><%if g.type == 9%><span class="cycle-tip">周期购</span><%/if%> <%g.title%></div>
+		   </a>
+			 <div style="line-height:0.7rem;height:0.7rem;color:#b2b2b2;font-size:0.6rem;margin-top: .2rem;text-decoration: line-through"><%if g.productprice > 0%><%g.productprice%><% /if %></div>
+		    <div class="price" style="margin-top: 0">
+			   <span class="text">￥<%g.minprice%></span>
+				<%if g.levelbuy ==0 || g.groupbuy==0 %>
+
+				<%else%>
+	           		<span class="buy<%if g.bargain >0%> bargain-btn<%/if%>" data-type="<%g.type%>"  <%if g.total<=0%> style="display:none;" <%/if%>><%if g.bargain >0%>砍价活动<%else%>购买<%/if%></span>
+				<%/if%>
+
+
+	       </div>
+	 	</div>
+	 	<!-- <div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div> -->
+		<!--<a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%else%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%/if%>>-->
+		 <!--{if !empty($_W['shopset']['shop']['saleout'])}-->
+		 <!--<%if g.total<=0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>-->
+		 <!--{else}-->
+		 <!--<%if g.total<=0%><div class="salez" style="background-image: url('{php echo '../addons/ewei_shopv2/static/images/shouqin.png'}'); "></div><%/if%>-->
+		 <!--{/if}-->
+		<!--</a>-->
 	</div>
     <%/each%>
 </script>
@@ -143,3 +170,21 @@
 </div>
 
 {template '_footer'}
+<script language='javascript'>
+    $(function () {
+        setTimeout(function () {
+            var width = window.screen.width *  window.devicePixelRatio;
+            var height = window.screen.height *  window.devicePixelRatio;
+            var h = document.body.offsetHeight *  window.devicePixelRatio;
+            //  微信版本6.6.7
+            if(h == 1923){
+                $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
+                return;
+            }
+
+            if(height==2436 && width==1125){
+                $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex')
+            }
+        },600)
+    })
+</script>

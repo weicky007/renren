@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,7 +9,7 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 {
 	public function main()
 	{
-		app_error(AppError::$RequestError);
+		return app_error(AppError::$RequestError);
 	}
 
 	/**
@@ -23,7 +23,21 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 		$member = $this->newmember(0);
 		$goods = m('goods')->getTotals();
 		$goodscount = $goods['sale'] + $goods['out'] + $goods['stock'] + $goods['cycle'];
-		$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		$open_redis = function_exists('redis') && !is_error(redis());
+
+		if ($open_redis) {
+			$redis_key = 'ewei_' . $_W['uniacid'] . '_member_mmanage_index1';
+			$member_count = m('member')->memberRadisCount($redis_key, false);
+
+			if (!$member_count) {
+				$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+				m('member')->memberRadisCount($redis_key, $member_count);
+			}
+		}
+		else {
+			$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		}
+
 		$result = array(
 			'shopset'      => array('name' => $_W['shopset']['shop']['name'], 'logo' => tomedia($_W['shopset']['shop']['logo']), 'desc' => $_W['shopset']['shop']['description']),
 			'notices'      => $notices,
@@ -33,9 +47,9 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 			'order_count'  => m('order')->getTotals(),
 			'goods_count'  => $goodscount,
 			'member_count' => $member_count,
-			'perms'        => array('sysset' => cv('sysset'), 'order_status0' => cv('order.list.status0'), 'order_status1' => cv('order.list.status1'), 'order_status2' => cv('order.list.status2'), 'order_status4' => cv('order.list.status4'), 'order_status5' => cv('order.list.status5'), 'goods' => cv('goods'), 'member' => cv('member'), 'finance' => cv('finance'))
-			);
-		app_json($result);
+			'perms'        => array('sysset' => cv('sysset'), 'order_status0' => cv('order.list.status0'), 'order_status1' => cv('order.list.status1'), 'order_status2' => cv('order.list.status2'), 'order_status4' => cv('order.list.status4'), 'order_status5' => cv('order.list.status5'), 'goods' => cv('goods'), 'member' => cv('member'), 'finance' => cv('finance'), 'statistics' => cv('statistics'))
+		);
+		return app_json($result);
 	}
 
 	/**
@@ -47,7 +61,7 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 		$uid = intval($_GPC['_uid']);
 
 		if (empty($uid)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$pindex = max(1, intval($_GPC['page']));
@@ -74,7 +88,7 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 			unset($set);
 		}
 
-		app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total));
+		return app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total));
 	}
 
 	/**
@@ -103,12 +117,12 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
+			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
+			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
 		}
 
 		$sql = 'select id,price,createtime from ' . tablename('ewei_shop_order') . ' where uniacid = :uniacid and ismr=0 and isparent=0 and (status > 0 or ( status=0 and paytype=3)) and deleted=0 and createtime between :createtime1 and :createtime2';
@@ -140,7 +154,21 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$param = array(':uniacid' => $_W['uniacid']);
-		$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
+		$open_redis = function_exists('redis') && !is_error(redis());
+
+		if ($open_redis) {
+			$redis_key = 'ewei_' . $_W['uniacid'] . '_member_mmanage_index2';
+			$member_count = m('member')->memberRadisCount($redis_key, false);
+
+			if (!$member_count) {
+				$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
+				m('member')->memberRadisCount($redis_key, $member_count);
+			}
+		}
+		else {
+			$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
+		}
+
 		$newmember = $this->selectMemberCreate($day);
 		return array('count' => (int) $newmember, 'rate' => empty($member_count) ? 0 : (int) number_format(round($newmember / $member_count, 3) * 100));
 	}
@@ -156,12 +184,12 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
+			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
+			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
 		}
 
 		$sql = 'select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid = :uniacid and createtime between :createtime1 and :createtime2';
@@ -201,7 +229,7 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 			$param[':name'] = '%' . $keyword . '%';
 		}
 
-		if (isset($_GPC['letter']) && (strlen($_GPC['letter']) == 1)) {
+		if (isset($_GPC['letter']) && strlen($_GPC['letter']) == 1) {
 			$letter = trim($_GPC['letter']);
 
 			if (!empty($letter)) {
@@ -213,9 +241,9 @@ class Index_EweiShopV2Page extends AppMobileAuthPage
 			}
 		}
 
-		$tsql = 'SELECT COUNT(*) FROM ' . tablename('uni_account') . ' as a LEFT JOIN' . tablename('account') . ' as b ON a.default_acid = b.acid ' . $condition . ' ' . $order_by . ', a.`uniacid` DESC';
+		$tsql = 'SELECT COUNT(*) FROM ' . tablename('uni_account') . ' as a LEFT JOIN' . tablename('account') . (' as b ON a.default_acid = b.acid ' . $condition . ' ' . $order_by . ', a.`uniacid` DESC');
 		$total = pdo_fetchcolumn($tsql, $param);
-		$sql = 'SELECT * FROM ' . tablename('uni_account') . ' as a LEFT JOIN' . tablename('account') . ' as b ON a.default_acid = b.acid  ' . $condition . ' ' . $order_by . ', a.`uniacid` DESC LIMIT ' . $start . ', ' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('uni_account') . ' as a LEFT JOIN' . tablename('account') . (' as b ON a.default_acid = b.acid  ' . $condition . ' ' . $order_by . ', a.`uniacid` DESC LIMIT ' . $start . ', ' . $psize);
 		$list = pdo_fetchall($sql, $param);
 		return array($list, $total);
 	}

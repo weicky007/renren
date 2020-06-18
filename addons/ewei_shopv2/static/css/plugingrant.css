@@ -51,9 +51,9 @@
 .plugingrant-container-left{background: #fff;float:left;}
 .plugingrant-container-right{background: #fff;width:300px;float:right;}
 .plugingrant-head{padding:40px 40px 25px 40px;margin:0;border-bottom:1px solid #f8f8f8;}
-.plugingrant-head-left{padding:0 10px;margin:0;width:80px;float:left;margin-right: 10px}
+.plugingrant-head-left{padding:0 10px;margin:0;width:80px;float:left;margin-right: 10px;position: absolute;}
 .plugingrant-head-left img{width:60px;height:60px;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;}
-.plugingrant-head-right{padding:0;margin:0;float:left;}
+.plugingrant-head-right{padding:0;margin:0;float:right;width:100%;padding-left:90px;}
 .plugingrant-head-right h2{padding:0;font-size:18px;font-weight:normal;color:#040404;margin-top:0;}
 
 .grant-detail-left-ul{display: block;}
@@ -365,7 +365,6 @@ span.ca-form-option{padding-left:20px;}
 .grant-package-a{position: relative;display: block;}
 .grant-silde{width:100%;position: absolute;left:0;bottom:0;background: #44abf7;color:#fff;padding:5px 10px;display: none;}
 .grant-list-ul li.grant-package-ul-li{height:auto;}
-
 
 
 

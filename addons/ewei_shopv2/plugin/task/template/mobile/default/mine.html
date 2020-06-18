@@ -20,7 +20,7 @@
 	        <a data-tab="tab1" class="external{if $status == 3} active{/if}"
 			   href="{php echo mobileUrl('task.mine',array('status'=>3))}">已失败</a>
 	    </div>
-		<div class="fui-content">
+		<div class="fui-content navbar" style="padding-bottom: 0;">
 			{if empty($list)}
 			<div style="height: 7rem;line-height:7rem;width: 100%;text-align: center;color: #d0d0d0;font-size: 1rem">暂时没有任何任务</div>
 			{/if}
@@ -59,4 +59,5 @@
 			</div>
 		</div>
 	</div>
+{php $this->footerMenus()}
 {template '_footer'}

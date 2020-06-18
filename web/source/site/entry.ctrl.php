@@ -58,11 +58,7 @@ if (!$entry['direct']) {
 	}
 	
 		if (empty($_W['uniacid']) && 'system_welcome' != $entry['entry'] && 'system_welcome' != $_GPC['module_type']) {
-			if (!empty($_GPC['version_id'])) {
-				itoast('', url('account/display', array('type' => WXAPP_TYPE_SIGN)));
-			} else {
-				itoast('', url('account/display'));
-			}
+			itoast('', $_W['siteroot'] . 'web/home.php');
 		}
 	
 	
@@ -81,12 +77,6 @@ if (!$entry['direct']) {
 
 	$_W['page']['title'] = $entry['title'];
 	define('ACTIVE_FRAME_URL', url('site/entry/', array('eid' => $entry['eid'], 'version_id' => $_GPC['version_id'])));
-}
-
-if (!empty($entry['module']) && !empty($_W['founder'])) {
-	if (ext_module_checkupdate($entry['module'])) {
-		itoast('系统检测到该模块有更新，请点击“<a href="' . url('extension/module/upgrade', array('m' => $entry['module'])) . '">更新模块</a>”后继续使用！', '', 'error');
-	}
 }
 
 $_GPC['__entry'] = $entry['title'];

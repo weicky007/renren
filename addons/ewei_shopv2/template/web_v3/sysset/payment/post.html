@@ -31,27 +31,27 @@
     <div class="row">
         <div class="col-sm-12">
             <form {ife 'sysset.payment' $list}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label class="col-lg control-label must">支付名称</label>
-                    <div class="col-sm-9 col-xs-12">
-                        {ife 'sysset.payment' $data}
-                        <input type="text" name="title" class="form-control" value="{$data['title']}" placeholder="方便选择与记忆的支付名称" data-rule-required='true'/>
-                        {else}
-                        <div class='form-control-static'>{$data['title']}</div>
-                        {/if}
-                    </div>
+            <div class="form-group">
+                <label class="col-lg control-label must">支付名称</label>
+                <div class="col-sm-9 col-xs-12">
+                    {ife 'sysset.payment' $data}
+                    <input type="text" name="title" class="form-control" value="{$data['title']}" placeholder="方便选择与记忆的支付名称" data-rule-required='true'/>
+                    {else}
+                    <div class='form-control-static'>{$data['title']}</div>
+                    {/if}
                 </div>
-                <div class="form-group">
-                    <label class="col-lg control-label">支付方式</label>
-                    <div class="col-sm-9 col-xs-12">
-                        {ife 'sysset.payment' $data}
-                        <label class="radio-inline"><input type="radio" name="paytype" value="0" {if empty($data['paytype'])}checked="true"{/if}/> 微信支付</label>
-                        <label class="radio-inline"><input type="radio" name="paytype" value="1" {if $data['paytype'] == 1}checked="true"{/if}/> 支付宝支付</label>
-                        {else}
-                        <div class='form-control-static'>{if empty($item['paytype'])}微信支付{else}支付宝支付{/if}</div>
-                        {/if}
-                    </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg control-label">支付方式</label>
+                <div class="col-sm-9 col-xs-12">
+                    {ife 'sysset.payment' $data}
+                    <label class="radio-inline"><input type="radio" name="paytype" value="0" {if empty($data['paytype'])}checked="true"{/if}/> 微信支付</label>
+                    <label class="radio-inline"><input type="radio" name="paytype" value="1" {if $data['paytype'] == 1}checked="true"{/if}/> 支付宝支付</label>
+                    {else}
+                    <div class='form-control-static'>{if empty($item['paytype'])}微信支付{else}支付宝支付{/if}</div>
+                    {/if}
                 </div>
+            </div>
             <div id="wechat" style="{if $data['paytype'] == 1}display: none;{/if}">
                 <div class="form-group">
                     <label class="col-lg control-label must">支付类型</label>
@@ -72,7 +72,7 @@
                     <label class="col-lg control-label must">服务商公众号(AppId)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="appid" class="form-control" value="{$data['appid']}"/>
+                        <input type="text" name="appid" class="form-control" value="{$data['appid']}"  data-rule-required='true'/>
                         {else}
                         <div class='form-control-static'>{$data['appid']}</div>
                         {/if}
@@ -83,7 +83,7 @@
                     <label class="col-lg control-label must">服务商支付商户号(Mch_Id)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="mch_id" class="form-control" value="{$data['mch_id']}"/>
+                        <input type="text" name="mch_id" class="form-control" value="{$data['mch_id']}"  data-rule-required='true'/>
                         {else}
                         <div class='form-control-static'>{$data['mch_id']}</div>
                         {/if}
@@ -94,7 +94,7 @@
                     <label class="col-lg control-label must">公众号(AppId)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="sub_appid" class="form-control" value="{$data['sub_appid']}"/>
+                        <input type="text" name="sub_appid" class="form-control" value="{$data['sub_appid']}"  data-rule-required='true'/>
                         {else}
                         <div class='form-control-static'>{$data['sub_appid_sub']}</div>
                         {/if}
@@ -105,10 +105,23 @@
                     <label class="col-lg control-label">应用密钥(AppSecret)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="sub_appsecret" class="form-control" value="{$data['sub_appsecret']}"/>
+                        <input type="text" name="sub_appsecret" class="form-control" value="{$data['sub_appsecret']}"  data-rule-required='true'/>
                         <div class="help-block">只有借用支付公众号绑定了系统或者支付目录和授权站点都是本站的设定,才需要填写此项</div>
                         {else}
                         <div class='form-control-static'>{$data['sub_appsecret']}</div>
+                        {/if}
+                    </div>
+                </div>
+
+                <div class="form-group hidden" id="qpay_signtype" >
+                    <label class="col-lg control-label must">验签方式 (SIGN_TYPE)</label>
+                    <div class="col-sm-9">
+                        {ifp 'sysset.payset.edit'}
+                        <label class="radio-inline"><input type="radio" name="qpay_signtype" value="0" {if empty($data['qpay_signtype'])}checked="true"{/if}/> MD5</label>
+                        <label class="radio-inline"><input type="radio" name="qpay_signtype" value="1" {if $data['qpay_signtype'] == 1}checked="true"{/if}/> RSA</label>
+                        <div class="help-block">请选择正确的验证签名方式(<span style="color:red">威富通请使用MD5 , 全付通建议使用RSA</span>)</div>
+                        {else}
+                        <div class='form-control-static'>{if !empty($data['qpay_signtype'])}RSA{else}MD5{/if}</div>
                         {/if}
                     </div>
                 </div>
@@ -117,18 +130,18 @@
                     <label class="col-lg control-label must">支付商户号(Mch_Id)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="sub_mch_id" class="form-control" value="{$data['sub_mch_id']}"/>
+                        <input type="text" name="sub_mch_id" class="form-control" value="{$data['sub_mch_id']}"  data-rule-required='true'/>
                         {else}
                         <div class='form-control-static'>{$data['sub_mch_id']}</div>
                         {/if}
                     </div>
                 </div>
 
-                <div class="form-group" >
+                <div class="form-group" id="apikey" style="{if !empty($data['qpay_signtype'])}display: none;{/if}" >
                     <label class="col-lg control-label must">支付密钥(APIKEY)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payment.edit'}
-                        <input type="text" name="apikey" class="form-control" value="{$data['apikey']}"/>
+                        <input type="text" name="apikey" class="form-control" value="{$data['apikey']}"  data-rule-required='true'/>
                         <div class="help-block">服务商的 APIKEY,并不是子商户的APIKEY</div>
                         {else}
                         <div class='form-control-static'>{$data['apikey_sub']}</div>
@@ -136,6 +149,33 @@
                     </div>
                 </div>
 
+
+                <div id="qpay_rsa" style="{if empty($data['qpay_signtype'])}display: none;{/if}">
+                    <div class="form-group" >
+                        <label class="col-lg control-label must">全付通RSA公钥</label>
+                        <div class="col-sm-9">
+                            {ifp 'sysset.payset.edit'}
+                            <textarea name="app_qpay_public_key" rows="4" data-rule-required='true' class="form-control">{if !empty($data['app_qpay_public_key'])}{$data['app_qpay_public_key']}{/if}</textarea>
+                            <div class="help-block">一行且不能有空格</div>
+                            {else}
+                            <div class='form-control-static'>{if !empty($data['app_qpay_public_key'])}{$data['app_qpay_public_key']}{/if}</div>
+                            {/if}
+                        </div>
+                    </div>
+
+                    <div class="form-group" >
+                        <label class="col-lg control-label must">商户自行生成的RSA私钥</label>
+                        <div class="col-sm-9">
+                            {ifp 'sysset.payset.edit'}
+                            <textarea name="app_qpay_private_key" style="{if !empty($sec['alipay_sec']['private_key'])}display: none;{/if}" data-rule-required='true' rows="4" class="form-control">{$data['app_qpay_private_key']}</textarea>
+                            <a href="javascript:void(0);" class="text text-edit" style="{if empty($sec['alipay_sec']['private_key'])}display: none;{/if}">修改</a>
+                            <div class="help-block">一行且不能有空格</div>
+                            {else}
+                            <div class='form-control-static'>{if !empty($data['app_qpay_private_key'])}{$data['app_qpay_private_key']}{/if}</div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group hidden" id="is_raw">
                     <label class="col-lg control-label">是否原生支付</label>
                     <div class="col-sm-9 col-xs-12">
@@ -206,7 +246,7 @@
                                             {else}
                                             <span class='label label-danger'>未上传</span>
                                             {/if}
-                                            下载证书 cert.zip 中的 rootca.pem 文件
+                                            下载证书 cert.zip 中的 rootca.pem 文件,新下载证书无需上传此文件！
                                         </span>
                         {else}
                         {if !empty($data['root_file'])}
@@ -233,6 +273,7 @@
                         {/if}
                     </div>
                 </div>
+
                 <div class="form-group" >
                     <label class="col-lg control-label must">APPID</label>
                     <div class="col-sm-9">
@@ -241,6 +282,18 @@
                         <div class="help-block">开放平台应用id</div>
                         {else}
                         <div class='form-control-static'>{if !empty($sec['alipay_sec']['appid'])}{$sec['alipay_sec']['appid']}{/if}</div>
+                        {/if}
+                    </div>
+                </div>
+                <div class="form-group" >
+                    <label class="col-lg control-label must">验签方式 (SIGN_TYPE)</label>
+                    <div class="col-sm-9">
+                        {ifp 'sysset.payset.edit'}
+                        <label class="radio-inline"><input type="radio" name="data[alipay_sign_type]" value="0" {if empty($sec['alipay_sec']['alipay_sign_type'])}checked="true"{/if}/> RSA</label>
+                        <label class="radio-inline"><input type="radio" name="data[alipay_sign_type]" value="1" {if $sec['alipay_sec']['alipay_sign_type'] == 1}checked="true"{/if}/> RSA2</label>
+                        <div class="help-block">请选择正确的验证签名方式，否则支付宝支付不起作用(<span style="color:red">建议使用RSA2</span>)</div>
+                        {else}
+                        <div class='form-control-static'>{if !empty($sec['alipay_sec']['alipay_sign_type'])}{$sec['alipay_sec']['alipay_sign_type']}{/if}</div>
                         {/if}
                     </div>
                 </div>
@@ -261,25 +314,25 @@
                     <label class="col-lg control-label must">应用私钥(PRIVATE_KEY)</label>
                     <div class="col-sm-9">
                         {ifp 'sysset.payset.edit'}
-                            <textarea name="data[app_alipay_private_key]" style="{if !empty($sec['alipay_sec']['private_key'])}display: none;{/if}" data-rule-required='true' rows="4" class="form-control">{$sec['alipay_sec']['private_key']}</textarea>
-                            <a href="javascript:void(0);" class="text text-edit" style="{if empty($sec['alipay_sec']['private_key'])}display: none;{/if}">修改</a>
-                            <div class="help-block">一行且不能有空格</div>
+                        <textarea name="data[app_alipay_private_key]" style="{if !empty($sec['alipay_sec']['private_key'])}display: none;{/if}" data-rule-required='true' rows="4" class="form-control">{$sec['alipay_sec']['private_key']}</textarea>
+                        <a href="javascript:void(0);" class="text text-edit" style="{if empty($sec['alipay_sec']['private_key'])}display: none;{/if}">修改</a>
+                        <div class="help-block">一行且不能有空格</div>
                         {else}
-                            <div class='form-control-static'>{if !empty($sec['alipay_sec']['private_key'])}{$sec['alipay_sec']['private_key']}{/if}</div>
+                        <div class='form-control-static'>{if !empty($sec['alipay_sec']['private_key'])}{$sec['alipay_sec']['private_key']}{/if}</div>
                         {/if}
                     </div>
                 </div>
             </div>
 
-                <div class="form-group">
-                    <label class="col-lg control-label"></label>
-                    <div class="col-sm-9 col-xs-12">
-                        {ife 'sysset.payment' $list}
-                        <input type="submit" value="提交" class="btn btn-primary"/>
-                        {/if}
-                        <a class="btn btn-default " href="{php echo webUrl('sysset/payment')}">返回列表</a>
-                    </div>
+            <div class="form-group">
+                <label class="col-lg control-label"></label>
+                <div class="col-sm-9 col-xs-12">
+                    {ife 'sysset.payment' $list}
+                    <input type="submit" value="提交" class="btn btn-primary"/>
+                    {/if}
+                    <a class="btn btn-default " href="{php echo webUrl('sysset/payment')}">返回列表</a>
                 </div>
+            </div>
             </form>
         </div>
     </div>
@@ -302,6 +355,20 @@
             }
         });
 
+        //全付通密钥签名方式
+        $("input[name=qpay_signtype]").off("click").on("click",function () {
+            var qpay_signtype = $(this).val();
+            //RSA
+            if(qpay_signtype==1){
+                $("#qpay_rsa").show();
+                $("#apikey").hide();
+            }else{
+                //MD5
+                $("#apikey").show();
+                $("#qpay_rsa").hide();
+            }
+        });
+
         var type = $("#type");
         type.change(function (e) {
             var $this = $(this);
@@ -310,6 +377,7 @@
             var wechat = $(".wechat");
             var is_raw = $("#is_raw");
             var sub_appsecret = $("#sub_appsecret");
+            var qpay_signtype=$("#qpay_signtype");
             cert.addClass('hidden');
             merch.addClass('hidden');
             wechat.addClass('hidden');
@@ -339,6 +407,7 @@
                     break;
                 case '4':
                     is_raw.removeClass('hidden');
+                    qpay_signtype.removeClass('hidden');
                     break;
 
             }
@@ -348,4 +417,3 @@
 </script>
 
 {template '_footer'}
-

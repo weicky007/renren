@@ -411,7 +411,7 @@ function user_group() {
 
 
 function user_founder_group() {
-	$groups = pdo_getall('users_founder_group', array(), array('id', 'name', 'package', 'timelimit'), 'id', 'id ASC');
+	$groups = pdo_getall('users_founder_group', array(), '*', 'id', 'id ASC');
 	return $groups;
 }
 
@@ -583,6 +583,9 @@ function user_modules($uid = 0) {
 									case 'toutiaoapp':
 										$module_list[$name][] = MODULE_SUPPORT_TOUTIAOAPP_NAME;
 										break;
+									case 'welcome':
+										$module_list[$name][] = MODULE_SUPPORT_SYSTEMWELCOME_NAME;
+										break;
 								}
 							}
 						}
@@ -621,7 +624,6 @@ function user_modules($uid = 0) {
 				}
 			}
 		}
-
 		cache_write(cache_system_key('user_modules', array('uid' => $uid)), $modules);
 	}
 
@@ -646,7 +648,7 @@ function user_modules($uid = 0) {
 			$all_modules[$value['name']]['main_module_logo'] = $all_modules[$value['main_module']]['logo'];
 			$all_modules[$value['name']]['main_module_title'] = $all_modules[$value['main_module']]['title'];
 		}
-		$is_main_founder = user_is_founder($_W['uid'], true);
+		$is_main_founder = $_W['isadmin'];
 
 		foreach ($modules as $modulename => $support) {
 			if (empty($all_modules[$modulename])) {
@@ -668,9 +670,6 @@ function user_modules($uid = 0) {
 
 			$is_continue = true;
 			foreach ($support_type as $support_name => $value) {
-								if (!$is_main_founder && $support_name == MODULE_SUPPORT_SYSTEMWELCOME_NAME) {
-					continue;
-				}
 				if ($module_info[$support_name] == $value['support']) {
 					$is_continue = false;
 				}
@@ -705,7 +704,7 @@ function user_login_forward($forward = '') {
 		return $login_forward;
 	}
 
-	if (user_is_founder($_W['uid'], true)) {
+	if ($_W['isadmin']) {
 		return url('home/welcome/system', array('page' => 'home'));
 	} else {
 		$user_end_time = user_end_time($_W['uid']);
@@ -1004,7 +1003,7 @@ function user_list_format($users, $founder_list = true) {
 		if ($user['endtime'] == USER_ENDTIME_GROUP_EMPTY_TYPE || $user['endtime'] == USER_ENDTIME_GROUP_UNLIMIT_TYPE) {
 			$user['endtime'] = '永久有效';
 		} else {
-			$user['endtime'] = $user['endtime'] <= TIMESTAMP ? '服务已到期' : date('Y-m-d', $user['endtime']);
+			$user['endtime'] = $user['endtime'] <= TIMESTAMP ? '服务已到期' : date('Y-m-d', intval($user['endtime']));
 		}
 
 		$user['module_num'] =array();
@@ -1158,7 +1157,7 @@ function user_founder_templates($founder_groupid) {
 	}
 
 	if (in_array(-1, $group_detail_info['package'])) {
-		$template_list = table('site_templates')->getAllTemplates();
+		$template_list = table('modules')->getAllTemplates();
 		return $template_list;
 	}
 

@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,9 +9,9 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 {
 	public function main()
 	{
-		app_json(array(
-	'perm' => array('member' => cv('member'))
-	));
+		return app_json(array(
+			'perm' => array('member' => cv('member'))
+		));
 	}
 
 	/**
@@ -23,7 +23,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		global $_GPC;
 
 		if (!cv('member')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		$pindex = max(1, intval($_GPC['page']));
@@ -43,10 +43,10 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$join = '';
-		$sql = 'select * from ' . tablename('ewei_shop_member') . ' dm ' . $join . ' where 1 ' . $condition . '  ORDER BY id DESC';
+		$sql = 'select * from ' . tablename('ewei_shop_member') . (' dm ' . $join . ' where 1 ' . $condition . '  ORDER BY id DESC');
 
 		if (empty($_GPC['export'])) {
-			$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -107,14 +107,14 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		unset($row);
-		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' dm ' . $join . ' where 1 ' . $condition . ' ', $params);
-		app_json(array(
-	'total'    => $total,
-	'list'     => $listArr,
-	'pagesize' => $psize,
-	'page'     => $pindex,
-	'perm'     => array('member_view' => cv('member.list.view'), 'member_edit' => cv('member.list.edit'))
-	));
+		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . (' dm ' . $join . ' where 1 ' . $condition . ' '), $params);
+		return app_json(array(
+			'total'    => $total,
+			'list'     => $listArr,
+			'pagesize' => $psize,
+			'page'     => $pindex,
+			'perm'     => array('member_view' => cv('member.list.view'), 'member_edit' => cv('member.list.edit'))
+		));
 	}
 
 	/**
@@ -125,13 +125,13 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		global $_W;
 		global $_GPC;
 		if (!cv('member.list.view') && cv('member.list.edit')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$plugin_commission = p('commission');
@@ -144,7 +144,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		if (empty($member)) {
-			app_error(AppError::$ParamsError, '会员不存在');
+			return app_error(AppError::$ParamsError, '会员不存在');
 		}
 
 		$member['followed'] = m('user')->followed($member['openid']);
@@ -157,7 +157,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$openbind = 0;
-		if ((empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind'])) || !empty($_W['shopset']['wap']['open'])) {
+		if (empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind']) || !empty($_W['shopset']['wap']['open'])) {
 			$openbind = 1;
 		}
 
@@ -177,7 +177,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 			$hascommission = 1;
 			$plugin_com_set = $plugin_commission->getSet();
 			$agentlevels = $plugin_commission->getLevels(true, true);
-			$comlevel_title = (empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname']);
+			$comlevel_title = empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname'];
 			if (!empty($member['agentlevel']) && !empty($agentlevels)) {
 				foreach ($agentlevels as $agentlevel) {
 					if ($member['agentlevel'] == $agentlevel['id']) {
@@ -190,14 +190,14 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 
 		$groups = m('member')->getGroups();
 		$groups = array_merge(array(
-	array('id' => 0, 'groupname' => '未分组')
-	), $groups);
+			array('id' => 0, 'groupname' => '未分组')
+		), $groups);
 		$levels = m('member')->getLevels();
 		$levels = array_merge(array(
-	array('id' => 0, 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '普通会员' : $_W['shopset']['shop']['levelname'])
-	), $levels);
+			array('id' => 0, 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '普通会员' : $_W['shopset']['shop']['levelname'])
+		), $levels);
 		$shop = $_W['shopset']['shop'];
-		$level_title = (empty($shop['levelname']) ? '普通会员' : $shop['levelname']);
+		$level_title = empty($shop['levelname']) ? '普通会员' : $shop['levelname'];
 		if (!empty($member['level']) && $levels) {
 			foreach ($levels as $level) {
 				if ($level['id'] == $member['level']) {
@@ -229,7 +229,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$result = array(
-			'member'          => array('id' => $member['id'], 'avatar' => tomedia($member['avatar']), 'nickname' => $member['nickname'], 'realname' => $member['realname'], 'followed' => $member['followed'], 'followedtext' => $member['followedtext'], 'credit2' => $member['credit2'], 'credit1' => $member['credit1'], 'mobile' => $member['mobile'], 'mobileverify' => $member['mobileverify'], 'weixin' => $member['weixin'], 'isblack' => $member['isblack'], 'content' => $member['content'], 'createtime' => date('Y-m-d H:i:s', $member['createtime']), 'self_ordercount' => $member['self_ordercount'], 'self_ordermoney' => $member['self_ordermoney'], 'last_ordertime' => $member['last_ordertime'], 'level' => $member['level'], 'levelname' => $level_title, 'groupid' => $member['groupid'], 'groupname' => $group_title, 'agentlevel' => $member['agentlevel'], 'agentlevelname' => $comlevel_title, 'fixagentid' => $member['fixagentid'], 'isagent' => $member['isagent'], 'status' => $member['status'], 'agentnotupgrade' => $member['agentnotupgrade'], 'commission_total' => $member['commission_total'], 'commission_pay' => $member['commission_pay'], 'agenttime' => $member['agenttime'], 'agentselectgoods' => $goods_title),
+			'member'          => array('id' => $member['id'], 'avatar' => tomedia($member['avatar']), 'nickname' => $member['nickname'], 'realname' => $member['realname'], 'followed' => $member['followed'], 'followedtext' => $member['followedtext'], 'credit2' => $member['credit2'], 'credit1' => $member['credit1'], 'mobile' => $member['mobile'], 'mobileverify' => $member['mobileverify'], 'weixin' => $member['weixin'], 'isblack' => $member['isblack'], 'content' => $member['content'], 'createtime' => date('Y-m-d H:i:s', $member['createtime']), 'self_ordercount' => $member['self_ordercount'], 'self_ordermoney' => $member['self_ordermoney'], 'last_ordertime' => $member['last_ordertime'], 'level' => $member['level'], 'levelname' => $level_title, 'groupid' => $member['groupid'], 'groupname' => $group_title, 'agentlevel' => $member['agentlevel'], 'agentlevelname' => $comlevel_title, 'fixagentid' => $member['fixagentid'], 'isagent' => $member['isagent'], 'status' => $member['status'], 'agentnotupgrade' => $member['agentnotupgrade'], 'commission_total' => $member['commission_total'], 'commission_pay' => $member['commission_pay'], 'agenttime' => 0 < $member['agenttime'] ? $member['agenttime'] : '非分销商', 'agentselectgoods' => $goods_title),
 			'openbind'        => $openbind,
 			'hascommission'   => $hascommission,
 			'parentagent'     => false,
@@ -237,7 +237,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 			'level_list'      => $levels,
 			'group_list'      => $groups,
 			'perm'            => array('member_edit' => cv('member.list.edit'), 'recharge_credit2' => cv('finance.recharge.credit2'), 'recharge_credit1' => cv('finance.recharge.credit1'), 'commission_changeagent' => cv('commission.agent.changeagent'), 'commission_check' => cv('commission.agent.check'), 'order' => cv('order'))
-			);
+		);
 
 		if ($hascommission) {
 			if ($parentagent) {
@@ -247,7 +247,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 			$result['agentlevel_list'] = $agentlevels;
 		}
 
-		app_json($result);
+		return app_json($result);
 	}
 
 	public function submit()
@@ -256,11 +256,11 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		global $_GPC;
 
 		if (!$_W['ispost']) {
-			app_error(AppError::$RequestError);
+			return app_error(AppError::$RequestError);
 		}
 
 		if (!cv('member.list.edit') && !cv('member.list.add')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		$id = intval($_GPC['id']);
@@ -274,7 +274,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$openbind = 0;
-		if ((empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind'])) || !empty($_W['shopset']['wap']['open'])) {
+		if (empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind']) || !empty($_W['shopset']['wap']['open'])) {
 			$openbind = 1;
 		}
 
@@ -293,7 +293,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 				}
 
 				$m = pdo_fetch('select id from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and mobileverify=1 and uniacid=:uniaicd limit 1 ', array(':mobile' => $data['mobile'], ':uniaicd' => $_W['uniacid']));
-				if (!empty($m) && ($m['id'] != $id)) {
+				if (!empty($m) && $m['id'] != $id) {
 					show_json(0, '此手机号已绑定其他用户!(uid:' . $m['id'] . ')');
 				}
 
@@ -351,7 +351,7 @@ class Member_EweiShopV2Page extends AppMobileAuthPage
 
 		pdo_update('ewei_shop_member', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 		plog('member.list.edit', '修改会员资料  ID: ' . $member['id'] . ' <br/> 会员信息:  ' . $member['openid'] . '/' . $member['nickname'] . '/' . $member['realname'] . '/' . $member['mobile']);
-		app_json();
+		return app_json();
 	}
 }
 

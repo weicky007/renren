@@ -16,9 +16,11 @@
             {if com('coupon')}
                 <label class="radio-inline"><input type="radio" name='goodstype' value="1" {if $item['goodstype']==1}checked{/if} {if !empty($item)} disabled{/if} />优惠券</label>
             {/if}
+        {if empty($_W['merchid'])}
             <label class="radio-inline"><input type="radio" name='goodstype' value="2" {if $item['goodstype']==2}checked{/if} {if !empty($item)} disabled{/if} />余额</label>
             <label class="radio-inline"><input type="radio" name='goodstype' value="3" {if $item['goodstype']==3}checked{/if} {if !empty($item)} disabled{/if} />红包</label>
-            <div class='help-block cgt cgt-0' {if !empty($item['goodstype'])}style="display:none"{/if}>保存后商品类型不可更改</div>
+        {/if}
+        <div class='help-block cgt cgt-0' {if !empty($item['goodstype'])}style="display:none"{/if}>保存后商品类型不可更改</div>
             <div class='help-block cgt cgt-1' {if $item['goodstype']!=1}style="display:none"{/if}>设置为优惠券类型，则无需进行领取，兑换或抽中直接发送到优惠券账户(保存后商品类型不可更改)</div>
             <div class='help-block cgt cgt-2' {if $item['goodstype']!=2}style="display:none"{/if}>设置为余额类型，则无需进行领取，兑换或抽中直接发送到用户账户(保存后商品类型不可更改)</div>
             <div class='help-block cgt cgt-3' {if $item['goodstype']!=3}style="display:none"{/if}>设置为红包类型，则无需进行领取，兑换或抽中直接发送微信红包(保存后商品类型不可更改)</div>
@@ -32,7 +34,7 @@
     <label class="col-lg control-label">设置商品</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'creditshop.goods' $item}
-            <?php echo tpl_selector('goodsid', array('required'=>false, 'preview'=>false,'url'=>webUrl('creditshop/goods/query'), 'items'=>$goods, 'readonly'=>true, 'buttontext'=>'选择商品', 'placeholder'=>'请选择商品','callback'=>'select_goods'))?>
+            <?php echo tpl_selector('goodsid', array('required'=>false, 'preview'=>false,'url'=>webUrl('creditshop/goods/query'), 'items'=>$goods, 'readonly'=>true,'nokeywords'=>1,'autosearch'=>1, 'buttontext'=>'选择商品', 'placeholder'=>'请选择商品','callback'=>'select_goods'))?>
         <div class="help-block">提示：您可选择商城商品或自行设置商品信息(此项非必选)</div>
         {else}
             <div class='form-control-static'>{$goods['title']}</div>
@@ -45,7 +47,7 @@
         <label class="col-lg control-label">选择优惠券</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'creditshop.goods' $item}
-                {php echo tpl_selector('couponid',array('required'=>false, 'preview'=>true,'url'=>webUrl('sale/coupon/query'),'text'=>'couponname','items'=>$coupon,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券','callback'=>'select_coupon'))}
+                {php echo tpl_selector('couponid',array('required'=>false, 'preview'=>false,'url'=>webUrl('sale/coupon/query'),'text'=>'couponname','items'=>$coupon,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券','callback'=>'select_coupon'))}
             {else}
                 <div class='form-control-static'>{$coupon['title']}</div>
             {/if}
@@ -126,6 +128,8 @@
             </span>
             <span class="input-group-addon">每个红包最低</span>
             <input type="number" class="form-control" name="minpacketmoney" {if !empty($item)} disabled{/if} value="{$item['minpacketmoney']}">
+            <span class="input-group-addon">元 最高</span>
+            <input type="number" class="form-control" name="maxpacketmoney" {if !empty($item)} disabled{/if} value="{$item['maxpacketmoney']}">
             <span class="input-group-addon">元</span>
         </div>
         {else}

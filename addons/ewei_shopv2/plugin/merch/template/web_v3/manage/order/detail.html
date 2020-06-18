@@ -129,11 +129,11 @@
         <div class="ui-step-number" >1</div>
         <div class="ui-step-title" >买家下单</div>
         <div class="ui-step-meta" >{if 0<=$item['status']}{php echo date('Y-m-d',$item['createtime'])}<br/>{php echo date('H:i:s',$item['createtime'])}{/if}</div>
-        </li {if 1<=$item['status']}class="ui-step-done"{/if}>
-        <li {if !empty($item['paytime'])}class="ui-step-done"{/if}>
+        </li>
+        <li {if !empty($item['paytime']) || $item['paytype']==3}class="ui-step-done"{/if}>
         <div class="ui-step-number">2</div>
-        <div class="ui-step-title">买家付款</div>
-        <div class="ui-step-meta">{if 1<=$item['status']}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
+        <div class="ui-step-title">{if $item['paytype']==3}货到付款{else}买家付款{/if}</div>
+        <div class="ui-step-meta">{if $item['paytype']==3}{php $item['paytime'] = $item['cashtime']}{/if}{if 1<=$item['status'] || $item['paytype']==3}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
         </li>
         <li {if 2<=$item['status']}class="ui-step-done"{/if}>
         <div class="ui-step-number" >3</div>
@@ -538,7 +538,7 @@
                             {if $item['status'] == 2}（商家已发货，等待买家收货并交易完成）{/if}
                             {if $item['status'] == -1}
                             {if !empty($refund) && $refund['status']==1}
-                            <span class="label label-default">（已退款）</span> {if !empty($refund['refundtime'])}退款时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
+                            <span class="label label-default">（已维权）</span> {if !empty($refund['refundtime'])}维权时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
                             {/if}
                             {/if}
                         </span>
@@ -704,7 +704,7 @@
                 {loop $item['goods'] $goods}
                 <tr  class="trorder">
                     <td>
-                        <img src="{php echo tomedia($g['thumb'])}" style='width:70px;height:70px;border:1px solid #efefef; padding:1px;'onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'">
+                        <img src="{php echo tomedia($goods['thumb'])}" style='width:70px;height:70px;border:1px solid #efefef; padding:1px;'onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'">
                     </td>
                     <td class='full'>
                         {if $category[$goods['pcate']]['name']}
@@ -862,4 +862,3 @@
 </script>
 
 {template '_footer'}
-

@@ -3,7 +3,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $config = array();
 
-$config['db']['master']['host'] = 'localhost';
+$config['db']['master']['host'] = '127.0.0.1';
 $config['db']['master']['username'] = 'renren';
 $config['db']['master']['password'] = 'rPYDAdshx3iMc484';
 $config['db']['master']['port'] = '3306';
@@ -26,17 +26,17 @@ $config['db']['slave']['1']['weight'] = 0;
 $config['db']['common']['slave_except_table'] = array('core_sessions');
 
 // --------------------------  CONFIG COOKIE  --------------------------- //
-$config['cookie']['pre'] = 'ef3f_';
+$config['cookie']['pre'] = '71c4_';
 $config['cookie']['domain'] = '';
 $config['cookie']['path'] = '/';
 
 // --------------------------  CONFIG SETTING  --------------------------- //
 $config['setting']['charset'] = 'utf-8';
-$config['setting']['cache'] = 'redis';
+$config['setting']['cache'] = 'mysql';
 $config['setting']['timezone'] = 'Asia/Shanghai';
 $config['setting']['memory_limit'] = '256M';
 $config['setting']['filemode'] = 0644;
-$config['setting']['authkey'] = '1cc79c89';
+$config['setting']['authkey'] = '02f3b53d';
 $config['setting']['founder'] = '1';
 $config['setting']['development'] = 0;
 $config['setting']['referrer'] = 0;
@@ -61,8 +61,8 @@ $config['setting']['proxy']['host'] = '';
 $config['setting']['proxy']['auth'] = '';
 
 // --------------------------  CONFIG REDIS  --------------------------- //
-$config['setting']['redis']['server'] = '127.0.0.1 ';
+$config['setting']['redis']['server'] = '';
 $config['setting']['redis']['port'] = 6379;
-$config['setting']['redis']['pconnect'] = 1;
+$config['setting']['redis']['pconnect'] = 0; 
 $config['setting']['redis']['requirepass'] = ''; 
 $config['setting']['redis']['timeout'] = 1;

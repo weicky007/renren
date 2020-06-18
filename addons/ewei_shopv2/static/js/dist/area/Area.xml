@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?> 
+<?xml version="1.0" encoding="utf-8"?>
  <address>
 <province name="请选择省份">
 	<city name="请选择城市">
@@ -152,15 +152,14 @@
   <county name="沙河市" /> 
   </city>
  <city name="保定市">
-  <county name="市辖区" /> 
-  <county name="新市区" /> 
-  <county name="北市区" /> 
-  <county name="南市区" /> 
-  <county name="满城县" /> 
-  <county name="清苑县" /> 
+  <county name="市辖区" />
+  <county name="竞秀区" />
+  <county name="莲池区" />
+  <county name="满城区" />
+  <county name="清苑区" />
   <county name="涞水县" /> 
   <county name="阜平县" /> 
-  <county name="徐水县" /> 
+  <county name="徐水区" />
   <county name="定兴县" /> 
   <county name="唐县" /> 
   <county name="高阳县" /> 
@@ -473,7 +472,8 @@
   </city>
  <city name="鄂尔多斯市">
   <county name="东胜区" /> 
-  <county name="达拉特旗" /> 
+  <county name="康巴什区" />
+  <county name="达拉特旗" />
   <county name="准格尔旗" /> 
   <county name="鄂托克前旗" /> 
   <county name="鄂托克旗" /> 
@@ -558,8 +558,8 @@
   <county name="皇姑区" /> 
   <county name="铁西区" /> 
   <county name="苏家屯区" /> 
-  <county name="东陵区" /> 
-  <county name="新城子区" /> 
+  <county name="浑南区" />
+  <county name="沈北新区" />
   <county name="于洪区" /> 
   <county name="辽中县" /> 
   <county name="康平县" /> 
@@ -577,7 +577,8 @@
   <county name="长海县" /> 
   <county name="瓦房店市" /> 
   <county name="普兰店市" /> 
-  <county name="庄河市" /> 
+  <county name="庄河市" />
+  <county name="经济技术开发区" />
   </city>
  <city name="鞍山市">
   <county name="市辖区" /> 
@@ -706,6 +707,10 @@
   <county name="九台市" /> 
   <county name="榆树市" /> 
   <county name="德惠市" /> 
+  <county name="长春经济技术开发区" />
+  <county name="长春净月高新技术产业开发区" />
+  <county name="长春高新技术产业开发区" />
+  <county name="长春汽车经济技术开发区" />
   </city>
  <city name="吉林市">
   <county name="市辖区" /> 
@@ -992,11 +997,9 @@
   <county name="高淳县" /> 
   </city>
  <city name="无锡市">
-  <county name="市辖区" /> 
-  <county name="崇安区" /> 
-  <county name="南长区" /> 
-  <county name="北塘区" /> 
-  <county name="锡山区" /> 
+  <county name="梁溪区" />
+  <county name="新吴区" />
+  <county name="锡山区" />
   <county name="惠山区" /> 
   <county name="滨湖区" /> 
   <county name="江阴市" /> 
@@ -1151,7 +1154,8 @@
   <county name="奉化市" /> 
   </city>
  <city name="温州市">
-  <county name="市辖区" /> 
+  <county name="龙港市" />
+  <county name="市辖区" />
   <county name="鹿城区" /> 
   <county name="龙湾区" /> 
   <county name="瓯海区" /> 
@@ -1224,7 +1228,7 @@
   <county name="椒江区" /> 
   <county name="黄岩区" /> 
   <county name="路桥区" /> 
-  <county name="玉环县" /> 
+  <county name="玉环市" />
   <county name="三门县" /> 
   <county name="天台县" /> 
   <county name="仙居县" /> 
@@ -1263,8 +1267,9 @@
   <county name="鸠江区" /> 
   <county name="芜湖县" /> 
   <county name="繁昌县" /> 
-  <county name="南陵县" /> 
-  </city>
+  <county name="南陵县" />
+  <county name="三山区" />
+ </city>
  <city name="蚌埠市">
   <county name="市辖区" /> 
   <county name="龙子湖区" /> 
@@ -1859,7 +1864,8 @@
   <county name="荥阳市" /> 
   <county name="新密市" /> 
   <county name="新郑市" /> 
-  <county name="登封市" /> 
+  <county name="登封市" />
+  <county name="郑东新区" />
   </city>
  <city name="开封市">
   <county name="市辖区" /> 
@@ -2226,7 +2232,7 @@
   <county name="芦淞区" /> 
   <county name="石峰区" /> 
   <county name="天元区" /> 
-  <county name="株洲县" /> 
+  <county name="渌口区" />
   <county name="攸县" /> 
   <county name="茶陵县" /> 
   <county name="炎陵县" /> 
@@ -2412,6 +2418,9 @@
   <county name="盐田区" /> 
   <county name="坪山新区" />
   <county name="光明新区" />
+  <county name="龙华新区" />
+  <county name="大鹏新区" />
+  <county name="坪山区" />
   </city>
  <city name="珠海市">
   <county name="市辖区" /> 
@@ -2561,12 +2570,14 @@
   <county name="石碣"/>
   <county name="石龙"/>
   <county name="石排"/>
-  <county name="望牛墩"/>
+  <county name="望牛墩镇"/>
   <county name="谢岗"/>
   <county name="樟木头"/>
   <county name="中堂"/>
   </city>
-  <city name="中山市" /> 
+  <city name="中山市">
+  <county name="市辖区" />
+ </city>
  <city name="潮州市">
   <county name="市辖区" /> 
   <county name="湘桥区" /> 
@@ -2590,7 +2601,7 @@
   <county name="罗定市" /> 
   </city>
   </province>
- <province name="广西区">
+ <province name="广西壮族自治区">
  <city name="南宁市">
   <county name="市辖区" /> 
   <county name="兴宁区" /> 
@@ -2753,6 +2764,10 @@
   </city>
  <city name="三亚市">
   <county name="市辖区" /> 
+  <county name="海棠区" />
+  <county name="吉阳区" />
+  <county name="天涯区" />
+  <county name="崖州区" />
   </city>
  <city name="海南直辖县">
   <county name="五指山市" /> 
@@ -2836,7 +2851,7 @@
   <county name="温江区" /> 
   <county name="金堂县" /> 
   <county name="双流区" />
-  <county name="郫县" /> 
+  <county name="郫都区" /> <!--此地址更新还未收录，应客户需求修改，原名郫县-->
   <county name="大邑县" /> 
   <county name="蒲江县" /> 
   <county name="新津县" /> 
@@ -2844,6 +2859,9 @@
   <county name="彭州市" /> 
   <county name="邛崃市" /> 
   <county name="崇州市" /> 
+  <county name="简阳市" />
+  <county name="高新区" /><!--此地址还未收录，应客户要求添加-->
+  <county name="天府新区" /> <!--此地址还未收录，应客户要求添加-->
   </city>
  <city name="自贡市">
   <county name="市辖区" /> 
@@ -3089,8 +3107,7 @@
  <city name="遵义市">
   <county name="市辖区" /> 
   <county name="红花岗区" /> 
-  <county name="汇川区" /> 
-  <county name="遵义县" /> 
+  <county name="汇川区" />
   <county name="桐梓县" /> 
   <county name="绥阳县" /> 
   <county name="正安县" /> 
@@ -3102,6 +3119,7 @@
   <county name="习水县" /> 
   <county name="赤水市" /> 
   <county name="仁怀市" /> 
+  <county name="播州区" />
   </city>
  <city name="安顺市">
   <county name="市辖区" /> 
@@ -3648,7 +3666,8 @@
   <county name="安西县" /> 
   <county name="肃北蒙古族自治县" /> 
   <county name="阿克塞哈萨克族自治县" /> 
-  <county name="玉门市" /> 
+  <county name="玉门市" />
+  <county name="瓜州县" />
   <county name="敦煌市" /> 
   </city>
  <city name="庆阳市">
@@ -3814,7 +3833,7 @@
   <county name="水磨沟区" /> 
   <county name="头屯河区" /> 
   <county name="达坂城区" /> 
-  <county name="东山区" /> 
+  <county name="米东区" />
   <county name="乌鲁木齐县" /> 
   </city>
  <city name="克拉玛依市">
@@ -3963,5 +3982,6 @@
   </province>
     <province name="境外">
         <city name="境外地区"></city>
+        <city name="其他地区"></city>
     </province>
   </address>

@@ -10,7 +10,10 @@ load()->model('module');
 
 $dos = array('display', 'del', 'post', 'save', 'edit');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-if (!user_is_founder($_W['uid'])) {
+if (!$_W['isfounder']) {
+	if ($_W['isajax']) {
+		iajax(-1, '无权限操作！');
+	}
 	itoast('无权限操作！', referer(), 'error');
 }
 
@@ -19,7 +22,7 @@ if ('display' == $do) {
 	$pagesize = 10;
 
 	$uni_group_table = table('uni_group');
-	$uni_group_table->searchWithUniacidAndUid();
+	$uni_group_table->searchWithUid();
 
 	$name = safe_gpc_string($_GPC['name']);
 	if (!empty($name)) {
@@ -34,7 +37,6 @@ if ('display' == $do) {
 	$total = $uni_group_table->getLastQueryTotal();
 	$pager = pagination($total, $pageindex, $pagesize);
 	$module_support_type = module_support_type();
-
 	if (!empty($modules_group_list)) {
 		$all_module_names = array();
 		foreach ($modules_group_list as $key => $value) {
@@ -65,20 +67,11 @@ if ('display' == $do) {
 
 			$group['templates'] = array();
 			if (is_array($template_ids)) {
-				$templates = table('site_templates')->searchWithId($template_ids)->getAll();
-				if (is_array($templates)) {
-					foreach ($templates as $k => $temp) {
-						$temp['logo'] = $_W['siteroot'] . "app/themes/{$temp['name']}/preview.jpg";
-						$group['templates'][$k] = $temp;
-					}
-				}
+				$group['templates'] = table('modules')->getAllTemplateByIds($template_ids);
 			}
 
 			$group['modules_all'] = array();
 			foreach ($module_support_type as $support => $info) {
-				if (MODULE_SUPPORT_SYSTEMWELCOME_NAME == $support) {
-					continue;
-				}
 				if (MODULE_SUPPORT_ACCOUNT_NAME == $support) {
 					$info['type'] = 'modules';
 				}
@@ -114,9 +107,7 @@ if (in_array($do, array('save', 'del', 'post'))) {
 }
 
 if ('save' == $do) {
-	$account_all_type = uni_account_type();
-	$account_all_type_sign = array_keys(uni_account_type_sign());
-
+	$account_all_type_sign = array_column($module_all_support, 'type');
 	$modules = safe_gpc_array($_GPC['modules']);
 	$package_info = array(
 		'id' => $id,
@@ -164,7 +155,6 @@ if ('post' == $do) {
 	$module_support_type = module_support_type();
 	$module_list = array(
 		'modules' => array(),
-		'templates' => array(),
 	);
 
 	$user_modules = user_modules($_W['uid']);
@@ -173,9 +163,6 @@ if ('post' == $do) {
 			continue;
 		}
 		foreach ($module_support_type as $support => $info) {
-			if (MODULE_SUPPORT_SYSTEMWELCOME_NAME == $support) {
-				continue;
-			}
 			$info['type'] = 'account' == $info['type'] ? 'modules' : $info['type'];
 			if ($module[$support] == $info['support']) {
 				$module_list['modules'][] = array(
@@ -188,26 +175,6 @@ if ('post' == $do) {
 				);
 			}
 		}
-	}
-
-	
-		if (user_is_vice_founder($_W['uid'])) {
-			$template_list = user_founder_templates($_W['user']['groupid']);
-		} else {
-			$template_list = pdo_getall('site_templates');
-		}
-	
-	
-
-	foreach ($template_list as $temp) {
-		$module_list['templates'][] = array(
-			'id' => $temp['id'],
-			'name' => $temp['name'],
-			'title' => $temp['title'],
-			'logo' => $_W['siteroot'] . "app/themes/{$temp['name']}/preview.jpg",
-			'support' => '',
-			'checked' => !empty($group['templates']) && is_array($group['templates']) && in_array($temp['id'], $group['templates']) ? 1 : 0,
-		);
 	}
 }
 template('module/group');

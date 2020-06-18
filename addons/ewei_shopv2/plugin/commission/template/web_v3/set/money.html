@@ -120,7 +120,7 @@
     <div class="col-sm-9 col-xs-12 fixmore-input-group">
         {ifp 'commission.set.edit'}
         <input type="text" name="data[settledays]" class="form-control" value="{$data['settledays']}"  />
-        <span class="help-block">当订单完成后的n天后，佣金才能申请提现,设置0或空，订单完成就可以结算</span>
+        <span class="help-block">当订单完成后的n天后，佣金才能申请提现,设置0或空，订单完成就可以结算<br>建议设置的结算天数大于【设置-交易设置-退款申请】中设置的天数，否则会出现佣金结算后商品被维权的情况</span>
         {else}
         {$data['settledays']}
         {/if}

@@ -46,7 +46,7 @@
     <label class="col-lg control-label must">任务有效期</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'task.edit'}
-        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+        {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
         <span class='help-block'>可领取任务的时间段</span>
         {else}
         <div class='form-control-static'>{php echo date('Y-m-d H:i', $starttime).'-'.date('Y-m-d H:i', $endtime);}</div>

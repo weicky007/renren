@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,7 +19,7 @@ class Sort_EweiShopV2Page extends WebPage
 			'cube'    => array('text' => '魔方栏', 'visible' => 1),
 			'banner'  => array('text' => '广告栏', 'visible' => 1),
 			'goods'   => array('text' => '推荐栏', 'visible' => 1)
-			);
+		);
 
 		if ($_W['ispost']) {
 			$datas = json_decode(html_entity_decode($_GPC['datas']), true);
@@ -41,12 +41,12 @@ class Sort_EweiShopV2Page extends WebPage
 			show_json(1);
 		}
 
-		$oldsorts = (!empty($_W['shopset']['shop']['indexsort_wxapp']) ? $_W['shopset']['shop']['indexsort_wxapp'] : $defaults);
+		$oldsorts = !empty($_W['shopset']['shop']['indexsort_wxapp']) ? $_W['shopset']['shop']['indexsort_wxapp'] : $defaults;
 		$sorts = array();
 
 		foreach ($oldsorts as $key => $old) {
 			$sorts[$key] = $old;
-			if (($key == 'notice') && !isset($oldsorts['seckill'])) {
+			if ($key == 'notice' && !isset($oldsorts['seckill'])) {
 				$sorts['seckill'] = array('text' => '秒杀栏', 'visible' => 0);
 			}
 		}

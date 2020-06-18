@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,7 +12,7 @@ class SignModel extends PluginModel
 		$set = pdo_fetch('select *  from ' . tablename('ewei_shop_sign_set') . ' where uniacid=:uniacid limit 1 ', array(':uniacid' => $_W['uniacid']));
 
 		if (empty($set)) {
-			return '';
+			return array();
 		}
 
 		if (empty($set['textsign'])) {
@@ -50,6 +51,11 @@ class SignModel extends PluginModel
 	public function setShare($set = NULL)
 	{
 		global $_W;
+		session_start();
+
+		if (!empty($_SESSION['sign_xcx_openid'])) {
+			$_W['openid'] = $_SESSION['sign_xcx_openid'];
+		}
 
 		if (empty($set)) {
 			$set = $this->getSet();
@@ -63,7 +69,7 @@ class SignModel extends PluginModel
 
 				if (!empty($set['level'])) {
 					$member = m('member')->getMember($_W['openid']);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) {
+					if (!empty($member) && $member['status'] == 1 && $member['isagent'] == 1) {
 						$_W['shopshare']['link'] = mobileUrl('sign', array('mid' => $member['id']), true);
 					}
 					else {
@@ -73,6 +79,9 @@ class SignModel extends PluginModel
 					}
 				}
 			}
+		}
+		else {
+			$_W['shopshare'] = array('title' => $_W['shopset']['shop']['name'], 'imgUrl' => tomedia($_W['shopset']['shop']['logo']), 'desc' => $_W['shopset']['shop']['description'], 'link' => mobileUrl('index', NULL, true));
 		}
 	}
 
@@ -106,7 +115,7 @@ class SignModel extends PluginModel
 		$i = $start_year;
 
 		while ($i <= $this_year) {
-			if (0 < ($this_year - $i)) {
+			if (0 < $this_year - $i) {
 				$ii_month = 12;
 			}
 			else {
@@ -133,6 +142,11 @@ class SignModel extends PluginModel
 	public function getCalendar($year = NULL, $month = NULL, $week = true)
 	{
 		global $_W;
+		session_start();
+
+		if (!empty($_SESSION['sign_xcx_openid'])) {
+			$_W['openid'] = $_SESSION['sign_xcx_openid'];
+		}
 
 		if (empty($year)) {
 			$year = date('Y', time());
@@ -161,7 +175,7 @@ class SignModel extends PluginModel
 			}
 
 			$today = 0;
-			if (($date['thisyear'] == $year) && ($date['thismonth'] == $month) && ($date['doday'] == $i)) {
+			if ($date['thisyear'] == $year && $date['thismonth'] == $month && $date['doday'] == $i) {
 				$today = 1;
 			}
 
@@ -192,7 +206,7 @@ class SignModel extends PluginModel
 				$sign_date = array('year' => date('Y', $item['date']), 'month' => date('m', $item['date']), 'day' => date('d', $item['date']));
 
 				foreach ($array as $day => &$row) {
-					if (($row['day'] == $sign_date['day']) && ($row['month'] == $sign_date['month']) && ($row['year'] == $sign_date['year'])) {
+					if ($row['day'] == $sign_date['day'] && $row['month'] == $sign_date['month'] && $row['year'] == $sign_date['year']) {
 						$row['title'] = $item['title'];
 						$row['color'] = $item['color'];
 					}
@@ -206,23 +220,23 @@ class SignModel extends PluginModel
 			$calendar = array();
 
 			foreach ($array as $index => $row) {
-				if ((1 <= $index) && ($index <= 7)) {
+				if (1 <= $index && $index <= 7) {
 					$cindex = 0;
 				}
 				else {
-					if ((8 <= $index) && ($index <= 14)) {
+					if (8 <= $index && $index <= 14) {
 						$cindex = 1;
 					}
 					else {
-						if ((15 <= $index) && ($index <= 21)) {
+						if (15 <= $index && $index <= 21) {
 							$cindex = 2;
 						}
 						else {
-							if ((22 <= $index) && ($index <= 28)) {
+							if (22 <= $index && $index <= 28) {
 								$cindex = 3;
 							}
 							else {
-								if ((29 <= $index) && ($index <= 35)) {
+								if (29 <= $index && $index <= 35) {
 									$cindex = 4;
 								}
 							}
@@ -243,6 +257,12 @@ class SignModel extends PluginModel
 	public function getSign($date = NULL)
 	{
 		global $_W;
+		session_start();
+
+		if (!empty($_SESSION['sign_xcx_openid'])) {
+			$_W['openid'] = $_SESSION['sign_xcx_openid'];
+		}
+
 		$set = $this->getSet();
 		$condition = '';
 
@@ -262,15 +282,15 @@ class SignModel extends PluginModel
 			foreach ($records as $key => $item) {
 				$day = date('Y-m-d', $item['time']);
 				$today = date('Y-m-d', time());
-				if (empty($date) && ($day == $today)) {
+				if (empty($date) && $day == $today) {
 					$signed = 1;
 				}
 
-				if (!empty($date) && ($day == $date)) {
+				if (!empty($date) && $day == $date) {
 					$signed = 1;
 				}
 
-				if ((1 < count($records)) && ($key == 0)) {
+				if (1 < count($records) && $key == 0) {
 					if (date('Y-m-d', $records[$key + 1]['time']) == date('Y-m-d', strtotime('-1 day'))) {
 						++$order[$orderindex];
 					}
@@ -279,11 +299,11 @@ class SignModel extends PluginModel
 				$dday = date('d', $item['time']);
 				$pday = date('d', isset($records[$key + 1]['time']) ? $records[$key + 1]['time'] : 0);
 
-				if (($dday - $pday) == 1) {
+				if ($dday - $pday == 1) {
 					++$order[$orderindex];
 				}
 				else {
-					if (($dday == 1) && (date('d', isset($records[$key + 1]['time']) ? $records[$key + 1]['time'] : 0) == date('t', strtotime('-1 month', $item['time'])))) {
+					if ($dday == 1 && date('d', isset($records[$key + 1]['time']) ? $records[$key + 1]['time'] : 0) == date('t', strtotime('-1 month', $item['time']))) {
 						++$order[$orderindex];
 					}
 					else {
@@ -305,7 +325,7 @@ class SignModel extends PluginModel
 	public function dateplus($date, $day)
 	{
 		$time = strtotime($date);
-		$time = $time + (3600 * 24 * $day);
+		$time = $time + 3600 * 24 * $day;
 		$date = date('Y-m-d', $time);
 		return $date;
 	}
@@ -313,7 +333,7 @@ class SignModel extends PluginModel
 	public function dateminus($date, $day)
 	{
 		$time = strtotime($date);
-		$time = $time - (3600 * 24 * $day);
+		$time = $time - 3600 * 24 * $day;
 		$date = date('Y-m-d', $time);
 		return $date;
 	}
@@ -340,11 +360,11 @@ class SignModel extends PluginModel
 			foreach ($records as $item) {
 				if (!empty($reword_order)) {
 					foreach ($reword_order as $i => &$order) {
-						if (!empty($set['cycle']) && ($date['days'] < $order['day'])) {
+						if (!empty($set['cycle']) && $date['days'] < $order['day']) {
 							unset($reword_order[$i]);
 						}
 
-						if (($item['day'] == $order['day']) && ($item['type'] == 1)) {
+						if ($item['day'] == $order['day'] && $item['type'] == 1) {
 							$order['drawed'] = 1;
 						}
 						else {
@@ -359,11 +379,11 @@ class SignModel extends PluginModel
 
 				if (!empty($reword_sum)) {
 					foreach ($reword_sum as $i => &$sum) {
-						if (!empty($set['cycle']) && ($date['days'] < $sum['day'])) {
+						if (!empty($set['cycle']) && $date['days'] < $sum['day']) {
 							unset($reword_sum[$i]);
 						}
 
-						if (($item['day'] == $sum['day']) && ($item['type'] == 2)) {
+						if ($item['day'] == $sum['day'] && $item['type'] == 2) {
 							$sum['drawed'] = 1;
 						}
 						else {
@@ -385,6 +405,11 @@ class SignModel extends PluginModel
 	public function updateSign($signinfo)
 	{
 		global $_W;
+		session_start();
+
+		if (!empty($_SESSION['sign_xcx_openid'])) {
+			$_W['openid'] = $_SESSION['sign_xcx_openid'];
+		}
 
 		if (empty($signinfo)) {
 			$signinfo = $this->getSign();
@@ -392,6 +417,10 @@ class SignModel extends PluginModel
 
 		$info = pdo_fetch('select id  from ' . tablename('ewei_shop_sign_user') . ' where openid=:openid and uniacid=:uniacid limit 1 ', array(':openid' => $_W['openid'], ':uniacid' => $_W['uniacid']));
 		$data = array('openid' => $_W['openid'], 'order' => $signinfo['order'], 'orderday' => $signinfo['orderday'], 'sum' => $signinfo['sum'], 'signdate' => date('Y-m'));
+
+		if ($_SESSION['sign_xcx_isminiprogram']) {
+			$data['isminiprogram'] = 1;
+		}
 
 		if (empty($info)) {
 			$data['uniacid'] = $_W['uniacid'];

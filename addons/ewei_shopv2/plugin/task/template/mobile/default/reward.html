@@ -11,7 +11,7 @@
         </div>
         <div class="title">奖励记录</div>
     </div>
-    <div class='fui-content'>
+    <div class="fui-content navbar" style="padding-bottom: 0;">
         {if empty($list)}
         <div style="height: 7rem;line-height:7rem;width: 100%;text-align: center;color: #d0d0d0;font-size: 1rem">暂时没有任何奖励</div>
         {/if}
@@ -24,9 +24,9 @@
                         {if $reward['reward_type'] == 'redpacket'}
                         <i class="iconfont icon-hongbao"></i>&yen{$reward['reward_data']}红包
                         {elseif $reward['reward_type'] == 'credit'}
-                        <i class="iconfont icon-jifen"></i>{php echo (int)$reward['reward_data']}积分
+                        <i class="iconfont icon-jifen"></i>{php echo (int)$reward['reward_data']}{php echo empty($tradeSet['credittext']) ? "积分" : $tradeSet['credittext']}
                         {elseif $reward['reward_type'] == 'balance'}
-                        <i class="iconfont icon-yue"></i>&yen{$reward['reward_data']}余额
+                        <i class="iconfont icon-yue"></i>&yen{$reward['reward_data']}{php echo empty($tradeSet['moneytext']) ? "余额" : $tradeSet['moneytext']}
                         {elseif $reward['reward_type'] == 'coupon'}
                         <i class="iconfont icon-youhuiquan"></i>{$reward['reward_title']}
                         {elseif $reward['reward_type'] == 'goods'}
@@ -78,4 +78,5 @@
         });
     }
 </script>
+{php $this->footerMenus()}
 {template '_footer'}

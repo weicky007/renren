@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,8 +23,8 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 
 		$commissioncount = pdo_fetchcolumn('select sum(commission) from ' . tablename('ewei_shop_commission_apply') . ' where mid=:mid and uniacid=:uniacid and status>-1 limit 1', array(':mid' => $member['id'], ':uniacid' => $_W['uniacid']));
-		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_apply') . ' where 1 ' . $condition . ' order by id desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_commission_apply') . ' where 1 ' . $condition, $params);
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_commission_apply') . (' where 1 ' . $condition . ' order by id desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_commission_apply') . (' where 1 ' . $condition), $params);
 		if (!is_array($list) || empty($list)) {
 			$list = array();
 		}
@@ -55,7 +55,7 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 
 		unset($row);
-		app_json(array('total' => $total, 'list' => $list, 'pagesize' => $psize, 'commissioncount' => number_format($commissioncount, 2), 'textyuan' => $this->set['texts']['yuan'], 'textcomm' => $this->set['texts']['commission'], 'textcomd' => $this->set['texts']['commission_detail']));
+		return app_json(array('total' => $total, 'list' => $list, 'pagesize' => $psize, 'commissioncount' => number_format($commissioncount, 2), 'textyuan' => $this->set['texts']['yuan'], 'textcomm' => $this->set['texts']['commission'], 'textcomd' => $this->set['texts']['commission_detail']));
 	}
 
 	public function detail_list()
@@ -66,7 +66,7 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$pindex = max(1, intval($_GPC['page']));
@@ -74,12 +74,12 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 		$apply = pdo_fetch('select orderids from ' . tablename('ewei_shop_commission_apply') . ' where id=:id and `mid`=:mid and uniacid=:uniacid limit 1', array(':id' => $id, ':mid' => $member['id'], ':uniacid' => $_W['uniacid']));
 
 		if (empty($apply)) {
-			app_error(AppError::$ParamsError, '未找到提现申请记录');
+			return app_error(AppError::$ParamsError, '未找到提现申请记录');
 		}
 
 		$orderids = iunserializer($apply['orderids']);
-		if (!is_array($orderids) || (count($orderids) <= 0)) {
-			app_error(AppError::$ParamsError, '未找到订单信息');
+		if (!is_array($orderids) || count($orderids) <= 0) {
+			return app_error(AppError::$ParamsError, '未找到订单信息');
 		}
 
 		$ids = array();
@@ -88,7 +88,7 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 			$ids[] = $o['orderid'];
 		}
 
-		$list = pdo_fetchall('select o.id,o.agentid, o.ordersn,o.price,o.goodsprice, o.dispatchprice,o.createtime, o.paytype from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid and o.uniacid = m.uniacid' . ' where  o.uniacid=:uniacid and o.id in ( ' . implode(',', $ids) . ' ) LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select o.id,o.agentid, o.ordersn,o.price,o.goodsprice, o.dispatchprice,o.createtime, o.paytype from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid and o.uniacid = m.uniacid' . ' where  o.uniacid=:uniacid and o.id in ( ' . implode(',', $ids) . ' ) LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']));
 		$total = (int) pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid and o.uniacid = m.uniacid' . ' where  o.uniacid=:uniacid and o.id in ( ' . implode(',', $ids) . ' ) ', array(':uniacid' => $_W['uniacid']));
 		$totalcommission = 0;
 		$totalpay = 0;
@@ -221,7 +221,7 @@ class Log_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 
 		unset($row);
-		app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total, 'totalcommission' => $totalcommission, 'textyuan' => $this->set['texts']['yuan'], 'textcomm' => $this->set['texts']['commission']));
+		return app_json(array('list' => $list, 'pagesize' => $psize, 'total' => $total, 'totalcommission' => $totalcommission, 'textyuan' => $this->set['texts']['yuan'], 'textcomm' => $this->set['texts']['commission']));
 	}
 }
 

@@ -34,11 +34,7 @@ if (is_error($oauth) || empty($oauth['openid'])) {
 	if (isset($_GPC['state']) && !empty($_GPC['state']) && strexists($_GPC['state'], 'we7sid-')) {
 		$state = $_GPC['state'];
 	}
-	$str = '';
-	if(uni_is_multi_acid()) {
-		$str = "&j={$_W['acid']}";
-	}
-	$url = "{$_W['siteroot']}app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=snsapi_base";
+	$url = "{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=auth&a=oauth&scope=snsapi_base";
 	$callback = urlencode($url);
 	$forward = $oauth_account->getOauthCodeUrl($callback, $state);
 	header('Location: ' . $forward);
@@ -300,11 +296,7 @@ if ($scope == 'userinfo' || $scope == 'snsapi_userinfo') {
 }
 
 $forward = urldecode($_SESSION['dest_url']);
-$str = '';
-if(uni_is_multi_acid()) {
-	$str = "&j={$_W['acid']}";
-}
-$forward = strexists($forward, 'i=') ? $forward : "{$forward}&i={$_W['uniacid']}{$str}";
+$forward = strexists($forward, 'i=') ? $forward : "{$forward}&i={$_W['uniacid']}";
 if (strpos($forward, '&wxref=mp.weixin.qq.com')) {
 		$forward = str_replace('&wxref=mp.weixin.qq.com', '', $forward) . '&wxref=mp.weixin.qq.com#wechat_redirect';
 } else {

@@ -313,7 +313,6 @@ class WeEngine {
 					$updatestat = array(
 						'cancel' => $todaystat['cancel'] + 1,
 					);
-					$updatestat['cumulate'] = 0;
 					pdo_update('stat_fans', $updatestat, array('id' => $todaystat['id']));
 				}
 			} elseif ($message['event'] == 'subscribe') {
@@ -329,7 +328,6 @@ class WeEngine {
 				} else {
 					$updatestat = array(
 						'new' => $todaystat['new'] + 1,
-						'cumulate' => 0,
 					);
 					pdo_update('stat_fans', $updatestat, array('id' => $todaystat['id']));
 				}
@@ -512,6 +510,7 @@ class WeEngine {
 	private function analyzeQR(&$message) {
 		global $_W;
 		$params = array();
+		$default_message = $message;
 		$message['type'] = 'text';
 		$message['redirection'] = true;
 		if(!empty($message['scene'])) {
@@ -548,6 +547,13 @@ class WeEngine {
 			$params += $this->analyzeText($message);
 		}
 		if (empty($qr)) {
+			$params = $this->handler($default_message['type']);
+			if (!empty($params)) {
+				$message = $default_message;
+				return $params;
+			}
+		}
+		if (empty($params)) {
 			$params = $this->handler($message['type']);
 		}
 		return $params;
@@ -579,7 +585,7 @@ AND
 	or
 	( `type` = 2 AND instr(:c2, `content`) )
 	or
-	( `type` = 3 AND :c3 REGEXP `content` )
+	( `type` = 3 AND `content` REGEXP :c3 )
 	or
 	( `type` = 4 )
 )

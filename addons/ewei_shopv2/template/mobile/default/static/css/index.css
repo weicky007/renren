@@ -1,4 +1,4 @@
-
+/*common*/
 .fui-page, .fui-page-group{
 	background: #ededed;
 	color: #000;
@@ -1129,7 +1129,7 @@ i{
 	color: #666;
 	font-size: 0.7rem;
 	line-height: 1.45rem;
-	height: 4.1rem;
+	/*height: 6.6rem;*/
 }
 .cav_record .fui-list-angle{
 	width: 5rem;

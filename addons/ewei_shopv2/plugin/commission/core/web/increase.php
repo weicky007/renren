@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -47,7 +48,7 @@ class Increase_EweiShopV2Page extends PluginWebPage
 				$time = date('Y-m-d', strtotime('-' . $i . ' day'));
 				$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 				$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($time . ' 00:00:00'), ':endtime' => strtotime($time . ' 23:59:59'));
-				$datas[] = array('date' => $time, 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1 and status=1  ' . $condition, $params));
+				$datas[] = array('date' => $time, 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1 and status=1  ' . $condition), $params));
 				--$i;
 			}
 		}
@@ -60,7 +61,7 @@ class Increase_EweiShopV2Page extends PluginWebPage
 				while ($d <= $lastday) {
 					$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 					$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($year . '-' . $month . '-' . $d . ' 00:00:00'), ':endtime' => strtotime($year . '-' . $month . '-' . $d . ' 23:59:59'));
-					$datas[] = array('date' => $d . '日', 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1  ' . $condition, $params));
+					$datas[] = array('date' => $d . '日', 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1  ' . $condition), $params));
 					++$d;
 				}
 			}
@@ -72,7 +73,7 @@ class Increase_EweiShopV2Page extends PluginWebPage
 						$lastday = get_last_day($year, $m['data']);
 						$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 						$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($year . '-' . $m['data'] . '-01 00:00:00'), ':endtime' => strtotime($year . '-' . $m['data'] . '-' . $lastday . ' 23:59:59'));
-						$datas[] = array('date' => $m['data'] . '月', 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1  ' . $condition, $params));
+						$datas[] = array('date' => $m['data'] . '月', 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1  ' . $condition), $params));
 					}
 				}
 			}

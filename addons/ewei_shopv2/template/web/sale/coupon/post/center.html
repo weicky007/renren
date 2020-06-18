@@ -9,13 +9,13 @@
     <div class="col-sm-9 col-xs-12" >
         {ife 'sale.coupon' $item}
         <label class="radio-inline">
-            <input type="radio" name="quickget" value="0" {if $item['quickget'] == 0}checked="true"{/if}  onclick="$('.quickget').hide()"/> 不可以
+            <input type="radio" name="quickget" value="0" {if $item['quickget'] == 0}checked="true"{/if}  /> 不可以
         </label>
         <label class="radio-inline">
-            <input type="radio" name="quickget" value="1" {if $item['quickget'] == 1}checked="true"{/if} onclick="$('.quickget').show()" /> 可以
+            <input type="radio" name="quickget" value="1" {if $item['quickget'] == 1}checked="true"{/if}  /> 可以
         </label>
 
-        <span class='help-block'>会员是否可以通过链接直接获取优惠券.注意!!!此功能无法与支付与积分兑换优惠券同时使用!!!</span>
+        <span class='help-block'>会员是否可以通过链接直接获取优惠券.注意!!!此功能无法与支付与积分兑换优惠券功能同时使用!!!</span>
 
         {else} <div class='form-control-static'>
         {if $item['quickget']==1}可以{else}不可以{/if}

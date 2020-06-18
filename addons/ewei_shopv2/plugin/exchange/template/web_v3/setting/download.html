@@ -5,7 +5,7 @@
     <div class="page-content" style="display: block;">
         <div class="page-sub-toolbar">
             <span class="">
-                <a class="btn btn-danger btn-sm"data-toggle="modal" data-target="#myModal"><i class="fa fa-trash"></i> 删除全部文件</a>
+                <a class="btn btn-danger btn-sm myModal"><i class="fa fa-trash"></i> 删除全部文件</a>
             </span>
         </div>
         <div class="alert alert-warning">
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top: 300px;">
+<div class="modal  fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="margin-top: 0px;">
     <div class="modal-dialog">
         <div class="modal-content" style="width: 500px">
             <div class="modal-header">
@@ -80,7 +80,7 @@
                     确认删除全部兑换码打包文件？删除后将无法下载过去的兑换码打包文件！
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                <button type="button" class="btn btn-default closes" data-dismiss="modal">取消
                 </button>
                 <button type="button" class="btn btn-primary suredel">
                     确认删除
@@ -99,6 +99,10 @@
                     window.location.reload();
             }});
         });
+        $('.myModal').click(function(){
+            $("#myModal").modal();
+        });
     });
 </script>
 {template '_footer'}
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

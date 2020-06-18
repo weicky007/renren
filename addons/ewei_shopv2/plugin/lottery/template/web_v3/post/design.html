@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="../addons/ewei_shopv2/plugin/lottery/static/style/design.css"/>
-<div class="alert alert-warning">抽奖所有等级不能低于5个，概率之和可不等于100%</div>
+<style>
+    .form-group.rec_reward_data{clear:both;}
+</style>
+<div class="alert alert-warning">抽奖所有等级不能低于5个，概率之和可不等于100%，概率可设置最大最小值为小数点前三位，小数点后三位</div>
 <div class="form-group">
     <label class="col-lg control-label">抽奖标题&概率</label>
     {ifp 'lottery.edit'}
@@ -50,7 +53,7 @@
                       <div class="col-lg col-xs-12">
                           <select class="input-sm form-control input-s-sm inline" data-id="{$rank}" onchange="select_change(this);">
                               <option value="0">请选择</option>
-                              <option value="1">积分</option>
+                              <option value="1">{php echo $this->set['texts']['credit1']}</option>
                               <option value="2">奖金</option>
                               <option value="3">红包</option>
                               <option value="4">特惠商品</option>
@@ -75,7 +78,7 @@
                       {if $rec>0}
                       <div class="form-group rec_reward_data"  id="rec_credit{$rank}" data-rank="{$rank}" data-type="1" data-value="{$rec}" style="border-bottom:1px solid #f2f2f2;">
                           <label class="col-lg control-label"></label>
-                          <div class="col-sm-7" style="padding-top: 8px;padding-bottom: 20px;">积分<span class="pull-right label label-success"  style="margin-right: 10px;">{$rec}</span></div>
+                          <div class="col-sm-7" style="padding-top: 8px;padding-bottom: 20px;">{php echo $this->set['texts']['credit1']}<span class="pull-right label label-success"  style="margin-right: 10px;">{$rec}</span></div>
                           <div class="col-lg">
                               '&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="del_data(this);" class="btn btn-danger  btn-sm btn-delete-time">删除</button>
                               '</div></div>
@@ -174,13 +177,27 @@
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <h4 class="modal-title" >选择商品</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 15px;">
                 {template 'lottery/post/select_goods'}
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        var currentUrl = window.location.href;
+
+        if(currentUrl.indexOf('lottery.edit') > -1) {
+            $('#reward-submit').on('click', function () {
+                if($('.rec_reward_data').length< 1) {
+                    tip.msgbox.err('请先添加奖励');
+                    return false;
+                }
+            })
+        }
+    })
+
       var currank = 0;
       var countrank = {php echo $count ? $count-1:0;};
       //选择奖励类型
@@ -234,6 +251,13 @@
           }
 
           var probability = $('input[name="probability"]').val();
+
+          var ret = /^\d+(\.\d{1,3})?$/;
+
+          if(!ret.test(probability)){
+              tip.msgbox.err('小数点后仅限输入三位');
+              return;
+          }
           if(probability==''){
               tip.msgbox.err('概率不能为空');
               return;
@@ -270,7 +294,7 @@
                   '<div class="col-lg">'+
                   '<b>操作</b>'+
                   '</div></div>'+
-                  '<div id="selected_rec_reward'+countrank+'">'+
+                  '<div class="reward-item" id="selected_rec_reward'+countrank+'">'+
                   '</div></div></div>';
 
 
@@ -342,7 +366,6 @@
               reccredit = parseInt(reccredit);
               if(reccredit>0){
                   var rec_credit = $('#rec_credit'+currank);
-
                   var btn_data = '<div class="form-group rec_reward_data"  data-rank="'+currank+'" data-type="1" data-value="'+reccredit+'" id="rec_credit'+currank+'" style="border-bottom:1px solid #f2f2f2;">'+
                           '<label class="col-lg control-label"></label>'+
                           '<div class="col-sm-7" style="padding-top: 8px;padding-bottom: 20px;">积分<span class="pull-right label label-success"  style="margin-right: 10px;">'+reccredit+'</span></div>'+
@@ -360,10 +383,11 @@
                       $('#selected_rec_reward'+currank).empty();
                       $('#selected_rec_reward'+currank).append(btn_data);
 //                  }
+              }else{
+                  tip.msgbox.err('请先填写积分..');
               }
           }
           if(datatype==2){
-
               var recmoney = $('#reward_show'+currank+' input[name="recmoney"]').val();
               recmoney = parseInt(recmoney);
               var recmoneytotal = $('#reward_show'+currank+' input[name="recmoneytotal"]').val();
@@ -394,13 +418,16 @@
                       $('#selected_rec_reward'+currank).empty();
                       $('#selected_rec_reward'+currank).append(btn_data);
 //                  }
+              }else{
+                  tip.msgbox.err('请先填写奖金..');
               }
           }
           if(datatype==3){
               var recbribery = $('#reward_show'+currank+' input[name="recbribery"]').val();
-              recbribery = parseInt(recbribery);
+              recbribery = parseFloat(recbribery);
               var recbriberytotal = $('#reward_show'+currank+' input[name="recbriberytotal"]').val();
               recbriberytotal = parseInt(recbriberytotal);
+
               if(recbribery>0){
                   var btn_data = '<div class="form-group rec_reward_data"   data-rank="'+currank+'" data-type="3" data-total="'+recbriberytotal+'" data-value="'+recbribery+'" id="rec_money'+currank+'" style="border-bottom:1px solid #f2f2f2;">'+
                           '<label class="col-lg control-label"></label>'+
@@ -423,6 +450,8 @@
                       $('#selected_rec_reward'+currank).empty();
                       $('#selected_rec_reward'+currank).append(btn_data);
 //                  }
+              }else{
+                  tip.msgbox.err('请先填写红包..');
               }
           }
           if(datatype==4){
@@ -463,13 +492,14 @@
       $(function(){
           $(".select-btn").click(function(){
               type = $(this).data("type");
+              var goodsgroup = parseInt($("#cates").val());
               var kw = $.trim($("#select-"+type+"-kw").val());
               $("#select-"+type+"-list").html('<div class="tip">正在进行搜索...</div>');
               $.ajax("{php echo webUrl('lottery/select/query')}", {
                   type: "get",
                   dataType: "html",
                   cache: false,
-                  data: {title:kw, type:type,page:1,psize:5}
+                  data: {title:kw, type:type,page:1,psize:5,goodsgroup:goodsgroup}
               }).done(function (html) {
                   $("#select-"+type+"-list").html(html);
               });

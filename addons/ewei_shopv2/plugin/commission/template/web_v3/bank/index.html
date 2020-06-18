@@ -1,14 +1,16 @@
 {template '_header'}
-
-<div class="page-heading">
-    <span class='pull-right'>
-        {ifp 'commission.set.edit'}
-            <a class='btn btn-primary btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('commission/bank/add')}"><i class="fa fa-plus"></i> 添加支持的银行</a>
-        {/if}
-    </span>
-    <h2>银行设置</h2> </div>
-
-<form action="" method="post">
+<div class="page-header">
+    当前位置：<span class="text-primary">银行设置</span>
+</div>
+<div class="page-content">
+    <div class="page-toolbar">
+        <span class='pull-left'>
+            {ifp 'commission.set.edit'}
+                <a class='btn btn-primary btn-sm' data-toggle='ajaxModal' href="{php echo webUrl('commission/bank/add')}"><i class="fa fa-plus"></i> 添加支持的银行</a>
+            {/if}
+        </span>
+    </div>
+    <form action="" method="post">
     {if count($list)>0}
     <table class="table table-hove table-responsive">
         <thead class="navbar-inner">
@@ -65,5 +67,6 @@
     </div>
     {/if}
 </form>
+</div>
 
 {template '_footer'}

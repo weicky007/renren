@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,7 +13,7 @@ class Shop_EweiShopV2Page extends AppMobileAuthPage
 		global $_GPC;
 
 		if (!cv('sysset.shop.edit')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		$shopset = m('common')->getSysset('shop');
@@ -25,7 +25,7 @@ class Shop_EweiShopV2Page extends AppMobileAuthPage
 			$shopclose = intval($_GPC['shopclose']);
 
 			if (empty($shopname)) {
-				app_error(AppError::$ParamsError, '请填写商城名称');
+				return app_error(AppError::$ParamsError, '请填写商城名称');
 			}
 
 			$data = $shopset['shop'];
@@ -34,14 +34,14 @@ class Shop_EweiShopV2Page extends AppMobileAuthPage
 			$data['close'] = $shopclose;
 			$data['logo'] = $shoplogo;
 			m('common')->updateSysset(array(
-	'shop'  => $data,
-	'close' => array('flag' => $shopclose)
-	));
+				'shop'  => $data,
+				'close' => array('flag' => $shopclose)
+			));
 			plog('sysset.shop.edit', '修改系统设置-商城设置');
-			app_json();
+			return app_json();
 		}
 
-		app_json(array('shopname' => $shopset['name'], 'shoplogo' => tomedia($shopset['logo']), 'shopdesc' => $shopset['description'], 'shopclose' => $shopset['close']));
+		return app_json(array('shopname' => $shopset['name'], 'shoplogo' => tomedia($shopset['logo']), 'shopdesc' => $shopset['description'], 'shopclose' => $shopset['close']));
 	}
 }
 

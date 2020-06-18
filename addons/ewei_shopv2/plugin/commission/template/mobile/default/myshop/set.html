@@ -29,7 +29,7 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">小店设置</div>
+        <div class="title">{php echo $this->set['texts']['shop']}设置</div>
     </div>
 	<div class='fui-content'>
 		<div class='fui-cell-group'>
@@ -84,7 +84,7 @@
 			</div>
 			<div class='fui-cell'>
 				<div class='fui-cell-label'>简介</div>
-				<div class='fui-cell-info'><textarea id="desc" rows="3" placeholder="小店简介,分享你的小店">{$shop['desc']}</textarea></div>
+				<div class='fui-cell-info'><textarea id="desc" rows="3" placeholder="{php echo $this->set['texts']['shop']}简介,分享你的{php echo $this->set['texts']['shop']}">{$shop['desc']}</textarea></div>
 			</div>
 		</div>
 		<div class='btn btn-warning block btn-submit mtop'>保存设置</div>

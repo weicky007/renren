@@ -24,6 +24,12 @@ if ('display' == $do) {
 			}
 		}
 	}
+	if ($_W['isajax']) {
+		$message = array(
+			'lists' => $lists
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('change_status' == $do) {
@@ -50,10 +56,16 @@ if ('add' == $do) {
 if ('delete' == $do) {
 	$ip = trim($_GPC['ip']);
 	if (empty($ip)) {
+		if ($_W['isajax']) {
+			iajax(-1, '参数错误');
+		}
 		itoast('参数错误');
 	}
 	unset($ip_lists[$ip]);
 	$update = setting_save($ip_lists, 'ip_white_list');
+	if ($_W['isajax']) {
+		iajax(0, '删除成功');
+	}
 	itoast('删除成功', url('system/ipwhitelist'));
 }
 template('system/ip-list');

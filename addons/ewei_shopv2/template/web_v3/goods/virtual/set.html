@@ -11,7 +11,7 @@
                     <input type="text" name="data[closeorder_virtual]" class="form-control" value="{$data['closeorder_virtual']}" />
                     <div class="input-group-addon">分钟</div>
                 </div>
-                <span class='help-block'>订单下单未付款，n分钟后自动关闭，空为15分钟后关闭，最低为5分钟</span>
+                <span class='help-block'>订单下单未付款，n分钟后自动关闭，空为15分钟后关闭，最低为3分钟</span>
                 {else}
                 <input type="hidden" name="data[closeorder_virtual]" value="{$data['closeorder_virtual']}"/>
                 <div class='form-control-static'>
@@ -45,5 +45,4 @@
 </script>
 
 {template '_footer'}
-
 

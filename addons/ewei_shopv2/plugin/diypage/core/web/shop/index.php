@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -49,7 +50,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			'creditshop' => array('status' => 0, 'list' => $creditshop_list),
 			'seckill'    => array('status' => 0, 'list' => $seckill_list),
 			'exchange'   => array('status' => 0, 'list' => $exchange_list)
-			);
+		);
 		$pluginAll = m('plugin')->getAll();
 
 		if (empty($pluginAll)) {
@@ -88,7 +89,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			show_json(1);
 		}
 
-		$pluginList = array('creditshop' => 0, 'commission' => 0, 'groups' => 0, 'mr' => 0, 'sns' => 0, 'sign' => 0, 'seckill' => 0, 'threen' => 0, 'merch' => 0);
+		$pluginList = array('creditshop' => 0, 'commission' => 0, 'groups' => 0, 'mr' => 0, 'sns' => 0, 'sign' => 0, 'seckill' => 0, 'threen' => 0);
 		$pluginAll = m('plugin')->getAll();
 
 		if (empty($pluginAll)) {

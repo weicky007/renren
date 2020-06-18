@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,12 +18,12 @@ return array(
 				'items' => array(
 					array('title' => '问题管理', 'route' => 'question', 'route_must' => true),
 					array('title' => '添加问题', 'route' => 'question.add')
-					)
-				),
+				)
+			),
 			array('title' => '问题分类', 'route' => 'category'),
 			array('title' => '基础设置', 'route' => 'set')
-			)
 		)
-	);
+	)
+);
 
 ?>

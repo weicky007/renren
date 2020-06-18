@@ -237,7 +237,7 @@
                                     {/if}
                                     {/if}
                                     {if $order['refundtime']}
-                                    <span class='label label-default'>已退款</span>
+                                    <span class='label label-default'>维权已完成</span>
                                     {/if}
                                 </td>
                             </tr>
@@ -480,17 +480,13 @@
                                 {if $order['status'] == 0}
                                 <span class="text-warning font20">待付款</span>
                                 {/if}
-                                <!--{if $order['status'] == 1}-->
-                                <!--<span class="text-success font20">已付款</span>-->
-                                <!--{/if}-->
-                                {if $order['status'] == 1 && $order['success']==1}
-                                <span class="text-warning font20">待发货</span>
-                                {/if}
-                                {if $order['status'] == 2}<span class="text-warning font20">待收货</span>{/if}
-                                {if $order['status'] == 3}<span class="text-success font20">交易完成</span>{/if}
-                                {if $order['status'] == -1}
-                                <span class="text-default font20">已关闭</span>
-                                {/if}
+                                {if $order['status'] == 1 && $order['success'] == 0}<span class='text-warning font20'>已付款</span>{/if}
+                                {if $order['status'] == 1 && $order['success'] == -1}<span class='text-warning font20'>待退款</span>{/if}
+                                {if $order['status'] == 1 && $order['success'] == 1}<span class='text-warning font20'>待发货</span>{/if}
+                                {if $order['status'] == 2}<span class='text-warning'>待收货</span>{/if}
+                                {if $order['status'] == 3}<span class='text-success'>已完成</span>{/if}
+                                {if $order['status'] == -1}<span class='text-default'>已取消</span>{/if}
+
                                 <span class="form-control-static">
                                     {if $order['status'] == 0}
                                     （等待买家付款）
@@ -528,7 +524,7 @@
                     </div>
                     <div class="">
                             <p class="form-control-static ops">
-                                {if $order['status'] == 1 && $order['success'] == 1}
+                                {if $order['status'] == 1 && ($order['success'] == 1 || $order['groupnum'] ==1)}
                                 {ifp 'groups.order.send'}
                                 <a class="btn btn-primary btn-xs" data-toggle="ajaxModal" href="{php echo webUrl('groups/order/send', array('id' => $order['id']))}">确认发货</a>
                                 {/if}
@@ -582,6 +578,7 @@
                     <tr class="trorder">
                         <th style="width:70px">商品</th>
                         <th></th>
+                        <th style="text-align: center;">规格</th>
                         <th style="text-align: center;">单价(元)</th>
                         <th style="text-align: center;">数量</th>
                         <th style="text-align: center;">金额(元)</th>
@@ -597,6 +594,12 @@
                         <td>
                             {$order['title']}
                         </td>
+                        <!--<td style="padding: 10px 20px">-->
+                        <td style="text-align: center;">
+                            <p style="white-space:normal;">
+                                {if !empty($order['optiontitle'])}<span class="label label-primary" data-container="body" data-toggle="popover" data-placement="right" data-content="{$goods['optionname']}">{$order['optiontitle']}</span>{else}无{/if}
+                            </p>
+                        </td>
                         <td style="text-align: center;">
                             {if $order['is_team']==1}
                             ¥ {$order['groupsprice']}
@@ -604,7 +607,7 @@
                             ¥ {$order['singleprice']}
                             {/if}
                         </td>
-                        <td style="text-align: center;">1</td>
+                        <td style="text-align: center;">{$order['goodsnum']}</td>
                         <td style='text-align: center;'>
                             ¥ {php echo number_format($order['price'] + $order['freight'],2)}
                         </td>
@@ -633,7 +636,7 @@
                     {/if}
                     <tfoot>
                     <tr class="trorder">
-                        <td colspan="5">
+                        <td colspan="6">
                             <div class="price">
                                 <p> <span class="price-inner">  订单金额：</span><span style="font-weight: bold"> ¥ {php echo number_format($order['price']+$order['freight'],2)}</span></p>
                                 <p><span class="price-inner">商品小计：</span><span  style="font-weight: bold">¥ {php echo number_format($order['price'] + $order['discount'] ,2)}</span></p>

@@ -1,16 +1,18 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Index_EweiShopV2Page extends PluginWebPage 
+
+class Index_EweiShopV2Page extends PluginWebPage
 {
-	public function main() 
+	public function main()
 	{
 		global $_W;
 		include $this->template();
 	}
-	public function ajaxuser() 
+
+	public function ajaxuser()
 	{
 		global $_GPC;
 		global $_W;
@@ -24,4 +26,5 @@ class Index_EweiShopV2Page extends PluginWebPage
 		show_json(1, $totals);
 	}
 }
+
 ?>

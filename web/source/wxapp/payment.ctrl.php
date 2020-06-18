@@ -38,6 +38,6 @@ if ('save_setting' == $do) {
 	$pay_setting[$type] = $param;
 	$payment = iserializer($pay_setting);
 	uni_setting_save('payment', $payment);
-	iajax(0, '设置成功', url('account/display', array('do' => 'switch', 'uniacid' => $_W['uniacid'])));
+	iajax(0, '设置成功', url('account/display/switch', array('uniacid' => $_W['uniacid'])));
 }
 template('wxapp/payment');

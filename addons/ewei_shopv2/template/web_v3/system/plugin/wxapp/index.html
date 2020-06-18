@@ -37,6 +37,14 @@
                         <input type="text" name="mmanage[name]" class="form-control" value="{$set['mmanage']['name']}" />
                     </div>
                 </div>
+                <div class="form-group splitter"></div>
+                <div class="form-group">
+                    <label class="col-lg control-label">二维码</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {php echo tpl_form_field_image2('mmanage[qrcode]', $set['mmanage']['qrcode'])}
+                        <div class="help-block">上传后，管理员可直接在后台页面使用此二维码登录手机端后台 建议尺寸100*100</div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="col-lg control-label">小程序状态</label>
                     <div class="col-sm-9 col-xs-12">

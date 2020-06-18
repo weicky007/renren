@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,12 +12,17 @@ class GrantModel extends PluginModel
 		$uniacid = $_W['uniacid'];
 		$setting = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_setting') . ' where 1 = 1 limit 1 ');
 		if (!strstr($setting['plugin'], $identity) && !strstr($setting['com'], $identity)) {
-			$plugin = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_log') . ' WHERE uniacid = ' . $uniacid . ' and `identity` = \'' . $identity . '\' ');
-			if ((($plugin['month'] == 0) && ($plugin['isperm'] == 1)) || ((0 < $plugin['month']) && ($plugin['isperm'] == 1))) {
+			$plugin = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_log') . ' WHERE uniacid = ' . $uniacid . ' and `identity` = \'' . $identity . '\'order by permendtime desc ');
+			if ($plugin['month'] == 0 && $plugin['isperm'] == 1) {
 				return true;
 			}
 
-			if ($plugin['permendtime'] < time()) {
+			if (0 < $plugin['month'] && $plugin['isperm'] == 1) {
+				if ($plugin['permendtime'] < time()) {
+					return false;
+				}
+			}
+			else {
 				return false;
 			}
 		}
@@ -33,8 +39,9 @@ class GrantModel extends PluginModel
 		}
 
 		$data = array('isperm' => 1);
-		$lastitem = pdo_fetch('SELECT MAX(permendtime) as permendtime,permlasttime FROM ' . tablename('ewei_shop_system_plugingrant_log') . " \n                            WHERE uniacid = " . $item['uniacid'] . ' and pluginid = ' . $item['pluginid'] . ' and isperm = 1 limit 1');
-		if (!empty($lastitem) && (0 < $lastitem['permendtime'])) {
+		$lastitem = pdo_fetch('SELECT MAX(permendtime) as permendtime,permlasttime FROM ' . tablename('ewei_shop_system_plugingrant_log') . ' 
+                            WHERE uniacid = ' . $item['uniacid'] . ' and pluginid = ' . $item['pluginid'] . ' and isperm = 1 limit 1');
+		if (!empty($lastitem) && 0 < $lastitem['permendtime']) {
 			$data['permendtime'] = strtotime('+' . $item['month'] . ' month', $lastitem['permendtime']);
 			$data['permlasttime'] = $lastitem['permendtime'];
 		}
@@ -128,7 +135,7 @@ class GrantModel extends PluginModel
 		$prepares = array();
 
 		foreach ($parameter as $key => $value) {
-			if (($key == 'sign') || ($key == 'sign_type') || ($value == '')) {
+			if ($key == 'sign' || $key == 'sign_type' || $value == '') {
 				continue;
 			}
 
@@ -226,7 +233,7 @@ class GrantModel extends PluginModel
 		$para_filter = array();
 
 		foreach ($para_temp as $key => $value) {
-			if (($key == 'sign') || ($key == 'sign_type') || ($value == '')) {
+			if ($key == 'sign' || $key == 'sign_type' || $value == '') {
 				continue;
 			}
 

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -44,7 +45,8 @@ class User_EweiShopV2Page extends SnsMobilePage
 		$postcount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and openid=:openid and pid=0 and deleted = 0 and checked=1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 		$boards = pdo_fetchall('select b.id,b.logo,b.title from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . '   where f.uniacid=:uniacid and f.openid=:openid limit 5', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 		$boards = set_medias($boards, 'logo');
-		$followcount = count($boards);
+		$follow = pdo_fetchall('select count(*) as num from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . '   where f.uniacid=:uniacid and f.openid=:openid ', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+		$followcount = $follow[0]['num'];
 		$posts = pdo_fetchall('select p.id,p.images,p.title ,p.views, b.title as boardtitle,b.logo as boardlogo from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on p.bid = b.id ' . '   where p.uniacid=:uniacid and p.openid=:openid and pid=0 and deleted=0 and checked=1 order by createtime desc limit 3', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 		foreach ($posts as &$r) {
@@ -65,7 +67,11 @@ class User_EweiShopV2Page extends SnsMobilePage
 
 		if ($openid == $_W['openid']) {
 			$replycount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and openid=:openid and pid>0 and deleted = 0 and checked=1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
-			$replys = pdo_fetchall("select p.id, p.content, p.views,\r\n                  parent.id as parentid, \r\n                  parent.nickname as parentnickname,parent.title as parenttitle ,\r\n                  rparent.nickname as rparentnickname\r\n                  from " . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . '   where p.uniacid=:uniacid and p.openid=:openid and p.pid>0 and p.deleted=0 and p.checked=1 order by p.createtime desc limit 3', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			$replys = pdo_fetchall('select p.id, p.content, p.views,
+                  parent.id as parentid, 
+                  parent.nickname as parentnickname,parent.title as parenttitle ,
+                  rparent.nickname as rparentnickname
+                  from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . '   where p.uniacid=:uniacid and p.openid=:openid and p.pid>0 and p.deleted=0 and p.checked=1 order by p.createtime desc limit 3', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			foreach ($replys as &$r) {
 				$parentnickname = $r['rparentnickname'];
@@ -136,9 +142,9 @@ class User_EweiShopV2Page extends SnsMobilePage
 		$psize = 10;
 		$condition = ' and f.uniacid = :uniacid and f.openid=:openid';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $openid);
-		$sql = 'select b.id,b.logo,b.title from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . '   where 1 ' . $condition . ' ORDER BY f.createtime asc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'select b.id,b.logo,b.title from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . ('   where 1 ' . $condition . ' ORDER BY f.createtime asc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select b.id,b.logo,b.title from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . ' where 1 ' . $condition, $params);
+		$total = pdo_fetchcolumn('select b.id,b.logo,b.title from ' . tablename('ewei_shop_sns_board_follow') . ' f ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on f.bid = b.id ' . (' where 1 ' . $condition), $params);
 
 		foreach ($list as &$row) {
 			$row['postcount'] = $this->model->getPostCount($row['id']);
@@ -218,9 +224,9 @@ class User_EweiShopV2Page extends SnsMobilePage
 			$condition .= ' and `checked`=1';
 		}
 
-		$sql = 'select id,title,createtime,content,images , nickname,avatar,isbest,isboardbest,checked from ' . tablename('ewei_shop_sns_post') . '  where 1 ' . $condition . ' ORDER BY createtime desc,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'select id,title,createtime,content,images , nickname,avatar,isbest,isboardbest,checked from ' . tablename('ewei_shop_sns_post') . ('  where 1 ' . $condition . ' ORDER BY createtime desc,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where 1 ' . $condition, $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where 1 ' . $condition), $params);
 
 		foreach ($list as &$row) {
 			$row['avatar'] = $this->model->getAvatar($row['avatar']);
@@ -299,9 +305,13 @@ class User_EweiShopV2Page extends SnsMobilePage
 		$psize = 10;
 		$condition = ' p.uniacid=:uniacid and p.openid=:openid and p.pid>0 and p.deleted=0 and p.checked=1';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $openid);
-		$sql = "select p.id, p.content, p.views,\r\n                  parent.id as parentid, parent.nickname as parentnickname,parent.title as parenttitle ,parent.images as parentimages,\r\n                  rparent.nickname as rparentnickname,\r\n                  b.title as boardtitle, b.logo as boardlogo,b.id as boardid\r\n                  from " . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on b.id=p.bid ' . '   where 1 and ' . $condition . ' order by p.createtime desc limit ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'select p.id, p.content, p.views,
+                  parent.id as parentid, parent.nickname as parentnickname,parent.title as parenttitle ,parent.images as parentimages,
+                  rparent.nickname as rparentnickname,
+                  b.title as boardtitle, b.logo as boardlogo,b.id as boardid
+                  from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on b.id=p.bid ' . ('   where 1 and ' . $condition . ' order by p.createtime desc limit ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . ' where 1 and ' . $condition, $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' p ' . ' left join ' . tablename('ewei_shop_sns_post') . ' parent on p.pid = parent.id ' . ' left join ' . tablename('ewei_shop_sns_post') . ' rparent on p.rpid = rparent.id ' . (' where 1 and ' . $condition), $params);
 
 		foreach ($list as &$r) {
 			$parentnickname = $r['rparentnickname'];

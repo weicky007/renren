@@ -1,13 +1,15 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Task_EweiShopV2Page extends MobilePage 
+
+class Task_EweiShopV2Page extends MobilePage
 {
-	public function main() 
+	public function main()
 	{
 		$this->runTasks();
 	}
 }
+
 ?>

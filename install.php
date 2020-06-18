@@ -302,7 +302,7 @@ if($action == 'db') {
 					$sql = local_create_sql($schema);
 					local_run($sql);
 				}
-				//添加site配置 start
+				// 添加site配置 start
 				$_URLTYPE = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
 				$tmp1 =  local_salt(6);
 				$tmp2 = $_URLTYPE . $_SERVER['HTTP_HOST'];
@@ -648,7 +648,7 @@ function tpl_frame() {
 					<a href="http://www.we7.cc">关于微擎</a> &nbsp; &nbsp; <a href="http://bbs.we7.cc">微擎帮助</a> &nbsp; &nbsp; <a href="http://www.we7.cc">购买授权</a>
 				</div>
 				<div class="text-center">
-					Powered by <a href="http://www.we7.cc"><b>微擎</b></a>  &copy; 2018 <a href="http://www.we7.cc">www.we7.cc</a>
+					Powered by <a href="http://www.microeco.net"><b>百码云</b></a>  &copy; 2018 <a href="http://www.microeco.net">www.microeco.net</a>
 				</div>
 			</div>
 		</div>
@@ -886,7 +886,7 @@ function tpl_install_db($error = '') {
 				<div class="form-group">
 					<label class="col-sm-2 control-label">数据库主机</label>
 					<div class="col-sm-4">
-						<input class="form-control" type="text" name="db[server]" value="localhost">
+						<input class="form-control" type="text" name="db[server]" value="127.0.0.1">
 						<a style="color:red;" >特别注意：<br>如果是win系统，请填"127.0.0.1"，<br>如果是linux系统，请填"localhost"</a>
 					</div>
 				</div>

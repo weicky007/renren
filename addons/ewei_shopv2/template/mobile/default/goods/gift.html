@@ -37,6 +37,9 @@
 				<a href="{php echo mobileUrl('goods/detail',array('id'=>$item['id']))}">
 					<div class="text" style="color: #000">{$item['title']}</div>
 				</a>
+				{if $item['total']<=0}
+				<span style="color:red;">售罄</span>
+				{/if}
 			</div>
 			<div class="fui-list-angle">
 				<span class="price" style="color: #000">&yen;<span class="marketprice  marketprice{$item['id']}">{$item['marketprice']}</span></span>

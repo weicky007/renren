@@ -1,4 +1,5 @@
 <?php
+
 class LiveSocket
 {
 	public function redis($server)
@@ -35,7 +36,7 @@ class LiveSocket
 			}
 
 			$this->send($server, $fd, $sendArr);
-			if (isset($settings['virtualadd']) && (1 < intval($settings['virtualadd']))) {
+			if (isset($settings['virtualadd']) && 1 < intval($settings['virtualadd'])) {
 				$table = $this->getTable('settings', $data['roomid']);
 				$this->redis($server)->hIncrBy($table, 'virtual', $settings['virtualadd']);
 			}
@@ -47,7 +48,7 @@ class LiveSocket
 			$this->updateUser($data['uid'], array());
 		}
 		else {
-			if (($data['type'] == 'text') || ($data['type'] == 'image')) {
+			if ($data['type'] == 'text' || $data['type'] == 'image') {
 				if (!$this->isManage($data['uid'])) {
 					$banned = $this->getBanned($server, $data['roomid'], $data['uid']);
 					if ($banned['all'] || $banned['self']) {
@@ -56,7 +57,7 @@ class LiveSocket
 				}
 
 				if ($data['toUser'] == 'all') {
-					$at = (isset($data['at']) ? $data['at'] : array());
+					$at = isset($data['at']) ? $data['at'] : array();
 					$msgid = $this->getMsgid($data['uid']);
 					$table_records = $this->getTable('chat_records', $data['roomid']);
 					$this->redis($server)->rPush($table_records, json_encode(array('id' => $msgid, 'mid' => $data['uid'], 'nickname' => $data['nickname'], 'type' => $data['type'], 'text' => $data['text'], 'sendtime' => time(), 'at' => !empty($at) ? iserializer($at) : '')));
@@ -123,7 +124,7 @@ class LiveSocket
 
 				$table = $this->getTable('settings', $data['roomid']);
 				$settings = $this->redis($server)->hGetAll($table);
-				$settings = (empty($settings) ? array() : $settings);
+				$settings = empty($settings) ? array() : $settings;
 				$settings['canat'] = intval($data['canAt']);
 				$settings['canrepeal'] = intval($data['canRepeal']);
 				$settings['virtual'] = intval($data['virtualNum']);
@@ -239,14 +240,14 @@ class LiveSocket
 				$table_records = $this->getTable('chat_records', $data['roomid']);
 				$this->redis($server)->rPush($table_records, json_encode(array('id' => $msgid, 'mid' => $data['uid'], 'nickname' => $data['nickname'], 'type' => $data['type'], 'text' => $redpacktitle, 'pushid' => $redpackid, 'sendtime' => time())));
 				$this->sendAll($server, array(
-	'type'     => 'redpack',
-	'fromUser' => $data['uid'],
-	'toUser'   => 'all',
-	'nickname' => $data['nickname'],
-	'redpack'  => array('title' => $redpacktitle, 'id' => $redpackid, 'total' => $redpacktotal, 'money' => $redpackmoney, 'type' => $redpacktype),
-	'msgid'    => $msgid,
-	'roomid'   => $data['roomid']
-	));
+					'type'     => 'redpack',
+					'fromUser' => $data['uid'],
+					'toUser'   => 'all',
+					'nickname' => $data['nickname'],
+					'redpack'  => array('title' => $redpacktitle, 'id' => $redpackid, 'total' => $redpacktotal, 'money' => $redpackmoney, 'type' => $redpacktype),
+					'msgid'    => $msgid,
+					'roomid'   => $data['roomid']
+				));
 			}
 			else if ($data['type'] == 'redpackget') {
 				$redpackid = intval($data['pushid']);
@@ -271,7 +272,7 @@ class LiveSocket
 							return false;
 						}
 
-						if (($this->redis($server)->hLen($table_redpack_list) < $this->redis($server)->lLen($table_redpack)) || ($selfdata['redpackindex'] < 0)) {
+						if ($this->redis($server)->hLen($table_redpack_list) < $this->redis($server)->lLen($table_redpack) || $selfdata['redpackindex'] < 0) {
 							$sendArr['prestatus'] = 3;
 						}
 						else {
@@ -427,14 +428,14 @@ class LiveSocket
 				$table_records = $this->getTable('chat_records', $data['roomid']);
 				$this->redis($server)->rPush($table_records, json_encode(array('id' => $msgid, 'mid' => $data['uid'], 'nickname' => $data['nickname'], 'type' => $data['type'], 'text' => $couponname, 'pushid' => $pushcouponid, 'sendtime' => time())));
 				$this->sendAll($server, array(
-	'type'     => 'coupon',
-	'fromUser' => $data['uid'],
-	'toUser'   => 'all',
-	'nickname' => $data['nickname'],
-	'coupon'   => array('title' => $couponname, 'id' => $pushcouponid, 'total' => $coupontotal),
-	'msgid'    => $msgid,
-	'roomid'   => $data['roomid']
-	));
+					'type'     => 'coupon',
+					'fromUser' => $data['uid'],
+					'toUser'   => 'all',
+					'nickname' => $data['nickname'],
+					'coupon'   => array('title' => $couponname, 'id' => $pushcouponid, 'total' => $coupontotal),
+					'msgid'    => $msgid,
+					'roomid'   => $data['roomid']
+				));
 			}
 			else {
 				if ($data['type'] == 'coupondraw') {
@@ -689,7 +690,7 @@ class LiveSocket
 				}
 			}
 			else {
-				if (!empty($fd) && ($fd == $user['fd'])) {
+				if (!empty($fd) && $fd == $user['fd']) {
 					continue;
 				}
 			}
@@ -864,7 +865,7 @@ class LiveSocket
 		}
 		else {
 			$user = $this->redis($server)->hGet($table, $uid);
-			$user = (!empty($user) ? json_decode($user, true) : false);
+			$user = !empty($user) ? json_decode($user, true) : false;
 		}
 
 		if (!empty($user)) {
@@ -899,10 +900,23 @@ class LiveSocket
 						}
 					}
 				}
+				else {
+					if ($user[2] == 'vice') {
+						$founders = $_W['config']['setting']['founder'];
+
+						if (!empty($founders)) {
+							$founders = explode(',', $founders);
+
+							if (in_array($user[1], $founders)) {
+								return true;
+							}
+						}
+					}
+				}
 
 				$account = pdo_fetch2('SELECT * FROM ' . tablename('uni_account_users') . ' WHERE uid=:uid AND uniacid=:uniacid', array(':uid' => $user[1], ':uniacid' => $user[3]));
-
-				if (!empty($account)) {
+				$account_ne = pdo_fetch2('SELECT * FROM ' . tablename('uni_account_users') . ' WHERE uid=:uid AND uniacid=:uniacid', array(':uid' => $user[1], ':uniacid' => $user[4]));
+				if (!empty($account) || !empty($account_ne)) {
 					return true;
 				}
 			}
@@ -1128,7 +1142,8 @@ class LiveSocket
 	{
 		$filename = dirname(__FILE__) . '/log_' . $name . '.log';
 		$text = '[' . date('Y-m-d H:i:s', time()) . '] ' . $text;
-		file_put_contents($filename, $text . "\r\n", FILE_APPEND);
+		file_put_contents($filename, $text . '
+', FILE_APPEND);
 	}
 
 	public function special($obj)

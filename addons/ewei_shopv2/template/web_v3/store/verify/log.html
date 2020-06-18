@@ -27,23 +27,24 @@
                 <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词" />
                     <span class="input-group-btn">
                     <button class="btn btn-primary" type="submit"> 搜索</button>
+                    <button type="submit" name="export"  value="1" class="btn btn-success">导出</button>
                 </span>
             </div>
         </div>
-
     </form>
     {if count($list)>0}
     <table class="table table-responsive">
         <thead class="navbar-inner">
         <tr>
             <th >记次时商品信息</th>
-            <th style='width:100px;'>订单号</th>
-            <th style='width:95px;'>核销时间</th>
-            <th style='width:95px;'>购买时间</th>
+            <th style='width:180px;'>订单号</th>
+            <th style='width:65px;'>核销次数</th>
+            <th style='width:135px;'>核销时间</th>
+            <th style='width:135px;'>购买时间</th>
             <th style='width:55px;'>购买人</th>
             <th style='width:100px;'>手机号</th>
             <th style='width:70px;'>核销人</th>
-            <th style='width:70px;'>核销门店</th>
+            <th style='width:120px;'>核销门店</th>
             <th >备注信息</th>
         </tr>
         </thead>
@@ -55,8 +56,9 @@
                 {$row['title']}
             </td>
             <td>{$row['ordersn']}</td>
-            <td>{php echo date('Y-m-d',$row['verifydate'])}</td>
-            <td>{php echo date('Y-m-d',$row['paytime'])}</td>
+            <td>{$row['verifynum']}</td>
+            <td>{php echo date('Y-m-d H:i:s',$row['verifydate'])}</td>
+            <td>{php echo date('Y-m-d H:i:s',$row['paytime'])}</td>
             <td>
                 {$row['username']}
             </td>

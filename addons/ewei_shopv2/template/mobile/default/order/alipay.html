@@ -44,6 +44,10 @@
             var url = core.getUrl('threen/register/lottery');
             var data = {id: logid};
             var url_return = core.getUrl('threen');
+        }else if(type == 22){
+            var url = core.getUrl('membercard/detail/membercard_complete');
+            var data = {id: logid};
+            var url_return = core.getUrl('membercard/detail/membercard_complete');
         }else{
             var url = core.getUrl('member/recharge/getstatus');
             var data = {logno: orderid };
@@ -51,6 +55,7 @@
         }
 
         var settime = setInterval(function () {
+            //alert(url_return);
             $.getJSON(url, data, function (ret) {
                 if (ret.status >=1) {
                     clearInterval(settime);
@@ -64,4 +69,3 @@
 </script>
 
 {template '_footer'}
-

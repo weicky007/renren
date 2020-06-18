@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -57,18 +58,119 @@ class Index_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$data = m('common')->getPluginset('commission', false);
+		$data = $data['tm'];
+		$salers1 = array();
+
+		if (isset($data['openid1'])) {
+			if (!empty($data['openid1'])) {
+				$openids1 = array();
+				$strsopenids = explode(',', $data['openid1']);
+
+				foreach ($strsopenids as $openid) {
+					$openids1[] = '\'' . $openid . '\'';
+				}
+
+				@$salers1 = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids1) . (') and uniacid=' . $_W['uniacid']));
+			}
+		}
+
+		$salers3 = array();
+
+		if (isset($data['openid3'])) {
+			if (!empty($data['openid3'])) {
+				$openids3 = array();
+				$strsopenids3 = explode(',', $data['openid3']);
+
+				foreach ($strsopenids3 as $openid3) {
+					$openids3[] = '\'' . $openid3 . '\'';
+				}
+
+				@$salers3 = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids3) . (') and uniacid=' . $_W['uniacid']));
+			}
+		}
+
+		$salers2 = array();
+
+		if (isset($data['openid2'])) {
+			if (!empty($data['openid2'])) {
+				$openids2 = array();
+				$strsopenids2 = explode(',', $data['openid2']);
+
+				foreach ($strsopenids2 as $openid2) {
+					$openids2[] = '\'' . $openid2 . '\'';
+				}
+
+				@$salers2 = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids2) . (') and uniacid=' . $_W['uniacid']));
+			}
+		}
 
 		if ($_W['ispost']) {
-			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$post_data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+
+			if ($post_data['is_advanced'] == 0) {
+				if (is_array($_GPC['openids2'])) {
+					$post_data['openid2'] = implode(',', $_GPC['openids2']);
+				}
+				else {
+					$post_data['openid2'] = '';
+				}
+
+				$post_data['openid'] = $post_data['openid2'];
+
+				if (!empty($data['openid1'])) {
+					$post_data['openid1'] = $data['openid1'];
+				}
+			}
+			else {
+				if ($post_data['is_advanced'] == 1) {
+					if (is_array($_GPC['openids1'])) {
+						$post_data['openid1'] = implode(',', $_GPC['openids1']);
+						$post_data['openid'] = $post_data['openid1'];
+					}
+					else {
+						$post_data['openid1'] = '';
+					}
+
+					if (is_array($_GPC['openids3'])) {
+						$post_data['openid3'] = implode(',', $_GPC['openids3']);
+						$post_data['openid'] = $post_data['openid3'];
+					}
+					else {
+						$post_data['openid3'] = '';
+					}
+
+					if (!empty($data['openid2'])) {
+						$post_data['openid2'] = $data['openid2'];
+					}
+				}
+			}
+
 			m('common')->updatePluginset(array(
-	'commission' => array('tm' => $data)
-	));
+				'commission' => array('tm' => $post_data)
+			));
 			plog('commission.notice.edit', '修改通知设置');
 			show_json(1);
 		}
 
 		$data = m('common')->getPluginset('commission');
-		$template_list = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid and typecode=:typecode ', array(':uniacid' => $_W['uniacid'], ':typecode' => 'commission'));
+		$template_lists = pdo_fetchall('SELECT id,title,typecode FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
+		$templatetype_list = pdo_fetchall('SELECT * FROM  ' . tablename('ewei_shop_member_message_template_type'));
+		$template_group = array();
+
+		foreach ($templatetype_list as $type) {
+			$templates = array();
+
+			foreach ($template_lists as $template) {
+				if ($template['typecode'] == $type['typecode']) {
+					$templates[] = $template;
+				}
+			}
+
+			$template_group[$type['typecode']] = $templates;
+		}
+
+		$template_list = $template_group;
 		include $this->template();
 	}
 
@@ -78,7 +180,11 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 
 		if ($_W['ispost']) {
-			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+			if ($data['cansee'] == 1 && empty($data['seetitle'])) {
+				show_json(0, '请选择佣金显示文字');
+			}
+
 			$data['cashcredit'] = intval($data['cashcredit']);
 			$data['cashweixin'] = intval($data['cashweixin']);
 			$data['cashother'] = intval($data['cashother']);
@@ -97,10 +203,14 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$data['regbg'] = save_media($data['regbg']);
 			$data['become_goodsid'] = intval($_GPC['become_goodsid']);
 			$data['texts'] = is_array($_GPC['texts']) ? $_GPC['texts'] : array();
+			if ($data['become'] == 4 && empty($data['become_goodsid'])) {
+				show_json(0, '请选择商品');
+			}
+
 			m('common')->updatePluginset(array('commission' => $data));
 			m('cache')->set('template_' . $this->pluginname, $data['style']);
-			$selfbuy = ($data['selfbuy'] ? '开启' : '关闭');
-			$become_child = ($data['become_child'] ? ($data['become_child'] == 1 ? '首次下单' : '首次付款') : '首次点击分享连接');
+			$selfbuy = $data['selfbuy'] ? '开启' : '关闭';
+			$become_child = $data['become_child'] ? ($data['become_child'] == 1 ? '首次下单' : '首次付款') : '首次点击分享连接';
 
 			switch ($data['become']) {
 			case '0':
@@ -133,7 +243,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($handle = opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if (($file != '..') && ($file != '.')) {
+				if ($file != '..' && $file != '.') {
 					if (is_dir($dir . '/' . $file)) {
 						$styles[] = $file;
 					}

@@ -38,17 +38,18 @@
                 {/if}
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-lg control-label">所属门店</label>
-            <div class="col-sm-9 col-xs-12">
-                {ife 'shop.verify.saler' $item}
-                    {php echo tpl_selector('storeid',array('text'=>'storename','preview'=>true,'type'=>'text',  'thumb'=>'avatar','placeholder'=>'门店名称','buttontext'=>'选择门店 ', 'items'=>$store,'url'=>webUrl('shop/verify/store/query')))}
-                    <span class='help-block'>如果不选择门店，则可以进行全门店的核销</span>
-                {else}
-                    <div class='form-control-static'>{if empty($store['storename'])}全店核销{else}{$store['storename']}{/if}</div>
-                {/if}
-            </div>
+    <div class="form-group">
+        <label class="col-lg control-label must">所属门店</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'shop.verify.saler' $item}
+            {php echo tpl_selector('storeid',array('text'=>'storename','preview'=>true,'type'=>'text',  'thumb'=>'avatar','placeholder'=>'门店名称','buttontext'=>'选择门店 ', 'items'=>$store,'url'=>webUrl('shop/verify/store/query')))}
+             <span class='help-block'>店铺所属的门店，用于核销订单</span>
+            {else}
+            <div class='form-control-static'>{if empty($store['storename'])}无所属门店{else}{$store['storename']}{/if}</div>
+            {/if}
         </div>
+    </div>
+ 
         <div class="form-group">
             <label class="col-lg control-label">状态</label>
             <div class="col-sm-9 col-xs-12">

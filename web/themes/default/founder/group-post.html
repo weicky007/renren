@@ -5,7 +5,7 @@
 		<li><a href="{php echo url('founder/group/display')}">副创始人组管理</a></li>
 		<li>添加副创始人组</li>
 	</ol>
-	<form class="we7-form user-group-edit" method="post" action="">
+	<form class="we7-form user-group-edit" method="post" action="{php echo url('founder/group/save', array('id' => $_GPC['id']))}">
 		<div class="form-group">
 			<label for="" class="control-label col-sm-2">用户权限组名</label>
 			<div class="form-controls col-sm-8">
@@ -45,7 +45,7 @@
 					</div>
 					<div class="group-app-list">
 						<div class="group-app-item" ng-repeat="module in extend.modules_all">
-							<img ng-src="{{module.logo}}" class="module-img" alt="">
+							<img src="{{module.logo}}" class="module-img" alt="">
 							<div class="info">
 								<div class="title text-over">
 									{{module.title}}
@@ -56,7 +56,7 @@
 							</div>
 						</div>
 						<div class="group-app-item" ng-repeat="module in extend.templates">
-							<img ng-src="{{module.logo}}" class="template-img" alt="">
+							<img src="{{module.logo}}" class="template-img" alt="">
 							<div class="info">
 								<div class="title">
 									{{module.title}}

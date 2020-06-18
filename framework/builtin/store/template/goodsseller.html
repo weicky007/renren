@@ -6,7 +6,8 @@
 		<li {if $type == STORE_TYPE_ACCOUNT}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_ACCOUNT,'direct' => '1'))}">平台个数</a></li>
 		<li {if $type == STORE_TYPE_ACCOUNT_RENEW}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_ACCOUNT_RENEW,'direct' => '1'))}">平台续费</a></li>
 		<li {if $type == STORE_TYPE_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_PACKAGE,'direct' => '1'))}">应用权限组</a></li>
-		<!--<li {if $type == STORE_TYPE_ACCOUNT_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_ACCOUNT_PACKAGE,'direct' => '1'))}">账号权限组</a></li>-->
+		<li {if $type == STORE_TYPE_ACCOUNT_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_ACCOUNT_PACKAGE,'direct' => '1'))}">账号权限组</a></li>
+		<li {if $type == STORE_TYPE_USER_RENEW}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_USER_RENEW,'direct' => '1'))}">账号有效期</a></li>
 		<li {if $type == STORE_TYPE_USER_PACKAGE}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_USER_PACKAGE,'direct' => '1'))}">用户权限组</a></li>
 		<li {if $type == STORE_TYPE_API}class="active"{/if}><a href="{php echo $this->createWebUrl('goodsSeller', array('type' => STORE_TYPE_API,'direct' => '1'))}">API浏览次数</a></li>
 	</ul>
@@ -54,7 +55,7 @@
 			<td>
 				{if $goods['type'] == STORE_TYPE_API}
 				<div class="icon icon-api"><span class="wi wi-api"></span></div>
-				{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW))}
+				{elseif in_array($goods['type'], array(STORE_TYPE_PACKAGE, STORE_TYPE_ACCOUNT, STORE_TYPE_WXAPP,STORE_TYPE_WEBAPP,STORE_TYPE_PHONEAPP,STORE_TYPE_XZAPP,STORE_TYPE_ALIAPP,STORE_TYPE_BAIDUAPP,STORE_TYPE_TOUTIAOAPP, STORE_TYPE_ACCOUNT_RENEW, STORE_TYPE_WXAPP_RENEW, STORE_TYPE_WEBAPP_RENEW,STORE_TYPE_PHONEAPP_RENEW,STORE_TYPE_XZAPP_RENEW,STORE_TYPE_ALIAPP_RENEW,STORE_TYPE_BAIDUAPP_RENEW,STORE_TYPE_TOUTIAOAPP_RENEW, STORE_TYPE_USER_RENEW))}
 				<div class="icon icon-api"><span class="wi wi-appjurisdiction"></span></div>
 				{elseif $goods['type'] == STORE_TYPE_ACCOUNT_PACKAGE}
 				<div class="icon icon-api"><span class="wi wi-userjurisdiction"></span></div>
@@ -93,6 +94,9 @@
 				{$goods['price']}元
 				{if !in_array($goods['type'], array_keys($store_goods_types['account_num']))}
 					/
+					{if $goods['type'] == STORE_TYPE_USER_RENEW}
+						{$goods['account_num']}
+					{/if}
 					{if $goods['unit'] == 'month'}
 						{loop $renews $goods_type $renew}
 							{if $goods['type'] == $goods_type}
@@ -113,6 +117,12 @@
 								{$goods[$renew['num_sign']]}
 							{/if}
 						{/loop}年
+					{elseif $goods['unit'] == 'week'}
+						{loop $renews $goods_type $renew}
+							{if $goods['type'] == $goods_type}
+								{$goods[$renew['num_sign']]}
+							{/if}
+						{/loop}周
 					{/if}
 				{/if}
 			</td>

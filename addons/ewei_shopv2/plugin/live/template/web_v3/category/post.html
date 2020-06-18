@@ -5,7 +5,7 @@
 <div class="page-content">
     <div class="page-sub-toolbar">
         {ifp 'live.category.add'}
-        <a class="btn btn-primary btn-sm" href="{php echo webUrl('live/category/add')}">添加新商品分类</a>
+        <a class="btn btn-primary btn-sm" href="{php echo webUrl('live/category/add')}">添加直播分类</a>
         {/if}
     </div>
     <form  {ife 'live.category' $item}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data" >
@@ -108,5 +108,4 @@
     </form>
 </div>
 {template '_footer'}
-
 

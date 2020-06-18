@@ -93,8 +93,8 @@
 		<span class='text'> 正在加载...</span>
 	</div>
 
-<!--	<div  id="container" class="fui-content basic-block">
-	</div>-->
+	<!--	<div  id="container" class="fui-content basic-block">
+        </div>-->
 
 	<div class="fui-content">
 		<div class="coupon-list-group"  id="container" style="margin-top: 0.25rem">
@@ -103,73 +103,89 @@
 
 	<script id='tpl_list_verifygood_my' type='text/html'>
 		<%each list as verifygood%>
-			<a class="coupon-list  <%if  verifygood.canuse == 1%><% if verifygood.numlimit==1%>blue<%else%>green<%/if%><%else%> gray<%/if%>"
-		<%if  verifygood.canuse == 1%><%if verifygood.cangetcard%> href="javascript:;" onclick="addCard('<%=verifygood.card_id%>','<%=verifygood.cardcode%>')"<%else%>href="{php echo mobileUrl('verifygoods/detail')}&id=<%verifygood.id%>" <%/if%><%/if%>>
-				<div class="coupon-left">
-					<div class="coupon-title">
-						<div class="coupon-list-media">
-							<img src="<%=verifygood.thumb%>"/>
-						</div>
-						<div class="coupon-inner">
-							<div>
-								<%=verifygood.title%>
-							</div>
-						</div>
-					</div>
-					<div class="coupon-time">
-						有效日期：<%=verifygood.termofvalidity%>
-					</div>
-				</div>
-				<div class="coupon-right">
-					<div class="text"><% if verifygood.numlimit==1%>可用次数<%else%>剩余天数<%/if%></div>
-					<div class="num"><span><%=verifygood.surplusnum%></span></div>
-				</div>
+		<a class="coupon-list
+			<%if  verifygood.expired == 1%>
+			gray
+			<%else%>
 				<%if  verifygood.canuse == 1%>
-					<%if verifygood.cangetcard%>
-						<div class="mask">
-							<span href="">点击激活</span>
-						</div>
+					<% if verifygood.numlimit==1%>
+						blue
+						<%else%>
+						green
 					<%/if%>
-				<%/if%>
+				<%else%>
+				 <% if verifygood.numlimit==1%>
+					 blue
+					<%else%>
+					 green
+					 <%/if%>
+				 <%/if%><%/if%>"
+		<%if verifygood.cangetcard%> href="javascript:;" onclick="addCard('<%=verifygood.card_id%>','<%=verifygood.cardcode%>')"<%else%>href="{php echo mobileUrl('verifygoods/detail')}&id=<%verifygood.id%>" <%/if%>>
+		<div class="coupon-left">
+			<div class="coupon-title">
+				<div class="coupon-list-media">
+					<img src="<%=verifygood.thumb%>"/>
+				</div>
+				<div class="coupon-inner">
+					<div>
+						<%=verifygood.title%>
+					</div>
+				</div>
+			</div>
+			<div class="coupon-time">
+				有效日期：<%=verifygood.termofvalidity%>
+			</div>
+		</div>
+		<div class="coupon-right">
+			<div class="text"><% if verifygood.numlimit==1%>可用次数<%else%>剩余天数<%/if%></div>
+			<div class="num"><span><%=verifygood.surplusnum%></span></div>
+		</div>
+		<%if  verifygood.canuse == 1%>
+		<%if verifygood.cangetcard%>
+		<div class="mask">
+			<span href="">点击激活</span>
+		</div>
+		<%/if%>
+		<%/if%>
 
-			</a>
+		</a>
 
 		<%/each%>
 	</script>
 	<script language='javascript'>
-		require(['biz/verifygoods/list'], function (modal) {modal.init();});
+        require(['biz/verifygoods/list'], function (modal) {modal.init();});
 
 
-		function addCard(card_id,code) {
+        function addCard(card_id,code) {
 
-			var data = {'openid': '{php echo $_W["openid"]}', 'card_id': card_id, 'code': code};
-			$.ajax({
-				url: "{php echo mobileUrl('sale/coupon/getsignature')}",
-				data: data,
-				cache: false
-			}).done(function (result) {
-				var data = jQuery.parseJSON(result);
-				if (data.status == 1) {
-					wx.addCard({
-						cardList: [
-							{
-								cardId: card_id,
-								cardExt: data.result.cardExt
-							}
-						],
-						success: function (res) {
-							//alert('已添加卡券：' + JSON.stringify(res.cardList));
-						},
-						cancel: function (res) {
-							//alert(JSON.stringify(res))
-						}
-					});
-				} else {
-					alert("微信接口繁忙,请稍后再试!");
-					alert(data.result.message);
-				}
-			});
-		}
+            var data = {'openid': '{php echo $_W["openid"]}', 'card_id': card_id, 'code': code};
+            $.ajax({
+                url: "{php echo mobileUrl('sale/coupon/getsignature')}",
+                data: data,
+                cache: false
+            }).done(function (result) {
+                var data = jQuery.parseJSON(result);
+                if (data.status == 1) {
+                    wx.addCard({
+                        cardList: [
+                            {
+                                cardId: card_id,
+                                cardExt: data.result.cardExt
+                            }
+                        ],
+                        success: function (res) {
+                            //alert('已添加卡券：' + JSON.stringify(res.cardList));
+                        },
+                        cancel: function (res) {
+                            //alert(JSON.stringify(res))
+                        }
+                    });
+                } else {
+                    alert("微信接口繁忙,请稍后再试!");
+                    alert(data.result.message);
+                }
+            });
+        }
 
 
 	</script>

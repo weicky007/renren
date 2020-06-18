@@ -47,9 +47,25 @@
 		{ifp 'groups.set.edit'}
 		{php echo tpl_form_field_image2('data[followqrcode]', $data['followqrcode']);}
 		<span class='help-block'></span>
-			{else}
+		{else}
 		<input type="hidden" name="data[followqrcode]" value="{$data['followqrcode']}" />
-		 <div class='form-control-static'>{$data['followqrcode']}</div>
+		<div class='form-control-static'>{$data['followqrcode']}</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label">拼团顶部关注条</label>
+	<div class="col-sm-9 col-xs-12">
+		{ifp 'groups.set.edit'}
+		<label class='radio radio-inline'>
+			<input type='radio' value='1' name='data[followbar]'  {if $data['followbar']==1}checked{/if} /> 显示
+		</label>
+		<label class='radio radio-inline'>
+			<input type='radio' value='0' name='data[followbar]' {if $data['followbar']==0}checked{/if} /> 关闭
+		</label>
+		{else}
+		<div class='form-control-static'>{if $data['followbar']==1}显示{else}关闭{/if}</div>
 		{/if}
 	</div>
 </div>

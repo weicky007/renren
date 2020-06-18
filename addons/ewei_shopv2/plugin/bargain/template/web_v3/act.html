@@ -78,11 +78,15 @@
             </label>
         </div>
     </div>
+    <div class="form-group" id="initiate-help">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-9 col-xs-12">用户已经发起本商品的砍价活动时，需要完成购买方可再次发起</div>
+    </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">活动时间</label>
         <div class="col-sm-9 col-xs-12">
             {php $time_end = time()+604800;$time['start'] = date('Y-m-d H:i:s',time());$time['end'] = date('Y-m-d H:i:s',$time_end);}
-            {php echo tpl_form_field_daterange('act_time', $time, true);}
+            {php echo tpl_form_field_eweishop_daterange('act_time', $time, true);}
         </div>
     </div>
     <div class="form-group">
@@ -263,6 +267,25 @@
                 document.getElementById("partin").style.display = "block";
             }
         }
+
+        $(document).ready(function(){
+            var initiate= $("input[name='initiate']:checked").val();
+            if(initiate==1){
+                $('#initiate-help').show();
+            }else{
+                $('#initiate-help').hide();
+            }
+        });
+
+        $('input[name=initiate]').bind('click',function () {
+           var radioval=$(this).val();
+           if(radioval==1){
+               $('#initiate-help').show();
+           }else{
+               $('#initiate-help').hide();
+           }
+        })
+
     </script>
 
 

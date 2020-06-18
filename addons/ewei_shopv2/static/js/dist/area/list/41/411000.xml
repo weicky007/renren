@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="许昌" code="411000">
-<county name="魏都" code="411002">
+<city name="许昌市" code="411000">
+<county name="魏都区" code="411002">
     <street name="西大街道" code="411002001" />
     <street name="东大街道" code="411002002" />
     <street name="西关街道" code="411002003" />
@@ -17,7 +17,27 @@
     <street name="许昌经济开发区" code="411002560" />
     <street name="东城区管委会" code="411002570" />
 </county>
-<county name="许昌" code="411023">
+<county name="建安区" code="411003">
+    <street code="411003001000" name="许由办事处"/>
+    <street code="411003002000" name="新元办事处"/>
+    <street code="411003100000" name="将官池镇"/>
+    <street code="411003101000" name="五女店镇"/>
+    <street code="411003102000" name="尚集镇"/>
+    <street code="411003103000" name="苏桥镇"/>
+    <street code="411003104000" name="蒋李集镇"/>
+    <street code="411003105000" name="张潘镇"/>
+    <street code="411003106000" name="灵井镇"/>
+    <street code="411003200000" name="陈曹乡"/>
+    <street code="411003201000" name="邓庄乡"/>
+    <street code="411003202000" name="小召乡"/>
+    <street code="411003203000" name="河街乡"/>
+    <street code="411003204000" name="桂村乡"/>
+    <street code="411003205000" name="椹涧乡"/>
+    <street code="411003206000" name="榆林乡"/>
+    <street code="411003208000" name="艾庄回族乡"/>
+</county>
+
+    <county name="许昌县" code="411023">
     <street name="将官池镇" code="411023100" />
     <street name="五女店镇" code="411023101" />
     <street name="尚集镇" code="411023102" />
@@ -35,7 +55,7 @@
     <street name="长村张乡" code="411023207" />
     <street name="艾庄回族乡" code="411023208" />
 </county>
-<county name="鄢陵" code="411024">
+<county name="鄢陵县" code="411024">
     <street name="安陵镇" code="411024100" />
     <street name="马栏镇" code="411024101" />
     <street name="柏梁镇" code="411024102" />
@@ -49,7 +69,7 @@
     <street name="彭店乡" code="411024205" />
     <street name="马坊乡" code="411024206" />
 </county>
-<county name="襄城" code="411025">
+<county name="襄城县" code="411025">
     <street name="城关镇" code="411025100" />
     <street name="颍桥回族镇" code="411025101" />
     <street name="麦岭镇" code="411025102" />
@@ -67,7 +87,7 @@
     <street name="双庙乡" code="411025206" />
     <street name="汾陈乡" code="411025207" />
 </county>
-<county name="禹州" code="411081">
+<county name="禹州市" code="411081">
     <street name="颍川街道" code="411081001" />
     <street name="夏都街道" code="411081002" />
     <street name="韩城街道" code="411081003" />
@@ -95,7 +115,7 @@
     <street name="小吕乡" code="411081206" />
     <street name="山货回族乡" code="411081210" />
 </county>
-<county name="长葛" code="411082">
+<county name="长葛市" code="411082">
     <street name="建设路街道" code="411082001" />
     <street name="长兴路街道" code="411082002" />
     <street name="长社路街道" code="411082003" />

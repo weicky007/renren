@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,9 +9,9 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 {
 	public function main()
 	{
-		app_json(array(
-	'perm' => array('finance_recharge' => cv('finance.log.recharge'), 'finance_withdraw' => cv('finance.log.withdraw'), 'finance_credit2' => cv('finance.credit.credit2'))
-	));
+		return app_json(array(
+			'perm' => array('finance_recharge' => cv('finance.log.recharge'), 'finance_withdraw' => cv('finance.log.withdraw'), 'finance_credit2' => cv('finance.credit.credit2'))
+		));
 	}
 
 	/**
@@ -22,17 +22,17 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 		global $_W;
 		global $_GPC;
 		$type = intval($_GPC['type']);
-		if (($type == 0) || ($type == 1)) {
-			if ((($type == 0) && !cv('finance.log.recharge')) || (($type == 1) && !cv('finance.log.withdraw'))) {
-				app_error(AppError::$PermError, '您无操作权限');
+		if ($type == 0 || $type == 1) {
+			if ($type == 0 && !cv('finance.log.recharge') || $type == 1 && !cv('finance.log.withdraw')) {
+				return app_error(AppError::$PermError, '您无操作权限');
 			}
 
 			$this->log($type);
 		}
 		else {
-			if (($type == 2) || ($type == 3)) {
-				if ((($type == 2) && !cv('finance.credit.credit1')) || (($type == 3) && !cv('finance.credit.credit2'))) {
-					app_error(AppError::$PermError, '您无操作权限');
+			if ($type == 2 || $type == 3) {
+				if ($type == 2 && !cv('finance.credit.credit1') || $type == 3 && !cv('finance.credit.credit2')) {
+					return app_error(AppError::$PermError, '您无操作权限');
 				}
 
 				$this->credit($type);
@@ -87,10 +87,10 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 			$condition .= ' and log.status=' . intval($_GPC['status']);
 		}
 
-		$sql = 'select log.id,m.id as mid, m.realname,m.avatar,log.logno,log.type,log.status,log.rechargetype,m.nickname,m.mobile,log.money,log.createtime,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype,log.apppay from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
+		$sql = 'select log.id,m.id as mid, m.realname,m.avatar,log.logno,log.type,log.status,log.rechargetype,m.nickname,m.mobile,log.money,log.createtime,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype,log.apppay from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' ORDER BY log.createtime DESC ');
 
 		if (empty($_GPC['export'])) {
-			$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -109,8 +109,8 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 			}
 		}
 
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid and m.uniacid= log.uniacid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ', $params);
-		app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid and m.uniacid= log.uniacid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' '), $params);
+		return app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 	{
 		global $_W;
 		global $_GPC;
-		$type = ($type == 2 ? 'credit1' : 'credit2');
+		$type = $type == 2 ? 'credit1' : 'credit2';
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$condition = ' and log.uniacid=:uniacid and (log.module=:module1  or log.module=:module2)and m.uniacid=:uniacid  and log.credittype=:credittype';
@@ -146,10 +146,10 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 		}
 
 		$condition .= ' and log.uid<>0';
-		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
+		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' ORDER BY log.createtime DESC ');
 
 		if (empty($_GPC['export'])) {
-			$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -163,8 +163,8 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 			unset($item);
 		}
 
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ', $params);
-		app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' '), $params);
+		return app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
 	}
 
 	/**
@@ -178,25 +178,25 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 		$type = intval($_GPC['type']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
-		$typestr = ($type == 1 ? 'credit1' : 'credit2');
+		$typestr = $type == 1 ? 'credit1' : 'credit2';
 
 		if (!cv('finance.recharge.' . $typestr)) {
-			app_error(AppError::$PermError);
+			return app_error(AppError::$PermError);
 		}
 
 		$member = m('member')->getMember($id);
 
 		if (empty($member)) {
-			app_error(AppError::$MemberRechargeError, '用户不存在');
+			return app_error(AppError::$MemberRechargeError, '用户不存在');
 		}
 
 		if ($_W['ispost']) {
-			$type = ($type == 1 ? 'credit1' : 'credit2');
+			$type = $type == 1 ? 'credit1' : 'credit2';
 			ca('finance.recharge.' . $type);
-			$typestr = ($type == 'credit1' ? '积分' : '余额');
+			$typestr = $type == 'credit1' ? '积分' : '余额';
 			$num = floatval($_GPC['num']);
 			$remark = trim($_GPC['remark']);
 
@@ -243,13 +243,13 @@ class Finance_EweiShopV2Page extends AppMobileAuthPage
 			}
 
 			plog('finance.recharge.' . $type, '充值' . $typestr . ': ' . $_GPC['num'] . ' <br/>会员信息: ID: ' . $member['id'] . ' /  ' . $member['openid'] . '/' . $member['nickname'] . '/' . $member['realname'] . '/' . $member['mobile']);
-			app_json();
+			return app_json();
 		}
 
-		app_json(array(
-	'member' => array('id' => $member['id'], 'nickname' => $member['nickname'], 'avatar' => tomedia($member['avatar']), 'credit1' => $member['credit1'], 'credit2' => $member['credit2']),
-	'perm'   => array('recharge_credit1' => cv('finance.recharge.credit1'), 'recharge_credit2' => cv('finance.recharge.credit2'))
-	));
+		return app_json(array(
+			'member' => array('id' => $member['id'], 'nickname' => $member['nickname'], 'avatar' => tomedia($member['avatar']), 'credit1' => $member['credit1'], 'credit2' => $member['credit2']),
+			'perm'   => array('recharge_credit1' => cv('finance.recharge.credit1'), 'recharge_credit2' => cv('finance.recharge.credit2'))
+		));
 	}
 }
 

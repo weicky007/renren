@@ -10,11 +10,7 @@
 </div>
 
 <script>
-	if($(".seckill-group").length>0) {
-		require(['../addons/ewei_shopv2/plugin/seckill/static/js/timer.js'], function (modal) {
-			modal.initTimers();
-		});
-	}
+
 	{if count($seckillinfo['goods'])>=4}
 	if($(".seckill-group").length>0){
 
@@ -57,6 +53,12 @@
 			})
 		});
 	}
+	{else}
+		if($(".seckill-group").length>0) {
+			require(['../addons/ewei_shopv2/plugin/seckill/static/js/timer.js'], function (modal) {
+				modal.initTimers();
+			});
+		}
 	{/if}
 
 </script>

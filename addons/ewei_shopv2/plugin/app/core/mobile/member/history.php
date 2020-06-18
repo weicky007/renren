@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class History_EweiShopV2Page extends AppMobilePage
 {
 	public function get_list()
@@ -15,15 +15,15 @@ class History_EweiShopV2Page extends AppMobilePage
 		$psize = 10;
 		$condition = ' and f.uniacid = :uniacid and f.openid=:openid and f.deleted=0';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_history') . ' f where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_history') . (' f where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
-		$sql = 'SELECT f.id,f.goodsid,g.title,g.thumb,g.marketprice,g.productprice,f.createtime,g.merchid FROM ' . tablename('ewei_shop_member_history') . ' f ' . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT f.id,f.goodsid,g.title,g.thumb,g.marketprice,g.productprice,f.createtime,g.merchid FROM ' . tablename('ewei_shop_member_history') . ' f ' . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 		$result = array(
 			'list'     => array(),
 			'total'    => $total,
 			'pagesize' => $psize
-			);
+		);
 		$merch_plugin = p('merch');
 		$merch_data = m('common')->getPluginset('merch');
 		if (!empty($list) && $merch_plugin && $merch_data['is_openmerch']) {
@@ -39,7 +39,7 @@ class History_EweiShopV2Page extends AppMobilePage
 
 		unset($row);
 		$result['list'] = $list;
-		app_json($result);
+		return app_json($result);
 	}
 
 	public function remove()
@@ -48,12 +48,12 @@ class History_EweiShopV2Page extends AppMobilePage
 		global $_GPC;
 		$ids = $_GPC['ids'];
 		if (empty($ids) || !is_array($ids)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$sql = 'update ' . tablename('ewei_shop_member_history') . ' set deleted=1 where openid=:openid and id in (' . implode(',', $ids) . ')';
 		pdo_query($sql, array(':openid' => $_W['openid']));
-		app_error();
+		return app_error();
 	}
 }
 

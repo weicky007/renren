@@ -129,9 +129,9 @@
     color: #ffffff;
 }
 .fui-tab.fui-tab-default a.active {
-     color: #ffffff;
+    color: #ffffff;
     background: #0c7784;
-     border: none;
+    border: none;
     z-index: 100;
 }
 .reward_p{
@@ -150,12 +150,22 @@
     display: none;
 }
 /*弹出层*/
-.task-model{
+/*.task-model{
     z-index: 11;
     position: absolute;
     background: #ffffff;
     bottom: 12rem;
     right: 3.5rem;
+    width: 12rem;
+    border-radius: 0.5rem;
+}*/
+.fui-modal.picker-modal{
+    position: fixed;
+    bottom: 260px !important;
+}
+.task-model{
+    margin: 0 auto;
+    background: #ffffff;
     width: 12rem;
     border-radius: 0.5rem;
 }

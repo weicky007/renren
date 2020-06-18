@@ -94,7 +94,7 @@
                             
                             <input type="hidden" name="data" value="" />
                         {/if}
-                       <input type="button" name="back" onclick='history.back()' {ifp 'poster.add|poster.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />
+                        <a class="btn btn-default  btn-sm" href="{php echo webUrl('poster')}">返回列表</a>
                     </div>
             </div>
 </form>
@@ -116,18 +116,18 @@
               
                 var recmoney = parseFloat($(':input[name=recmoney]').val());
                 if( recmoney>0 ){
-                        if(recmoney<1){
+                        if(recmoney<0.3){
                             $(':input[name=recmoney]').focus();
-                            tip.msgbox.err('微信企业付款需支付1元以上!');
+                            tip.msgbox.err('微信企业付款需支付0.3元以上!');
                             $('form').attr('stop',1);
                             return false;
                         }
                 }
                 var submoney = parseFloat($(':input[name=submoney]').val());
                 if(submoney>0){
-                    if(submoney<1){
+                    if(submoney<0.3){
                         $(':input[name=submoney]').focus();
-                        tip.msgbox.err('微信企业付款需支付1元以上!');
+                        tip.msgbox.err('微信企业付款需支付0.3元以上!');
                         $('form').attr('stop',1);
                         return false;
                     }
@@ -140,6 +140,18 @@
             var type = obj.attr('type');
             var left = obj.css('left'),top = obj.css('top');
             var d= {left:left,top:top,type:obj.attr('type'),width:obj.css('width'),height:obj.css('height')};
+
+            if(type == 'productprice' || type == 'marketprice'){
+
+
+                d.top = parseInt(d.top) + 50
+
+                d.top +='px'
+
+
+            }
+
+
             if(type=='nickname' ||type=='title' || type=='marketprice' || type=='productprice'){
                 d.size = obj.attr('size');
                 d.color = obj.attr('color');
@@ -148,6 +160,7 @@
             } else if(type=='img'){
                 d.src = obj.attr('src');
             }
+
             data.push(d);
         });
         $(':input[name=data]').val( JSON.stringify(data));
@@ -301,11 +314,14 @@
                    
              } else if(type=='qr'){
                  qrset.show();
-                 var size = obj.attr('size') || "3";
+                 var size = obj.attr('size') || "6";
                  var sel = qrset.find('#qrsize');
+
                  sel.val(size);
                  sel.unbind('change').change(function(){
-                      obj.attr('size',sel.val()) 
+                      obj.attr('size',sel.val());
+                      /*二维码尺寸大小*/
+
                  });
              }  
          }
@@ -406,4 +422,3 @@
 	
     </script>
 {template '_footer'}
-

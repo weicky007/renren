@@ -25,7 +25,7 @@ class Index_EweiShopV2Page extends SystemPage
 			if (empty($_GPC['id'])) {
 				show_json(0,'您还没未注册站点!');
 			}
-			$resp = ihttp_request('http://cloud.010xr.com/gateway.php/a=rr', array('ip' => $ip, 'id' => $id, 'code' => $_GPC['code'], 'domain' => $domain));
+			$resp = ihttp_request('http://cloud.we7.cc/gateway.php/a=rr', array('ip' => $ip, 'id' => $id, 'code' => $_GPC['code'], 'domain' => $domain));
 			$result = @json_decode($resp['content'], true);
 			
 			if ($result['status'] == '1') {

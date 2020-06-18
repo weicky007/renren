@@ -72,20 +72,23 @@
                                 {if $row['id']=='default'}
                                 默认等级
                                 {else}
-
-                                {if empty($shopset['leveltype'])}
-                                {if $row['ordermoney']>0}
-                                完成订单金额满 {$row['ordermoney']}元
+                                {if $row['buygoods'] ==0}
+                                    {if empty($shopset['leveltype'])}
+                                        {if $row['ordermoney']>0}
+                                        完成订单金额满 {$row['ordermoney']}元
+                                        {else}
+                                        不自动升级
+                                        {/if}
+                                    {/if}
+                                    {if $shopset['leveltype']==1}
+                                        {if $row['ordercount']>0}
+                                        完成订单数量满 {$row['ordercount']}个
+                                        {else}
+                                        不自动升级
+                                        {/if}
+                                    {/if}
                                 {else}
-                                不自动升级
-                                {/if}
-                                {/if}
-                                {if $shopset['leveltype']==1}
-                                {if $row['ordercount']>0}
-                                完成订单数量满 {$row['ordercount']}个
-                                {else}
-                                不自动升级
-                                {/if}
+                                 购买产品
                                 {/if}
                                 {/if}
                             </td>
@@ -152,4 +155,3 @@
 </div>
 
 {template '_footer'}
-

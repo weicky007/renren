@@ -39,7 +39,14 @@
             <div class="col-sm-9 col-xs-12">
                 {ife 'shop.notice' $notice}
                     {php echo tpl_form_field_image2('thumb', $notice['thumb'])}
-                    <span class="help-block">正方型图片</span>
+                    <span class="help-block">
+                        正方型图片,在手机端公告列表页
+                        <a href="javascript:void(0);" class="btn btn-default btn-sm" data-toggle="popover" data-trigger="hover" data-html="true"
+                           data-content="<img src='{$qrcode}' width='130' alt='链接二维码'>" data-placement="auto right">
+						<i class="glyphicon glyphicon-qrcode"></i>
+					    </a>
+                        显示
+                    </span>
                 {else}
                     {if !empty($notice['thumb'])}
                         <a href='{php echo tomedia($notice['thumb'])}' target='_blank'>
@@ -81,10 +88,10 @@
             <div class="col-sm-9 col-xs-12">
                 {ife 'shop.notice' $notice}
                     <label class='radio-inline'>
-                        <input type='radio' name='status' value=1' {if $notice['status']==1}checked{/if} /> 是
+                        <input type='radio' name='status' value='1' {if $notice['status']==1}checked{/if} /> 是
                     </label>
                     <label class='radio-inline'>
-                        <input type='radio' name='status' value=0' {if $notice['status']==0}checked{/if} /> 否
+                        <input type='radio' name='status' value='0' {if $notice['status']==0}checked{/if} /> 否
                     </label>
                 {else}
                     <div class='form-control-static'>{if empty($notice['status'])}否{else}是{/if}</div>

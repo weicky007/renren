@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Favorite_EweiShopV2Page extends AppMobilePage
 {
 	public function get_list()
@@ -21,17 +21,17 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 		}
 
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_favorite') . ' f where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_favorite') . (' f where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 		$result = array(
 			'list'     => array(),
 			'total'    => $total,
 			'pagesize' => $psize
-			);
+		);
 
 		if (!empty($total)) {
-			$sql = 'SELECT f.id,f.goodsid,g.title,g.thumb,g.marketprice,g.productprice,g.merchid FROM ' . tablename('ewei_shop_member_favorite') . ' f ' . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT f.id,f.goodsid,g.title,g.thumb,g.marketprice,g.productprice,g.merchid FROM ' . tablename('ewei_shop_member_favorite') . ' f ' . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
 			if (!empty($list) && $merch_plugin && $merch_data['is_openmerch']) {
@@ -48,7 +48,7 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 		}
 
 		$result['list'] = $list;
-		app_json($result);
+		return app_json($result);
 	}
 
 	public function toggle()
@@ -58,14 +58,14 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$isfavorite = intval($_GPC['isfavorite']);
 		$goods = pdo_fetch('select * from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 		if (empty($goods)) {
-			app_error(AppError::$GoodsNotFound);
+			return app_error(AppError::$GoodsNotFound);
 		}
 
 		$data = pdo_fetch('select id,deleted from ' . tablename('ewei_shop_member_favorite') . ' where uniacid=:uniacid and goodsid=:id and openid=:openid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':id' => $id));
@@ -80,7 +80,7 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 			pdo_update('ewei_shop_member_favorite', array('deleted' => $isfavorite ? 0 : 1), array('id' => $data['id'], 'uniacid' => $_W['uniacid']));
 		}
 
-		app_json(array('isfavorite' => $isfavorite == 1));
+		return app_json(array('isfavorite' => $isfavorite == 1));
 	}
 
 	public function remove()
@@ -89,12 +89,12 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 		global $_GPC;
 		$ids = $_GPC['ids'];
 		if (empty($ids) || !is_array($ids)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$sql = 'update ' . tablename('ewei_shop_member_favorite') . ' set deleted=1 where openid=:openid and id in (' . implode(',', $ids) . ')';
 		pdo_query($sql, array(':openid' => $_W['openid']));
-		app_json();
+		return app_json();
 	}
 
 	public function get_merchlist()
@@ -105,12 +105,12 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 		$psize = 10;
 		$condition = ' and f.uniacid = :uniacid and f.openid=:openid and f.deleted=0 and f.type=1';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_favorite') . ' f where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_favorite') . (' f where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT f.id,f.merchid,g.merchname,g.logo,g.desc FROM ' . tablename('ewei_shop_member_favorite') . ' f ' . ' left join ' . tablename('ewei_shop_merch_user') . ' g on f.merchid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT f.id,f.merchid,g.merchname,g.logo,g.desc FROM ' . tablename('ewei_shop_member_favorite') . ' f ' . ' left join ' . tablename('ewei_shop_merch_user') . ' g on f.merchid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'logo');
 			$merch_plugin = p('merch');
@@ -126,7 +126,7 @@ class Favorite_EweiShopV2Page extends AppMobilePage
 			}
 		}
 
-		app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
+		return app_json(array('list' => $list, 'total' => $total, 'pagesize' => $psize));
 	}
 }
 

@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-heading">
     <span class="pull-right">
-        <a class="btn btn-danger btn-sm"data-toggle="modal" data-target="#myModal"><i class="fa fa-trash"></i> 删除全部文件</a>
+        <a class="btn btn-danger btn-sm myModal"><i class="fa fa-trash"></i> 删除全部文件</a>
     </span>
     <h2>文件管理 <small>共 <span class="text-danger">{php echo count($file);}</span> 条</small></h2>
 
@@ -87,6 +87,10 @@
                     window.location.reload();
             }});
         });
+        $('.myModal').click(function(){
+            $("#myModal").modal();
+        });
     });
 </script>
 {template '_footer'}
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->

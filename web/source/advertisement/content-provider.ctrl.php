@@ -145,7 +145,13 @@ if ('account_list' == $do) {
 	$flow_uniaccount_list = cloud_flow_uniaccount_list_get();
 	if (!empty($list)) {
 		foreach ($list as $unia => &$account) {
-			$account_details = uni_accounts($account['uniacid']);
+			$account_details = array();
+			$account_info = pdo_get('account', array('uniacid' => $uniacid));
+			if (!empty($account_info)) {
+				$account_tablename = uni_account_type($account_info['type']);
+				$account_tablename = $account_tablename['table_name'];
+				$account_details = pdo_fetchall("SELECT w.*, a.type, a.isconnect FROM " . tablename('account') . " a INNER JOIN " . tablename($account_tablename) . " w USING(acid) WHERE a.uniacid = :uniacid AND a.isdeleted <> 1 ORDER BY a.acid ASC", array(':uniacid' => $uniacid), 'acid');
+			}
 						$account['details'][$account['default_acid']] = $account_details[$account['default_acid']];
 			$account['role'] = permission_account_user_role($_W['uid'], $account['uniacid']);
 			$account['setmeal'] = uni_setmeal($account['uniacid']);

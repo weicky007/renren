@@ -12,11 +12,15 @@ if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allow_o
 	header('Access-Control-Allow-Origin:' . $_SERVER['HTTP_ORIGIN']);
 }*/
 
+if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
+	$vars = array();
+	$vars['message'] = 	array('errno' => 0, 'message' => NULL);
+	$vars['redirect'] = '';
+	$vars['type'] = 'ajax';
+	exit(json_encode($vars));
+}
 require '../framework/bootstrap.inc.php';
 require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
-if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
-	iajax(0, NULL);
-}
 
 if (!empty($_GPC['state'])) {
 	$login_callback_params = OAuth2Client::supportParams($_GPC['state']);
@@ -25,6 +29,15 @@ if (!empty($_GPC['state'])) {
 		$action = 'login';
 		$_GPC['login_type'] = $login_callback_params['from'];
 		$_GPC['handle_type'] = $login_callback_params['mode'];
+	}
+}
+
+$welcome_bind = pdo_get('system_welcome_binddomain', array('domain IN ' => array('http://' . $_SERVER['HTTP_HOST'], 'https://' . $_SERVER['HTTP_HOST'])));
+$site_url_query = parse_url($_W['siteurl'], PHP_URL_QUERY);
+if (!empty($welcome_bind) && empty($site_url_query)) {
+	$site = WeUtility::createModuleSystemWelcome($welcome_bind['module_name']);
+	if (!is_error($site)) {
+		exit($site->systemWelcomeDisplay($welcome_bind['uid']));
 	}
 }
 
@@ -81,7 +94,7 @@ if (defined('FRAME') && $need_account_info) {
 	if (!empty($_W['uniacid'])) {
 		$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
 		if (is_error($_W['account'])) {
-			itoast('', url('account/display'));
+			itoast('', $_W['siteroot'] . 'web/home.php');
 		}
 		$_W['acid'] = $_W['account']['acid'];
 		$_W['weid'] = $_W['uniacid'];
@@ -120,11 +133,11 @@ if (is_array($acl[$controller]['direct']) && in_array($action, $acl[$controller]
 }
 
 checklogin();
-if (ACCOUNT_MANAGE_NAME_FOUNDER != $_W['role']) {
-	if (ACCOUNT_MANAGE_NAME_UNBIND_USER == $_W['role']) {
+if (ACCOUNT_MANAGE_NAME_FOUNDER != $_W['highest_role']) {
+	if (ACCOUNT_MANAGE_NAME_UNBIND_USER == $_W['highest_role']) {
 		itoast('', url('user/third-bind'));
 	}
-	if (empty($_W['uniacid']) && in_array(FRAME, array('account', 'wxapp')) && 'store' != $_GPC['m']) {
+	if (empty($_W['uniacid']) && in_array(FRAME, array('account', 'wxapp')) && 'store' != $_GPC['m'] && !$_GPC['system_welcome']) {
 		itoast('', url('account/display/platform'), 'info');
 	}
 
@@ -175,7 +188,7 @@ function _calc_current_frames(&$frames) {
 		$_W['breadcrumb'] = $frames['title'];
 	}
 	if (defined('IN_MODULE')) {
-		$_W['breadcrumb'] = ($_W['current_module']['name'] == 'store' ? '' : ('<a href="' . url('home/welcome', array('uniacid' => $_W['account']['uniacid'])) . '">' . $_W['account']['name'] . '</a> / ')) .  $_W['current_module']['title'];
+		$_W['breadcrumb'] = ($_W['current_module']['name'] == 'store' ? '' : ('<a href="' . $_W['account']['switchurl'] . '">' . $_W['account']['name'] . '</a> / ')) .  $_W['current_module']['title'];
 	}
 	if (empty($frames['section']) || !is_array($frames['section'])) {
 		return true;

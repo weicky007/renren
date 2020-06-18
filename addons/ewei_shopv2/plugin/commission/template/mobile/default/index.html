@@ -46,17 +46,21 @@
 		{/if}
 	    </div>
 	</div>
-		<div class="fui-cell-group">
-			<div class="fui-cell"style="    height: 2.85rem;">
-				<div class="fui-cell-icon">
-					<svg class="icon1" aria-hidden="true">
-						<use xlink:href="#icon-yaoqingma"></use>
-					</svg>
-				</div>
-				<div class="fui-cell-text">我的{php echo $this->set['texts']['icode']}：  {if p('offic')}{$member['mobile']}{else}{$member['id']}{/if}
+
+		{if empty($this->set['hideicode'])}
+			<div class="fui-cell-group">
+				<div class="fui-cell"style="    height: 2.85rem;">
+					<div class="fui-cell-icon">
+						<svg class="icon1" aria-hidden="true">
+							<use xlink:href="#icon-yaoqingma"></use>
+						</svg>
+					</div>
+					<div class="fui-cell-text">我的{php echo $this->set['texts']['icode']}：  {if p('offic')}{$member['mobile']}{else}{$member['id']}{/if}
+					</div>
 				</div>
 			</div>
-		</div>
+		{/if}
+
 		<div class="userblock">
 			<div class="line total new">
 				<div class="num">{php echo number_format($member['commission_pay'],2)}</div>
@@ -87,7 +91,7 @@
                 <div class="icon" style="color: #9ec9f4;"><i class="icon icon-dingdan2"></i></div>
 				<div class="text new">
 					<div class="title">{php echo $this->set['texts']['order']}</div>
-					<div class=""><span>{php echo number_format($member['ordercount0'],0)}</span> 笔</div>
+					<div class=""><span>{php echo number_format($member['ordercount'],0)}</span> 笔</div>
 				</div>
             </a>
             <a class="fui-block-child new  external" href="{php echo mobileUrl('commission/log')}">
@@ -104,6 +108,16 @@
 					<div class=""><span>{php echo number_format($member['downcount'],0)}</span>人</div>
 				</div>
             </a>
+
+		{if $hasdividend}
+			<a class="fui-block-child new  external" href="{php echo mobileUrl('dividend')}">
+				<div class="icon "  style="color: #ff6e02;"><i class="icon icon-heilongjiangtubiao11"></i></div>
+				<div class="text new">
+					<div class="title">{php echo $plugin_dividend_set['texts']['center']}</div>
+					<div class=""><span></span></div>
+				</div>
+			</a>
+		{/if}
 		<!--{if p("offic")}-->
 		<!--<a class="fui-block-child external" href="{php echo mobileUrl('commission/branch')}">-->
 			<!--<div class="icon text-orange"><i class="icon icon-store"></i></div>-->
@@ -207,7 +221,7 @@
 				<div class="fui-cell-icon ">
 					<i class="icon icon-dianpu1 text-yellow"></i>
 				</div>
-				<div class="fui-cell-text">小店设置</div>
+				<div class="fui-cell-text">{php echo $this->set['texts']['shop']}设置</div>
 				<div class="fui-cell-remark" style="font-size: 0.5rem;"></div>
 			</a>
 			<!--{/if}-->

@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,7 +21,7 @@ class Notice_EweiShopV2Page extends MobilePage
 			$hascommission = !empty($cset['level']);
 		}
 
-		app_json(array('notice' => $notice, 'hascommission' => $hascommission));
+		return app_json(array('notice' => $notice, 'hascommission' => $hascommission));
 	}
 
 	public function submit()
@@ -35,7 +35,7 @@ class Notice_EweiShopV2Page extends MobilePage
 		$notice = iunserializer($member['noticeset']);
 
 		if (empty($type)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$checked = intval($_GPC['checked']);
@@ -48,7 +48,7 @@ class Notice_EweiShopV2Page extends MobilePage
 		}
 
 		pdo_update('ewei_shop_member', array('noticeset' => iserializer($notice)), array('openid' => $openid, 'uniacid' => $uniacid));
-		app_json();
+		return app_json();
 	}
 }
 

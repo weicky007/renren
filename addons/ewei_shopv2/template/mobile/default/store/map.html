@@ -1,5 +1,70 @@
 {template '_header'}
-<script language='javascript' src='//api.map.baidu.com/getscript?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7'></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.1&key=1fb308f0707e5ff11db5997d42660396&plugin=AMap.Driving"></script>
+<style type="text/css">
+	.info {
+		border: solid 1px silver;
+		width: 12.5rem;
+		color: #000;
+	}
+	div.info-top {
+		position: relative;
+		background: none repeat scroll 0 0 #fff;
+	}
+	div.info-top div {
+		display: inline-block;
+		color: #000;
+		font-size: .7rem;
+		line-height: .775rem;
+		padding: .25rem .25rem 0;
+	}
+	div.info-top img {
+		position: absolute;
+		top: .5rem;
+		right: .5rem;
+		width: .6rem;
+		transition-duration: 0.25s;
+	}
+	div.info-top img:hover {
+		box-shadow: 0px 0px .125rem #000;
+	}
+	div.info-middle {
+		font-size: .3rem;
+		padding: .75rem;
+		line-height: .5rem;
+		height: 5.2rem;
+	}
+	div.info-middle .info-title{
+		line-height: 1rem;
+		font-size: .7rem;
+	}
+	div.info-bottom {
+		height: 0px;
+		width: 100%;
+		clear: both;
+		text-align: center;
+	}
+	div.info-bottom img {
+		position: relative;
+		z-index: 104;
+	}
+	span {
+		margin-left: .125rem;
+		font-size: .275rem;
+	}
+	.info-middle img {
+		float: left;
+		margin-right: .15rem;
+	}
+	.store-map-page .info-window .address{
+		max-height: 1.7rem;
+	}
+	.store-map-page .info-window .navi {
+		position: absolute;
+		right: .9rem;
+		bottom: .9rem;
+		font-size: .7rem;
+	}
+</style>
 <div class='fui-page  fui-page-current store-map-page' >
 
     <div class="fui-header">
@@ -36,7 +101,8 @@
     <script language='javascript'>
             require(['biz/store/map'], function (modal) {
                 modal.init({store: {php echo json_encode($store)}, isios: "{php echo is_h5app()&&is_ios()?1:0}"});
-            });</script>
+            });
+	</script>
 
 </div>
 {template '_footer'}

@@ -4,10 +4,13 @@
 <style type="text/css">
     .popover{z-index:10000;}
     .alert{margin-top:10px;}
+    .content .table{border-collapse:collapse;border:none;}
+    .content .table tr{border-collapse: collapse;border-left:1px solid #ededed;border-right:1px solid #ededed;}
+    .content .table > tbody > tr > td{border-top:1px solid #ededed;border-left:0;border-right:0;}
 </style>
-<div style='max-height:500px;overflow:auto;min-width:850px;'>
-    <table class="table">
-        <thead>
+<div class="">
+    <table class="table" border="1" cellspacing="0" width="100%" cellpadding="0">
+        <thead style="background: #f7f7f7;">
         <tr>
             <td>商品</td>
             <td style="width:100px;text-align: center;">商品价格</td>
@@ -54,7 +57,8 @@
         if(pindex==''||pindex==0){
             return;
         }
-        var keyword = $.trim($("input[name=keyword]").val());
+        // var keyword = $.trim($("input[name=keyword]").val());
+        var keyword = $.trim($("#goodsid_input").val());
         $("#goodsid_input").html('<div class="tip">正在进行搜索...</div>');
 
         $.ajax({

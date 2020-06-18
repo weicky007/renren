@@ -82,7 +82,7 @@
         <span class="help-block">推广二维码默认使用原来默认,如果选择则使用关注海报</span>
     </div>
 </div>
-<div id="qrcode" style="height: 620px"  {if empty($data['qrcode'])}style="display: none"{/if}>
+<div id="qrcode" style="height: 620px;{if empty($data['qrcode'])} display: none;{/if}" >
     <div class="col-sm-5">
         <img src="../addons/ewei_shopv2/plugin/commission/static/images/bangzhu.jpg" height="100%" width="100%"/>
     </div>
@@ -296,4 +296,3 @@
         })
     });
 </script>
-

@@ -20,7 +20,7 @@
             <td>{if $row['spc']!=''}<select class="form-control" id="spc_{$row['id']}" onchange="spcselect(this);">{loop $row['spc'] $r}<option data-id="{$row['id']}" data-specs="{php  echo $r['id'];}" data-marketprice="{$r['marketprice']}" data-stock="{$r['stock']}" data-title="{php echo $r['title']}" >{php echo $r['title']}</option>{/loop}</select>{else}无规格{/if}</td>
             <td><input type="number" class="form-control" name="need_goods_{$row['id']}" placeholder="输入数量"  ></td>
             <td><input type="number" class="form-control" name="need_money_{$row['id']}" placeholder="输入价格"  ></td>
-            <td ><a href="javascript:;" onclick="goods_select(this, {id:'{$row['id']}',name:'{$row['title']}',total:{$row['total']}})">选择</a></td>
+            <td ><a href="javascript:;"  class="label label-primary" onclick="goods_select(this, {id:'{$row['id']}',name:'{$row['title']}',total:{$row['total']}})">选择</a></td>
         </tr>
         {/loop}
         {if $total<=0}
@@ -35,4 +35,3 @@
         </tbody>
     </table>
 </div>
-

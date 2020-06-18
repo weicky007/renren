@@ -20,9 +20,9 @@
             {php $top_nav_shortcut[] = $nav}
         {/if}
     {/if}
-    {if 'store' == $nav['name'] && user_is_founder($_W['uid'], true)}{php $nav_top_tiled_system[] = $nav}{/if}
+    {if 'store' == $nav['name'] && $_W['isadmin']}{php $nav_top_tiled_system[] = $nav}{/if}
 {/loop}
-{if $_W['iscontroller'] && user_is_founder($_W['uid'], true)}
+{if $_W['iscontroller'] && $_W['isadmin']}
 {loop $nav_top_tiled_system $key $nav}
 <!-- start应用入口和平台入口特殊处理active-->
 {if (FRAME == 'account' && $nav['name'] == 'platform') && !defined('IN_MODULE')}{php $nav['name'] = FRAME}{/if}

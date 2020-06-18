@@ -287,6 +287,7 @@ a {
     line-height: 2.5rem;
     background: #ff9d55;
     color: #fff;
+    margin: 0 !important;
     display: inline-block;
 }
 .fui-footer.quick .quick-submit.disabled {
@@ -553,6 +554,8 @@ a {
     content: "\e6d7";
     line-height: 1.1rem;
     font-size: 0.85rem;
+    margin-top: -1px;
+    display: block;
 }
 .quick-num .minus.disabled {
     color: #dadada;
@@ -568,6 +571,8 @@ a {
     content: "\e662";
     line-height: 1.2rem;
     font-size: 0.9rem;
+    margin-top: -1px;
+    display: block;
 }
 .quick-num .plus.disabled {
     background: #dadada;
@@ -870,6 +875,7 @@ a {
     background: #e6e6e6;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    flex: 0 0 auto;
 }
 .fui-goods-tab .menu .nav {
     height: 2.4rem;
@@ -920,6 +926,7 @@ a {
     -webkit-flex: 1;
     -ms-flex: 1;
     flex: 1;
+    overflow: hidden;
 }
 .fui-goods-tab .main .item-title {
     padding: 0.5rem 0.5rem 0;
@@ -1009,6 +1016,7 @@ a {
     line-height: 1.1rem;
 }
 .fui-goods-tab .main .item .inner .buyline .buybtn {
+    margin-left: auto;
     height: 1.2rem;
     width: 1.2rem;
     background: #ff5555;
@@ -1070,4 +1078,7 @@ a {
     font-size: 1.4rem;
     vertical-align: middle;
     color: #ffffff
+}
+.cart-dot.empty:after {
+    display: none;
 }

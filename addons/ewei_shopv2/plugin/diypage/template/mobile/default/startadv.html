@@ -16,14 +16,19 @@
                 </div>
                 <div class="fui-swipe-page"></div>
             </div>
-            {if $startadv['params']['style']!='default' || $startadv['params']['style']=='default'&&$startadv['params']['autoclose']>0}
-                <div class="close">
+            {if $startadv['params']['style']!='default' || $startadv['params']['style']=='default'}
+                <div class="close" data-value="startadv">
                     <div class="close-btn" data-close="{php echo $startadv['params']['style']=='default'&&$startadv['params']['autoclose']>0&&empty($startadv['params']['canclose'])?0:1}" data-second="{php echo  $startadv['params']['style']=='default'&&$startadv['params']['autoclose']>0?$startadv['params']['autoclose']:0}">{if $startadv['params']['style']=='default'&&$startadv['params']['autoclose']>0}<span>{$startadv['params']['autoclose']}</span> {if $startadv['params']['canclose']>0}关闭{else}秒{/if}{/if}</div>
                 </div>
             {/if}
         </div>
     </div>
     <script type="text/javascript">
+
+        $('.fui-startadv .inner img').css({
+            height:'auto'
+        })
+
         var advsecond=$(".close-btn").data('second');
         if(advsecond>0){
             var endtime = parseInt(advsecond);

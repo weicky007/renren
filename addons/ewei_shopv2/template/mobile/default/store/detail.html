@@ -34,7 +34,7 @@
 	    		</div>
 	    		<div class="fui-list">
 	    		  	<div class="fui-list-inner">
-	    		  	    <div class="subtitle">公告：{$item['desc']}</div>
+	    		  	    <div class="subtitle">门店简介：{$item['desc']}</div>
 	    		  	</div>
 	    		</div>
 				{if  $item['haslabel']==1  }
@@ -52,7 +52,7 @@
 				<div class="fui-cell-text"><p>{$item['tel']}</p></div>
 				<div class="fui-cell-remark"></div>
 		 	 </a>
-			 <a class="fui-cell external"  href="{php echo mobileUrl('store/map',array('id'=>$item['id'],'merchid'=>$item['merchid']))}">
+			 <a class="fui-cell external"  href="{php echo mobileUrl('store/map',array('id'=>$item['id']))}">
 				<div class="fui-cell-icon"><i class="icon icon-dingwei "></i></div>
 				<div class="fui-cell-text">{$item['address']}</div>
 				<div class="fui-cell-remark"></div>
@@ -73,4 +73,3 @@
 
 </div>
 {template '_footer'}
-

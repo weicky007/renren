@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -75,7 +76,49 @@ class index_EweiShopV2Page extends PluginMobilePage
 				$set = unserialize($set);
 			}
 
-			$log = pdo_fetchall('SELECT l.*,m.`nickname`,m.`avatar` FROM ' . tablename('ewei_shop_lottery_log') . ' AS l LEFT JOIN ' . tablename('ewei_shop_member') . ' AS m ON m.openid=l.join_user WHERE l.uniacid=:uniacid AND l.lottery_id=:lottery_id AND l.is_reward=1 order by id desc LIMIT 5', array(':uniacid' => $_W['uniacid'], ':lottery_id' => $id));
+			$where = '';
+			if (!empty($lottery['award_start']) && !empty($lottery['award_end'])) {
+				$where .= ' AND l.addtime >= ' . $lottery['award_start'] . ' AND l.addtime <= ' . $lottery['award_end'];
+			}
+
+			$log = pdo_fetchall('SELECT l.*,m.`nickname`,m.`avatar` FROM ' . tablename('ewei_shop_lottery_log') . ' AS l LEFT JOIN ' . tablename('ewei_shop_member') . ' AS m ON m.openid=l.join_user WHERE l.uniacid=:uniacid AND l.lottery_id=:lottery_id AND l.is_reward=1 ' . $where . ' order by l.log_id desc LIMIT 5', array(':uniacid' => $_W['uniacid'], ':lottery_id' => $id));
+
+			if (!empty($log)) {
+				$credittext = empty($_W['shopset']['trade']['credittext']) ? '积分' : $_W['shopset']['trade']['credittext'];
+				$moneytext = empty($_W['shopset']['trade']['moneytext']) ? '余额' : $_W['shopset']['trade']['moneytext'];
+
+				foreach ($log as &$item) {
+					if (empty($item['lottery_data'])) {
+						continue;
+					}
+
+					$reward_name = '积分';
+					$lottery_data = unserialize($item['lottery_data']);
+
+					if (isset($lottery_data['credit'])) {
+						$reward_name = $credittext;
+					}
+					else if (isset($lottery_data['money'])) {
+						$reward_name = $moneytext;
+					}
+					else if (isset($lottery_data['bribery'])) {
+						$reward_name = '红包';
+					}
+					else if (isset($lottery_data['goods'])) {
+						$reward_name = '特惠商品';
+					}
+					else {
+						if (isset($lottery_data['coupon'])) {
+							$reward_name = '优惠券';
+						}
+					}
+
+					$reward_text = ' ' . $item['nickname'] . '[抽到' . $reward_name . ',时间' . date('Y-m-d', $item['addtime']) . '] ';
+					$item['reward_text'] = $reward_text;
+				}
+
+				unset($item);
+			}
 
 			if (!empty($lottery['lottery_days'])) {
 				$effecttime = time() - $lottery['lottery_days'];
@@ -86,15 +129,15 @@ class index_EweiShopV2Page extends PluginMobilePage
 			$member = m('member')->getMember($_W['openid'], true);
 		}
 
-		if (isset($lottery['lottery_type']) && ($lottery['lottery_type'] == 1)) {
+		if (isset($lottery['lottery_type']) && $lottery['lottery_type'] == 1) {
 			include $this->template('lottery/indexpan');
 		}
 		else {
-			if (isset($lottery['lottery_type']) && ($lottery['lottery_type'] == 2)) {
+			if (isset($lottery['lottery_type']) && $lottery['lottery_type'] == 2) {
 				include $this->template('lottery/indexgua');
 			}
 			else {
-				if (isset($lottery['lottery_type']) && ($lottery['lottery_type'] == 3)) {
+				if (isset($lottery['lottery_type']) && $lottery['lottery_type'] == 3) {
 					include $this->template('lottery/indexgrid');
 				}
 				else {
@@ -142,14 +185,15 @@ class index_EweiShopV2Page extends PluginMobilePage
 		}
 
 		$limit = ($page - 1) * 15;
-		$mylog = pdo_fetchall('SELECT l.*,m.`nickname`,m.`avatar` FROM ' . tablename('ewei_shop_lottery_log') . ' AS l LEFT JOIN ' . tablename('ewei_shop_member') . ' AS m ON m.openid=l.join_user WHERE l.uniacid=:uniacid  AND l.join_user=:join_user AND l.is_reward=1 order by addtime desc LIMIT ' . $limit . ',15', array(':uniacid' => $_W['uniacid'], ':join_user' => $_W['openid']));
+		$mylog = pdo_fetchall('SELECT l.*,m.`nickname`,m.`avatar` FROM ' . tablename('ewei_shop_lottery_log') . ' AS l LEFT JOIN ' . tablename('ewei_shop_member') . ' AS m ON m.openid = l.join_user and l.uniacid = m.uniacid WHERE l.uniacid=:uniacid  AND l.join_user=:join_user AND l.is_reward=1 order by addtime desc LIMIT ' . $limit . ',15', array(':uniacid' => $_W['uniacid'], ':join_user' => $_W['openid']));
 		$count = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_lottery_log') . ' WHERE uniacid=:uniacid  AND join_user=:join_user AND is_reward=1 ', array(':uniacid' => $_W['uniacid'], ':join_user' => $_W['openid']));
+		$set = $this->set;
 
 		foreach ($mylog as $key => $value) {
 			$lottery_data = unserialize($value['lottery_data']);
 
 			if (isset($lottery_data['credit'])) {
-				$mylog[$key]['title'] = '积分:' . $lottery_data['credit'];
+				$mylog[$key]['title'] = $set['texts']['credit1'] . ':' . $lottery_data['credit'];
 				$mylog[$key]['rewarded'] = 1;
 				$mylog[$key]['icon'] = '../addons/ewei_shopv2/plugin/lottery/static/images/jifen.png';
 			}
@@ -276,7 +320,7 @@ class index_EweiShopV2Page extends PluginMobilePage
 				$pass = 0;
 
 				foreach ($value['reward']['coupon'] as $val) {
-					if (!empty($val['count']) && ($val['couponnum'] <= $val['count'])) {
+					if (!empty($val['count']) && $val['couponnum'] <= $val['count']) {
 						$pass = 1;
 					}
 				}

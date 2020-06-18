@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,29 +25,29 @@ return array(
 					array(
 						'title' => '待发货',
 						'param' => array('status' => 1)
-						),
+					),
 					array(
 						'title' => '待收货',
 						'param' => array('status' => 2)
-						),
+					),
 					array(
 						'title' => '待付款',
 						'param' => array('status' => 3)
-						),
+					),
 					array(
 						'title' => '已完成',
 						'param' => array('status' => 4)
-						),
+					),
 					array(
 						'title' => '已关闭',
 						'param' => array('status' => 5)
-						),
+					),
 					array(
 						'title' => '全部订单',
 						'param' => array('status' => 'all')
-						)
 					)
-				),
+				)
+			),
 			array(
 				'title'  => '核销查询',
 				'route'  => 'verify',
@@ -55,17 +56,17 @@ return array(
 					array(
 						'title' => '未核销',
 						'param' => array('verify' => 'normal')
-						),
+					),
 					array(
 						'title' => '已核销',
 						'param' => array('verify' => 'over')
-						),
+					),
 					array(
 						'title' => '已取消',
 						'param' => array('verify' => 'cancel')
-						)
 					)
-				),
+				)
+			),
 			array(
 				'title'  => '拼团管理',
 				'route'  => 'team',
@@ -74,21 +75,21 @@ return array(
 					array(
 						'title' => '拼团成功',
 						'param' => array('type' => 'success')
-						),
+					),
 					array(
 						'title' => '拼团中',
 						'param' => array('type' => 'ing')
-						),
+					),
 					array(
 						'title' => '拼团失败',
 						'param' => array('type' => 'error')
-						),
+					),
 					array(
 						'title' => '全部拼团',
 						'param' => array('type' => 'all')
-						)
 					)
-				),
+				)
+			),
 			array(
 				'title'  => '维权设置',
 				'route'  => 'refund',
@@ -97,13 +98,13 @@ return array(
 					array(
 						'title' => '维权申请',
 						'param' => array('status' => 'apply')
-						),
+					),
 					array(
 						'title' => '维权完成',
 						'param' => array('status' => 'over')
-						)
 					)
-				),
+				)
+			),
 			array(
 				'title' => '基础设置',
 				'items' => array(
@@ -114,12 +115,12 @@ return array(
 						'title'   => '快递打印',
 						'route'   => 'exhelper',
 						'extends' => array('groups.exhelper.short', 'groups.exhelper.express', 'groups.exhelper.invoice', 'groups.exhelper.sender', 'groups.exhelper.single', 'groups.exhelper.batch', 'groups.exhelper.senderadd')
-						),
+					),
 					array('title' => '批量发货', 'route' => 'batchsend')
-					)
 				)
 			)
 		)
-	);
+	)
+);
 
 ?>

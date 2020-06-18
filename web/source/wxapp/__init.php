@@ -25,7 +25,7 @@ if (in_array($action, array('manage', 'post'))) {
 if (!in_array($action, array('post', 'manage', 'auth'))) {
 	$account_api = WeAccount::createByUniacid();
 	if (is_error($account_api)) {
-		itoast('', url('account/display', array('type' => WXAPP_TYPE_SIGN)));
+		itoast('', $_W['siteroot'] . 'web/home.php');
 	}
 	$check_manange = $account_api->checkIntoManage();
 	if (is_error($check_manange)) {

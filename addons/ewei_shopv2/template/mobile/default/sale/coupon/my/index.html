@@ -41,7 +41,7 @@
 			<div class="coupon-dots">
 				<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
 			</div>
-				<div class="coupon-type" ><%coupon.tagtitle%></div>
+				<div class="coupon-type" <% if coupon.settitlecolor ==1 %>style="background:<%coupon.titlecolor%>"<%/if%> ><%coupon.tagtitle%></div>
 			<div class="coupon-left">
 				<div class="title"><%=coupon.title3%></div>
 				<div class="subtitle"><%=coupon.title2%></div>

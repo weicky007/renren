@@ -6,7 +6,7 @@
     <div class="page-sub-toolbar">
          <span class=''>
             {ifp 'goods.virtual.temp.add'}
-            <a class="btn btn-primary btn-sm" href="{php echo webUrl('goods/virtual/temp/add')}">添加新模板</a>
+            <a class="btn btn-primary btn-sm" href="{php echo merchUrl('goods/virtual/temp/add')}">添加新模板</a>
             {/if}
         </span>
     </div>
@@ -98,7 +98,7 @@
                 <input type="submit" value="提交" class="btn btn-primary"  />
 
                 {/if}
-                <a href="{php echo webUrl('goods/virtual/temp')}"  {ife 'goods.virtual.temp' $item}style='margin-left:10px;'{/if}><span class="btn btn-default" style='margin-left:10px;'>返回列表</span></a>
+                <a href="{php echo merchUrl('goods/virtual/temp')}"  {ife 'goods.virtual.temp' $item}style='margin-left:10px;'{/if}><span class="btn btn-default" style='margin-left:10px;'>返回列表</span></a>
             </div>
         </div>
 
@@ -109,7 +109,7 @@
     function addType() {
         $(".btn-add-type").button("loading");
         $.ajax({
-            url: "{php echo webUrl('goods/virtual/temp/tpl')}&kw=" + kw,
+            url: "{php echo merchUrl('goods/virtual/temp/tpl')}&kw=" + kw,
             cache: false
         }).done(function (html) {
             $(".btn-add-type").button("reset");
@@ -173,3 +173,4 @@
 
 {template '_footer'}
 
+<!--青岛易联互动网络科技有限公司-->

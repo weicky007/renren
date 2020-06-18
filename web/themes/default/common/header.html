@@ -31,7 +31,7 @@
 					{else}
 						{php $nav_top_tiled_system[] = $nav}
 					{/if}
-					{if 'store' == $nav['name'] && user_is_founder($_W['uid'], true)}{php $nav_top_tiled_system[] = $nav}{/if}
+					{if 'store' == $nav['name'] && $_W['isadmin']}{php $nav_top_tiled_system[] = $nav}{/if}
 				{/loop}
 				<ul class="nav navbar-nav  navbar-left">
 					{loop $nav_top_tiled_system $nav}
@@ -78,7 +78,7 @@
 						{loop $frames['section'] $frame_section_id $frame_section}
 
 						
-						{if FRAME == 'store' && !($_W['isfounder'] && !user_is_vice_founder()) && !empty($frame_section['founder'])}
+						{if FRAME == 'store' && !($_W['isadmin']) && !empty($frame_section['founder'])}
 						{php continue;}
 						{/if}
 						

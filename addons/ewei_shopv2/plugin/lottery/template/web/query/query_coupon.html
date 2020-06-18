@@ -29,7 +29,7 @@
                 打 {$row['discount']} 折
                 {else if $row['backtype']==2}
                 {if $row['backmoney']>0}返 {$row['backmoney']} 余额;{/if}
-                {if $row['backcredit']>0}返 {$row['backcredit']} 积分;{/if}
+                {if $row['backcredit']>0}返 {$row['backcredit']} {php echo $this->set["texts"]["credit1"]};{/if}
                 {if $row['backredpack']>0}返 {$row['backredpack']} 红包;{/if}
                 {/if}</td>
             <td>{$row['last']}</td>

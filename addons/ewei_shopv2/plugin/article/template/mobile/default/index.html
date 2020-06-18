@@ -18,7 +18,7 @@
 		<div class="fui-article-page">
 			
 			<div class="fui-article-title">{$article['article_title']}</div>
-			<div class="fui-article-subtitle">{if !empty($article['article_mp'])}<a href="{if !empty($_W['shopset']['share']['followurl'])}{$_W['shopset']['share']['followurl']}{else}javascript:;{/if}">{$article['article_mp']}</a> 发布时间: {$article['article_date_v']}{if !empty($article['article_author'])} 作者: {$article['article_author']}{/if} {/if} </div>
+			<div class="fui-article-subtitle">{$article['article_date_v']} {if !empty($article['article_mp'])}{if !empty($article['article_author'])} 作者: {$article['article_author']}{/if} <a href="{if !empty($_W['shopset']['share']['followurl'])}{$_W['shopset']['share']['followurl']}{else}javascript:;{/if}">{$article['article_mp']}</a>{/if}  </div>
 			<!-- 关注提示 -->
 			{if !$followed && !empty($_W['shopset']['share']['followurl'])}
 				<div class="fui-list-group external" onclick="location.href='{$_W['shopset']['share']['followurl']}'">

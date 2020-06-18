@@ -131,7 +131,7 @@
     <label class="col-lg control-label">商户位置</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'merch.user' $item}
-        {php echo tpl_form_field_coordinate('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
+        {php echo tpl_form_field_position('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
         {else}
         <div class='form-control-static'>lng={$item['lng']},lat={$item['lat']}</div>
         {/if}
@@ -166,7 +166,7 @@
     <label class="col-lg control-label">主账户名</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        <input type="text" class="form-control" name="username" value="{$account['username']}" />
+        <input type="text" class="form-control" name="username" value="{if !empty($account['username'])}{$account['username']}{else}{$show_name}{/if}" />
         {else}
         <div class="form-control-static">{$item['username']}</div>
         {/if}
@@ -176,7 +176,7 @@
     <label class="col-lg control-label">主账户密码</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        <input type="text" class="form-control" name="pwd" />
+        <input type="text" class="form-control" name="pwd" value="{if !empty($account['pwd'])}{else}{$show_pass}{/if}"/>
         {else}
         <div class="form-control-static">******</div>
         {/if}
@@ -282,7 +282,7 @@
 
 <div class="form-group-title">商户结算</div>
 <div class="form-group">
-    <label class="col-lg control-label">抽成利率</label>
+    <label class="col-lg control-label">抽成比例</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
         <div class="input-group">
@@ -298,10 +298,63 @@
     <label class="col-lg control-label must">收款人</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        {php echo tpl_selector('payopenid',array('required'=>false,'preview'=>false,'key'=>'openid','text'=>'nickname','type'=>'text','placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择收款人 ', 'items'=>$user,'url'=>webUrl('member/query') ))}
+        {php echo tpl_selector('payopenid',array('value'=>!empty($user['nickname'])?$user['nickname']:"",'required'=>false,'preview'=>false,'key'=>'openid','text'=>'nickname','type'=>'text','placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择收款人 ', 'items'=>$user,'url'=>webUrl('member/query') ))}
         {else}
         <div class="form-control-static">{$item['payopenid']}</div>
         {/if}
     </div>
 </div>
 
+<div class="form-group-title">多商户积分商城积分订单提现</div>
+<div class="form-group">
+    <label class="col-lg control-label">积分商城提现</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <label class="radio-inline">
+                <input type="radio" name="iscredit" value="0" {if empty($item['iscredit'])}checked{/if} /> 开启
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="iscredit" value="1" {if !empty($item['iscredit'])}checked{/if} />禁用
+            </label>
+        </div>
+        <span class="help-block">如果开启积分商城提现功能，商户积分商城的订单将可以通过余额进行提现。</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg control-label">积分兑换</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <label class="radio-inline">
+                <input type="radio" name="iscreditmoney" value="0" {if empty($item['iscreditmoney'])}checked{/if} /> 开启
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="iscreditmoney" value="1" {if !empty($item['iscreditmoney'])}checked{/if} />禁用
+            </label>
+        </div>
+        <span class="help-block">如果开启积分兑换功能，商户积分商城的订单中的积分将可以通过积分兑换余额进行提现。</span>
+    </div>
+</div>
+
+
+<!--    -->
+<div id="seecredit">
+<div class="form-group">
+    <label class="col-lg control-label">兑换比例</label>
+    <div class="col-sm-8">
+        {ife 'merch.user' $item}
+        <div class="input-group">
+            <input type="text" class="form-control" name="creditrate" value="{$item['creditrate']}" /><span class="input-group-addon">积分：1元</span>
+        </div>
+        {else}
+        <div class="form-control-static">{$item['creditrate']}</div>
+        {/if}
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-lg control-label must">收款人</label>
+    <div class="col-sm-8">
+        <div class="form-control-static">与商户结算收款人为同一人</div>
+    </div>
+</div>
+</div>

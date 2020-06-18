@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,7 +14,8 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 		$uniacid = $_W['uniacid'];
 		$openid = $_W['openid'];
 		$orderid = intval($_GPC['orderid']);
-		$order = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order') . "\r\n            where id=:id and uniacid=:uniacid and openid=:openid limit 1", array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
+		$order = pdo_fetch('select * from ' . tablename('ewei_shop_groups_order') . '
+            where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
 
 		if (empty($order)) {
 			if (!$_W['isajax']) {
@@ -21,12 +23,13 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 				exit();
 			}
 			else {
-				show_json(0, '订单未找到');
+				$this->message('订单未找到', mobileUrl('groups/index'), 'error');
 			}
 		}
 
-		if (($order['heads'] == 1) && ($order['success'] == 0)) {
+		if ($order['heads'] == 1 && $order['success'] == 0) {
 			$_err = '拼团未成功，团长不允许退款！';
+			$this->message($_err, mobileUrl('groups/index'), 'error');
 		}
 
 		$goodRefund = false;
@@ -36,34 +39,52 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 			$goodRefund = true;
 		}
 
+		if ($groupsSet['refundday'] == 0) {
+			$goodRefund = true;
+		}
+
+		$verifytotal = pdo_fetchcolumn('select count(1) from ' . tablename('ewei_shop_groups_verify') . ' where orderid = :orderid and openid = :openid and uniacid = :uniacid and verifycode = :verifycode ', array(':orderid' => $order['id'], ':openid' => $order['openid'], ':uniacid' => $order['uniacid'], ':verifycode' => $order['verifycode']));
+
 		if ($order['status'] == 0) {
 			$_err = '订单未付款，不能申请退款!';
 		}
 		else if ($order['status'] == 2) {
 			if ($goodRefund) {
-				$_err = '该商品发货之后不允许退款!';
+				$_err = '该商品不允许退款!';
+			}
+
+			if (0 < $verifytotal) {
+				$_err = '该商品已经核销不允许退款!';
+			}
+		}
+		else if ($order['status'] == 3) {
+			if ($goodRefund) {
+				$_err = '该商品不允许退款!';
+			}
+			else if (0 < $verifytotal) {
+				$_err = '该商品已经核销不允许退款!';
+			}
+			else {
+				if ($order['refundstate'] == 0) {
+					$refunddays = intval($groupsSet['refundday']);
+
+					if (0 < $refunddays) {
+						$days = intval((time() - $order['finishtime']) / 3600 / 24);
+
+						if ($refunddays < $days) {
+							$_err = '订单完成已超过 ' . $refunddays . ' 天, 无法发起退款申请!';
+						}
+					}
+					else {
+						$_err = '订单完成, 无法申请退款!';
+					}
+				}
 			}
 		}
 		else {
-			if ($order['status'] == 3) {
+			if ($order['status'] == 1) {
 				if ($goodRefund) {
-					$_err = '该商品发货之后不允许退款!';
-				}
-				else {
-					if ($order['refundstate'] == 0) {
-						$refunddays = intval($groupsSet['refundday']);
-
-						if (0 < $refunddays) {
-							$days = intval((time() - $order['finishtime']) / 3600 / 24);
-
-							if ($refunddays < $days) {
-								$_err = '订单完成已超过 ' . $refunddays . ' 天, 无法发起退款申请!';
-							}
-						}
-						else {
-							$_err = '订单完成, 无法申请退款!';
-						}
-					}
+					$_err = '该商品不允许退款!';
 				}
 			}
 		}
@@ -77,7 +98,7 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
-		$order['refundprice'] = ($order['price'] - $order['creditmoney']) + $order['freight'];
+		$order['refundprice'] = $order['price'] - $order['creditmoney'] + $order['freight'];
 
 		if (2 <= $order['status']) {
 			$order['refundprice'] -= $order['freight'];
@@ -94,6 +115,9 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 
 		try {
 			extract($this->globalData());
+			if ($order['success'] == 0 && $order['heads'] == 1) {
+				throw new Exception('拼团未完成,团长不能退款哦！');
+			}
 
 			if ($order['status'] == '-1') {
 				throw new Exception('请不要重复提交！');
@@ -144,9 +168,10 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 		global $_W;
 		global $_GPC;
 		extract($this->globalData());
+		$error = '';
 
 		if ($order['status'] == '-1') {
-			show_json(0, '订单已经处理完毕!');
+			$error = '订单已经处理完毕';
 		}
 
 		$price = trim($_GPC['price']);
@@ -154,11 +179,20 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 
 		if ($rtype != 2) {
 			if (empty($price)) {
-				show_json(0, '退款金额不能为0元');
+				$error = '退款金额不能为0元';
 			}
 
 			if ($order['refundprice'] < $price) {
-				show_json(0, '退款金额不能超过' . $order['refundprice'] . '元');
+				$error = '退款金额不能超过' . $order['refundprice'] . '元';
+			}
+		}
+
+		if (!empty($error)) {
+			if ($_W['isajax']) {
+				show_json(0, $error);
+			}
+			else {
+				$this->message($error, mobileUrl('groups/index'), 'error');
 			}
 		}
 
@@ -242,9 +276,10 @@ class Refund_EweiShopV2Page extends PluginMobileLoginPage
 		$refund_data['refundtime'] = $time;
 		pdo_update('ewei_shop_groups_order_refund', $refund_data, array('id' => $refundid, 'uniacid' => $uniacid));
 		$order_data = array();
-		$order_data['refundstate'] = 0;
-		$order_data['refundstatus'] = -1;
+		$order_data['refundstate'] = -1;
+		$order_data['status'] = 3;
 		$order_data['refundtime'] = $time;
+		$order_data['finishtime'] = $time;
 		pdo_update('ewei_shop_groups_order', $order_data, array('id' => $orderid, 'uniacid' => $uniacid));
 		show_json(1);
 	}

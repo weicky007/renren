@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Comment_EweiShopV2Page extends AppMobilePage
 {
 	public function __construct()
@@ -13,7 +13,7 @@ class Comment_EweiShopV2Page extends AppMobilePage
 		$trade = m('common')->getSysset('trade');
 
 		if (!empty($trade['closecomment'])) {
-			app_error(AppError::$OrderCanNotComment);
+			return app_error(AppError::$OrderCanNotComment);
 		}
 	}
 
@@ -27,20 +27,20 @@ class Comment_EweiShopV2Page extends AppMobilePage
 		$order = pdo_fetch('select id,status,iscomment from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
 
 		if (empty($order)) {
-			app_error(AppError::$OrderNotFound);
+			return app_error(AppError::$OrderNotFound);
 		}
 
-		if (($order['status'] != 3) && ($order['status'] != 4)) {
-			app_error(AppError::$OrderCanNotComment, '订单未收货，不能评价!');
+		if ($order['status'] != 3 && $order['status'] != 4) {
+			return app_error(AppError::$OrderCanNotComment, '订单未收货，不能评价!');
 		}
 
 		if (2 <= $order['iscomment']) {
-			app_error(AppError::$OrderCanNotComment, '您已经评价过了!');
+			return app_error(AppError::$OrderCanNotComment, '您已经评价过了!');
 		}
 
 		$goods = pdo_fetchall('select og.id,og.goodsid,og.price,g.title,g.thumb,og.total,g.credit,og.optionid,o.title as optiontitle from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' left join ' . tablename('ewei_shop_goods_option') . ' o on o.id=og.optionid ' . ' where og.orderid=:orderid and og.uniacid=:uniacid ', array(':uniacid' => $uniacid, ':orderid' => $orderid));
 		$goods = set_medias($goods, 'thumb');
-		app_json(array('order' => $order, 'goods' => $goods, 'shopname' => $_W['shopset']['shop']['name']));
+		return app_json(array('order' => $order, 'goods' => $goods, 'shopname' => $_W['shopset']['shop']['name']));
 	}
 
 	public function submit()
@@ -53,7 +53,7 @@ class Comment_EweiShopV2Page extends AppMobilePage
 		$order = pdo_fetch('select id,status,iscomment from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
 
 		if (empty($order)) {
-			app_error(AppError::$OrderNotFound);
+			return app_error(AppError::$OrderNotFound);
 		}
 
 		$member = m('member')->getMember($openid);
@@ -65,7 +65,7 @@ class Comment_EweiShopV2Page extends AppMobilePage
 		}
 
 		if (!is_array($comments)) {
-			app_error(AppError::$SystemError, '数据出错,请重试!');
+			return app_error(AppError::$SystemError, '数据出错,请重试!');
 		}
 
 		$trade = m('common')->getSysset('trade');
@@ -98,7 +98,7 @@ class Comment_EweiShopV2Page extends AppMobilePage
 		}
 
 		pdo_update('ewei_shop_order', $d, array('id' => $orderid, 'uniacid' => $uniacid));
-		app_json();
+		return app_json();
 	}
 }
 

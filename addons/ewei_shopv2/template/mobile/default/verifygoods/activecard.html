@@ -80,12 +80,12 @@
 		<div class="coupon-list-group"  id="container">
 			{loop $verifygoods $item}
 			<a class="coupon-list  blue"  href="{php echo mobileUrl('verifygoods/active',array('id'=>$item['id'],'card_id'=>$card_id,'encrypt_code'=>$encrypt_code))}" >
-				<div class="coupon-left">
+				<div class="coupon-left" style="width: 6.25rem">
 					<div class="coupon-title">
 						<div class="coupon-list-media">
 							<img src="{$item['thumb']}"/>
 						</div>
-						<div style="float: left;">
+						<div style="float: left;overflow: hidden;text-overflow: ellipsis; white-space: nowrap;">
 							{$item['title']}
 						</div>
 					</div>

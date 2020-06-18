@@ -1,5 +1,5 @@
 <?php
-//haha
+
 function ranksort($a, $b)
 {
 	return $b['credit1'] < $a['credit1'] ? -1 : 1;
@@ -30,10 +30,10 @@ class Rank_EweiShopV2Page extends MobilePage
 	{
 		global $_W;
 		$rank_cache = m('cache')->getArray('member_rank');
-		if (empty($rank_cache) || ($rank_cache['time'] < TIMESTAMP) || $update) {
+		if (empty($rank_cache) || $rank_cache['time'] < TIMESTAMP || $update) {
 			$num = intval($_W['shopset']['rank']['num']);
-			$result = pdo_fetchall('SELECT sm.id,sm.uid,m.credit1,sm.nickname,sm.avatar,sm.openid FROM ' . tablename('ewei_shop_member') . ' sm RIGHT JOIN ' . tablename('mc_members') . ' m ON m.uid=sm.uid WHERE sm.uniacid = :uniacid ORDER BY m.credit1 DESC LIMIT ' . $num, array(':uniacid' => $_W['uniacid']));
-			$result1 = pdo_fetchall('SELECT id,uid,credit1,nickname,avatar,openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = :uniacid AND uid=0 ORDER BY credit1 DESC LIMIT ' . $num, array(':uniacid' => $_W['uniacid']));
+			$result = pdo_fetchall('SELECT sm.id,sm.uid,m.credit1,sm.nickname,sm.avatar,sm.openid FROM ' . tablename('ewei_shop_member') . ' sm RIGHT JOIN ' . tablename('mc_members') . (' m ON m.uid=sm.uid WHERE sm.uniacid = :uniacid ORDER BY m.credit1 DESC LIMIT ' . $num), array(':uniacid' => $_W['uniacid']));
+			$result1 = pdo_fetchall('SELECT id,uid,credit1,nickname,avatar,openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = :uniacid AND uid=0 ORDER BY credit1 DESC LIMIT ' . $num), array(':uniacid' => $_W['uniacid']));
 			$result = array_merge($result, $result1);
 			usort($result, 'ranksort');
 			$result = array_slice($result, 0, $num);
@@ -83,7 +83,7 @@ class Rank_EweiShopV2Page extends MobilePage
 		$stop = false;
 
 		if ($num <= $pindex * $psize) {
-			$psize = (($num % $psize) == 0 ? 20 : $num % $psize);
+			$psize = $num % $psize == 0 ? 20 : $num % $psize;
 			$pindex = ceil($num / $psize);
 			$stop = true;
 		}
@@ -100,12 +100,12 @@ class Rank_EweiShopV2Page extends MobilePage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
+			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
+			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
 		}
 
 		$sql = 'select sum(num) from ' . tablename('mc_credits_record') . ' where uniacid = :uniacid and uid = :uid and credittype = :credittype and `module` = "ewei_shopv2" and createtime between :createtime1 and :createtime2';
@@ -158,12 +158,12 @@ class Rank_EweiShopV2Page extends MobilePage
 		$stop = false;
 
 		if ($num <= $pindex * $psize) {
-			$psize = (($num % $psize) == 0 ? 20 : $num % $psize);
+			$psize = $num % $psize == 0 ? 20 : $num % $psize;
 			$pindex = ceil($num / $psize);
 			$stop = true;
 		}
 
-		$limit = ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$limit = ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$result = pdo_fetchall('SELECT m.id,m.uid,m.nickname,m.avatar,SUM(o.price) as price FROM ' . tablename('ewei_shop_member') . ' as m JOIN ' . tablename('ewei_shop_order') . ' as o ON m.openid = o.openid AND m.uniacid = o.uniacid WHERE o.uniacid = :uniacid AND o.status = 3 GROUP BY o.openid ORDER BY price DESC ' . $limit, array(':uniacid' => $_W['uniacid']));
 		show_json(1, array('list' => $result, 'stop' => $stop));
 	}
@@ -174,12 +174,12 @@ class Rank_EweiShopV2Page extends MobilePage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
+			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
+			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
 		}
 
 		$sql = 'select sum(price) from ' . tablename('ewei_shop_order') . ' where uniacid = :uniacid and openid = :openid and status = 3 and createtime between :createtime1 and :createtime2';

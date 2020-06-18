@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -142,8 +143,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$time_start = mktime(0, 0, 0, date('m'), 1, date('Y'));
 		$time_end = mktime(23, 59, 59, date('m'), date('t'), date('Y'));
-		$starttime = (!empty($_GPC['time']['start']) ? strtotime($_GPC['time']['start']) : $time_start);
-		$endtime = (!empty($_GPC['time']['end']) ? strtotime($_GPC['time']['end']) : $time_end);
+		$starttime = !empty($_GPC['time']['start']) ? strtotime($_GPC['time']['start']) : $time_start;
+		$endtime = !empty($_GPC['time']['end']) ? strtotime($_GPC['time']['end']) : $time_end;
 		$condition = ' where r.uniacid=' . $_W['uniacid'] . ' and m.uniacid=' . $_W['uniacid'];
 		$time = $_GPC['time'];
 		$keyword = trim($_GPC['keyword']);
@@ -154,19 +155,19 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and (m.nickname like \'%' . $keyword . '%\' or r.log like \'%' . $keyword . '%\') ';
 		}
 
-		if (($type != '') && (-1 < $type)) {
+		if ($type != '' && -1 < $type) {
 			$condition .= ' and `type`=' . $type;
 		}
 
 		if (!empty($searchtime) && is_array($_GPC['time'])) {
 			$_GPC['time']['start'] = strtotime($_GPC['time']['start']);
-			$_GPC['time']['end'] = (strtotime($_GPC['time']['end']) + (3600 * 24)) - 1;
+			$_GPC['time']['end'] = strtotime($_GPC['time']['end']) + 3600 * 24 - 1;
 			$condition .= ' and r.time BETWEEN ' . $_GPC['time']['start'] . ' AND ' . $_GPC['time']['end'];
 		}
 
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$list = pdo_fetchall('select r.*, m.nickname, m.id as mid, m.avatar from ' . tablename('ewei_shop_sign_records') . 'r left join ' . tablename('ewei_shop_member') . 'm on r.openid=m.openid ' . $condition . ' order by r.time desc, r.id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select r.*, m.nickname, m.id as mid, m.avatar from ' . tablename('ewei_shop_sign_records') . 'r left join ' . tablename('ewei_shop_member') . 'm on r.openid=m.openid ' . $condition . ' order by r.time desc, r.id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_sign_records') . 'r left join ' . tablename('ewei_shop_member') . 'm on r.openid=m.openid ' . $condition);
 		$pager = pagination2($total, $pindex, $psize);
 		$count = 0;

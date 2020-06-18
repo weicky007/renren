@@ -128,7 +128,7 @@
             <!--{/if}-->
         </div>
         <div class='fui-list' style="font-size: .55rem;justify-content: flex-end;border-top: .025rem solid #ebebeb;">
-            预计佣金：<span class="right" style="font-size: .8rem">+<%order.commission%></span>
+            预计{php echo $this->set['texts']['commission']}：<span class="right" style="font-size: .8rem">+<%order.commission%></span>
         </div>
     </div>
     <%/each%>
@@ -141,4 +141,3 @@
 </script>
 {php $this->footerMenus()}
 {template '_footer'}
-

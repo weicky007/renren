@@ -142,7 +142,7 @@ if($controller != 'utility') {
 	$_W['token'] = token();
 }
 
-if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['support_oauthinfo'] && empty($_W['isajax']) && 
+if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['support_oauthinfo'] && empty($_W['isajax']) &&
 	(($_W['container'] == 'baidu' && $_W['account']->typeSign != 'account') || $_W['container'] != 'baidu')) {
 
 	if (($_W['platform'] == 'account' && !$_GPC['logout'] && empty($_W['openid']) && ($controller != 'auth' || ($controller == 'auth' && !in_array($action, array('forward', 'oauth'))))) ||
@@ -150,10 +150,6 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['support_oauthinf
 		$state = 'we7sid-'.$_W['session_id'];
 		if (empty($_SESSION['dest_url'])) {
 			$_SESSION['dest_url'] = urlencode($_W['siteurl']);
-		}
-		$str = '';
-		if(uni_is_multi_acid()) {
-			$str = "&j={$_W['acid']}";
 		}
 		$oauth_type = 'snsapi_base';
 		if ($controller == 'entry' && !empty($_GPC['m'])) {
@@ -163,7 +159,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['support_oauthinf
 			}
 		}
 		$oauth_url = uni_account_oauth_host();
-		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}{$str}&c=auth&a=oauth&scope=" . $oauth_type;
+		$url = $oauth_url . "app/index.php?i={$_W['uniacid']}&c=auth&a=oauth&scope=" . $oauth_type;
 		$callback = urlencode($url);
 		$oauth_account = WeAccount::create($_W['account']['oauth']);
 		if ($oauth_type == 'snsapi_base') {
@@ -174,6 +170,7 @@ if (!empty($_W['account']['oauth']) && $_W['account']['oauth']['support_oauthinf
 		header('Location: ' . $forward);
 		exit();
 	}
+
 }
 $_W['account']['groupid'] = $_W['uniaccount']['groupid'];
 $_W['account']['qrcode'] = tomedia('qrcode_'.$_W['acid'].'.jpg').'?time='.$_W['timestamp'];

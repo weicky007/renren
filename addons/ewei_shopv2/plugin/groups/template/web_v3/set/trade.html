@@ -90,7 +90,7 @@
 				<input type="text" name="headsmoney" value="{$data['headsmoney']}" class="form-control"/>
 				<span class="input-group-addon">元</span>
 			</div>
-			<span class="help-block">团长开团立减金额，如果设置0，则团长没有优惠金额</span>
+			<span class="help-block">团长开团立减金额</span>
 			{else}
 			{if $data['headstype']==0}
 			<div class='form-control-static'>优惠金额 {$data['headsmoney']}元</div>
@@ -111,7 +111,7 @@
 				<input type="text" name="headsdiscount" value="{$data['headsdiscount']}" class="form-control"/>
 				<span class="input-group-addon">%</span>
 			</div>
-			<span class="help-block">折扣为0-100整数，如果设置0，则团长没有优惠折扣</span>
+			<span class="help-block">折扣为0-100整数，价格=拼团价*折扣，如果设置0，则团长没有优惠金额</span>
 			{if $data['headstype']==0}
 			<div class='form-control-static'>优惠折扣 {$data['headsdiscount']}%</div>
 			{/if}

@@ -74,7 +74,7 @@
                         <option value='2' {if $_GPC['followed']=='2'}selected{/if}>取消关注</option>
                     </select>
                 </div>
-                <input type="text" class="form-control "  name="keyword" value="{$_GPC['keyword']}" placeholder="昵称/姓名/手机号"/>
+                <input type="text" class="form-control "  name="keyword" value="{$_GPC['keyword']}" placeholder="粉丝昵称/姓名/手机号"/>
                  <span class="input-group-btn">
                      <button class="btn btn-primary" type="submit"> 搜索</button>
                      <button type="submit" name="export" value="1" class="btn btn-success">导出</button>
@@ -123,7 +123,7 @@
                             <span>状态:</span>  {if $row['agentblack']==1}黑名单{else}正常{/if}
 					   ">
                    {ifp 'member.list.view'}
-                   <a href="{php echo webUrl('member/list/detail',array('id' => $row['id']));}" title='会员信息' target='_blank' style="display: flex">
+                   <a href="{php echo webUrl('member/list/detail',array('id' => $row['pagent']['id']));}" title='会员信息' target='_blank' style="display: flex">
                    {if !empty($row['pagent']['avatar'])}
                    <img class="radius50" src='{$row['pagent']['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc'  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
                    {/if}
@@ -152,12 +152,14 @@
             </td>
 
             <td >
-                <span data-toggle='tooltip' title='{$row['nickname']}'>
-                {if !empty($row['avatar'])}
-                <img class="radius50" src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc'  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
-                {/if}
-                {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}
-                </span>
+                <a href="{php echo webUrl('member/list/detail',array('id' => $row['id']));}" title='会员信息' target='_blank' style="display: flex">
+                    <span data-toggle='tooltip' title='{$row['nickname']}'>
+                    {if !empty($row['avatar'])}
+                    <img class="radius50" src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc'  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
+                    {/if}
+                    {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}
+                    </span>
+                </a>
             </td>
             <td>{if $row['level'] == 1}
                 一级下线

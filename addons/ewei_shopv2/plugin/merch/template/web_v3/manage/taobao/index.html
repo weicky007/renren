@@ -17,6 +17,17 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-lg control-label">商品来源</label>
+
+            <div class="col-sm-9">
+                <select id="from"  name='from' class="form-control" style='width:605px;'>
+                    <option value="taobao" >淘宝商品</option>
+                    <option value="tmall" >天猫商品</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="form-group">
             <label class="col-lg control-label">设置分类</label>
 
             <div class="col-sm-9">
@@ -42,6 +53,7 @@
         </div>
     </form>
 </div>
+<input type="hidden" name="merchGroup" value="{$merchGroup['goodschecked']}">
 <script type="text/javascript">
     var category = {php echo json_encode($children)};
     var len = 0;
@@ -63,10 +75,12 @@
     }
     function fetch_next() {
         var cates =$("#cates").val();
-
+        var from =$("#from").val();
+        var merchGroup = $("input[name='merchGroup']").val();
         var postdata =  {
             url: urls[len],
-            cate: cates
+            cate: cates,
+            from:from
         };
 
         $.post("{php echo webUrl('taobao/fetch')}", postdata, function (data) {
@@ -75,7 +89,13 @@
             if (len >= total) {
                 $("#btn_submit").val("立即获取").addClass("btn-primary").removeAttr("disabled");
                 if (confirm('商品已经获取成功, 是否跳转到商品管理?')) {
-                    location.href = "{php echo webUrl('goods' ,array('goodsfrom'=>stock))}";
+                    if(merchGroup == 1)
+                    {
+                        location.href = "{php echo merchUrl('goods' ,array('goodsfrom'=>stock))}";
+                    }else{
+                        location.href = "{php echo merchUrl('goods' ,array('goodsfrom'=>check))}";
+
+                    }
                 }
                 else {
                     location.reload();
@@ -89,4 +109,3 @@
 </script>
 
 {template '_footer'}
-

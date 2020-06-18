@@ -15,16 +15,63 @@
     .fullback-container p{height:0.9rem;line-height: 0.9rem;}
     .fui-according{border-bottom:0.5rem solid #ededed;}
     .fui-list-media img{height:3rem;width:3rem;}
+
+
+    .full-info{
+        background: #ff5555;
+        padding: 0.6rem;
+        color: #fff;
+        margin-bottom: 0.6rem;
+    }
+    .full-info .time{
+        font-size: 0.55rem;
+        opacity: 0.7;
+    }
+    .full-info .flex{
+        display: flex;
+    }
+    .full-info .flex div{
+        flex: 1;
+        text-align: center;
+        font-size: 0.75rem;
+        margin-top: 0.6rem;
+        font-weight: bold;
+    }
+    .full-info .flex div p{
+        font-size: 0.6rem;
+        line-height: 1.2rem;
+        font-weight: normal;
+    }
 </style>
 <div class='fui-page  fui-page-current member-log-page'>
+
     <div class="fui-header">
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">全返记录</div>
+        <div class="title">{php m('sale')->getFullBackText(true)}记录</div>
     </div>
-
     <div class='fui-content navbar' style="padding-bottom: 0;">
+        <div class="full-info">
+            <div class="time">
+                创建时间: <span>{php echo date('Y/m/d H:i:s', $alldata['createtime'] ? $alldata['createtime'] : time() )} </span>
+            </div>
+            <div class="flex">
+                <div>
+                        &yen;{$alldata['allprice']} <p>全返总额</p>
+                </div>
+                <div>
+                    &yen;{$alldata['hasprice']}<p>已返金额</p>
+                </div>
+                <div>
+                    {$alldata['day']} <p>返还天数 </p>
+                </div>
+                <div>
+                    {$alldata['fullbackday']} <p>已返天数</p>
+                </div>
+            </div>
+
+        </div>
 
         <div id="tab" class="fui-tab fui-tab-danger">
             <a data-tab="tab1"  class="external {if $_GPC['type']==0}active{/if}" data-type='0'>未完成</a>
@@ -76,7 +123,7 @@
                     <span class="text"></span>
                     <span class="remark" style="font-size:0.7rem;color:#000;">每天返<%log.priceevery%>元，剩余<%log.surplusday%>天</span>
                 </div>
-                <div class="fui-according-content store-container">
+                <div class="fui-according-content store-container" style="display: block;">
                     <div class="fullback-container">
                         <p>总金额：&yen;<%log.price%></p>
                         <p>每天返：&yen;<%log.priceevery%></p>
@@ -92,7 +139,7 @@
 
     <script language='javascript'>
         require(['biz/member/fullback'], function (modal) {
-            modal.init({page:"{$_GPC['page']}",type:"{$_GPC['type']}"});
+            modal.init({page:"{$_GPC['page']}",type:"{$_GPC['type']}",orderid:"{$_GPC['orderid']}"});
         });
     </script>
     {php $this->footerMenus()}

@@ -5,7 +5,6 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
-load()->classs('cloudapi');
 load()->model('cloud');
 load()->model('setting');
 
@@ -15,31 +14,22 @@ permission_check_account_user('system_cloud_diagnose');
 
 if ('testapi' == $do) {
 	$starttime = microtime(true);
-	$_URLTYPE = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-	$response = cloud_request($_URLTYPE.'HTTP_HOST', array(), array('ip' => $_GPC['ip']));
+	$response = cloud_request('HTTP_HOST', array(), array('ip' => $_GPC['ip']));
 	$endtime = microtime(true);
 	iajax(0, '请求接口成功，耗时 ' . (round($endtime - $starttime, 5)) . ' 秒');
 } else {
-	if ($_W['ispost']){
-		if ($_GPC['submit']) {
-			$result = cloud_reset_siteinfo();
-			$api = new CloudApi();
-			$api->deleteCer();
+	if (checksubmit()) {
 
-			if (is_error($result)) {
-				itoast($result['message'], '', 'error');
-			} else {
-				itoast('重置成功', 'refresh', 'success');
-			}
+		setting_save('', 'site');
+		itoast('成功清除站点记录.', 'refresh', 'success');
+	}
+	if (checksubmit('updateserverip')) {
+		if (!empty($_GPC['ip'])) {
+			setting_save(array('ip' => $_GPC['ip'], 'expire' => TIMESTAMP + 201600), 'cloudip');
+		} else {
+			setting_save(array(), 'cloudip');
 		}
-		if ($_GPC['updateserverip']) {
-			if (!empty($_GPC['ip'])) {
-				setting_save(array('ip' => $_GPC['ip'], 'expire' => TIMESTAMP + 201600), 'cloudip');
-			} else {
-				setting_save(array(), 'cloudip');
-			}
-			itoast('修改云服务ip成功.', 'refresh', 'success');
-		}
+		itoast('修改云服务ip成功.', 'refresh', 'success');
 	}
 	if (empty($_W['setting']['site'])) {
 		$_W['setting']['site'] = array();
@@ -54,7 +44,7 @@ if ('testapi' == $do) {
 			$checkips[] = $cloudip;
 		}
 	} else {
-		for ($i = 0; $i <= 10; $i++) {
+		for ($i = 0; $i <= 10; ++$i) {
 			$cloudip = gethostbyname('HTTP_HOST');
 			if (!in_array($cloudip, $checkips)) {
 				$checkips[] = $cloudip;

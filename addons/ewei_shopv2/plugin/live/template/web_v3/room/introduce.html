@@ -7,20 +7,17 @@
             <div class="col-sm-12 col-xs-12">
                 {ife 'live.room' $item}
                 <div>
-                    <?php echo tpl_selector_new('goodsid',array('preview'=>true,
-                    'readonly'=>true,
-                    'multi'=>1,
-                    'type'=>'live',
-                    'value'=>$goods['title'],
-                    'url'=>webUrl('live/room/query'),
-                    'optionurl'=>'live.room.hasoption',
-                    'items'=>$goods,
-                    'nokeywords'=>1,
-                    'autosearch'=>1,
-                    'buttontext'=>'直播商品',
-                    'placeholder'=>'请选择商品')
-                    )
-                    ?>
+
+                    <?php echo tpl_goods_selector('goodsarr',$goods,
+                                array(
+                                        'option'=>true,
+                                        'condition'=>' and deleted = 0 and status = 1 and total>0',
+                                        'ophtml'=>'注意',
+                                        'column'=>array(
+                                            array('title'=>'直播间价格','name'=>'liveprice')
+                                         )
+                                 )
+                    );?>
                 </div>
                 <span class='help-block'>提示：直播商品可在直播中显示，且观看直播的用户可在直播中自由购买已添加的商品。</span>
                 {else}

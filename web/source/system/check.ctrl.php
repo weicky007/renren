@@ -25,7 +25,7 @@ if ('check_table' == $do) {
 		}
 	}
 	$message = array(
-		'status' => !empty($wrong_tables) ? -1 : 1, //qwj
+		'status' => !empty($wrong_tables) ? -1 : 0,
 		'list' => $wrong_tables
 	);
 	iajax(0, $message);

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -35,14 +36,14 @@ class Share_EweiShopV2Page extends CommissionMobilePage
 				$commission = number_format($this->model->getCommission($goods), 2);
 				$share_goods = true;
 				$_W['shopshare'] = array('title' => !empty($goods['share_title']) ? $goods['share_title'] : $goods['title'], 'imgUrl' => !empty($goods['share_icon']) ? tomedia($goods['share_icon']) : tomedia($goods['thumb']), 'desc' => !empty($goods['description']) ? $goods['description'] : (empty($set['closemyshop']) ? $myshop['name'] : $shop_set['name']), 'link' => mobileUrl('commission/share', array('goodsid' => $goods['id'], 'mid' => $member['id']), true));
-				$img = (empty($goods['commission_thumb']) ? $goods['thumb'] : tomedia($goods['commission_thumb']));
+				$img = empty($goods['commission_thumb']) ? $goods['thumb'] : tomedia($goods['commission_thumb']);
 				$md5 = md5(json_encode(array('id' => $goods['id'], 'marketprice' => $goods['marketprice'], 'productprice' => $goods['productprice'], 'img' => $img, 'shopset' => $shop_set, 'openid' => $member['openid'], 'version' => 4)));
 				$qrcode = $path . $md5 . '.jpg';
 				if (p('poster') && !is_file(IA_ROOT . '/addons/ewei_shopv2/data/poster/' . $_W['uniacid'] . '/' . $md5 . '.jpg')) {
 					$poster = pdo_fetch('select bg,data from ' . tablename('ewei_shop_poster') . ' where uniacid=:uniacid and type=3 and isdefault=1', array(':uniacid' => $_W['uniacid']));
 
 					if (!empty($poster)) {
-						$md5 = md5(json_encode(array('siteroot' => $_W['siteroot'], 'openid' => $member['openid'], 'goodsid' => $goodsid, 'bg' => $poster['bg'], 'data' => $poster['data'], 'version' => 1)));
+						$md5 = md5(json_encode(array('siteroot' => $_W['siteroot'], 'openid' => $member['openid'], 'goodsid' => (string) $goodsid, 'bg' => $poster['bg'], 'data' => $poster['data'], 'version' => 1)));
 						$qrcode = $path . $md5 . '.png';
 					}
 				}

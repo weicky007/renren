@@ -6,7 +6,7 @@
     <form action="" method="post" class="form-horizontal form-search page-toolbar" role="form" style="margin-bottom: 0">
         <div class="col-sm-6 pull-right">
             <div class="input-group " >
-                <input type="text" class="input-sm form-control" name="search" value="" placeholder="商品名称" > <span class="input-group-btn">
+                <input type="text" class="input-sm form-control" name="search"  value="{$_GPC['search']}" placeholder="商品名称" > <span class="input-group-btn">
             <button class="btn  btn-primary" type="submit" style="float: left"> 搜索</button> </span>
             </div>
         </div>
@@ -19,8 +19,8 @@
             <th style="width:60px;text-align:left;">序号</th>
             <th style="width:60px;">商品</th>
             <th  style="width:200px;">&nbsp;</th>
-            <th style="width:70px;" >价格</th>
-            <th  style="width:60px;" >操作</th>
+            <th   >价格</th>
+            <th   >操作</th>
         </tr>
         </thead>
 
@@ -39,25 +39,34 @@
             </td>
             <td style="color: #ff747b">{$value['marketprice']}</td>
             {if $value['hasoption']}
-            <td  style="overflow:visible;">
-                <a class='label label-fail' style="background-color:#ffb18e">
-                    暂不开放多规格
-                </a>
+                <td  style="overflow:visible;">
+                    <a class='label label-fail' style="background-color:#ffb18e">
+                        暂不开放多规格
+                    </a>
+                </td>
             {else}
-            {if !$value['bargain']}
-            <td  style="overflow:visible;">
-                <a class='label label-success' href="{php echo webUrl('bargain/act',array('id'=>$value['id']));}">
-                    参加砍价
-                </a>
+                {if !$value['bargain']}
+                <td  style="overflow:visible;">
+                    {if in_array($value['id'],$goodsids)}
+                        <span class="label label-danger"><i class="fa fa-remove"></i> 已参加秒杀</span>
+                        <br />
+                        <a href="{php echo webUrl('seckill')}" class="btn btn-default btn-sm" target="_blank">去取消</a>
+                    {else}
+                    <a class='label label-success' href="{php echo webUrl('bargain/act',array('id'=>$value['id']));}">
+                        参加砍价
+                    </a>
+                    {/if}
+                </td>
+                {/if}
+                {if $value['bargain']}
+                <td  style="overflow:visible;">
+                    <a class='label label-warning' href="{php echo webUrl('bargain/act',array('id'=>$value['id']));}">
+                        已发起
+                    </a>
+                </td>
                 {/if}
             {/if}
-                {if $value['bargain']}
-            <td  style="overflow:visible;">
-                <a class='label label-warning' href="{php echo webUrl('bargain/act',array('id'=>$value['id']));}">
-                    已发起
-                </a>
-                {/if}
-            </td>
+
         </tr>
         {/loop}
         </tbody>

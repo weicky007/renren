@@ -117,6 +117,50 @@
     .table .trorder td:nth-of-type(1){
         border:none;
     }
+    .rr-label{
+        width: 75px;
+        padding: 5px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        background: #44ABF7;
+        color: #fff;
+        text-align: center;
+    }
+    .rr-process{
+        color: #44ABF7;
+        cursor: pointer;
+
+    }
+    .rr-process .input-group {
+        display: none;
+    }
+    .rr-process .input-group:first-of-type{
+        display: block;
+    }
+    .rr-process .form-control {
+        display: none;
+    }
+    .rr-process .input-group-btn .btn{
+        background: none!important;
+        border: none!important;
+        color: #44ABF7!important;
+        outline: none!important;
+    }
+    .rr-process .input-group-btn .btn:active {
+        border: none!important;
+        box-shadow: none!important;
+    }
+
+
+    .full-info .text{
+        overflow: hidden;
+    }
+    .full-info .flex{
+        display: flex;
+    }
+    .full-info .flex .text{
+        width: 200px;
+    }
 </style>
 <div class="page-header">
     当前位置：<span class="text-primary">订单详情</span>
@@ -129,17 +173,19 @@
             <div class="ui-step-number" >1</div>
             <div class="ui-step-title" >买家下单</div>
             <div class="ui-step-meta" >{if 0<=$item['status']}{php echo date('Y-m-d',$item['createtime'])}<br/>{php echo date('H:i:s',$item['createtime'])}{/if}</div>
-            </li {if 1<=$item['status']}class="ui-step-done"{/if}>
-            <li {if !empty($item['paytime'])}class="ui-step-done"{/if}>
+            </li>
+            <li {if !empty($item['paytime']) || $item['paytype']==3}class="ui-step-done"{/if}>
             <div class="ui-step-number">2</div>
-            <div class="ui-step-title">买家付款</div>
-            <div class="ui-step-meta">{if 1<=$item['status']}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
+            <div class="ui-step-title">{if $item['paytype']==3}货到付款{else}买家付款{/if}</div>
+            <div class="ui-step-meta">{if $item['paytype']==3}{php $item['paytime'] = $item['cashtime']}{/if}{if 1<=$item['status'] || $item['paytype']==3}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
             </li>
             <li {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}class="ui-step-done"{/if}>
+
             <div class="ui-step-number" >3</div>
             <div class="ui-step-title">
                 {if $isonlyverifygoods}
-                核销时间
+                <!--核销时间-->
+                订单完成
                 {else if $item['isverify'] == 1}
                 确认使用
                 {elseif !empty($item['addressid'])}
@@ -148,7 +194,8 @@
                 自动发货
                 {else}
                 确认取货
-                {/if}</div>
+                {/if}
+            </div>
             <div class="ui-step-meta" >
                 {if $isonlyverifygoods}
                     {if 3<=$item['status']}{php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}
@@ -156,12 +203,15 @@
                     {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}{php echo date('Y-m-d',$item['sendtime'])}<br/>{php echo date('H:i:s',$item['sendtime'])}{/if}
                 {/if}
             </div>
+
             </li>
-            <li {if 3<=$item['status']}class="ui-step-done"{/if}>
-            <div class="ui-step-number" >4</div>
-            <div class="ui-step-title">订单完成</div>
-            <div class="ui-step-meta">{if 3<=$item['status']}{php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}</div>
-            </li>
+            {if empty($isonlyverifygoods)}
+                <li {if 3<=$item['status']}class="ui-step-done"{/if}>
+                <div class="ui-step-number" >4</div>
+                <div class="ui-step-title">订单完成</div>
+                <div class="ui-step-meta">{if 3<=$item['status']}{php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}</div>
+                </li>
+            {/if}
         </ul>
     </div>
     {/if}
@@ -176,6 +226,9 @@
                     <div class="col-md-12">
                         <ul class="">
                             <li class="text"><span class="col-sm">订单编号：</span><span class="text-default">{$item['ordersn']}</span></li>
+                            {if !empty($item['transid'])}
+                            <li class="text"><span class="col-sm">平台单号：</span><span class="text-default">{$item['transid']}</span></li>
+                            {/if}
                             {if !empty($coupon)}
                             <li class="text">
                                 <span class="col-sm">优惠券：</span>
@@ -247,10 +300,12 @@
                                     {if $item['paytype'] == 23}银联支付{/if}
                                     {if $item['paytype'] == 3}货到付款{/if}
                                 </span>
+                                {if $item['is_peerpay']}
+                                <a class='label label-primary text-primary' style="color: #fff !important;padding-right: 2px;" data-toggle='ajaxModal' href="{php echo webUrl('order/op/peerpay',array('id' => $item['id']))}">代付<i style="font-size: 12px;position: relative;top: -1px;" class="icow icow-you"></i></a>
+                                {/if}
                             </li>
+
                             <li class="text">
-
-
                                 <span class="col-sm">买家：</span>
                                 <span class="text-default">
                                     <a href="{php echo webUrl('member/list/detail',array('id'=>$member['id']))}" target='_blank' class="text-primary">{$member['nickname']}</a> &nbsp;&nbsp;<a data-toggle='popover' data-html='true' data-trigger='hover' data-placement='right'
@@ -289,28 +344,67 @@
                                 </span>
                             </li>
                             {if !empty($item['invoicename'])}
-                            <li class="text">
-                                <span class="col-sm">发票抬头：</span>
-                                <span class="text-default">{$item['invoicename']}</span>
-                            </li>
+                            {php $invoice_info = m('sale')->parseInvoiceInfo($item['invoicename'])}
+
+                                {if $invoice_info['title']}
+                                    <li class="text">
+                                        <span class="col-sm">发票类型：</span>
+                                        <span class="text-default">{php echo $invoice_info['entity']?'纸质':'电子'}</span>
+                                        {if $invoice_info['title'] && $invoice_info['entity'] === false && $item['status']>0}
+                                        <a class="{if $item['invoice_img']}text-success{else}text-danger{/if}"
+                                           href="{php echo webUrl('order.op.upload_invoice',array('order_id'=>$item['id']));}"
+                                           data-toggle="ajaxModal"> {if $item['invoice_img']}查看已上传的电子发票{else}需要上传电子发票{/if}</a>
+                                        {/if}
+                                    </li>
+                                    <li class="text">
+                                        <span class="col-sm">抬头类型：</span>
+                                        <span class="text-default">{php echo $invoice_info['company']?'单位':'个人'}</span>
+                                    </li>
+                                {/if}
+                                <li class="text">
+                                    <span class="col-sm">发票抬头：</span>
+                                    <span class="text-default">
+                                        {if $invoice_info['title']}
+                                        {$invoice_info['title']}
+                                        {else}{$item['invoicename']}{/if}</span>
+                                </li>
+                                {if $invoice_info['company']}
+                                    <li class="text">
+                                        <span class="col-sm">纳税号：</span>
+                                        <span class="text-default">{$invoice_info['number']}</span>
+                                    </li>
+                                {/if}
                             {/if}
                             <li class="text">
                                 <span class="col-sm">配送方式：</span>
                                 <span class="text-default">
                                     {if $item['isverify'] == 1}
-                                        线下核销
-                                    {elseif !empty($item['addressid'])}
-                                        快递{if !empty($dispatch['dispatchname'])}({$dispatch['dispatchname']}){/if}
+                                        {if $isonlyverifygoods}
+                                        记次/时核销
+                                        {else}
+                                            线下核销
+                                        {/if}
+                                    {elseif !empty($item['addressid']) && $item['city_express_state']==0}
+                                        快递
+                                    {if !empty($dispatch['dispatchname'])}({$dispatch['dispatchname']}){/if}
                                     {elseif !empty($item['isvirtualsend']) || !empty($item['virtual'])}
                                         自动发货{if !empty($item['isvirtualsend'])}(虚拟物品){else}(虚拟卡密){/if}
                                     {elseif $item['dispatchtype']}
                                         自提
+                                    {elseif $item['city_express_state']==1}
+                                        同城配送
                                     {else}
                                         其他
                                     {/if}
                                 </span>
                             </li>
-                            {if $item['isverify']==1}
+                            {if $item['isverify']==1 && !empty($goodsstore)}
+                            <li class="text">
+                                <span class="col-sm">指定门店：</span>
+                                <span class="text-default">{$goodsstore['storename']}</span>
+                            </li>
+                            {/if}
+                            {if $item['isverify']==1 && !$isonlyverifygoods}
                             <li class="text">
                                 <span class="col-sm">核销方式：</span>
                                 <span class="text-default">{if $item['verifytype']==0}
@@ -330,10 +424,18 @@
                                 <span class="col-sm">消费码：</span>
                                 <span class="text-default">{$item['verifycode']}</span>
                             </li>
+
+
                             {if $item['verified']}
                             <li class="text">
                                 <span class="col-sm">核销时间：</span>
-                                <span class="text-default">{php echo date('Y-m-d H:i:s', $item['verifytime'])}</span>
+                                <span class="text-default">
+					                {if !empty($row['verifytime'])}
+                                    {php echo date('Y-m-d H:i:s', $item['verifytime'])}
+                                    {else}
+                                    -
+                                    {/if}
+                                    </span>
                             </li>
                             {if !empty($saler)}
                             <li class="text">
@@ -442,7 +544,7 @@
                                 <span class="col-sm">联系人：</span>
                                 <span class="text-default">{$user['carrier_realname']}, {$user['carrier_mobile']}</span>
                             </li>
-                            {else}
+                            {else if !$isonlyverifygoods}
                             <li class="text">
                                 <span class="col-sm">自提码：</span>
                                 <span class="text-default">{$item['verifycode']}</span>
@@ -452,14 +554,32 @@
                                 <span class="text-default">{$user['carrier_realname']} {$user['carrier_mobile']} </span>
                             </li>
                             <li class="text">
+                                <span class="col-sm">门店名称：</span>
+                                {if $item['ismerch'] == 0}
+                                <span class="text-default">{$user['storename']['storename']}</span>
+                                {else}
+                                <span class="text-default">{$user['storename']}</span>
+                                {/if}
+                            </li>
+                            <li class="text">
                                 <span class="col-sm">自提点：</span>
                                 <span class="text-default">{php echo html_entity_decode($user['address'])},  {$user['realname']}, {$user['mobile']}</span>
                             </li>
-                            {/if}
 
+                                {if $item['verified']}
+                                    {if !empty($saler)}
+                                        <li class="text">
+                                            <span class="col-sm">核销人：</span>
+                                            <span class="text-default">{$saler['nickname']}( {$saler['salername']} )</span>
+                                        </li>
+                                    {/if}
+                                {/if}
+
+                            {/if}
                             {if !empty($item['remark'])}
                             <li class="text"><span class="col-sm">买家备注：</span><span class="text-default">{$item['remark']}</span></li>
                             {/if}
+
                         </ul>
                     </div>
                     {if !empty($item['addressid'])}
@@ -505,29 +625,35 @@
                 <div class=" status">
                     <span class="text"> 订单状态：</span>
                     {if $item['status'] == 0}
-                    {if $item['paytype']==3}
-                    <span class="text-warning font18">待发货</span>
-                    {else}
-                    <span class="text-danger font18">待付款</span>
+                        {if $item['paytype']==3}
+                        <span class="text-warning font18">待发货</span>
+                        {else}
+                        <span class="text-danger font18">待付款</span>
+                        {/if}
                     {/if}
-                    {/if}
+
                     {if $item['status'] == 1}
                     <span class="text-warning font18">
-                    {if $item['isverify'] == 1}
-                        待使用
-                    {else if empty($item['addressid'])}
-                        待取货
-                    {else}
-                        {if $item['sendtype'] > 0}部分发货{else}待发货{/if}
+                        {if $item['isverify'] == 1}
+                            待使用
+                        {else if empty($item['addressid'])}
+                            待取货
+                        {else}
+                            {if $item['sendtype'] > 0}部分发货{else}待发货{/if}
+                        {/if}
+                        </span>
                     {/if}
-                    </span>
-                    {/if}
+
                     {if $item['status'] == 2}<span class="text-warning font18">待收货</span>{/if}
                     {if $item['status'] == 3}<span class="text-success font18">交易完成</span>{/if}
                     {if $item['status'] == -1}
                     <span class="text-default font18">已关闭</span>
+                    {if !empty($item['canceltime'])}
+                    <span>(关闭时间:{php echo date('Y-m-d H:i:s',$item['canceltime'])})</span>
                     {/if}
-                    <i>{if $item['status'] == 0}
+                    {/if}
+                    <i>
+                        {if $item['status'] == 0}
                         {if $item['paytype']==3}
                         （此订单为货到付款订单，请商家尽快发货）
                         {else}
@@ -548,7 +674,7 @@
                 <div>
                     <ul>
                         <li class="text">快递公司：<span class="text-default">{if empty($item['expresscom'])}其他快递{else}{$item['expresscom']}{/if}</span></li>
-                        <li class="text">快递单号：<span class="text-default">{$item['expresssn']}</span>&nbsp;<a class="text-primary op" data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}">查看物流</a></li>
+                        <li class="text">快递单号：<span class="text-default">{$item['expresssn']}</span>&nbsp;<a class="text-primary op" data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'],'mobile'=>$user['mobile']))}">查看物流</a></li>
                         <li class="text">发货时间：<span class="text-default">{php echo date('Y-m-d H:i:s',$item['sendtime'])}</span></li>
                     </ul>
                 </div>
@@ -661,6 +787,58 @@
                     </div>
                     {/if}
                     {/loop}
+
+                    <!----分红-------->
+                    {if !empty($heads)}
+                    <div>
+                        <label >团长分红</label>
+                        <ul>
+                            <li class="text">
+                                <span style="display:inline-block;width: 45px;">姓名：</span>
+                                <span class="text-primary" >
+                                                <a href="{php echo webUrl('member/list/detail',array('id'=>$heads['id']))}" target='_blank' class="text-primary"> {if empty($heads['realname'])}未填写{else}{$heads['realname']}{/if}</a>
+                                                <a data-toggle='popover' data-trigger='hover'  data-html='true' data-placement='right' data-content="<table style='width:100%;'>
+
+                                <tr>
+                                    <td  style='border:none;text-align:right;' colspan='2'><img src='{php echo tomedia($heads['avatar'])}' style='width:100px;height:100px;padding:1px;border:1px solid #ccc' /></td>
+                                </tr>
+                                 <tr>
+                                    <td  style='border:none;text-align:right;'>ID：</td>
+                                    <td  style='border:none;text-align:right;'>{$heads['id']}</td>
+                                </tr>
+                                <tr>
+                                    <td  style='border:none;text-align:right;'>昵称</td>
+                                    <td  style='border:none;text-align:right;'>
+                                    {if empty($heads['nickname'])}未填写{else} {$heads['nickname']}{/if}
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  style='border:none;text-align:right;'>姓名：</td>
+                                    <td  style='border:none;text-align:right;'>
+                                     {if empty($heads['realname'])}未填写{else}{$heads['realname']}{/if}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  style='border:none;text-align:right;'>手机号：</td>
+
+                                    <td  style='border:none;text-align:right;'> {if empty($heads['mobile'])}未填写{else}{$heads['mobile']}{/if}</td>
+                                </tr>
+                                <tr>
+                                    <td  style='border:none;text-align:right;'>微信号：</td>
+                                    <td  style='border:none;text-align:right;'>{if empty($heads['weixin'])}未填写{else}{$heads['weixin']}{/if}</td>
+                                </tr>
+                                </table>
+                "><i class='icow icow-help' style="font-size: 13px;color: #2f3434"></i></a>
+                                            </span>
+                            </li>
+                            <li class="text"><span style="display:inline-block;width: 50px;">手机号：</span><span class="text-default">{$heads['mobile']}</span></li>
+                            <li class="text"><span style="display:inline-block;width: 50px;">分红：</span><span class='text-default'>{$dividend_price}</span></li>
+                        </ul>
+                    </div>
+                {/if}
+                <!----分红结束-------->
+
                 </div>
             </div>
             {/if}
@@ -702,8 +880,32 @@
                 {/loop}
             </div>
         {/if}
-
-
+        {if !empty($fullbackid) && $item['status'] ==3}
+        <h3 class="order-title">全返信息</h3>
+        <div class="order-container full-info">
+            <div style="padding: 12px;line-height: 26px;width: 100%;">
+            <div class="text">
+                <span class="col-sm">创建时间:</span> <span class="text-default">{php echo date('Y/m/d h:i:s', $alldata['createtime'])}</span>
+            </div>
+            <div class="flex">
+                <div class="text">
+                    <span class="col-sm">全返总额:</span> <span class="text-default">&yen;{$alldata['allprice']}</span>
+                </div>
+                <div class="text">
+                    <span class="col-sm">已返金额:</span> <span class="text-default">&yen;{$alldata['hasprice']}</span>
+                </div>
+            </div>
+            <div class="flex">
+                <div class="text">
+                    <span class="col-sm">返还天数:</span> <span class="text-default">{$alldata['day']}</span>
+                </div>
+                <div class="text">
+                    <span class="col-sm">已返天数:</span> <span class="text-default">{$alldata['fullbackday']}</span>
+                </div>
+            </div>
+        </div>
+        </div>
+        {/if}
         <h3 class="order-title">商品信息</h3>
         <table class="table ">
             <thead>
@@ -719,9 +921,11 @@
                 <th style="text-align: center;width: 10%">数量</th>
                 {if $item['ispackage']}
                 <th  style="text-align: center;width: 10%;">总价</th>
+
                 {else}
                 <th  style="text-align: center;width: 15%;">原价</th>
                 <th  style="text-align: center;width: 15%;">折扣后</th>
+                <th  style="text-align: center;width: 15%;">状态</th>
                 {/if}
                 {if $showdiyform}
                     <th style="text-align: center;">自定义信息</th>
@@ -749,6 +953,34 @@
                         <span class="text-error">[{$category[$goods['pcate']]['name']}] </span>{/if}{if $children[$goods['pcate']][$goods['ccate']][1]}
                         <span class="text-info">[{$children[$goods['pcate']][$goods['ccate']][1]}] </span>
                         {/if}
+
+                        {if !empty($goods['fullbackid'])}
+                        <div style="float: right;display: inline-block;">
+
+                            <div class="rr-label">全返</div>
+
+                            {if $item['status'] == 3}
+                            <div class="rr-process" id=""><?php echo tpl_selector_new('goodsid',array(
+                                    'required'=>true,
+                                'type'=>'fullback',
+                                'value'=>$item['title'],
+                                'url'=>webUrl('sale/fullback/info', array(
+                                    'order_id' => $item['id'],
+                                    'goods_id'=>$goods['id'],
+                                    'option_id'=>$goods['option_id']
+                                    )
+                                ),
+                                'items'=>$item,
+                                'nokeywords'=>1,
+                                'autosearch'=>1,
+                                'buttontext' => '查看进度',
+                                ))
+                            ?></div>
+                            {/if}
+                        </div>
+                        {/if}
+
+
                     </td>
                     <td style="padding: 10px 20px">
                         <p style="white-space:normal;">
@@ -767,19 +999,55 @@
                     <td style="text-align: center">
                         <p>{$goods['total']}个</p>
                     </td>
-                    {if $item['ispackage']}
-                        <td  style="text-align: center">&yen;{php echo number_format($goods['marketprice'],2)}</td>
+
+
+                {if $item['ispackage']}
+                    <td  style="text-align: center">&yen;{php echo number_format($goods['marketprice'],2)}</td>
+                {else}
+                    <td  style="text-align: center">&yen;{$goods['orderprice']}</td>
+                    <td  style="text-align: center">
+                        &yen;{$goods['realprice']}
+                    </td>
+                {/if}
+
+                <td style="text-align: center">
+                    {if $goods['single_refundstate']}
+                        {if $goods['single_refundstate']==8}
+                        <span class="text-danger">已拒绝</span>
+                        {elseif $goods['single_refundstate']==9}
+                        <span class="text-danger">维权成功</span>
+                        {elseif $goods['single_refundstate']==1}
+                        <span class="text-danger">退款中</span>
+                        {elseif $goods['single_refundstate']==2}
+                        <span class="text-danger">退货中</span>
+                        {/if}
+                    {elseif $item['refundid'] > 0 && $refund['status'] != -2 && $refund['status'] != -1 }
+                        {if !empty($refund) && $refund['status']==1}
+                        <span class="label label-default">已维权</span>
+                        {else}
+                        <span class="text-danger">维权中</span>
+                        {/if}
                     {else}
-                        <td  style="text-align: center">&yen;{$goods['orderprice']}</td>
-                        <td  style="text-align: center">
-                            &yen;{$goods['realprice']}
-                        </td>
+                        {if $item['status'] == 1}
+                            已付款
+                        {elseif $item['status'] == 2}
+                            已发货
+                        {elseif $item['status'] == 3}
+                            已完成
+                        {elseif $item['status'] == -1}
+                            已取消
+                        {elseif $item['status'] == 0}
+                            未付款
+                        {/if}
                     {/if}
+
+                </td>
+
                     {if !empty($goods['diyformdata']) && $goods['diyformdata'] != 'false'}
-                        <td style="text-align: center;">
-                            <a href="javascript:;" class="text-primary" hide="1"  data="{$i}" onclick="showDiyInfo(this)">点击展开</a>
-                        </td>
-                    {/if}
+                    <td style="text-align: center;">
+                        <a href="javascript:;" class="text-primary" hide="1"  data="{$i}" onclick="showDiyInfo(this)">点击展开</a>
+                    </td>
+                {/if}
                 </tr>
                 {if !empty($goods['diyformdata']) && $goods['diyformdata'] != 'false'}
                 <tr class="trorder"  style='display: none;'  id="diyinfo_{$i}">
@@ -809,7 +1077,7 @@
                     <span class="text-danger" style="color:red;">（套餐优惠价：&yen;{php echo number_format($item['price'],2)}{if $item['dispatchprice'] }，含运费：&yen;{php echo number_format($item['dispatchprice'],2)}{/if}）</span>
                     {/if}
                 </td>
-                {php $colspan=$item['ispackage']?4:5}
+                {php $colspan=$item['ispackage']?5:6}
                 {if $showdiyform}
                     {php $colspan++}
                 {/if}
@@ -843,6 +1111,9 @@
                         {if $item['couponprice']>0 }
                         <p><span class="price-inner">优惠券优惠：</span><span class="text-danger">-￥{$item['couponprice']}</span></p>
                         {/if}
+                        {if $use_membercard}
+                        <p><span class="price-inner">会员卡优惠：</span><span class="text-danger"> -&yen; {$card_dec_price}</span></p>
+                        {/if}
                         {if $item['isdiscountprice']>0 }
                         <p><span class="price-inner">促销优惠：</span><span class="text-danger">-￥{$item['isdiscountprice']}</span></p>
                         {/if}
@@ -874,8 +1145,49 @@
             </tr>
             </tfoot>
         </table>
+
+        {if count($verifygoods_list)>0}
+        <h3 class="order-title">记次/时核销记录
+            {if $verifygoods_times_total>0}
+            <small>剩余 {php echo $verifygoods_times_total - $verifygoods_times < 0 ? 0 : $verifygoods_times_total - $verifygoods_times} / 总数 <span class="text-danger">{$verifygoods_times_total}</span> </small></h3>
+        {/if}
+        <table class="table table-responsive">
+            <thead class="navbar-inner">
+            <tr>
+                <th >核销时间</th>
+                <th >核销次数</th>
+                <th >核销人</th>
+                <th >核销门店</th>
+                <th >备注信息</th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop $verifygoods_list $row}
+            <tr>
+                <td>{php echo date('Y-m-d H:i:s',$row['verifydate'])}</td>
+                <td>{$row['verifynum']}</td>
+                <td>
+                    {$row['salername']}
+                </td>
+                <td>
+                    {$row['storename']}
+                </td>
+                <td>
+                    {$row['remarks']}
+                </td>
+            </tr>
+
+            {/loop}
+            </tbody>
+        </table>
+        {else}
+        {if $isonlyverifygoods}
+        <h3 class="order-title">暂时无任何核销记录</h3>
+        {/if}
+       {/if}
     </form>
-</div>
+
+
 
 <script language='javascript'>
     $(function () {
@@ -906,5 +1218,3 @@
 </script>
 
 {template '_footer'}
-
-<!--青岛易联互动网络科技有限公司-->

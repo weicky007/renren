@@ -1,66 +1,68 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Weixintemplate_EweiShopV2Page extends WebPage 
+
+class Weixintemplate_EweiShopV2Page extends WebPage
 {
-	public function main() 
+	public function main()
 	{
 		global $_W;
 		global $_GPC;
 		$list = $this->gettemplatelist();
 		$industry = $this->getindustry();
 		$industrytext = '';
-		if ($industry && is_array($industry)) 
-		{
-			foreach ($industry as $indu ) 
-			{
+		if ($industry && is_array($industry)) {
+			foreach ($industry as $indu) {
 				$industrytext .= $indu['first_class'] . '/' . $indu['second_class'] . '&nbsp;&nbsp;&nbsp;';
 			}
 		}
+
 		include $this->template();
 	}
-	public function post() 
+
+	public function post()
 	{
 		global $_W;
 		global $_GPC;
 		$id = $_GPC['id'];
 		$list = $this->gettemplatelist();
 		$template = NULL;
-		foreach ($list as $temp ) 
-		{
-			while ($temp['template_id'] == $id) 
-			{
+
+		foreach ($list as $temp) {
+			if ($temp['template_id'] == $id) {
 				$template = $temp;
 				break;
 			}
 		}
+
 		include $this->template();
 	}
-	public function delete() 
+
+	public function delete()
 	{
 		global $_W;
 		global $_GPC;
 		$id = $_GPC['id'];
-		if (empty($id)) 
-		{
+
+		if (empty($id)) {
 			$ids = $_GPC['ids'];
-			if (is_array($ids)) 
-			{
-				foreach ($ids as $i ) 
-				{
+
+			if (is_array($ids)) {
+				foreach ($ids as $i) {
 					$this->deltemplatebyid($i);
 				}
 			}
 		}
-		else 
-		{
+		else {
 			$this->deltemplatebyid($id);
 		}
+
 		show_json(1, array('url' => referer()));
 	}
-	public function getindustry() 
+
+	public function getindustry()
 	{
 		global $_W;
 		global $_GPC;
@@ -70,17 +72,19 @@ class Weixintemplate_EweiShopV2Page extends WebPage
 		$url = 'https://api.weixin.qq.com/cgi-bin/template/get_industry?access_token=' . $token;
 		$c = ihttp_request($url);
 		$result = @json_decode($c['content'], true);
-		if (!(is_array($result))) 
-		{
+
+		if (!is_array($result)) {
 			return false;
 		}
-		if (!(empty($result['errcode']))) 
-		{
+
+		if (!empty($result['errcode'])) {
 			return false;
 		}
+
 		return $result;
 	}
-	public function gettemplateid() 
+
+	public function gettemplateid()
 	{
 		global $_W;
 		global $_GPC;
@@ -91,17 +95,19 @@ class Weixintemplate_EweiShopV2Page extends WebPage
 		$url = 'https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=' . $token;
 		$c = ihttp_request($url, $bb);
 		$result = @json_decode($c['content'], true);
-		if (!(is_array($result))) 
-		{
+
+		if (!is_array($result)) {
 			show_json(0);
 		}
-		if (!(empty($result['errcode']))) 
-		{
+
+		if (!empty($result['errcode'])) {
 			show_json(0, $result['errmsg']);
 		}
+
 		show_json(1, $result);
 	}
-	public function gettemplatelist() 
+
+	public function gettemplatelist()
 	{
 		global $_W;
 		global $_GPC;
@@ -111,17 +117,19 @@ class Weixintemplate_EweiShopV2Page extends WebPage
 		$url = 'https://api.weixin.qq.com/cgi-bin/template/get_all_private_template?access_token=' . $token;
 		$c = ihttp_request($url);
 		$result = @json_decode($c['content'], true);
-		if (!(is_array($result))) 
-		{
+
+		if (!is_array($result)) {
 			return false;
 		}
-		if (!(empty($result['errcode']))) 
-		{
+
+		if (!empty($result['errcode'])) {
 			return false;
 		}
+
 		return $result['template_list'];
 	}
-	public function deltemplatebyid($template_id) 
+
+	public function deltemplatebyid($template_id)
 	{
 		global $_W;
 		global $_GPC;
@@ -132,14 +140,15 @@ class Weixintemplate_EweiShopV2Page extends WebPage
 		$url = 'https://api.weixin.qq.com/cgi-bin/template/del_private_template?access_token=' . $token;
 		$c = ihttp_request($url, $bb);
 		$result = @json_decode($c['content'], true);
-		if (!(is_array($result))) 
-		{
+
+		if (!is_array($result)) {
 			show_json(0);
 		}
-		if (!(empty($result['errcode']))) 
-		{
+
+		if (!empty($result['errcode'])) {
 			show_json(0, $result['errmsg']);
 		}
 	}
 }
+
 ?>

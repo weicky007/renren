@@ -24,6 +24,12 @@ if ('display' == $do) {
 			}
 		}
 	}
+	if ($_W['isajax']) {
+		$message = array(
+			'lists' => $lists
+		);
+		iajax(0, $message);
+	}
 }
 
 if ('add' == $do) {

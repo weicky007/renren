@@ -2,7 +2,7 @@
     <div class="fui-menu-group" style="margin-top: {$diyitem['style']['margintop']}px;">
         {loop $diyitem['data'] $menuitem}
             {if !empty($menuitem['text'])}
-                <a class="fui-menu-item" style="{if $diyitem['style']['background']!='#ffffff'}background:{$diyitem['style']['background']};{/if} color: {$menuitem['textcolor']};" href="{$menuitem['linkurl']}" data-nocache="true">{if !empty($menuitem['iconclass'])}<i class="icon {$menuitem['iconclass']}" style="color: {$menuitem['iconcolor']};"></i>{/if} {$menuitem['text']}</a>
+                <a class="fui-menu-item" style="{if $diyitem['style']['background']!='#ffffff'}background:{$diyitem['style']['background']};{/if} color: {$menuitem['textcolor']};" href="{$menuitem['linkurl']}" data-nocache="true">{if !empty($menuitem['iconclass'])}<i class="icon {$menuitem['iconclass']}" style="color: {$menuitem['iconcolor']};position: relative;top: -2px;"></i>{/if} {$menuitem['text']}</a>
             {/if}
         {/loop}
     </div>

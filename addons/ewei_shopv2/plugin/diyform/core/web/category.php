@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -35,7 +36,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 			show_json(1, array('url' => webUrl('diyform/category')));
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_diyform_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id DESC');
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_diyform_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id DESC'));
 		include $this->template();
 	}
 
@@ -44,7 +45,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_diyform_category') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_diyform_category') . (' WHERE id = \'' . $id . '\' AND uniacid=') . $_W['uniacid'] . '');
 
 		if (empty($item)) {
 			$this->message('抱歉，分类不存在或是已经被删除！', webUrl('diyform/category', array('op' => 'display')), 'error');

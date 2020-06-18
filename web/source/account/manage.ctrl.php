@@ -8,7 +8,7 @@ defined('IN_IA') or exit('Access Denied');
 load()->model('message');
 load()->model('miniapp');
 
-$dos = array('display', 'delete', 'account_detailinfo', 'account_create_info');
+$dos = array('display', 'delete', 'user_account_num', 'account_list', 'account_detailinfo', 'account_create_info');
 $do = in_array($_GPC['do'], $dos) ? $do : 'display';
 
 if ('display' == $do) {
@@ -17,41 +17,14 @@ if ('display' == $do) {
 	}
 	$message_id = intval($_GPC['message_id']);
 	message_notice_read($message_id);
-
-	$pindex = max(1, intval($_GPC['page']));
-	$psize = 20;
-
-	$account_table = table('account');
-
-	$account_type = $_GPC['account_type'];
-	if (!empty($account_type) && in_array($account_type, array_keys($account_all_type_sign))) {
-		$account_type = $account_all_type_sign[$account_type]['contain_type'];
-		$account_table->searchWithType($account_type);
-	}
-
-	$order = safe_gpc_string($_GPC['order']);
-	$account_table->accountUniacidOrder($order);
-
-	$keyword = safe_gpc_string($_GPC['keyword']);
-	if (!empty($keyword)) {
-		$account_table->searchWithKeyword($keyword);
-	}
-	$account_table->searchWithPage($pindex, $psize);
-
-	if (in_array(safe_gpc_string($_GPC['type']), array('expire', 'unexpire'))) {
-		$expire_type = safe_gpc_string($_GPC['type']);
-	}
-	$list = $account_table->searchAccountList($expire_type);
 	foreach ($account_all_type_sign as $type_sign => $type_value) {
-		$type_accounts = uni_user_accounts($_W['uid'], $type_sign);
-		if (!empty($type_accounts)) {
-			$account_all_type_sign[$type_sign]['account_num'] = count($type_accounts);
+		if ($_W['isadmin']) {
+			$account_all_type_sign[$type_sign]['account_num'] = 1;
+			continue;
 		}
+		$type_accounts = uni_user_accounts($_W['uid'], $type_sign);
+		$account_all_type_sign[$type_sign]['account_num'] = empty($type_accounts) ? 0 : count($type_accounts);
 	}
-
-	$list = array_values($list);
-	$total = $account_table->getLastQueryTotal();
-	$pager = pagination($total, $pindex, $psize);
 	template('account/manage-display');
 }
 
@@ -59,23 +32,36 @@ if ('account_create_info' == $do) {
 	$result = uni_account_create_info();
 	iajax(0, $result);
 }
+if ('account_list' == $do) {
+	$page = max(1, intval($_GPC['page']));
+	$page_size = empty($_GPC['page_size']) ? 20 : max(1, intval($_GPC['page_size']));
+	$order = safe_gpc_string($_GPC['order']);
+	$keyword = safe_gpc_string($_GPC['keyword']);
+	$account_type = empty($account_all_type_sign[$_GPC['account_type']]) ? 0 : $_GPC['account_type'];
+	$expire_type = in_array($_GPC['type'], array('expire', 'unexpire')) ? $_GPC['type'] : '';
 
-if ('account_detailinfo' == $do) {
-	$uniacids = safe_gpc_array($_GPC['uniacids']);
-	if (empty($uniacids)) {
-		return array();
+	$account_table = table('account');
+	if (!empty($account_type)) {
+		$account_table->searchWithType($account_all_type_sign[$account_type]['contain_type']);
 	}
-	$account_detailinfo = array();
-	foreach ($uniacids as $uniacid_value) {
-		$uniacid = intval($uniacid_value['uniacid']);
-		if ($uniacid <= 0) {
+	if (!empty($keyword)) {
+		$account_table->searchWithKeyword($keyword);
+	}
+	$account_table->accountUniacidOrder($order);
+	$account_table->searchWithPage($page, $page_size);
+	$list = $account_table->searchAccountList($expire_type);
+	$total = $account_table->getLastQueryTotal();
+
+	foreach ($list as $uniacid => $info) {
+		$account = uni_fetch($uniacid);
+		if (is_error($account) && empty($account)) {
 			continue;
 		}
-		$account = uni_fetch($uniacid);
+		$account['switchurl_full'] = $_W['siteroot'] . 'web/' . ltrim($account['switchurl'], './');
 		$account['owner_name'] = $account->owner['username'];
 		$account['support_version'] = $account->supportVersion;
 		$account['sms_num'] = !empty($account['setting']['notify']) ? $account['setting']['notify']['sms']['balance'] : 0;
-		$account['end'] = USER_ENDTIME_GROUP_EMPTY_TYPE == $account['endtime'] || USER_ENDTIME_GROUP_UNLIMIT_TYPE == $account['endtime'] ? '永久' : ($account['endtime'] > TIMESTAMP ? date('Y-m-d', $account['endtime']) : '已过期');
+		$account['end'] = USER_ENDTIME_GROUP_EMPTY_TYPE == $account['endtime'] || USER_ENDTIME_GROUP_UNLIMIT_TYPE == $account['endtime'] ? '永久' : date('Y-m-d', $account['endtime']);
 		$account['manage_premission'] = in_array($account['current_user_role'], array(ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER, ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_MANAGER));
 		if ($account['support_version']) {
 			$account['versions'] = miniapp_get_some_lastversions($uniacid);
@@ -87,9 +73,16 @@ if ('account_detailinfo' == $do) {
 				}
 			}
 		}
-		$account_detailinfo[] = $account;
+		$list[$uniacid] = $account;
 	}
-	iajax(0, $account_detailinfo);
+	$pager = pagination($total, $page, $page_size, '', array('isajax' => 1, 'callbackfuncname' => 'getAccountList'));
+	iajax(0, array(
+		'total' => $total,
+		'page' => $page,
+		'page_size' => $page_size,
+		'pager' => $pager,
+		'list' => array_values($list),
+	));
 }
 
 if ('delete' == $do) {
@@ -110,6 +103,7 @@ if ('delete' == $do) {
 
 				pdo_update('account', array('isdeleted' => 1), array('uniacid' => $uniacid));
 				pdo_delete('uni_modules', array('uniacid' => $uniacid));
+				table('users_operate_star')->where(array('uniacid' => $uniacid))->delete();
 				pdo_delete('users_lastuse', array('uniacid' => $uniacid));
 				pdo_delete('core_menu_shortcut', array('uniacid' => $uniacid));
 				pdo_delete('uni_link_uniacid', array('link_uniacid' => $uniacid));
@@ -122,8 +116,13 @@ if ('delete' == $do) {
 			}
 		}
 	}
-	if (!$_W['isajax'] || !$_W['ispost']) {
-		itoast('停用成功！，您可以在回收站中恢复', url('account/manage'));
+
+	$redirct_url = url('account/manage');
+	if (!$_W['iscontroller']) {
+		$redirct_url = $_W['siteroot'] . 'web/home.php';
 	}
-	iajax(0, '停用成功！，您可以在回收站中恢复', url('account/manage'));
+	if (!$_W['isajax'] || !$_W['ispost']) {
+		itoast('停用成功！，您可以在回收站中恢复', $redirct_url);
+	}
+	iajax(0, '停用成功！，您可以在回收站中恢复', $redirct_url);
 }

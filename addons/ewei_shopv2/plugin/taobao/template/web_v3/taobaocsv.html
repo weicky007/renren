@@ -1,3 +1,4 @@
+
 {template '_header'}
 
 <div class="page-header"> 当前位置：<span class="text-primary">淘宝CSV上传助手</span>  </div>
@@ -94,26 +95,26 @@
             num: len,
             totalnum: total
         };
-        $.post("{php echo merchUrl('taobao/taobaocsv/fetch')}",
-            postdata,
-            function (data) {
+        $.post("{php echo webUrl('taobao/taobaocsv/fetch')}",
+                postdata,
+                function (data) {
 
-                $("#btn_submit").val("已经获取  " + len + " / " + total + " 个宝贝, 请等待....");
-                len++;
-                if (len >= total) {
-                    $("#btn_submit").val("立即获取").addClass("btn-primary").removeAttr("disabled");
-                    if (confirm('商品已经获取成功, 是否跳转到商品管理?')) {
-                        location.href = "{php echo merchUrl('goods' ,array('goodsfrom'=>stock))}";
+                    $("#btn_submit").val("已经获取  " + len + " / " + total + " 个宝贝, 请等待....");
+                    len++;
+                    if (len >= total) {
+                        $("#btn_submit").val("立即获取").addClass("btn-primary").removeAttr("disabled");
+                        if (confirm('商品已经获取成功, 是否跳转到商品管理?')) {
+                            location.href = "{php echo webUrl('goods' ,array('goodsfrom'=>stock))}";
+                        }
+                        else {
+                            location.reload();
+                        }
                     }
                     else {
-                        location.reload();
+                        fetch_next();
                     }
-                }
-                else {
-                    fetch_next();
-                }
 
-            }, "json");
+                }, "json");
     }
 
 </script>

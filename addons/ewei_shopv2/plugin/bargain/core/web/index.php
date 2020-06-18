@@ -1,4 +1,5 @@
 <?php
+
 class Index_EweiShopV2Page extends PluginWebPage
 {
 	public function __construct()
@@ -20,15 +21,15 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
-			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
-			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 		}
 
@@ -44,19 +45,18 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total <= 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total <= 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total <= 0 AND unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total <= 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE g.total <= 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total <= 0 AND unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 		}
 
-		$pager = pagination2($all, $page, $psize);
 		include $this->template();
 	}
 
@@ -68,13 +68,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.start_time )>' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
@@ -92,13 +92,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND unix_timestamp(goods.start_time )<' . time();
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid AND unix_timestamp(goods.start_time )<' . time();
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
@@ -116,15 +116,15 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
-			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND g.uniacid = :uniacid';
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND goods.account_id = :uniacid  AND g.uniacid = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND goods.account_id = :uniacid  AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
-			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND g.title LIKE :keyword';
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE (g.status = \'0\' or g.deleted=\'1\') AND goods.status = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 		}
 
@@ -140,13 +140,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 
 		if (empty($_GPC['search'])) {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.uniacid = :uniacid ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.uniacid = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.uniacid = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.uniacid = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.uniacid = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
 			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
 			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE goods.status = \'1\' AND g.title LIKE :keyword AND g.uniacid = :uniacid';
 			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
@@ -178,7 +178,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		}
 		else {
 			if (!empty($goods)) {
-				pdo_query('UPDATE' . tablename('ewei_shop_goods') . 'SET status = \'1\' ,deleted = \'0\' WHERE (status = \'0\' OR deleted=\'1\') AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+				pdo_query('UPDATE' . tablename('ewei_shop_goods') . 'SET status = \'1\' ,deleted = \'0\' WHERE (status = \'0\' OR deleted=\'1\') AND uniacid = :uniacid and id=:goods', array(':uniacid' => $_W['uniacid'], 'goods' => $goods));
 			}
 		}
 
@@ -192,15 +192,26 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$page = max(1, intval($_GPC['page']));
 		$psize = 20;
 
+		if (p('seckill')) {
+			$goodsids = array();
+			$seckill_goods = pdo_fetchall('select goodsid from ' . tablename('ewei_shop_seckill_task_goods') . ' where uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+
+			if (!empty($seckill_goods)) {
+				foreach ($seckill_goods as $v) {
+					$goodsids[] = $v['goodsid'];
+				}
+			}
+		}
+
 		if (empty($_GPC['search'])) {
-			$get_all_goods_sql = 'SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND status = \'1\'ORDER BY id ASC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$get_all_goods_sql = 'SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND status = \'1\' AND deleted = 0 ORDER BY id ASC LIMIT ' . ($page * $psize - $psize) . ',' . $psize;
 			$allGoods = pdo_fetchall($get_all_goods_sql, array(':uniacid' => $_W['uniacid']));
-			$count = pdo_fetch('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . 'WHERE uniacid = :uniacid AND status = \'1\'', array(':uniacid' => $_W['uniacid']));
+			$count = pdo_fetch('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . 'WHERE uniacid = :uniacid AND status = \'1\' AND deleted = 0', array(':uniacid' => $_W['uniacid']));
 		}
 		else {
-			$get_all_goods_sql = 'SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND status = \'1\' AND title LIKE \'%' . $_GPC['search'] . '%\' ORDER BY id ASC LIMIT ' . (($page * $psize) - $psize) . ',' . $psize;
+			$get_all_goods_sql = 'SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND status = \'1\' AND deleted = 0 AND title LIKE \'%' . $_GPC['search'] . '%\' ORDER BY id ASC LIMIT ' . ($page * $psize - $psize) . ',' . $psize;
 			$allGoods = pdo_fetchall($get_all_goods_sql, array(':uniacid' => $_W['uniacid']));
-			$count = pdo_fetch('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . 'WHERE uniacid = :uniacid AND status = \'1\' AND title LIKE \'%' . $_GPC['search'] . '%\'', array(':uniacid' => $_W['uniacid']));
+			$count = pdo_fetch('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . 'WHERE uniacid = :uniacid AND status = \'1\' AND deleted = 0 AND title LIKE \'%' . $_GPC['search'] . '%\'', array(':uniacid' => $_W['uniacid']));
 		}
 
 		$pager = pagination2($count['COUNT(*)'], $page, $psize);
@@ -227,7 +238,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$if_act_swi = false;
 		}
 
-		if (!empty($end_price) || ($end_price === 0)) {
+		if (!empty($end_price) || $end_price === 0) {
 			$market_price = (double) $_GPC['marketprice'];
 
 			if ($market_price < $end_price) {
@@ -326,7 +337,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$tt = json_decode($this_act['probability'], true);
 		$get_this_goods_sql = 'SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id';
 		$this_goods = pdo_fetch($get_this_goods_sql, array(':id' => $id));
-		if (!empty($end_price) || ($end_price === 0)) {
+		if (!empty($end_price) || $end_price === 0) {
 			$market_price = (double) $_GPC['marketprice'];
 
 			if ($market_price < $end_price) {
@@ -402,7 +413,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = (int) $_GPC['id'];
 		pdo_update('ewei_shop_bargain_goods', array('status' => 1), array('account_id' => $_W['uniacid'], 'id' => $id, 'status' => 0));
 		$goods_id = pdo_get('ewei_shop_bargain_goods', array('id' => $id), array('goods_id'));
-		pdo_query('UPDATE ' . tablename('ewei_shop_goods') . ' SET bargain=null WHERE id =:id', array(':id' => $goods_id['goods_id']));
+		pdo_query('UPDATE ' . tablename('ewei_shop_goods') . ' SET bargain=0 WHERE id =:id', array(':id' => $goods_id['goods_id']));
 		show_json(1, '已经放到回收站');
 	}
 
@@ -416,7 +427,19 @@ class Index_EweiShopV2Page extends PluginWebPage
 			show_json(0);
 		}
 
-		pdo_delete('ewei_shop_bargain_goods', array('id' => $id, 'account_id' => $_W['uniacid']));
+		$bargain_goods = pdo_get('ewei_shop_bargain_goods', array('id' => $id, 'account_id' => $_W['uniacid']));
+
+		if (empty($bargain_goods)) {
+			show_json(0);
+		}
+
+		$res = pdo_delete('ewei_shop_bargain_goods', array('id' => $id, 'account_id' => $_W['uniacid']));
+
+		if (!$res) {
+			show_json(0);
+		}
+
+		pdo_update('ewei_shop_goods', array('bargain' => 0), array('id' => $bargain_goods['goods_id'], 'uniacid' => $_W['uniacid']));
 		show_json('1', '删除成功');
 	}
 
@@ -458,13 +481,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 
-				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . ') and uniacid=' . $_W['uniacid']);
+				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . (') and uniacid=' . $_W['uniacid']));
 			}
 		}
 
 		if ($_W['ispost']) {
 			ca('sysset.notice.edit');
-			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
 
 			if (is_array($_GPC['openids'])) {
 				$data['openid'] = implode(',', $_GPC['openids']);
@@ -562,6 +585,102 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = (int) $_GPC['id'];
 		pdo_update('ewei_shop_bargain_goods', array('start_time' => date('Y-m-d H:i:s', time())), array('account_id' => $_W['uniacid'], 'id' => $id));
 		show_json(1, '已开始');
+	}
+
+	public function success()
+	{
+		global $_GPC;
+		global $_W;
+		$page = max(1, intval($_GPC['page']));
+		$psize = 20;
+
+		if (empty($_GPC['search'])) {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title,a.bargain_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times = goods.total_time AND g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times = goods.total_time AND unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
+		}
+		else {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title a.bargin_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times = goods.total_time AND g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times = goods.total_time AND unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+		}
+
+		$pager = pagination2($all, $page, $psize);
+		include $this->template();
+	}
+
+	public function all()
+	{
+		global $_GPC;
+		global $_W;
+		$page = max(1, intval($_GPC['page']));
+		$psize = 20;
+
+		if (empty($_GPC['search'])) {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title,a.bargain_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
+		}
+		else {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title a.bargin_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+		}
+
+		$pager = pagination2($all, $page, $psize);
+		include $this->template();
+	}
+
+	public function error()
+	{
+		global $_GPC;
+		global $_W;
+		$page = max(1, intval($_GPC['page']));
+		$psize = 20;
+
+		if (empty($_GPC['search'])) {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title,a.bargain_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times < goods.total_time AND g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times < goods.total_time AND  unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
+		}
+		else {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title a.bargin_times FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE a.bargain_times < goods.total_time AND g.total > 0 AND unix_timestamp(goods.end_time )>' . time() . ' AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND g.title LIKE :keyword ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id JOIN ' . tablename('ewei_shop_bargain_actor') . ' a ON a.goods_id = goods.id WHERE  a.bargain_times < goods.total_time AND unix_timestamp(goods.end_time )>' . time() . ' AND g.total > 0 AND unix_timestamp(goods.start_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid';
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+		}
+
+		$pager = pagination2($all, $page, $psize);
+		include $this->template();
+	}
+
+	public function fails()
+	{
+		global $_W;
+		global $_GPC;
+		$page = max(1, intval($_GPC['page']));
+		$psize = 20;
+
+		if (empty($_GPC['search'])) {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND goods.account_id = :uniacid AND unix_timestamp(goods.start_time )<' . time();
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid']));
+		}
+		else {
+			$sql = 'SELECT goods.*,g.total,thumb,marketprice,sales,title FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND unix_timestamp(goods.start_time )<' . time() . ' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid ORDER BY goods.id DESC LIMIT ' . ($page * $psize - $psize) . (',' . $psize);
+			$onSell = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+			$all_sql = 'SELECT COUNT(*) FROM' . tablename('ewei_shop_bargain_goods') . ' goods JOIN' . tablename('ewei_shop_goods') . ' g ON goods.goods_id = g.id WHERE unix_timestamp(goods.end_time )<' . time() . ' AND goods.status = \'0\' AND g.status = \'1\' AND g.deleted = \'0\' AND g.title LIKE :keyword AND goods.account_id = :uniacid AND unix_timestamp(goods.start_time )<' . time();
+			$all = pdo_fetchcolumn($all_sql, array(':uniacid' => $_W['uniacid'], ':keyword' => '%' . $_GPC['search'] . '%'));
+		}
+
+		$pager = pagination2($all, $page, $psize);
+		include $this->template();
 	}
 }
 

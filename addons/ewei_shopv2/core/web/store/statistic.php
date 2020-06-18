@@ -1,23 +1,20 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class Statistic_EweiShopV2Page extends ComWebPage 
+
+class Statistic_EweiShopV2Page extends WebPage
 {
-	public function __construct($_com = 'verify') 
-	{
-		parent::__construct($_com);
-	}
-	public function main() 
+	public function main()
 	{
 		global $_W;
 		global $_GPC;
 		$days = array(1, 7, 30);
 		$info = array();
 		$list = array();
-		foreach ($days as $day ) 
-		{
+
+		foreach ($days as $day) {
 			$total = array();
 			$top10 = array();
 			$result = m('statistic')->o2oorderstatistic($day);
@@ -36,7 +33,9 @@ class Statistic_EweiShopV2Page extends ComWebPage
 			$info[$day] = $total;
 			$list[$day] = $top10;
 		}
+
 		include $this->template();
 	}
 }
+
 ?>

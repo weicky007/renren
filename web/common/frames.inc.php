@@ -215,7 +215,7 @@ $we7_system_menu['system'] = array(
 	'title' => '系统功能',
 	'icon' => 'wi wi-setting',
 	'dimension' => 3,
-	'url' => user_is_founder($_W['uid'], true) ? url('article/notice') : url('system/updatecache'),
+	'url' => url('article/notice'),
 	'section' => array(
 		'article' => array(
 			'title' => '站内公告',
@@ -239,71 +239,11 @@ $we7_system_menu['system'] = array(
 			),
 			'founder' => true,
 		),
-		'system_template' => array(
-			'title' => '模板',
-			'menu' => array(
-				'system_template' => array(
-					'title' => '微官网模板',
-					'url' => url('system/template'),
-					'icon' => 'wi wi-wx-template',
-					'permission_name' => 'system_template',
-				),
-			),
-			'founder' => true,
-		),
-/* 		'sms' => array(
-			'title' => '系统短信',
-			'menu' => array(
-				'system_cloud_sms_sign' => array(
-					'title' => '签名管理',
-					'url' => url('cloud/sms-sign'),
-					'icon' => 'wi wi-sms',
-					'permission_name' => 'system_cloud_sms_sign',
-				),
-				'system_cloud_sms_package' => array(
-					'title' => '购买短信包',
-					'url' => url('cloud/sms-package'),
-					'icon' => 'wi wi-sms',
-					'permission_name' => 'system_cloud_sms_package',
-				),
-				'system_cloud_sms_statistics' => array(
-					'title' => '发送统计',
-					'url' => url('cloud/sms-statistics'),
-					'icon' => 'wi wi-sms',
-					'permission_name' => 'system_cloud_sms_statistics',
-				),
-				'system_cloud_sms_template' => array(
-					'title' => '短信模板',
-					'url' => url('cloud/sms-template'),
-					'icon' => 'wi wi-sms',
-					'permission_name' => 'system_cloud_sms_template',
-				),
-				'system_cloud_sms_share' => array(
-					'title' => '分配短信',
-					'url' => url('cloud/sms-share'),
-					'icon' => 'wi wi-sms',
-					'permission_name' => 'system_cloud_sms_share',
-				),
-				'system_sms_mass' => array(
-					'title' => '短信群发',
-					'url' => url('cloud/sms-mass'),
-					'icon' => 'wi wi-sms-sign',
-					'permission_name' => 'system_cloud_sms_mass',
-					'is_display' => false,
-				),
-			),
-			'founder' => true,
-		), */
+
 		
 		'system_welcome' => array(
-			'title' => '系统首页',
+			'title' => '系统新闻',
 			'menu' => array(
-				'system_welcome' => array(
-					'title' => '系统首页应用',
-					'url' => url('module/manage-system', array('support' => MODULE_SUPPORT_SYSTEMWELCOME_NAME)),
-					'icon' => 'wi wi-system-welcome',
-					'permission_name' => 'system_welcome',
-				),
 				'system_news' => array(
 					'title' => '系统新闻',
 					'url' => url('article/news'),
@@ -720,7 +660,7 @@ $we7_system_menu['account'] = array(
 						'platform_material_delete' => array(
 							'title' => '删除',
 							'permission_name' => 'platform_material_delete',
-							'is_display' => false,
+							'is_display' => 0,
 						),
 					),
 				),
@@ -771,7 +711,7 @@ $we7_system_menu['account'] = array(
 		'platform_module' => array(
 			'title' => '应用模块',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 		'mc' => array(
 			'title' => '粉丝',
@@ -804,7 +744,7 @@ $we7_system_menu['account'] = array(
 				),
 				'mc_member' => array(
 					'title' => '会员管理',
-					'url' => url('mc/member', array('version_id' => $_GPC['version_id'])),
+					'url' => url('mc/member'),
 					'icon' => 'wi wi-fans',
 					'permission_name' => 'mc_member',
 					'is_display' => array(
@@ -1139,7 +1079,7 @@ $we7_system_menu['wxapp'] = array(
 		'platform_module' => array(
 			'title' => '应用',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 		'mc' => array(
 			'title' => '粉丝',
@@ -1240,7 +1180,7 @@ $we7_system_menu['wxapp'] = array(
 				),
 				'wxapp_profile_domainset' => array(
 					'title' => '域名设置',
-					'url' => url('wxapp/domainset', array('version_id' => $_GPC['version_id'])),
+					'url' => url('wxapp/domainset'),
 					'is_display' => array(
 						ACCOUNT_TYPE_APP_NORMAL,
 						ACCOUNT_TYPE_APP_AUTH,
@@ -1289,6 +1229,7 @@ $we7_system_menu['wxapp'] = array(
 		'statistics' => array(
 			'title' => '统计',
 			'menu' => array(
+				
 				'statistics_visit' => array(
 					'title' => '访问统计',
 					'url' => url('statistics/app'),
@@ -1324,6 +1265,7 @@ $we7_system_menu['wxapp'] = array(
 						),
 					),
 				),
+				
 				'statistics_fans' => array(
 					'title' => '用户统计',
 					'url' => url('wxapp/statistics'),
@@ -1364,7 +1306,7 @@ $we7_system_menu['phoneapp'] = array(
 		'platform_module' => array(
 			'title' => '应用',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 		'phoneapp_profile' => array(
 			'title' => '配置',
@@ -1381,12 +1323,12 @@ $we7_system_menu['phoneapp'] = array(
 				'front_download' => array(
 					'title' => '下载APP',
 					'url' => url('phoneapp/front-download'),
-					'is_display' => true,
+					'is_display' => 1,
 					'icon' => 'wi wi-examine',
 					'permission_name' => 'phoneapp_front_download',
 				),
 			),
-			'is_display' => true,
+			'is_display' => 1,
 			'permission_display' => array(
 				ACCOUNT_TYPE_PHONEAPP_NORMAL,
 			),
@@ -1402,7 +1344,7 @@ $we7_system_menu['xzapp'] = array(
 		'platform_module' => array(
 			'title' => '应用模块',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 	),
 );
@@ -1414,7 +1356,7 @@ $we7_system_menu['aliapp'] = array(
 		'platform_module' => array(
 			'title' => '应用',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 	),
 );
@@ -1427,7 +1369,7 @@ $we7_system_menu['baiduapp'] = array(
 		'platform_module' => array(
 			'title' => '应用',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 	),
 );
@@ -1440,7 +1382,7 @@ $we7_system_menu['toutiaoapp'] = array(
 		'platform_module' => array(
 			'title' => '应用',
 			'menu' => array(),
-			'is_display' => true,
+			'is_display' => 1,
 		),
 	),
 );
@@ -1477,6 +1419,18 @@ $we7_system_menu['toutiaoapp'] = array(
 						'url' => url('site/entry/goodsbuyer', array('m' => 'store', 'direct' => 1,  'type' => STORE_TYPE_PACKAGE)),
 						'icon' => 'wi wi-appjurisdiction',
 						'type' => STORE_TYPE_PACKAGE,
+					),
+					'store_goods_user_account' => array(
+						'title' => '账号权限组',
+						'url' => url('site/entry/goodsbuyer', array('m' => 'store', 'direct' => 1,  'type' => STORE_TYPE_ACCOUNT_PACKAGE)),
+						'icon' => 'wi wi-appjurisdiction',
+						'type' => STORE_TYPE_ACCOUNT_PACKAGE,
+					),
+					'store_goods_user_renew' => array(
+						'title' => '账号有效期',
+						'url' => url('site/entry/goodsbuyer', array('m' => 'store', 'direct' => 1,  'type' => STORE_TYPE_USER_RENEW)),
+						'icon' => 'wi wi-appjurisdiction',
+						'type' => STORE_TYPE_USER_RENEW,
 					),
 					'store_goods_users_package' => array(
 						'title' => '用户权限组',
@@ -1605,33 +1559,9 @@ $we7_system_menu['toutiaoapp'] = array(
 	);
 
 
-/*$we7_system_menu['workorder'] = array(
-	'title' => '工单',
-	'icon' => 'wi wi-gongdan',
-	'dimension' => 2,
-	'url' => url('system/workorder/display'),
-	'section' => array(
-		'workorder'=> array(
-			'title' => '工单系统',
-			'menu'=> array(
-				'system_workorder'=> array(
-					'title' => '工单系统',
-					'url' => url('system/workorder/display'),
-					'icon' => 'wi wi-system-work',
-					'permission_name' => 'system_workorder',
-				),
-			),
-		),
-	),
-	'founder' => true,
-);*/
 
-$we7_system_menu['help'] = array(
-	'title' => '帮助',
-	'icon' => 'wi wi-bangzhu',
-	'url' => url('help/display'),
-	'section' => array(),
-);
+
+
 
 $we7_system_menu['custom_help'] = array(
 	'title' => '本站帮助',

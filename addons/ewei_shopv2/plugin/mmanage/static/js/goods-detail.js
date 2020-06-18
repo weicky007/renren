@@ -33,8 +33,8 @@ define(['core', './sortable.js'], function (core, Sortable) {
     };
     modal.initClick = function () {
         $('.fui-uploader').uploader({
-            uploadUrl: core.getUrl('util/uploader'),
-            removeUrl: core.getUrl('util/uploader/remove')
+            uploadUrl: core.getUrl('mmanage/util/uploader'),
+            removeUrl: core.getUrl('mmanage/util/uploader/remove')
         });
         $(".btn-submit").unbind('click').click(function () {
             if (modal.stop) {

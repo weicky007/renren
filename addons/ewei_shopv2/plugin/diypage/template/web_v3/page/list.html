@@ -15,8 +15,14 @@
 
         <div class="page-toolbar">
             <div class="col-sm-4">
-                {ifp 'diypage.page.sys.add|diypage.page.diy.add'}
+                {if $pagetype=='mod'}
+                    {ifp 'diypage.page.mod.add|diypage.page.mod.add'}
+                        <a class="btn btn-primary btn-sm" href="{php echo webUrl('diypage/page/mod/add')}"><i class="fa fa-plus"></i> 新建模块</a>
+                    {/if}
+                {else}
+                    {ifp 'diypage.page.sys.add|diypage.page.diy.add'}
                     <a class="btn btn-primary btn-sm" href="{php echo webUrl('diypage/page/create')}"><i class="fa fa-plus"></i> 新建页面</a>
+                    {/if}
                 {/if}
             </div>
 

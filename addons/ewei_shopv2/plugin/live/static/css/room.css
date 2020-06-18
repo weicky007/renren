@@ -74,25 +74,24 @@
     object-fit: contain;
     object-position: 0px 50px;
 }
-
-.block-video .live-tips {
+.prompt .live-tips {
     background: rgba(0, 0, 0, 0.5);
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: 99;
     text-align: center;
     color: #fff;
     display: none;
 }
 
-.block-video .live-tips.loading {
+.prompt .live-tips.loading {
     display: block;
 }
 
-.block-video .live-tips .inner {
+.prompt .live-tips .inner {
     height: 2rem;
     position: absolute;
     top: 50%;
@@ -101,26 +100,26 @@
     margin-top: -1rem;
 }
 
-.fullscreen .block-video .live-tips .inner {
+.fullscreen .prompt .live-tips .inner {
     position: relative;
     height: auto;
 }
 
-.block-video .live-tips .inner .date {
+.prompt .live-tips .inner .date {
     color: #118cff;
     font-size: 0.65rem;
 }
 
-.fullscreen .block-video .live-tips {
+.fullscreen .prompt .live-tips {
     background: rgba(0, 0, 0, 0.3);
-    padding-top: 6rem;
+    padding-top: 4rem;
 }
 
-.player-fullscreen .block-video .live-tips {
+.player-fullscreen .prompt .live-tips {
     padding-top: 8rem;
 }
 
-.fullscreen .block-video .live-tips .inner {
+.fullscreen .prompt .live-tips .inner {
     width: 70%;
     background: rgba(0, 0, 0, 0.5);
     padding: 0.6rem 0;
@@ -128,13 +127,13 @@
     border-radius: 0.3rem;
 }
 
-.block-video .live-tips.play .inner .icon {
+.prompt .live-tips.play .inner .icon {
     height: 2rem;
     font-size: 2rem;
     line-height: 2rem;
 }
 
-.fullscreen .block-video .live-tips.play .inner {
+.fullscreen .prompt .live-tips.play .inner {
     width: 4rem;
 }
 
@@ -541,8 +540,8 @@
 }
 
 .fullscreen .block-content .tab-content .msg {
-    background: rgba(255, 255, 255, 0.5);
-    padding: 0.2rem 0.5rem;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0.1rem 0.5rem;
     margin-bottom: 0.3rem;
     border-radius: 0.4rem;
 }
@@ -579,11 +578,13 @@
 .block-content .tab-content .msg .nickname {
     color: #118cff;
     display: inline;
+    font-size:0.6rem;
 }
 
 .block-content .tab-content .msg .content {
     color: #444;
     display: inline;
+    font-size:0.6rem;
 }
 
 .block-content .tab-content .msg .content img {
@@ -864,7 +865,7 @@
     position: fixed;
     right: 0.25rem;
     bottom: 4.5rem;
-    z-index: 11;
+    z-index: 100;
 }
 
 .block-icon .btn-gift {
@@ -874,6 +875,21 @@
     background-size: 100%;
     background-repeat: no-repeat;
     margin-top: 0.85rem;
+}
+
+.block-icon .btn-content {
+    height: 2.2rem;
+    width: 2.45rem;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    margin-top: 0.85rem;
+}
+.block-icon .btn-content.btn-show{
+    background-image: url("../images/btn-show.png");
+    display: none;
+}
+.block-icon .btn-content.btn-hide{
+    background-image: url("../images/btn-hide.png");
 }
 
 .block-icon .btn-like {
@@ -1060,7 +1076,7 @@
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    z-index: 90 !important;
+    z-index: 100 !important;
 }
 
 .block-input:before {
@@ -2175,7 +2191,7 @@
 /* 商品弹层 */
 .layer-goods {
     height: auto;
-    max-height: 70%;
+    max-height: 65%;
     padding-top: 1.4rem;
     background: #fff;
     position: fixed;
@@ -2211,6 +2227,7 @@
 .layer-goods .inner {
     height: 100%;
     overflow-y: auto;
+    padding-bottom: 2.8rem;
 }
 
 .ico-like {
@@ -2220,7 +2237,7 @@
     position: fixed;
     right: 30px;
     bottom: 2.5rem;
-    z-index: 10;
+    z-index: 100;
 }
 
 .ico-like .icon {

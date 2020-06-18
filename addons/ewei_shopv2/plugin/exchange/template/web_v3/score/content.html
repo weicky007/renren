@@ -4,7 +4,7 @@
 <div class="page-content" style="display: block;">
     <div class="page-toolbar m-b-sm m-t-sm" style="margin-bottom: 0">
         <div class="col-sm-4">
-            {ifp 'exchange.score.setting'}
+            {ifp 'exchange.score.edit'}
                 <span class="">
                     <a class="btn btn-primary btn-sm" href="{php echo webUrl('exchange/score/setting',array('id'=>0));}"><i class="fa fa-plus"></i> 添加积分兑换任务</a>
                 </span>
@@ -82,7 +82,13 @@
                 <td><input type="checkbox" name="checkbox[]" value="{$value['id']}" class="checkbox"></td>
                 <td>{php echo $key+$pstart+1;}</td>
                 <td colspan="2"><a href="{php echo webUrl('exchange/score/dno',array('id'=>$value['id']));}">{$value['title']}</a></td>
-                <td>{$value['use']}/{$value['total']}</td>
+                <td>
+                    {if $value['repeat'] >0}
+                    {$value['hadex']}/{$value['allex']}
+                    {else}
+                    {$value['use']}/{$value['total']}
+                    {/if}
+                </td>
                 <td>{php echo substr($value['endtime'],0,10);}</td>
                 <td align="center">
                     {if $value['type'] == 1}<span class="label label-success">指定</span>{/if}
@@ -105,7 +111,7 @@
                             <i class='icow icow-chakan-copy'></i>
                        </span>
                     </a>
-                    {ifp 'exchange.score.setting'}
+                    {ifp 'exchange.score.edit'}
                     <a class="btn btn-default btn-sm btn-op btn-operation" href="{php echo webUrl('exchange/score/setting',array('id'=>$value['id']));}" title="编辑">
                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="编辑">
                             <i class='icow icow-bianji2'></i>

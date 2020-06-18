@@ -18,7 +18,7 @@
 	<div class="col-sm-9 col-xs-12">
 		{ifp 'merch.set.edit'}
 		{php echo tpl_form_field_image2('data[reglogo]',$data['reglogo'],'../addons/ewei_shopv2/plugin/merch/template/mobile/default/static/images/regbg.png')}
-		<span class="help-block">登录页面logo 建议尺寸360 * 90</span>
+		<span class="help-block">登录页面logo 建议尺寸200 * 68</span>
 		{else}
 		{if empty($data['regbg'])}
 		<img src="../addons/ewei_shopv2/plugin/merch/template/mobile/default/static/images/regbg.png" onerror="this.src='../addons/ewei_shopv2/plugin/merch/template/mobile/default/static/images/regbg.png'; this.title='图片未找到.'" class="img-responsive img-thumbnail" width="150">

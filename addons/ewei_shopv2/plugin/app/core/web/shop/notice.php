@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +25,8 @@ class Notice_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_notice') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_notice') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_notice') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_notice') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -73,7 +73,7 @@ class Notice_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . ' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=' . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . (' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_notice', array('displayorder' => $displayorder), array('id' => $id));
@@ -90,10 +90,10 @@ class Notice_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . ' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . (' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_notice', array('id' => $item['id']));
@@ -110,14 +110,14 @@ class Notice_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . ' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_notice') . (' WHERE id in( ' . $id . ' ) and iswxapp=1 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_notice', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('app.app.shop.notice.edit', ('修改公告状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '显示' : '隐藏');
+			plog('app.app.shop.notice.edit', '修改公告状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));

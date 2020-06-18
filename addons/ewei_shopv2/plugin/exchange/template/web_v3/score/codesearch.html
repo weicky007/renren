@@ -45,7 +45,7 @@
             </div>
         </div>
             <div style="float: left;width: 0%;">
-                {php echo tpl_form_field_daterange('date',array('start'=>20161001,'end'=>20161001));}
+                {php echo tpl_form_field_eweishop_daterange('date',array('start'=>20161001,'end'=>20161001));}
             </div>
             <div class="col-sm-4 pull-right">
                 <div class="input-group">
@@ -149,7 +149,7 @@
                 {else}
                 <a href="javascript:;" class="btn btn-default btn-sm js-clip" data-url="&nbsp;{$value['key']}"><i class="fa fa-link"></i> 复制</a>
                 {/if}
-                {ifp 'exchange.score.setting'}
+                {ifp 'exchange.score.edit'}
                 <a class="btn btn-default btn-sm" data-toggle="ajaxModal"
                    data-href="{php echo webUrl('exchange/score/status',array('key'=>$value['key']));}"><i class="fa fa-check-circle"></i> 状态</a>
                 {/if}

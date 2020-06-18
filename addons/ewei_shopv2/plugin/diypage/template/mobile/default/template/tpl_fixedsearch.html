@@ -1,6 +1,6 @@
 
 {php $diyitem = $diyitem_search}
-    <div class="diy-fixedsearch fixed" style="{if is_h5app()&&is_ios()} top: 3.2rem;{/if}">
+    <div class="diy-fixedsearch fixed" style="{if is_h5app()&&is_ios()} top: 2.2rem;{/if}">
         <div class="background" style="background: {$diyitem['style']['background']}; opacity: {$diyitem['style']['opacity']};"></div>
         <form action="{php echo mobileUrl('goods', array('merchid'=>$page['merch']))}" method="post" class="inner" id="fixedsearch">
             {if !empty($diyitem['params']['leftnav'])}
@@ -31,4 +31,3 @@
             {/if}
         </form>
     </div>
-

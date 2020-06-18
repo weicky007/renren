@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -66,9 +67,9 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			$params[':status'] = $_GPC['status'];
 		}
 
-		$sql = 'SELECT id,title,shorttitle,status FROM ' . tablename('ewei_shop_groups_goods') . ' where  1 and ' . $condition . ' ORDER BY  shorttitle desc, status desc, id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT id,title,shorttitle,status FROM ' . tablename('ewei_shop_groups_goods') . (' where  1 and ' . $condition . ' ORDER BY  shorttitle desc, status desc, id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_groups_goods') . ' where 1 and ' . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_groups_goods') . (' where 1 and ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -81,11 +82,11 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 		$shorttitle = trim($_GPC['value']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 			$shorttitle = '';
 		}
 
-		$goods = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_groups_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$goods = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_groups_goods') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($goods as $good) {
 			pdo_update('ewei_shop_groups_goods', array('shorttitle' => $shorttitle), array('id' => $good['id'], 'uniacid' => $_W['uniacid']));
@@ -173,7 +174,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$this->model->tempDelete($id, 1);
@@ -223,7 +224,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 		$express_list = m('express')->getExpressList();
 
 		if (!empty($id)) {
-			$item = pdo_fetch('select * from ' . tablename('ewei_shop_exhelper_express') . "\r\n            where id=:id and type=:type and uniacid=:uniacid limit 1", array(':id' => $id, ':type' => $type, ':uniacid' => $_W['uniacid']));
+			$item = pdo_fetch('select * from ' . tablename('ewei_shop_exhelper_express') . '
+            where id=:id and type=:type and uniacid=:uniacid limit 1', array(':id' => $id, ':type' => $type, ':uniacid' => $_W['uniacid']));
 
 			if (!empty($item)) {
 				$elements = htmlspecialchars_decode($item['datas']);
@@ -274,9 +276,9 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_exhelper_senduser') . ' where  1 and ' . $condition . ' ORDER BY isdefault desc,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_exhelper_senduser') . (' where  1 and ' . $condition . ' ORDER BY isdefault desc,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_exhelper_senduser') . ' where 1 and ' . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_exhelper_senduser') . (' where 1 and ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -330,7 +332,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,sendername FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,sendername FROM ' . tablename('ewei_shop_exhelper_senduser') . (' WHERE id = \'' . $id . '\' AND uniacid=') . $_W['uniacid'] . '');
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_exhelper_senduser', array('isdefault' => 0), array('uniacid' => $_W['uniacid']));
@@ -348,10 +350,10 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,sendername,sendertel,sendercity,senderaddress FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,sendername,sendertel,sendercity,senderaddress FROM ' . tablename('ewei_shop_exhelper_senduser') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_exhelper_senduser', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -371,13 +373,13 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			'credit' => array('css' => 'danger', 'name' => '余额支付'),
 			'other'  => array('css' => 'default', 'name' => '后台付款'),
 			'wechat' => array('css' => 'success', 'name' => '微信支付')
-			);
+		);
 		$orderstatus = array(
 			array('css' => 'danger', 'name' => '待付款'),
 			array('css' => 'info', 'name' => '待发货'),
 			array('css' => 'warning', 'name' => '待收货'),
 			array('css' => 'success', 'name' => '已完成')
-			);
+		);
 		if (empty($starttime) && empty($endtime)) {
 			$starttime = strtotime('-1 month');
 			$endtime = time();
@@ -385,8 +387,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 
 		$printset = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exhelper_sys') . ' WHERE uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		$lodopUrl_ip = 'localhost';
-		$lodopUrl_port = (empty($printset['port']) ? 8000 : $printset['port']);
-		$https = ($_W['ishttps'] ? 'https://' : 'http://');
+		$lodopUrl_port = empty($printset['port']) ? 8000 : $printset['port'];
+		$https = $_W['ishttps'] ? 'https://' : 'http://';
 		$lodopUrl = $https . $lodopUrl_ip . ':' . $lodopUrl_port . '/CLodopfuncs.js';
 		load()->func('tpl');
 		include $this->template();
@@ -471,7 +473,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				}
 			}
 
-			$sql = 'select o.* ,a.realname ,m.nickname, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . ' where ' . $condition . ' ' . $statuscondition . ' ORDER BY o.createtime DESC,o.status DESC  ';
+			$sql = 'select o.* ,a.realname ,m.nickname, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . (' where ' . $condition . ' ' . $statuscondition . ' ORDER BY o.createtime DESC,o.status DESC  ');
 			$orders = pdo_fetchall($sql, $paras);
 			$list = array();
 
@@ -521,15 +523,15 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				'credit' => array('css' => 'danger', 'name' => '余额支付'),
 				'other'  => array('css' => 'default', 'name' => '后台付款'),
 				'wechat' => array('css' => 'success', 'name' => '微信支付')
-				);
+			);
 			$orderstatus = array(
 				-1 => array('css' => 'default', 'name' => '已关闭'),
 				0  => array('css' => 'danger', 'name' => '待付款'),
 				1  => array('css' => 'info', 'name' => '待发货'),
 				2  => array('css' => 'warning', 'name' => '待收货'),
 				3  => array('css' => 'success', 'name' => '已完成')
-				);
-			$sql = 'select o.* , a.realname,a.mobile,a.province,a.city,a.area, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . ' where o.id in ( ' . implode(',', $arr) . ') and o.uniacid=' . $_W['uniacid'] . ' and m.uniacid=' . $_W['uniacid'] . ' ORDER BY o.createtime DESC,o.status DESC  ';
+			);
+			$sql = 'select o.* , a.realname,a.mobile,a.province,a.city,a.area, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . ' where o.id in ( ' . implode(',', $arr) . (') and o.uniacid=' . $_W['uniacid'] . ' and m.uniacid=' . $_W['uniacid'] . ' ORDER BY o.createtime DESC,o.status DESC  ');
 			$list = pdo_fetchall($sql, $paras);
 
 			foreach ($list as &$value) {
@@ -577,20 +579,25 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 					$value['address']['province'] = $member_address['province'];
 					$value['address']['city'] = $member_address['city'];
 					$value['address']['area'] = $member_address['area'];
+					$value['address']['street'] = $member_address['street'];
 					$value['address']['address'] = $member_address['address'];
 				}
 				else {
-					$value['address'] = array('realname' => $addressa['realname'], 'nickname' => $value['nickname'], 'mobile' => $addressa['mobile'], 'province' => $addressa['province'], 'city' => $addressa['city'], 'area' => $addressa['area'], 'address' => $addressa['address']);
+					$value['address'] = array('realname' => $addressa['realname'], 'nickname' => $value['nickname'], 'mobile' => $addressa['mobile'], 'province' => $addressa['province'], 'city' => $addressa['city'], 'area' => $addressa['area'], 'street' => $addressa['street'], 'address' => $addressa['address']);
 				}
 
-				if (($value['status'] == 1) || (($value['status'] == 0) && ($value['pay_type'] == 3))) {
+				if ($value['status'] == 1 || $value['status'] == 0 && $value['pay_type'] == 3) {
 					$value['send_status'] = 1;
 				}
 				else {
 					$value['send_status'] = 0;
 				}
 
-				$order_goods = pdo_fetchall("select g.id,g.title,g.shorttitle,g.thumb,g.units as unit,g.goodssn, g.productsn,\r\n                    g.groupsprice,g.singleprice,g.price,o.is_team,o.price as realprice,o.goodid as ordergoodid,o.printstate,o.printstate2,o.creditmoney,o.discount\r\n                    from " . tablename('ewei_shop_groups_order') . " o\r\n                    left join " . tablename('ewei_shop_groups_goods') . " g on g.id = o.goodid\r\n                    where o.uniacid=:uniacid and o.id=:orderid ", array(':uniacid' => $_W['uniacid'], ':orderid' => $value['id']));
+				$order_goods = pdo_fetchall('select g.id,g.title,g.shorttitle,g.thumb,g.units as unit,g.goodssn, g.productsn,
+                    g.groupsprice,g.singleprice,g.price,o.is_team,o.price as realprice,o.goodid as ordergoodid,o.printstate,o.printstate2,o.creditmoney,o.discount
+                    from ' . tablename('ewei_shop_groups_order') . ' o
+                    left join ' . tablename('ewei_shop_groups_goods') . ' g on g.id = o.goodid
+                    where o.uniacid=:uniacid and o.id=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $value['id']));
 
 				foreach ($order_goods as $i => $order_good) {
 					if (!empty($order_good['optionid'])) {
@@ -602,7 +609,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				$goods = '';
 
 				foreach ($order_goods as &$og) {
-					$goods .= '' . $og['title'] . "\r\n";
+					$goods .= '' . $og['title'] . '
+';
 
 					if (!empty($og['realprice'])) {
 						$og['realprice'] = $og['realprice'] - $og['discount'] - $og['creditmoney'];
@@ -635,7 +643,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 					}
 
 					$og['total'] = 1;
-					$goods .= ' 数量: ' . $og['total'] . ' 总价: ' . $og['realprice'] . "\r\n ";
+					$goods .= ' 数量: ' . $og['total'] . ' 总价: ' . $og['realprice'] . '
+ ';
 				}
 
 				unset($og);
@@ -644,8 +653,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			}
 
 			unset($value);
-			$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_groups_order') . ' o ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' WHERE o.id in ( ' . implode(',', $arr) . ') and o.uniacid=' . $_W['uniacid'], $paras);
-			$totalmoney = pdo_fetchcolumn('SELECT sum(o.price) FROM ' . tablename('ewei_shop_groups_order') . ' o ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' WHERE o.id in ( ' . implode(',', $arr) . ') and o.uniacid=' . $_W['uniacid'], $paras);
+			$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_groups_order') . ' o ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' WHERE o.id in ( ' . implode(',', $arr) . (') and o.uniacid=' . $_W['uniacid']), $paras);
+			$totalmoney = pdo_fetchcolumn('SELECT sum(o.price) FROM ' . tablename('ewei_shop_groups_order') . ' o ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid  ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' WHERE o.id in ( ' . implode(',', $arr) . (') and o.uniacid=' . $_W['uniacid']), $paras);
 			$address = false;
 
 			if (!empty($list)) {
@@ -689,7 +698,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			$ordersns = $_GPC['ordersns'];
 
 			if (is_array($ordersns)) {
-				$data = array('realname' => trim($_GPC['realname']), 'nickname' => trim($_GPC['nickname']), 'mobile' => intval($_GPC['mobile']), 'province' => trim($_GPC['province']), 'city' => trim($_GPC['city']), 'area' => trim($_GPC['area']), 'address' => trim($_GPC['address']));
+				$data = array('realname' => trim($_GPC['realname']), 'nickname' => trim($_GPC['nickname']), 'mobile' => intval($_GPC['mobile']), 'province' => trim($_GPC['province']), 'city' => trim($_GPC['city']), 'area' => trim($_GPC['area']), 'street' => trim($_GPC['street']), 'address' => trim($_GPC['address']));
 				$address_send = iserializer($data);
 
 				foreach ($ordersns as $ordersn) {
@@ -800,7 +809,10 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				$printTemp['expresscom'] = '其他快递';
 			}
 
-			$orders = pdo_fetchall("SELECT o.id,o.orderno,o.addressid,o.address,o.status,o.pay_type,o.expresscom,o.expresssn,a.realname,a.mobile\r\n                    FROM " . tablename('ewei_shop_groups_order') . " as o\r\n                    left join " . tablename('ewei_shop_member_address') . " a on o.addressid = a.id\r\n                    WHERE o.id in( " . $in . ' ) and o.status = 1 and (o.is_team = 0 or o.success = 1) and o.uniacid=:uniacid order by o.orderno desc ', array(':uniacid' => $_W['uniacid']));
+			$orders = pdo_fetchall('SELECT o.id,o.orderno,o.addressid,o.address,o.status,o.pay_type,o.expresscom,o.expresssn,a.realname,a.mobile
+                    FROM ' . tablename('ewei_shop_groups_order') . ' as o
+                    left join ' . tablename('ewei_shop_member_address') . (' a on o.addressid = a.id
+                    WHERE o.id in( ' . $in . ' ) and o.status = 1 and (o.is_team = 0 or o.success = 1) and o.uniacid=:uniacid order by o.orderno desc '), array(':uniacid' => $_W['uniacid']));
 
 			if (empty($orders)) {
 				exit();
@@ -811,14 +823,14 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				'credit' => array('css' => 'danger', 'name' => '余额支付'),
 				'other'  => array('css' => 'default', 'name' => '后台付款'),
 				'wechat' => array('css' => 'success', 'name' => '微信支付')
-				);
+			);
 			$orderstatus = array(
 				-1 => array('css' => 'default', 'name' => '已关闭'),
 				0  => array('css' => 'danger', 'name' => '待付款'),
 				1  => array('css' => 'info', 'name' => '待发货'),
 				2  => array('css' => 'warning', 'name' => '待收货'),
 				3  => array('css' => 'success', 'name' => '已完成')
-				);
+			);
 
 			foreach ($orders as $i => $order) {
 				if (!empty($order['address'])) {
@@ -908,13 +920,13 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			'credit' => array('css' => 'danger', 'name' => '余额支付'),
 			'other'  => array('css' => 'default', 'name' => '后台付款'),
 			'wechat' => array('css' => 'success', 'name' => '微信支付')
-			);
+		);
 		$orderstatus = array(
 			array('css' => 'danger', 'name' => '待付款'),
 			array('css' => 'info', 'name' => '待发货'),
 			array('css' => 'warning', 'name' => '待收货'),
 			array('css' => 'success', 'name' => '已完成')
-			);
+		);
 		if (empty($starttime) && empty($endtime)) {
 			$starttime = strtotime('-1 month');
 			$endtime = time();
@@ -922,8 +934,8 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 
 		$printset = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exhelper_sys') . ' WHERE uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		$lodopUrl_ip = 'localhost';
-		$lodopUrl_port = (empty($printset['port']) ? 8000 : $printset['port']);
-		$https = ($_W['ishttps'] ? 'https://' : 'http://');
+		$lodopUrl_port = empty($printset['port']) ? 8000 : $printset['port'];
+		$https = $_W['ishttps'] ? 'https://' : 'http://';
 		$lodopUrl = $https . $lodopUrl_ip . ':' . $lodopUrl_port . '/CLodopfuncs.js';
 		load()->func('tpl');
 		include $this->template();
@@ -952,7 +964,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 
 			if ($status != '') {
 				if ($status == 1) {
-					$statuscondition = ' and (o.status = 1 and o.is_team = 0) or (o.status = 1 and o.success = 1 ) ';
+					$statuscondition = ' and ((o.status = 1 and o.is_team = 0) or (o.status = 1 and o.success = 1 )) ';
 				}
 				else {
 					$statuscondition = ' AND o.status = ' . intval($status);
@@ -1024,7 +1036,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				}
 			}
 
-			$sql = 'select o.* ,a.realname ,m.nickname, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_goods') . ' g on g.id = o.goodid  ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . ' where ' . $condition . ' ' . $statuscondition . ' ORDER BY o.createtime DESC  ';
+			$sql = 'select o.* ,a.realname ,m.nickname, d.dispatchname,m.nickname,r.refundstatus from ' . tablename('ewei_shop_groups_order') . ' o' . ' left join ' . tablename('ewei_shop_groups_goods') . ' g on g.id = o.goodid  ' . ' left join ' . tablename('ewei_shop_groups_order_refund') . ' r on r.orderid=o.id and ifnull(r.refundstatus,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on a.id = o.addressid ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . (' where ' . $condition . ' ' . $statuscondition . ' ORDER BY o.createtime DESC  ');
 			$orders = pdo_fetchall($sql, $paras);
 			$totalmoney = 0;
 
@@ -1036,14 +1048,18 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 					'credit' => array('css' => 'danger', 'name' => '余额支付'),
 					'other'  => array('css' => 'default', 'name' => '后台付款'),
 					'wechat' => array('css' => 'success', 'name' => '微信支付')
-					);
+				);
 				$orderstatus = array(
 					array('css' => 'danger', 'name' => '待付款'),
 					array('css' => 'info', 'name' => '待发货'),
 					array('css' => 'warning', 'name' => '待收货'),
 					array('css' => 'success', 'name' => '已完成')
-					);
-				$order_goods = pdo_fetchall("select g.id,g.title,g.shorttitle,g.thumb,g.goodssn,g.units as unit,g.goodssn as option_goodssn, g.productsn as option_productsn,\r\n                    o.price, o.price as realprice,o.goodid as ordergoodid,o.printstate,o.printstate2,g.singleprice,g.groupsprice,o.is_team\r\n                    from " . tablename('ewei_shop_groups_order') . " o\r\n                    left join " . tablename('ewei_shop_groups_goods') . " g on g.id = o.goodid\r\n                    where o.uniacid=:uniacid and o.id=:orderid ", array(':uniacid' => $_W['uniacid'], ':orderid' => $order['id']));
+				);
+				$order_goods = pdo_fetchall('select g.id,g.title,g.shorttitle,g.thumb,g.goodssn,g.units as unit,g.goodssn as option_goodssn, g.productsn as option_productsn,
+                    o.price, o.price as realprice,o.goodid as ordergoodid,o.printstate,o.printstate2,g.singleprice,g.groupsprice,o.is_team
+                    from ' . tablename('ewei_shop_groups_order') . ' o
+                    left join ' . tablename('ewei_shop_groups_goods') . ' g on g.id = o.goodid
+                    where o.uniacid=:uniacid and o.id=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $order['id']));
 
 				foreach ($order_goods as $ii => $order_good) {
 					$order_goods[$ii]['total'] = 1;
@@ -1087,11 +1103,13 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				}
 
 				if (!is_array($order_address)) {
-					$member_address = pdo_fetch('SELECT a.*,m.nickname FROM ' . tablename('ewei_shop_member_address') . " a\r\n                    left join " . tablename('ewei_shop_member') . " m on m.openid=a.openid\r\n                    WHERE a.id=:id and a.uniacid=:uniacid limit 1", array(':id' => $order['addressid'], ':uniacid' => $_W['uniacid']));
-					$orders[$i]['address'] = array('realname' => $member_address['realname'], 'nickname' => $member_address['nickname'], 'mobile' => $member_address['mobile'], 'province' => $member_address['province'], 'city' => $member_address['city'], 'area' => $member_address['area'], 'address' => $member_address['address']);
+					$member_address = pdo_fetch('SELECT a.*,m.nickname FROM ' . tablename('ewei_shop_member_address') . ' a
+                    left join ' . tablename('ewei_shop_member') . ' m on m.openid=a.openid
+                    WHERE a.id=:id and a.uniacid=:uniacid limit 1', array(':id' => $order['addressid'], ':uniacid' => $_W['uniacid']));
+					$orders[$i]['address'] = array('realname' => $member_address['realname'], 'nickname' => $member_address['nickname'], 'mobile' => $member_address['mobile'], 'province' => $member_address['province'], 'city' => $member_address['city'], 'area' => $member_address['area'], 'street' => $member_address['street'], 'address' => $member_address['address']);
 				}
 				else {
-					$orders[$i]['address'] = array('realname' => $order_address['realname'], 'nickname' => $order['nickname'], 'mobile' => $order_address['mobile'], 'province' => $order_address['province'], 'city' => $order_address['city'], 'area' => $order_address['area'], 'address' => $order_address['address']);
+					$orders[$i]['address'] = array('realname' => $order_address['realname'], 'nickname' => $order['nickname'], 'mobile' => $order_address['mobile'], 'province' => $order_address['province'], 'city' => $order_address['city'], 'area' => $order_address['area'], 'street' => $order_address['street'], 'address' => $order_address['address']);
 				}
 
 				if ($order['status'] == 1) {
@@ -1117,7 +1135,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 			$ordersns = $_GPC['ordersns'];
 
 			if (is_array($ordersns)) {
-				$data = array('realname' => trim($_GPC['realname']), 'nickname' => trim($_GPC['nickname']), 'mobile' => intval($_GPC['mobile']), 'province' => trim($_GPC['province']), 'city' => trim($_GPC['city']), 'area' => trim($_GPC['area']), 'address' => trim($_GPC['address']));
+				$data = array('realname' => trim($_GPC['realname']), 'nickname' => trim($_GPC['nickname']), 'mobile' => intval($_GPC['mobile']), 'province' => trim($_GPC['province']), 'city' => trim($_GPC['city']), 'area' => trim($_GPC['area']), 'street' => trim($_GPC['street']), 'address' => trim($_GPC['address']));
 				$address_send = iserializer($data);
 
 				foreach ($ordersns as $ordersn) {
@@ -1221,7 +1239,7 @@ class Exhelper_EweiShopV2Page extends PluginWebPage
 				exit(json_encode(array('result' => 'error', 'resp' => '订单不存在')));
 			}
 
-			if (($orderinfo['status'] == 1) && (($orderinfo['is_team'] == 0) || ($orderinfo['success'] == 1))) {
+			if ($orderinfo['status'] == 1 && ($orderinfo['is_team'] == 0 || $orderinfo['success'] == 1)) {
 				pdo_update('ewei_shop_groups_order', array('express' => trim($express), 'expresssn' => trim($expresssn), 'expresscom' => trim($expresscom), 'sendtime' => time(), 'status' => 2), array('id' => $orderid));
 
 				if (!empty($orderinfo['refundid'])) {

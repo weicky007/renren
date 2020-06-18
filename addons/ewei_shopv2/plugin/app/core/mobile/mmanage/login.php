@@ -1,10 +1,10 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Login_EweiShopV2Page extends AppMobilePage
 {
 	protected $appid;
@@ -21,7 +21,7 @@ class Login_EweiShopV2Page extends AppMobilePage
 			$set['mmanage'] = array();
 		}
 
-		app_json(array('logo' => tomedia($set['mmanage']['logo']), 'name' => $set['mmanage']['name'], 'close' => !intval($set['mmanage']['open'])));
+		return app_json(array('logo' => tomedia($set['mmanage']['logo']), 'name' => $set['mmanage']['name'], 'close' => !intval($set['mmanage']['open'])));
 	}
 
 	public function submit()
@@ -30,7 +30,7 @@ class Login_EweiShopV2Page extends AppMobilePage
 		global $_GPC;
 
 		if (!$_W['ispost']) {
-			app_error(AppError::$RequestError);
+			return app_error(AppError::$RequestError);
 		}
 
 		$set = p('app')->getGlobal();
@@ -40,7 +40,7 @@ class Login_EweiShopV2Page extends AppMobilePage
 		}
 
 		if (!intval($set['mmanage']['open'])) {
-			app_error(AppError::$ManageNotOpen);
+			return app_error(AppError::$ManageNotOpen);
 		}
 
 		load()->model('user');
@@ -50,11 +50,11 @@ class Login_EweiShopV2Page extends AppMobilePage
 			$code = trim($_GPC['code']);
 
 			if (empty($code)) {
-				app_error(AppError::$ParamsError);
+				return app_error(AppError::$ParamsError);
 			}
 
 			if (empty($set['mmanage']['appid']) || empty($set['mmanage']['secret'])) {
-				app_error(AppError::$UserLoginFail, '微信登录参数未配置');
+				return app_error(AppError::$UserLoginFail, '微信登录参数未配置');
 			}
 
 			load()->func('communication');
@@ -62,44 +62,44 @@ class Login_EweiShopV2Page extends AppMobilePage
 			$resp = ihttp_request($url);
 
 			if ($resp['code'] != 200) {
-				app_error(AppError::$UserLoginFail, '与微信连接失败，请稍后重试');
+				return app_error(AppError::$UserLoginFail, '与微信连接失败，请稍后重试');
 			}
 
 			$arr = @json_decode($resp['content'], true);
 			if (!empty($arr['errcode']) || !isset($arr['openid'])) {
-				app_error(AppError::$UserLoginFail, $arr['errmsg']);
+				return app_error(AppError::$UserLoginFail, $arr['errmsg']);
 			}
 
 			$openid = $arr['openid'];
 			$roleuser = pdo_fetch('SELECT id, uid, uniacid, username, status, openid_wa FROM' . tablename('ewei_shop_perm_user') . 'WHERE openid_wa=:openid LIMIT 1', array(':openid' => $openid));
 
 			if (empty($roleuser)) {
-				app_error(AppError::$UserLoginFail, '当前账号未绑定操作员');
+				return app_error(AppError::$UserLoginFail, '当前账号未绑定操作员');
 			}
 
 			if (empty($roleuser['status'])) {
-				app_error(AppError::$UserLoginFail, '此账号暂时无法登录管理后台');
+				return app_error(AppError::$UserLoginFail, '此账号暂时无法登录管理后台');
 			}
 
 			$account = user_single($roleuser['uid']);
 
 			if (!$account) {
-				app_error(AppError::$UserLoginFail, '当前账号未绑定操作员');
+				return app_error(AppError::$UserLoginFail, '当前账号未绑定操作员');
 			}
 		}
 		else {
 			$username = trim($_GPC['username']);
 			$password = trim($_GPC['password']);
 			if (empty($username) || empty($password)) {
-				app_error(AppError::$ParamsError);
+				return app_error(AppError::$ParamsError);
 			}
 
 			if (!user_check(array('username' => $username))) {
-				app_error(AppError::$UserLoginFail, '用户不存在');
+				return app_error(AppError::$UserLoginFail, '用户不存在');
 			}
 
 			if (!user_check(array('username' => $username, 'password' => $password))) {
-				app_error(AppError::$UserLoginFail, '用户名或密码错误');
+				return app_error(AppError::$UserLoginFail, '用户名或密码错误');
 			}
 
 			$account = user_single(array('username' => $username));
@@ -107,21 +107,21 @@ class Login_EweiShopV2Page extends AppMobilePage
 
 			if (!in_array($account['uid'], $founders)) {
 				if ($account['status'] != 2) {
-					app_error(AppError::$UserLoginFail, '操作员已被禁用');
+					return app_error(AppError::$UserLoginFail, '操作员已被禁用');
 				}
 			}
 
 			$role = $this->we_role($account['uid']);
 
 			if (empty($role)) {
-				app_error(AppError::$UserLoginFail, '此账号没有管理权限');
+				return app_error(AppError::$UserLoginFail, '此账号没有管理权限');
 			}
 
 			if ($role == 'operator') {
 				$roleuser = pdo_fetch('SELECT id, uid, uniacid FROM' . tablename('ewei_shop_perm_user') . 'WHERE uid=:uid LIMIT 1', array(':uid' => $account['uid']));
 
 				if (empty($roleuser)) {
-					app_error(AppError::$UserLoginFail, '此账号没有管理权限');
+					return app_error(AppError::$UserLoginFail, '此账号没有管理权限');
 				}
 
 				$admin = 0;
@@ -131,15 +131,15 @@ class Login_EweiShopV2Page extends AppMobilePage
 			}
 		}
 
-		app_json(array(
-	'account' => array('uid' => $account['uid'], 'uniacid' => is_array($roleuser) ? $roleuser['uniacid'] : 0, 'username' => $account['username'], 'admin' => $admin)
-	));
+		return app_json(array(
+			'account' => array('uid' => $account['uid'], 'uniacid' => is_array($roleuser) ? $roleuser['uniacid'] : 0, 'username' => $account['username'], 'admin' => $admin)
+		));
 	}
 
 	public function uni_owned($uid = 0)
 	{
 		global $_W;
-		$uid = (empty($uid) ? $_W['uid'] : intval($uid));
+		$uid = empty($uid) ? $_W['uid'] : intval($uid);
 		$uniaccounts = array();
 		$founders = explode(',', $_W['config']['setting']['founder']);
 
@@ -171,6 +171,12 @@ class Login_EweiShopV2Page extends AppMobilePage
 			return 'founder';
 		}
 
+		$vice_founder = pdo_fetchcolumn('SELECT COUNT(id)FROM ' . tablename('uni_account_users') . 'WHERE uid=:uid AND role=:role', array(':uid' => $uid, ':role' => 'vice_founder'));
+
+		if (!empty($vice_founder)) {
+			return 'vice_founder';
+		}
+
 		$owner = pdo_fetchcolumn('SELECT COUNT(id)FROM ' . tablename('uni_account_users') . 'WHERE uid=:uid AND role=:role', array(':uid' => $uid, ':role' => 'owner'));
 
 		if (!empty($owner)) {
@@ -181,6 +187,12 @@ class Login_EweiShopV2Page extends AppMobilePage
 
 		if (!empty($operator)) {
 			return 'operator';
+		}
+
+		$manager = pdo_fetchcolumn('SELECT COUNT(id)FROM ' . tablename('uni_account_users') . 'WHERE uid=:uid AND role=:role', array(':uid' => $uid, ':role' => 'manager'));
+
+		if (!empty($manager)) {
+			return 'manager';
 		}
 
 		return false;

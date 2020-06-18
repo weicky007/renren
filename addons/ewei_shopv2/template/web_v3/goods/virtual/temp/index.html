@@ -74,7 +74,7 @@
                                     </span>
                                 </a>
                             {/if}
-                            {ifp 'goods.virtual.data.view'}
+                            {ifp 'goods.virtual.temp.view'}
                                 <a class='btn btn-default  btn-sm btn-operation btn-op' href="{php echo webUrl('goods/virtual/data', array('typeid' => $item['id']))}" >
                                      <span data-toggle="tooltip" data-placement="top" title="" data-original-title="数据">
                                          <i class="icow icow-digital"></i>
@@ -126,4 +126,3 @@
     {/if}
 </div>
 {template '_footer'}
-

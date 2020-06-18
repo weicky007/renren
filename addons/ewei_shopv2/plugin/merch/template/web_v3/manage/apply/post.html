@@ -14,7 +14,7 @@
             </div>
             <div class="summary flex">
                 <div class="flex1 flex column">
-                    <h2 class="no-margins yesterday-count text-danger"><span id="bonusmoney_pay">{$item['realpricerate']}</span> 元</h2>
+                    <h2 class="no-margins yesterday-count text-danger"><span id="bonusmoney_pay">{php echo number_format($item['realpricerate'],2)}</span> 元</h2>
                     <small>抽成前的金额: {$item['realprice']} 元</small>
                 </div >
             </div>

@@ -1,6 +1,6 @@
 {template '_header'}
 <div class="page-header">
-    当前位置：<span class="text-primary">{$res['title']}<small>兑换率: <span class="text-danger">{$res['use']}/{$res['total']}</span></small></span>
+    当前位置：<span class="text-primary">{$res['title']}<small>兑换率: <span class="text-danger">{$dyet}/{php echo $dno+$dyet+$dend}</span></small></span>
 </div>
 <div class="page-content" style="display: block;">
     <span class="page-toolbar m-b-sm m-t-sm">
@@ -16,7 +16,7 @@
                     </span>
         </div>
         <span>
-            {php echo tpl_form_field_daterange('date',array('start'=>20161001,'end'=>20161001));}
+            {php echo tpl_form_field_eweishop_daterange('date',array('start'=>20161001,'end'=>20161001));}
         </span>
         <div class="col-sm-4 pull-right">
             <div class="input-group">

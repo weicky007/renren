@@ -139,7 +139,10 @@ MFF/yA==
 			cache_clean(cache_system_key('proxy_wechatpay_account:'));
 		}
 	
-	iajax(0, '设置成功！', referer());
+	if ($_W['isajax']) {
+		iajax(0, '设置成功！', referer());
+	}
+	itoast('设置成功！', referer(), 'success');
 }
 
 if ('change_status' == $do) {

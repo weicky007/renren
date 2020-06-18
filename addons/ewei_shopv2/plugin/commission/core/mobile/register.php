@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,7 +16,7 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 		$area_set = m('util')->get_area_config_set();
 		$new_area = intval($area_set['new_area']);
 		$member = m('member')->getMember($openid);
-		if (($member['isagent'] == 1) && ($member['status'] == 1)) {
+		if ($member['isagent'] == 1 && $member['status'] == 1 && empty($member['agentblack'])) {
 			header('location: ' . mobileUrl('commission'));
 			exit();
 		}
@@ -93,9 +94,17 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 			$icode = intval($_GPC['icode']);
 
 			if (0 < $icode) {
-				$iagent = m('member')->getMember($icode);
-				if (!empty($iagent) && ($iagent['isagent'] == 1)) {
-					$mid = $icode;
+				if (p('offic')) {
+					$iagent = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where mobile = :mobile and uniacid = :uniacid limit 1', array(':mobile' => $icode, ':uniacid' => intval($_W['uniacid'])));
+					if (!empty($iagent) && $iagent['isagent'] == 1) {
+						$mid = $iagent['id'];
+					}
+				}
+				else {
+					$iagent = m('member')->getMember($icode);
+					if (!empty($iagent) && $iagent['isagent'] == 1) {
+						$mid = $icode;
+					}
 				}
 			}
 
@@ -117,6 +126,7 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 				$m_data['agenttime'] = $become_check == 1 ? time() : 0;
 				unset($m_data['credit1']);
 				unset($m_data['credit2']);
+				$this->model->sendMessage($member['openid'], array('nickname' => $member['nickname'], 'agenttime' => $m_data['agenttime']), TM_COMMISSION_BECOME_APPLY);
 				pdo_update('ewei_shop_member', $m_data, array('id' => $member['id']));
 
 				if ($become_check == 1) {
@@ -133,6 +143,7 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 			}
 			else {
 				$data = array('isagent' => 1, 'agentid' => $mid, 'status' => $become_check, 'realname' => $_GPC['realname'], 'mobile' => $_GPC['mobile'], 'weixin' => $_GPC['weixin'], 'agenttime' => $become_check == 1 ? time() : 0);
+				$this->model->sendMessage($member['openid'], array('nickname' => $member['nickname'], 'agenttime' => $m_data['agenttime']), TM_COMMISSION_BECOME_APPLY);
 				pdo_update('ewei_shop_member', $data, array('id' => $member['id']));
 
 				if ($become_check == 1) {
@@ -159,13 +170,14 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 			show_json(1, array('check' => $become_check));
 		}
 
-		$order_status = (intval($set['become_order']) == 0 ? 1 : 3);
+		$order_status = intval($set['become_order']) == 0 ? 1 : 3;
 		$become_check = intval($set['become_check']);
 		$to_check_agent = false;
 
 		if (empty($set['become'])) {
 			if (empty($member['status']) || empty($member['isagent'])) {
-				$data = array('isagent' => 1, 'agentid' => $mid, 'status' => $become_check, 'realname' => trim($_GPC['realname']), 'mobile' => trim($_GPC['mobile']), 'weixin' => trim($_GPC['weixin']), 'agenttime' => $become_check == 1 ? time() : 0);
+				$data = array('isagent' => 1, 'agentid' => $mid, 'status' => $become_check, 'agenttime' => $become_check == 1 ? time() : 0);
+				$this->model->sendMessage($member['openid'], array('nickname' => $member['nickname'], 'agenttime' => $m_data['agenttime']), TM_COMMISSION_BECOME_APPLY);
 				pdo_update('ewei_shop_member', $data, array('id' => $member['id']));
 
 				if ($become_check == 1) {
@@ -181,17 +193,13 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 					}
 				}
 
-				if (!empty($member['uid'])) {
-					m('member')->mc_update($member['uid'], array('realname' => $data['realname'], 'mobile' => $data['mobile']));
-				}
-
 				$member['isagent'] = 1;
 				$member['status'] = $become_check;
 			}
 		}
 		else if ($set['become'] == '2') {
 			$status = 1;
-			$ordercount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			$ordercount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . (' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1'), array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if ($ordercount < intval($set['become_ordercount'])) {
 				$status = 0;
@@ -204,7 +212,7 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 		else if ($set['become'] == '3') {
 			$status = 1;
-			$moneycount = pdo_fetchcolumn('select sum(goodsprice) from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			$moneycount = pdo_fetchcolumn('select sum(price) from ' . tablename('ewei_shop_order') . (' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1'), array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if ($moneycount < floatval($set['become_moneycount'])) {
 				$status = 0;
@@ -217,12 +225,17 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 		else {
 			if ($set['become'] == 4) {
+				$time = empty($member['applyagenttime']) ? time() : $member['applyagenttime'];
 				$goods = pdo_fetch('select id,title,thumb,marketprice from' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $set['become_goodsid'], ':uniacid' => $_W['uniacid']));
-				$goodscount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order_goods') . ' og ' . '  left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid' . ' where og.goodsid=:goodsid and o.openid=:openid and o.status>=' . $order_status . '  limit 1', array(':goodsid' => $set['become_goodsid'], ':openid' => $openid));
+				$goodscount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order_goods') . ' og ' . '  left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid' . (' where og.goodsid=:goodsid and o.openid=:openid and o.status>=' . $order_status . '  and og.createtime >= ' . $time . '  limit 1'), array(':goodsid' => $set['become_goodsid'], ':openid' => $openid));
 
 				if ($goodscount <= 0) {
 					$status = 0;
 					$buy_goods = $goods;
+
+					if (empty($member['isagent'])) {
+						pdo_update('ewei_shop_member', array('applyagenttime' => time()), array('id' => $member['id']));
+					}
 				}
 				else {
 					$to_check_agent = true;
@@ -238,9 +251,10 @@ class Register_EweiShopV2Page extends CommissionMobileLoginPage
 
 		if ($to_check_agent) {
 			if (empty($member['isagent'])) {
-				$data = array('isagent' => 1, 'status' => $become_check, 'agenttime' => time());
+				$data = array('isagent' => 1, 'status' => $become_check, 'agenttime' => $become_check == 1 ? time() : 0, 'applyagenttime' => 0);
 				$member['isagent'] = 1;
 				$member['status'] = $become_check;
+				$this->model->sendMessage($member['openid'], array('nickname' => $member['nickname'], 'agenttime' => $m_data['agenttime']), TM_COMMISSION_BECOME_APPLY);
 				pdo_update('ewei_shop_member', $data, array('id' => $member['id']));
 
 				if ($become_check == 1) {

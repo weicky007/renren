@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -28,12 +29,16 @@ class View_EweiShopV2Page extends PluginMobileLoginPage
 		$psize = 10;
 		$condition = ' and lv.uniacid = :uniacid and lv.openid = \'' . $openid . '\' ';
 		$params = array(':uniacid' => $_W['uniacid']);
-		$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_live_view') . " as lv\r\n                    right join " . tablename('ewei_shop_live') . " as l on l.id = lv.roomid and l.uniacid = lv.uniacid\r\n            \t\twhere 1 " . $condition;
+		$sql = 'SELECT COUNT(1) FROM ' . tablename('ewei_shop_live_view') . ' as lv
+                    right join ' . tablename('ewei_shop_live') . (' as l on l.id = lv.roomid and l.uniacid = lv.uniacid
+            		where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT l.id,l.title,l.thumb,l.livetime,l.subscribe,l.living FROM ' . tablename('ewei_shop_live_view') . " as lv\r\n                    right join " . tablename('ewei_shop_live') . " as l on l.id = lv.roomid\r\n            \t\twhere 1 " . $condition . ' ORDER BY lv.viewing DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT l.id,l.title,l.thumb,l.livetime,l.subscribe,l.living FROM ' . tablename('ewei_shop_live_view') . ' as lv
+                    right join ' . tablename('ewei_shop_live') . ' as l on l.id = lv.roomid
+            		where 1 ' . $condition . ' ORDER BY lv.viewing DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
 

@@ -5,7 +5,7 @@
  */
 $_W['page']['title'] = '模拟测试';
 $development = 1;
-$accounts = uni_owned(0, false);
+$accounts = uni_user_accounts();
 define('FRAME', '');
 template('common/header');
 

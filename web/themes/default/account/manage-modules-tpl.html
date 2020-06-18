@@ -1,7 +1,7 @@
 {template 'common/header'}
 {template 'account/account-header'}
 <div id="js-account-manage-modules-tpl" ng-controller="AccountMangeModulesTpl" ng-cloak>
-	{if in_array($owner['uid'], $founders)}
+	{if $owner['is_admin']}
 		<div class="panel we7-panel user-permission">
 			<div class="panel-heading">
 				主管理员的会员权限
@@ -11,14 +11,13 @@
 			</div>
 		</div>
 	{/if}
-	{if !in_array($owner['uid'], $founders)}
-
+	{if !$owner['is_admin']}
 		<!--主管理员会员权限-->
 		<div class="panel we7-panel user-permission">
 			<div class="panel-heading">
 				<span>主管理员: {{owner.group.name}}</span>
 				
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
 				<a href="{if $owner['founder_groupid'] == ACCOUNT_MANAGE_GROUP_VICE_FOUNDER}{php echo url('founder/edit/edit_modules_tpl', array('uid' => $owner['uid']))}{else}{php echo url('user/edit/edit_modules_tpl',array('uid'=>$owner['uid']))}{/if}" class="pull-right color-default">修改</a>
 				{/if}
 				
@@ -91,7 +90,7 @@
 			<div class="panel-heading">
 				<span>附加应用权限组</span>
 				
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
 				<we7-modal-app title="'修改附加应用权限组'" module-list="groupList" multiple="true" on-confirm="changeGroup()"><a href="javascript:;" class="pull-right color-default">修改</a></we7-modal-app>
 				{/if}
 				
@@ -137,7 +136,7 @@
 			<div class="panel-heading">
 				<span>附加应用</span>
 				
-				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER && !in_array($owner['uid'], $founders) || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
+				{if $_W['role'] == ACCOUNT_MANAGE_NAME_FOUNDER || $_W['role'] == ACCOUNT_MANAGE_NAME_VICE_FOUNDER && $owner['uid'] != $_W['uid']}
 				<we7-modal-app module-list="moduleList" multiple="true" on-confirm="addExtend()"><a href="javascript:;" class="pull-right color-default">修改</a></we7-modal-app>
 				{/if}
 				
@@ -351,10 +350,9 @@
 		extend: {php echo !empty($extend) ? json_encode($extend) : 'null'},
 		uni_groups: {php echo !empty($uni_groups) ? json_encode($uni_groups) : 'null'},
 		links: {
-			postModulesTpl: "{php echo url('account/post/modules_tpl', array('uniacid' => $uniacid))}",
+			postModulesTpl: "{php echo url('account/post/edit_modules_tpl', array('uniacid' => $uniacid))}",
 		},
 		modules: {php echo !empty($modules) ? json_encode($modules) : 'null'},
-		templates: {php echo !empty($templates) ? json_encode($templates) : 'null'},
 		account_type_sign: '{php echo $account->typeSign}',
 	});
 	angular.bootstrap($('#js-account-manage-modules-tpl'), ['accountApp']);

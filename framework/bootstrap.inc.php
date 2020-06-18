@@ -74,6 +74,7 @@ if (isset($_W['config']['setting']['https']) && $_W['config']['setting']['https'
 	$_W['ishttps'] = $_W['config']['setting']['https'];
 } else {
 	$_W['ishttps'] = isset($_SERVER['SERVER_PORT']) && 443 == $_SERVER['SERVER_PORT'] ||
+	isset($_SERVER['HTTP_FROM_HTTPS']) && 'on' == strtolower($_SERVER['HTTP_FROM_HTTPS']) ||
 	(isset($_SERVER['HTTPS']) && 'off' != strtolower($_SERVER['HTTPS'])) ||
 	isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && 'https' == strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) ||
 	isset($_SERVER['HTTP_X_CLIENT_SCHEME']) && 'https' == strtolower($_SERVER['HTTP_X_CLIENT_SCHEME']) 			? true : false;
@@ -133,9 +134,7 @@ if (!$_W['isajax']) {
 }
 $_W['uniacid'] = $_W['uid'] = 0;
 
-
-define('DEVELOPMENT', $_W['config']['setting']['development'] == 1 || $_W['setting']['copyright']['develop_status'] ==1);
-if (DEVELOPMENT) {
+if ($_W['config']['setting']['development'] == 1) {
 	ini_set('display_errors', '1');
 	error_reporting(E_ALL ^ E_NOTICE);
 }
@@ -151,11 +150,16 @@ if ($_W['config']['setting']['development'] == 2) {
 		$error_handler->registerShutdownFunction();
 	}
 }
-
 setting_load();
+if ($_W['setting']['copyright']['develop_status'] ==1) {
+	ini_set('display_errors', '1');
+	error_reporting(E_ALL ^ E_NOTICE);
+}
+define('DEVELOPMENT', $_W['config']['setting']['development'] == 1 || $_W['setting']['copyright']['develop_status'] ==1);
 if (empty($_W['setting']['upload'])) {
 	$_W['setting']['upload'] = array_merge($_W['config']['upload']);
 }
+
 $_W['os'] = Agent::deviceType();
 if (Agent::DEVICE_MOBILE == $_W['os']) {
 	$_W['os'] = 'mobile';

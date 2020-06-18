@@ -1,5 +1,5 @@
-<div class="swiper-container adv-container"  style="background:{$diyitem['style']['bgcolor']};padding-top:{$diyitem['style']['margintop']}px;padding-bottom:{$diyitem['style']['marginbottom']}px">
-    <div class="swiper-wrapper">
+<div class="swiper-container adv-container"  style="background:{$diyitem['style']['bgcolor']};padding-top:0px;padding-bottom:0px">
+    <div class="swiper-wrapper" style="width: 100%">
         {loop $advs $adv}
         <div class="swiper-slide adv-slide no-swiper" style="background:{$diyitem['style']['bgcolor']}">
             <a href="{php echo empty($adv['link'])?'#':$adv['link']}" style="background:{$diyitem['style']['bgcolor']}">

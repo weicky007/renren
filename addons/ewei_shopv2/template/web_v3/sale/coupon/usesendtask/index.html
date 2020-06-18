@@ -41,9 +41,7 @@
             <table class="table table-hover table-responsive">
                 <thead class="navbar-inner">
                 <tr>
-                    <th>使用优惠券图片</th>
                     <th >使用优惠券名称</th>
-                    <th>发送优惠券图片</th>
                     <th>发送优惠券名称</th>
                     <th>赠送数量</th>
                     <th  style="width: 200px">活动时间</th>
@@ -56,13 +54,7 @@
                 {loop $usesendtasks $item}
                 <tr>
                     <td>
-                        <img src="{php echo tomedia($item['usethumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
-                    </td>
-                    <td>
                         {$item['usecouponname']}
-                    </td>
-                    <td>
-                        <img src="{php echo tomedia($item['thumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"  onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"/>
                     </td>
                     <td>
                         {$item['couponname']}
@@ -100,7 +92,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td style="text-align: right" colspan="9">
+                        <td style="text-align: right" colspan="7">
                             <span class="pull-right" style="line-height: 28px;">(共{php echo count($list)}条记录)</span>
                             {$pager}
                         </td>
@@ -117,4 +109,3 @@
         </form>
     </div>
 {template '_footer'}
-

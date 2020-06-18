@@ -9,21 +9,24 @@ load()->model('user');
 $dos = array('post', 'save', 'get_user_group_detail_info', 'check_vice_founder_exists', 'check_user_info', 'check_vice_founder_permission_limit');
 $do = in_array($do, $dos) ? $do : 'post';
 
-$groups = user_group();
-$modules = user_modules($_W['uid']);
+$uni_account_types = uni_account_type();
+$uni_account_type_signs = array_keys(uni_account_type_sign());
+foreach ($uni_account_type_signs as $type_sign_name) {
+	$max_account_type_signs['max' . $type_sign_name] = 0;
+}
 
-$modules = array_filter($modules, function ($module) {
-	return empty($module['issystem']);
-});
-$templates = pdo_fetchall('SELECT * FROM ' . tablename('site_templates'));
+if ('post' == $do) {
+	$user_type = 'user';
+		$groups = user_group();
 
-$user_extra_modules = table('users_extra_modules')->getExtraModulesByUid($uid);
-
-$module_support_type = module_support_type();
-$user_modules = array('modules' => array(), 'templates' => array());
-if (!empty($modules)) {
-	foreach ($modules as $item) {
-		if (0 == $item['issystem']) {
+		$modules = user_modules();
+	$module_support_type = module_support_type();
+	$user_modules = array('modules' => array(), 'templates' => array());
+	if (!empty($modules)) {
+		foreach ($modules as $item) {
+			if (1 == $item['issystem']) {
+				continue;
+			}
 			foreach ($module_support_type as $module_support_type_key => $module_support_type_val) {
 				if ($item[$module_support_type_key] == $module_support_type_val['support']) {
 					$item['support'] = $module_support_type_key;
@@ -33,98 +36,21 @@ if (!empty($modules)) {
 			}
 		}
 	}
-}
 
-$uni_group_table = table('uni_group');
-if (user_is_vice_founder($_W['uid'])) {
-	$founder_group_info = user_founder_group_detail_info($_W['user']['groupid']);
-	$modules_group_list = $founder_group_info['package_detail'];
+		$modules_group_list = uni_groups();
 
-	$uni_group_table->searchWithFounderUid($_W['uid']);
-	$packages = $uni_group_table->getUniGroupList();
-	$packages = uni_groups(array_column($packages, 'id'));
-	$modules_group_list = array_merge($modules_group_list, $packages);
-} else {
-	$uni_group_table->searchWithUniacidAndUid();
-	$modules_group_list = $uni_group_table->getUniGroupList();
-}
-
-if (!empty($modules_group_list)) {
-	foreach ($modules_group_list as $key => $value) {
-		$modules = (array) iunserializer($value['modules']);
-				$modules_all = array();
-		if (!empty($modules)) {
-			foreach ($modules as $type => $modulenames) {
-				if (empty($modulenames) || !is_array($modulenames)) {
-					continue;
-				}
-				foreach ($modulenames as $name) {
-					$modules_all[] = $name;
-				}
-			}
-		}
-		$modules_all = array_unique($modules_all);
-
-		$module_support = array();
-		foreach ($module_support_type as $support => $info) {
-			if (MODULE_SUPPORT_SYSTEMWELCOME_NAME == $support) {
-				continue;
-			}
-			if (MODULE_SUPPORT_ACCOUNT_NAME == $support) {
-				$info['type'] = 'modules';
-			}
-			if (empty($modules[$info['type']])) {
-				continue;
-			}
-			foreach ($modules[$info['type']] as $modulename) {
-				$module_support[$modulename][$support] = $info['support'];
-			}
-		}
-
-		foreach ($modules_all as $name) {
-			$module = module_fetch($name);
-			if (empty($module)) {
-				continue;
-			}
-
-			$module['group_support'] = $module_support[$name];
-			$modules_group_list[$key]['modules_all'][] = $module;
-		}
-
-		$templates = (array) iunserializer($value['templates']);
-		$modules_group_list[$key]['template_num'] = !empty($templates) ? count($templates) : 0;
-		$modules_group_list[$key]['templates'] = pdo_getall('site_templates', array('id' => $templates), array('id', 'name', 'title'));
+		if (user_is_vice_founder()) {
+		$users_founder_own_create_groups_table = table('users_founder_own_create_groups');
+		$account_group_lists = $users_founder_own_create_groups_table->getallGroupsByFounderUid($_W['uid']);
+	} else {
+		$account_group_table = table('users_create_group');
+		$account_group_lists = $account_group_table->getCreateGroupList();
 	}
-}
 
-$uni_account_types = uni_account_type();
-$uni_account_type_signs = array_keys(uni_account_type_sign());
-foreach ($uni_account_type_signs as $type_sign_name) {
-	$max_account_type_signs['max' . $type_sign_name] = 0;
-}
-
-if (user_is_vice_founder()) {
-	$users_founder_own_create_groups_table = table('users_founder_own_create_groups');
-	$account_group_lists = $users_founder_own_create_groups_table->getallGroupsByFounderUid($_W['uid']);
-} else {
-	$account_group_table = table('users_create_group');
-	$account_group_lists = $account_group_table->getCreateGroupList();
-}
-
-$user_extra_limits = table('users_extra_limit')->getExtraLimitByUid($uid);
-$create_account = array(
-	'create_groups' => $account_group_lists,
-	'create_numbers' => !empty($user_extra_limits) ? $user_extra_limits : $max_account_type_signs,
-);
-
-$source_templates = pdo_getall('site_templates', array(), array('id', 'name', 'title'));
-if (!empty($source_templates)) {
-	foreach ($source_templates as &$source_template) {
-		$source_template['checked'] = 0;
-	}
-}
-
-if ('post' == $do) {
+	$create_account = array(
+		'create_groups' => $account_group_lists,
+		'create_numbers' => $max_account_type_signs,
+	);
 	template('user/post');
 }
 

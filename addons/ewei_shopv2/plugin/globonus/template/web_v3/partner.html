@@ -166,6 +166,7 @@
                             {/if}
                         <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                             <span class="nickname">
+                                {if strexists($row['openid'],'sns_wa')}<i class="icow icow-xiaochengxu" style="color: #7586db;vertical-align: middle;" data-toggle="tooltip" data-placement="top" title="" data-original-title="来源: 小程序"></i>{/if}
                             {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}
                             </span>
                             {if $row['partnerblack']==1}<span class="text-danger">黑名单<i class="icow icow-heimingdan1"style="color: #db2228;margin-left: 2px;font-size: 13px;"></i></span>{/if}

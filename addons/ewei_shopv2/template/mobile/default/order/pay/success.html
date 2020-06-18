@@ -30,8 +30,33 @@
 		height: 4rem;
 		color: #fff;
 	}
+	.red .order-success-header{
+		background:#fc664c;
+		background:linear-gradient(to right, #fdad89 0%,#f94444 100%);
+		background: -webkit-linear-gradient(left, #fdad89 0%,#f94444 100%);
+	}
+	.blue .order-success-header{
+		background:#4e87ee;
+		background:linear-gradient(to right, #4fbaee 0%,#4e87ee 100%);
+		background: -webkit-linear-gradient(left, #4fbaee 0%,#4e87ee 100%);
+	}
+	.purple .order-success-header{
+		background:#a839fa;
+		background:linear-gradient(to right, #6a60ff 0%,#a839fa 100%);
+		background: -webkit-linear-gradient(left, #6a60ff 0%,#a839fa 100%);
+	}
+	.orange .order-success-header{
+		background:#ff8c1e;
+		background:linear-gradient(to right, #ffb81e 0%,#ff8c1e 100%);
+		background: -webkit-linear-gradient(left, #ffb81e 0%,#ff8c1e 100%);
+	}
+	.pink .order-success-header{
+		background:#ff7e95;
+		background:linear-gradient(to right, #ffacd0 0%,#ff7e95 100%);
+		background: -webkit-linear-gradient(left, #ffacd0 0%,#ff7e95 100%);
+	}
 </style>
-<div class='fui-page order-success-page pay'>
+<div class='fui-page order-success-page pay {$seckill_color}'>
 
 	<div class="fui-header">
 		<div class="fui-header-left">
@@ -49,7 +74,7 @@
 	</div>
 
     <div class='fui-content'>
-	
+
 	<div class='fui-list-group result-list ' style="margin-top: 0;display: none">
 	    <div class='fui-list'>
 		<div class='fui-list-media' >
@@ -228,7 +253,9 @@
 
 		</div>
 	</div>
-	{if !empty($stores)}
+
+
+	{if !empty($stores) && empty($store)}
 	<script language='javascript' src='https://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7&s=1'></script>
 	<div class='fui-according-group'>
 	<div class='fui-according'>
@@ -240,7 +267,7 @@
 	   <div class="fui-according-content store-container">
 		 {loop $stores $item}
 			<!--<div  class="fui-list store-item" -->
-		      
+		      <!---->
 		      <!--data-lng="{php echo floatval($item['lng'])}"-->
 		      <!--data-lat="{php echo floatval($item['lat'])}">-->
 		    <!--<div class="fui-list-media">-->
@@ -302,22 +329,22 @@
 		   </div>
 			{/loop}
 		</div>
-	 
+
 	<div id="nearStore" style="display:none">
-		 
+
 		<div class='fui-list store-item'   id='nearStoreHtml'></div>
 	</div>
 	</div></div>
 	{/if}
 	{if !empty($address)}
-	 
+
 	<div class='fui-list-group' >
 	    <div class='fui-list'>
 		<div class='fui-list-media'><i class="icon icon-dingwei"></i></div>
 		<div class='fui-list-inner'>
 			<div class='title'>联系人&nbsp;&nbsp;&nbsp;&nbsp;：{$address['realname']}</div>
 			<div class='title'>联系电话 ：{$address['mobile']}</div>
-		    <div class='text'>{$address['province']}{$address['city']}{$address['area']} {$address['address']}</div>
+		    <div class='text'>{$address['province']}{$address['city']}{$address['area']}{$address['street']}{$address['address']}</div>
 		</div>
 	    </div>
 	</div>
@@ -339,9 +366,9 @@
 	</a>
 	{/if}
 
-	
+
 	{if !empty($carrier) || !empty($store)}
-	 
+
 	<div class='fui-list-group'>
 	        {if !empty($carrier)}
 	    <div class='fui-list'>
@@ -352,7 +379,7 @@
 		</div>
 	    </div>
 		{/if}
-	    
+
 	    {if !empty($store)}
 	       <!--<div  class="fui-list" >-->
 		    <!--<div class="fui-list-media">-->
@@ -414,8 +441,8 @@
 	    {/if}
 	</div>
 	{/if}
-	
-	
+
+
 	<div class="fui-cell-group ">
 	    <div class="fui-cell">
 		<div class="fui-cell-label">{if $order['paytype']==3}需到付{else}实付金额{/if}</div>
@@ -429,11 +456,15 @@
 			{if is_array($ordervirtual) && !empty($ordervirtual)}
 				{loop $ordervirtual $ordervirtualindex $ordervirtualitem}
 				<div class="fui-cell-group">
-					<div class="fui-cell-title">Group {php echo count($ordervirtual)>1? $ordervirtualindex+1: ''}</div>
+					<div class="fui-cell-title">发货信息 {php echo count($ordervirtual)>1? $ordervirtualindex+1: ''}</div>
 					{loop $ordervirtualitem $ordervirtualrow}
 						<div class="fui-cell">
 							<div class="fui-cell-label">{$ordervirtualrow['key']}</div>
+							{if $order['islink'] == 1}
+							<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word"><a href="{$ordervirtualrow['value']}">{$ordervirtualrow['value']}</a></div>
+							{else}
 							<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word">{$ordervirtualrow['value']}</div>
+							{/if}
 						</div>
 					{/loop}
 					{if !empty($virtualtemp) && !empty($virtualtemp['linkurl'])}
@@ -477,10 +508,14 @@
 			</div>
 		</div>
 		{/if}
-	 
+
 	<div class='row'>
 	    <div class='col-50'>
-		<a class="btn btn-default external" {if empty($ispeerpay)}href="{php echo mobileUrl('order/detail',array('id'=>$order['id']))}"{else}href="{php echo mobileUrl('order/pay/peerpaydetail',array('id'=>$orderid))}"{/if} >订单详情</a>
+			{if !empty($order['iscycelbuy'])}
+				<a class="btn btn-default external" href="{php echo mobileUrl('cycelbuy/order/detail',array('id'=>$order['id']))}">订单详情</a>
+			{else}
+				<a class="btn btn-default external" {if empty($ispeerpay)}href="{php echo mobileUrl('order/detail',array('id'=>$order['id']))}"{else}href="{php echo mobileUrl('order/pay/peerpaydetail',array('id'=>$orderid))}"{/if} >订单详情</a>
+			{/if}
 	    </div>
 	    <div class='col-50'>
 			{if $order['isnewstore']==1}
@@ -490,7 +525,7 @@
 			{/if}
 	    </div>
 	</div>
-	 
+
     </div>
 
 	{if p('lottery')}

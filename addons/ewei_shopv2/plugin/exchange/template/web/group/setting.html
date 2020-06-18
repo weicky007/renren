@@ -122,8 +122,8 @@
                     <div class="form-group" id="shangpinadd">
                         <label class="col-sm-2 control-label">选择指定商品</label>
                         <div class="col-sm-9 col-xs-12">
-                            <a onclick="$('#myModal').modal('show')"
-                               class="form-control">点击选择商品</a>
+                            <style>input[type="checkbox"]{height: auto}</style>
+                            {php echo tpl_goods_selector('exgoods',$setting['goods_native'],array('option'=>1,'column'=>array(array('name'=>'total','title'=>'兑换库存','default'=>'0'),array('name'=>'postage','title'=>'运费','default'=>'0'))));}
                         </div>
                     </div>
                         <div class="form-group">

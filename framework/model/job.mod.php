@@ -46,30 +46,32 @@ function job_execute($id) {
 
 
 function job_execute_delete_account($job) {
-
 	$uniacid = $job['uniacid'];
-		$core_attchments = table('core_attachment')->where('uniacid', $uniacid)
-		->searchWithPage(1, 10)->getall('id');
+		$core_attchments = table('core_attachment')
+		->where('uniacid', $uniacid)
+		->searchWithPage(1, 10)
+		->getall('id');
+	$wechat_attachments = table('wechat_attachment')
+		->where('uniacid', $uniacid)
+		->searchWithPage(1, 10)
+		->getall('id');
+		if (count($core_attchments) == 0 && count($wechat_attachments) == 0) {
+		table('core_attachment_group')->where('uniacid', $uniacid)->delete();
+		table('core_job')
+			->where('id', $job['id'])
+			->fill('status', 1)			->fill('endtime', TIMESTAMP)			->save();
+		return error(0,  array('finished' => 1, 'progress' => 100, 'id' => $job['id'], 'endtime' => TIMESTAMP));
+	}
 
 	array_walk($core_attchments, function($item) {
 		$path = $item['attachment'];
 		file_delete($path);
 	});
 
-	$wechat_attachments = table('wechat_attachment')->where('uniacid', $uniacid)
-		->searchWithPage(1, 10)->getall('id');
 	array_walk($wechat_attachments, function($item) {
 		$path = $item['attachment'];
 		file_delete($path);
 	});
-
-		if (count($core_attchments) == 0 && count($wechat_attachments) == 0) {
-		table('core_attachment_group')->where('uniacid', $uniacid)->delete();
-		$upjob = table('core_job')->where('id', $job['id']);
-		$upjob->fill('status', 1);		$upjob->fill('endtime', TIMESTAMP);		$upjob->save();
-		return error(0,  array('finished'=>1, 'progress'=>100, 'id'=>$job['id'], 'endtime'=>time()));
-	}
-
 
 		$core_ids = array_keys($core_attchments);
 	$wechat_ids = array_keys($wechat_attachments);
@@ -82,11 +84,14 @@ function job_execute_delete_account($job) {
 	}
 
 	$handled = count($core_ids) + count($wechat_ids);
-	$all_handled = intval($job['handled']) + $handled;
-	$total = intval($job['total']);
-	table('core_job')->where('id', $job['id'])->fill('handled', $all_handled)
-		->fill('updatetime',TIMESTAMP)->save();
-	return error(0, array('finished'=>0, 'progress'=>intval($all_handled/$total*100), 'id'=>$job['id']));
+	table('core_job')
+		->where('id', $job['id'])
+		->fill('handled', $handled)
+		->fill('status', 1)
+		->fill('endtime', TIMESTAMP)
+		->fill('updatetime',TIMESTAMP)
+		->save();
+	return error(0, array('finished' => 1, 'progress' => 100, 'id'=>$job['id'], 'endtime' => TIMESTAMP));
 
 }
 

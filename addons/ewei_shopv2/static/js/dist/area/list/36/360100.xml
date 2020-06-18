@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="南昌" code="360100">
-<county name="东湖" code="360102">
+<city name="南昌市" code="360100">
+<county name="东湖区" code="360102">
     <street name="公园街道" code="360102001" />
     <street name="滕王阁街道" code="360102002" />
     <street name="八一桥街道" code="360102003" />
@@ -15,7 +15,7 @@
     <street name="贤士湖管理处" code="360102400" />
     <street name="凤凰洲管理处（红谷滩新区）" code="360102450" />
 </county>
-<county name="西湖" code="360103">
+<county name="西湖区" code="360103">
     <street name="南浦街道" code="360103001" />
     <street name="朝阳洲街道" code="360103002" />
     <street name="广润门街道" code="360103004" />
@@ -29,7 +29,7 @@
     <street name="桃花镇" code="360103101" />
     <street name="南昌市朝阳农场" code="360103400" />
 </county>
-<county name="青云谱" code="360104">
+<county name="青云谱区" code="360104">
     <street name="洪都街道" code="360104002" />
     <street name="京山街道" code="360104006" />
     <street name="三家店街道" code="360104007" />
@@ -38,7 +38,7 @@
     <street name="青云谱镇" code="360104100" />
     <street name="南昌昌南工业园" code="360104400" />
 </county>
-<county name="湾里" code="360105">
+<county name="湾里区" code="360105">
     <street name="站前街道" code="360105001" />
     <street name="幸福街道" code="360105002" />
     <street name="招贤镇" code="360105100" />
@@ -46,7 +46,7 @@
     <street name="罗亭镇" code="360105102" />
     <street name="太平镇" code="360105103" />
 </county>
-<county name="青山湖" code="360111">
+<county name="青山湖区" code="360111">
     <street name="青山路街道" code="360111001" />
     <street name="上海路街道" code="360111003" />
     <street name="南钢街道" code="360111004" />
@@ -63,7 +63,7 @@
     <street name="艾溪湖管理处（南昌高新开发区）" code="360111490" />
     <street name="湖西新建区（南昌高新开发区）" code="360111493" />
 </county>
-<county name="南昌" code="360121">
+<county name="南昌县" code="360121">
     <street name="莲塘镇" code="360121100" />
     <street name="向塘镇" code="360121101" />
     <street name="三江镇" code="360121102" />
@@ -87,7 +87,7 @@
     <street name="南昌市五星垦殖场" code="360121501" />
     <street name="江西省良种繁殖场" code="360121572" />
 </county>
-<county name="新建" code="360122">
+<county name="新建区" code="360122">
     <street name="长堎镇" code="360122100" />
     <street name="望城镇" code="360122101" />
     <street name="生米镇（红谷滩新区）" code="360122102" />
@@ -117,7 +117,7 @@
     <street name="新祺周管理处（江西桑海经济技术开发区）" code="360122461" />
     <street name="新丰垦殖场" code="360122502" />
 </county>
-<county name="安义" code="360123">
+<county name="安义县" code="360123">
     <street name="龙津镇" code="360123100" />
     <street name="万埠镇" code="360123101" />
     <street name="石鼻镇" code="360123102" />
@@ -132,7 +132,7 @@
     <street name="国营万埠垦殖场" code="360123501" />
     <street name="国营峤岭垦殖场" code="360123502" />
 </county>
-<county name="进贤" code="360124">
+<county name="进贤县" code="360124">
     <street name="民和镇" code="360124100" />
     <street name="李渡镇" code="360124101" />
     <street name="温圳镇" code="360124102" />
@@ -155,6 +155,9 @@
     <street name="长山晏乡" code="360124210" />
     <street name="泉岭乡" code="360124211" />
     <street name="五里垦殖场" code="360124500" />
+</county>
+<county name="红谷滩新区" code="360125">
+    <street name="红谷滩新区" code="360125100" />
 </county>
 </city>
 </address>

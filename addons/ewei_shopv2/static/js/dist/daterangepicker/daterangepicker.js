@@ -1081,9 +1081,12 @@
 					var month = now.getMonth();
 					var day = now.getDate();
 					options.ranges['今天'] = [new Date(year, month, day, 0, 0, 0), moment()];
-					options.ranges['一周内'] = [moment().subtract('days', 6), moment()];
-					options.ranges['二周内'] = [moment().subtract('days', 13), moment()];
-					options.ranges['一月内'] = [moment().subtract('days', 29), moment()];
+                    options.ranges['未来一周'] = [moment(),moment().add('days', 6)];
+                    options.ranges['过去一周'] = [moment().subtract('days', 6), moment()];
+                    options.ranges['未来两周'] = [moment(), moment().add('days', 13)];
+					options.ranges['过去两周'] = [moment().subtract('days', 13), moment()];
+                    options.ranges['未来一月'] = [moment(), moment().add('days', 29)];
+					options.ranges['过去一月'] = [moment().subtract('days', 29), moment()];
 				}
 				if(typeof(options.locale) != 'object') {
 					options.locale = {

@@ -34,7 +34,7 @@ function cascdeInit(na,os,v1,v2,v3,v4,v5) {
 
     //打开xlmdocm文档
     if (new_area == 1) {
-        var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/AreaNew.xml?v=4';
+        var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/AreaNew.xml?v=5';
     } else {
         var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/Area.xml?v=4';
     }
@@ -65,6 +65,9 @@ function cascdeInit(na,os,v1,v2,v3,v4,v5) {
             var option = document.createElement("option");
             option.value = county.getAttribute("name");
             option.text = county.getAttribute("name");
+            if (county.getAttribute("code")) {
+                option.setAttribute('code', county.getAttribute("code"));
+            }
             if (v1 == option.value) {
                 option.selected = true;
                 nodeindex = i;
@@ -81,6 +84,9 @@ function cascdeInit(na,os,v1,v2,v3,v4,v5) {
                 var option = document.createElement("option");
                 option.value = province[i] .getAttribute("name");
                 option.text = province[i].getAttribute("name");
+                if (province[i].getAttribute("code")) {
+                    option.setAttribute('code', province[i].getAttribute("code"));
+                }
                 if (v2 == option.value) {
                     option.selected = true;
                     childnodeindex = i;
@@ -109,7 +115,13 @@ function selectCity(v5) {
         id4 += v5;
     }
     var dropElement1 = document.getElementById(id1);
-    var name = dropElement1.options[dropElement1.selectedIndex].value;     
+    var name = dropElement1.options[dropElement1.selectedIndex].value;
+    var code = dropElement1.options[dropElement1.selectedIndex].getAttribute('code');
+    if (code) {
+        $("#chose_province_code").val(code);
+    }
+
+
     countyNodes = TopnodeList[dropElement1.selectedIndex];      
     var province = document.getElementById(id2);
     var city = document.getElementById(id3);
@@ -136,6 +148,9 @@ function selectCity(v5) {
             var option = document.createElement("option");
             option.value = provinceNode.getAttribute("name");
             option.text = provinceNode.getAttribute("name");
+            if (provinceNode.getAttribute("code")) {
+                option.setAttribute('code', provinceNode.getAttribute("code"));
+            }
             province.add(option);
         }
         if (countycodes.length > 0) {
@@ -144,11 +159,13 @@ function selectCity(v5) {
                 var dropElement2 = document.getElementById(id2);
                 var dropElement3 = document.getElementById(id3);
                 //取当天省份下第一个城市列表
-                
-                //alert(cityNode.childNodes.length); 
+
                 var option = document.createElement("option");
                 option.value = countycodes[i].getAttribute("name");
                 option.text = countycodes[i].getAttribute("name");
+                if (countycodes[i].getAttribute("code")) {
+                    option.setAttribute('code', countycodes[i].getAttribute("code"));
+                }
                 dropElement3.add(option);
             }
         }
@@ -174,6 +191,12 @@ function selectcounty(v3,v4,v5) {
     var dropElement1 = document.getElementById(id1);
     var dropElement2 = document.getElementById(id2);
     var name = dropElement2.options[dropElement2.selectedIndex].value;
+    var code = dropElement2.options[dropElement2.selectedIndex].getAttribute('code');
+    if (code) {
+        $("#chose_city_code").val(code);
+    }
+
+
     var dropElement3 = document.getElementById(id3);
     var countys = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county");
 
@@ -199,6 +222,10 @@ function selectcounty(v3,v4,v5) {
             var option = document.createElement("option");
             option.value = countyNode.getAttribute("name");
             option.text = countyNode.getAttribute("name");
+            if (countyNode.getAttribute("code")) {
+                option.setAttribute('code', countyNode.getAttribute("code"));
+            }
+
             if(v3==option.value){
                 option.selected=true;
             }
@@ -227,12 +254,17 @@ function selectstreet(v4,v5) {
     var dropElement1 = document.getElementById(id1);
     var dropElement2 = document.getElementById(id2);
     var name = dropElement2.options[dropElement2.selectedIndex].value;
+
     var dropElement3 = document.getElementById(id3);
     var dropElement4 = document.getElementById(id4);
 
     var area = dropElement3.options[dropElement3.selectedIndex].value;
-    var area_code = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county")[dropElement3.selectedIndex].getAttribute("code");
+    var code = dropElement3.options[dropElement3.selectedIndex].getAttribute('code');
+    if (code) {
+        $("#chose_area_code").val(code);
+    }
 
+    var area_code = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county")[dropElement3.selectedIndex].getAttribute("code");
     RemoveDropDownList(dropElement4);
 
     if(CityList && CityList.length>0) {
@@ -247,6 +279,9 @@ function selectstreet(v4,v5) {
                     var option = document.createElement("option");
                     option.value = street.getAttribute("name");
                     option.text = street.getAttribute("name");
+                    if (street.getAttribute("code")) {
+                        option.setAttribute('code', street.getAttribute("code"));
+                    }
                     if (v4 == option.value) {
                         option.selected = true;
                         nodeindex = m;

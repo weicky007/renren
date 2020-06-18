@@ -34,7 +34,7 @@
         <div class="page-toolbar m-b-sm m-t-sm">
                 <div class="input-group">
                     <div class="input-group-btn">
-                        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                        {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                     </div>
                     <div class="input-group-select">
                         <select name="paytype" class="form-control" style="">
@@ -297,19 +297,19 @@
             <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
                 <a class='op text-primary'  href="{php echo webUrl('order/detail', array('id' => $item['id']))}" >查看详情</a><br/>
                 {if $item['addressid']!=0 && $item['statusvalue']>=2}
-                <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}"   >物流信息</a>
+                <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'], 'mobile'=>$item['addressdata']['mobile']))}"   >物流信息</a>
                 {/if}
             </td>
 
             <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
                 {ifp 'member.member.edit'}
-                <a href="{php echo webUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['m1']['nickname']}</a>
+                <a href="{php echo webUrl('member/list/detail',array('id'=>$item['m1']['id']))}"> {$item['m1']['nickname']}</a>
                 {else}
                 {$item['m1']['nickname']}
                 {/if}
 
                 <br/>
-                {$item['addressdata']['realname']}<br/>{$item['addressdata']['mobile']}</td>
+                {$item['m1']['realname']}<br/>{$item['m1']['mobile']}</td>
             </td>
 
             <td   rowspan="{php echo count($item['goods'])}" class='ops' style='line-height:20px;text-align:center' ><span class='text-{$item['statuscss']}'>{$item['status']}</span><br />
@@ -371,4 +371,3 @@
     {/if}
 </div>
 {template '_footer'}
-

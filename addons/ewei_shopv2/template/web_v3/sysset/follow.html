@@ -88,7 +88,7 @@
                        <span data-input="#shareurl" data-toggle="selectUrl" data-full="true" class="input-group-addon btn btn-default">选择链接</span>
                    </div>
 
-                   <span class='help-block'>用户分享出去的链接，默认为首页</span>
+                   <span class='help-block'>用户分享出去的链接，默认为首页,链接域名需要和微信后台设置的js安全域名以及当前访问域名一致，否者会出现分享错误的情况</span>
                    {else}
                    <input type="hidden" name="data[url]" value="{$data['url']}" />
                    <div class='form-control-static'>{$data['url']}</div>
@@ -100,7 +100,7 @@
            <div class="form-group">
                <label class="col-lg control-label">商品详情分享</label>
                <div class="col-sm-9">
-                   {ifp 'sysset.follows.edit'}
+                   {ifp 'sysset.follow.edit'}
                    <label class="radio-inline"><input type="radio" name="data[goods_detail_close]" value="0" {if empty($data['goods_detail_close'])} checked="checked"{/if}/>开启</label>
                    <label class="radio-inline"><input type="radio" name="data[goods_detail_close]" value="1" {if $data['goods_detail_close']==1} checked="checked"{/if}/>关闭</label>
                    <span class="help-block">商品详情页面按钮</span>

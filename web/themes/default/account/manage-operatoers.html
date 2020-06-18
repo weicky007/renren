@@ -24,28 +24,18 @@
 			<th>权限信息</th>
 			<th>操作</th>
 		</tr>
-		{loop $clerks $clerk}
-		<tr>
-			<td>{$users_info[$clerk['uid']]['username']}</td>
-			<td>{$modules_info[$clerk['type']]['title']}</td>
-			<td class="color-default">{php echo count($clerk['permission'])} 项</td>
+		<tr ng-repeat="clerk in list" ng-if="list">
+			<td><span ng-bind="clerk.username"></span></td>
+			<td><span ng-bind="clerk.module_name"></span></td>
+			<td class="color-default" ><span ng-bind="clerk.permission"></span></td>
 			<td class="color-default">
-				<a target="_blank" href="{php echo url('module/display/switch', array('module_name' => $clerk['permission_module'], 'uniacid' => $clerk['uniacid'], 'redirect' => urlencode(url('module/permission/post', array('uid' => $clerk['uid'], 'm' => $clerk['permission_module'], 'uniacid' => $clerk['uniacid']))) ))}">
-					权限设置
-				</a>
-				{if empty($clerk['main_module'])}
-				<a ng-click="deleteClerk('{php echo url('module/permission/delete',  array('uid' => $clerk['uid'], 'm' => $clerk['permission_module'], 'uniacid' => $clerk['uniacid']))}')" href="javascript:;">
-					删除
-				</a>
-				{/if}
+				<a target="_blank" ng-href="clerk.permission_setting_url">权限设置</a>
+				<a href="javascript:;" ng-click="deleteClerk(clerk.uid, clerk.type)" ng-if="clerk.can_delete">删除</a>
 			</td>
 		</tr>
-		{/loop}
-		{if empty($clerks)}
-		<tr>
+		<tr ng-if="!list">
 			<td colspan="10" class="text-center">暂无操作员...</td>
 		</tr>
-		{/if}
 	</table>
 	<div class="text-right">
 		{$pager}
@@ -53,12 +43,11 @@
 </div>
 <script>
 	angular.module('userProfile').value('config', {
-		user: {php echo !empty($user) ? json_encode($user) : 'null'},
-        profile: {php echo !empty($profile) ? json_encode($profile) : 'null'},
+		list: {php echo !empty($list) ? json_encode($list) : 'null'},
 		links: {
-			recycleUser: "{php echo url('user/display/operate', array('type' => 'recycle'))}",
+			deleteClerk: "{php echo url('module/permission/delete', array('uniacid' => $uniacid))}",
 		},
-    });
+	});
 	angular.bootstrap($('#js-user-edit-base'), ['userProfile']);
 </script>
 {template 'common/footer'}

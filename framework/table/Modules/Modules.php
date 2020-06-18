@@ -8,6 +8,7 @@ namespace We7\Table\Modules;
 class Modules extends \We7Table {
 	protected $tableName = 'modules';
 	protected $primaryKey = 'mid';
+	protected $templateFields = array('mid', 'name', 'version', 'title', 'description', 'type', 'sections');
 	protected $field = array(
 		'name',
 		'type',
@@ -38,6 +39,8 @@ class Modules extends \We7Table {
 		'baiduapp_support',
 		'toutiaoapp_support',
 		'cloud_record',
+		'sections',
+		'application_type',
 	);
 	protected $default = array(
 		'name' => '',
@@ -68,18 +71,69 @@ class Modules extends \We7Table {
 		'logo' => '',
 		'baiduapp_support' => '1',
 		'toutiaoapp_support' => '1',
-		'cloud_record' => 0
+		'cloud_record' => 0,
+		'sectinos' => 0,
+		'application_type' => 1,
 	);
 
 	public function bindings() {
 		return $this->hasMany('modules_bindings', 'module', 'name');
 	}
 
-	public function getByName($modulename) {
-		if (empty($modulename)) {
+	public function getByName($module_name) {
+		if (empty($module_name)) {
 			return array();
 		}
-		return $this->query->where('name', $modulename)->get();
+		return $this->query->where('name', $module_name)->get();
+	}
+		protected function templatesMidToId($result) {
+		if (empty($result) || !is_array($result)) {
+			return array();
+		}
+		foreach ($result as $key => $template) {
+			$result[$key] = $this->templateMidToId($template);
+		}
+		return $result;
+	}
+	protected function templateMidToId($result) {
+		global $_W;
+		if (empty($result) || !is_array($result)) {
+			return array();
+		}
+		$result['id'] = $result['mid'];
+		if (file_exists('../app/themes/'.$result['name'].'/preview.jpg')) {
+			$result['logo'] = $_W['siteroot'].'app/themes/'.$result['name'].'/preview.jpg';
+		} else {
+			$result['logo'] = $_W['siteroot'].'web/resource/images/nopic-203.png';
+		}
+		return $result;
+	}
+	public function searchTemplateWithName($module_name) {
+		return $this->query->where('name', $module_name);
+	}
+	public function getAllTemplates($keyfields = '') {
+		$fields = array('mid', 'name', 'version', 'title', 'description', 'type', 'sections');
+		$result = $this->query->select($fields)->where(array('application_type' => APPLICATION_TYPE_TEMPLATES, 'account_support' => MODULE_SUPPORT_ACCOUNT))->orderby('mid', 'DESC')->getall($keyfields);
+		return $this->templatesMidToId($result);
+	}
+
+	public function getTemplateByName($module_name) {
+		$result = $this->query->select($this->templateFields)->where('name', $module_name)->where('application_type', APPLICATION_TYPE_TEMPLATES)->get();
+		return $this->templateMidToId($result);
+	}
+	public function getTemplateByNames($module_names, $keyfields = '') {
+		$result = $this->query->select($this->templateFields)->where('name', $module_names)->where('application_type', APPLICATION_TYPE_TEMPLATES)->getall($keyfields);
+		return $this->templatesMidToId($result);
+	}
+
+	public function getTemplateById($id) {
+		$result = $this->query->select($this->templateFields)->where('mid', $id)->where('application_type', APPLICATION_TYPE_TEMPLATES)->get();
+		return $this->templateMidToId($result);
+	}
+
+	public function getAllTemplateByIds($ids, $keyfields = '') {
+		$result = $this->query->select($this->templateFields)->where('mid', $ids)->where('application_type', APPLICATION_TYPE_TEMPLATES)->orderby('mid', 'DESC')->getall($keyfields);
+		return $this->templatesMidToId($result);
 	}
 
 	public function getByNameList($modulename_list, $get_system = false) {
@@ -90,8 +144,8 @@ class Modules extends \We7Table {
 		return $this->query->getall('name');
 	}
 
-	public function deleteByName($modulename) {
-		return $this->query->where('name', $modulename)->delete();
+	public function deleteByName($module_name) {
+		return $this->query->where('name', $module_name)->delete();
 	}
 
 	public function getByHasSubscribes() {

@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -30,8 +30,8 @@ class Tmessage_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $keyword . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_wxapp_tmessage') . ' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_wxapp_tmessage') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_wxapp_tmessage') . (' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_wxapp_tmessage') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -63,11 +63,11 @@ class Tmessage_EweiShopV2Page extends PluginWebPage
 		if (empty($datas)) {
 			$datas = array(
 				array()
-				);
+			);
 		}
 
 		if ($_W['ispost']) {
-			$arr = array('name' => trim($_GPC['name']), 'templateid' => trim($_GPC['templateid']), 'status' => intval($_GPC['status']), 'emphasis_keyword' => intval($_GPC['tpl_bigkey']));
+			$arr = array('name' => trim($_GPC['name']), 'templateid' => trim($_GPC['templateid']), 'status' => intval($_GPC['status']), 'emphasis_keyword' => $_GPC['tpl_bigkey'] != '' ? intval($_GPC['tpl_bigkey']) : -1);
 			$keys = $_GPC['tpl_key'];
 			$values = $_GPC['tpl_value'];
 			$colors = $_GPC['tpl_color'];
@@ -75,7 +75,7 @@ class Tmessage_EweiShopV2Page extends PluginWebPage
 				show_json(0, '至少添加一条消息内容');
 			}
 
-			$colors = (!empty($colors) ? $colors : array());
+			$colors = !empty($colors) ? $colors : array();
 			$datas = array();
 
 			foreach ($keys as $index => $key) {
@@ -106,15 +106,15 @@ class Tmessage_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_wxapp_tmessage') . ' WHERE id in(' . $id . ') AND uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_wxapp_tmessage') . (' WHERE id in(' . $id . ') AND uniacid=:uniacid'), array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($items)) {
 			foreach ($items as $item) {
 				pdo_update('ewei_shop_wxapp_tmessage', array('status' => intval($_GPC['status'])), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
-				plog('app.tmessage.status', ('更新消息模板状态 ID: ' . $item['id'] . ' 模板名称: ' . $item['name'] . ' 状态:' . $_GPC['status']) == 1 ? '启用' : '禁用');
+				plog('app.tmessage.status', '更新消息模板状态 ID: ' . $item['id'] . ' 模板名称: ' . $item['name'] . ' 状态:' . $_GPC['status'] == 1 ? '启用' : '禁用');
 			}
 		}
 
@@ -128,10 +128,10 @@ class Tmessage_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,`name` FROM ' . tablename('ewei_shop_wxapp_tmessage') . ' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,`name` FROM ' . tablename('ewei_shop_wxapp_tmessage') . (' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid'), array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($items)) {
 			foreach ($items as $item) {

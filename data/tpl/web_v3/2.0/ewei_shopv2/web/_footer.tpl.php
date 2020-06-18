@@ -16,10 +16,28 @@
     </div>
     <?php  } ?>
 
-</div>
+    <!--微擎版权-->
+    <div class="container-fluid footer text-center copyright-footer" role="footer">
+    <div class="copyright"><?php  if(empty($_W['setting']['copyright']['footerleft'])) { ?>Powered by <a href="http://www.we7.cc"><b>微擎</b></a> v<?php echo IMS_VERSION;?> © 2014-2015 <a href="http://www.we7.cc">www.we7.cc</a><?php  } else { ?><?php  echo $_W['setting']['copyright']['footerleft'];?><?php  } ?></div>
+    <?php  if(!empty($_W['setting']['copyright']['icp'])) { ?><div>备案号：<a href="http://www.miitbeian.gov.cn" target="_blank"><?php  echo $_W['setting']['copyright']['icp'];?></a></div><?php  } ?>
+    </div>
+    <!--微擎版权结束-->
 
-
-
+    </div>
+    <style>
+        .copyright-footer {
+            background: #fff;
+            border-radius: 4px;
+            margin: 20px 0 0 0;
+            padding: 20px 0;
+            line-height: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+        .copyright-footer a {
+            color: #999;
+        }
+    </style>
 
 <script language='javascript'>
     require(['bootstrap'], function ($) {
@@ -32,16 +50,16 @@
     });
 
 
- <?php  if($_W['isfounder'] && $_W['routes']!='system.auth.upgrade') { ?>
+ <?php  if($_W['isfounder'] && $_W['routes']!='system.auth.upgrade' && $_W['routes']!='system.auth.upgrade_new' && $_W['role'] !='vice_founder') { ?>
     function check_ewei_shopv2_upgrade() {
         require(['util'], function (util) {
             if (util.cookie.get('checkeweishopv2upgrade_sys')) {
                 return;
             }
-            $.post('<?php  echo webUrl("system/auth/upgrade/check")?>', function (ret) {
+            $.post('<?php  echo webUrl("system/auth/upgrade_new/check")?>',{check:0}, function (ret) {
                 if (ret && ret.status == '1') {
                     var result = ret.result;
-                    if (result.filecount > 0 || result.database || result.upgrades) {
+                    if (result.files.length>0 || result.database.length>0 || result.upgrades.length>0) {
                         $('#headingFive').find('.systips').show();
                         if($('#headingFive').attr('aria-expanded')=='false'){
                             $('#headingFive').click();
@@ -83,6 +101,7 @@
         <?php  } ?>
     });
 </script>
+
 <script language="javascript">
     myrequire(['web/init']);
     if( $('form.form-validate').length<=0){
@@ -103,6 +122,5 @@
 <?php  } ?>
 
 </body>
-</html>
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->
+</html>

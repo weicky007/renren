@@ -29,11 +29,18 @@ if ('display' == $do) {
 		if ($result) {
 			iajax(0, '修改成功!', referer());
 		} else {
-			iajax(0, '修改失败!', referer());
+			iajax(-1, '修改失败!', referer());
 		}
 	}
 
 	$fields = $table->getFieldsList();
+
+	if ($_W['isajax']) {
+		$message = array(
+			'fields' => $fields,
+		);
+		iajax(0, $message);
+	}
 	template('user/fields-display');
 }
 
@@ -57,6 +64,9 @@ if ('post' == $do) {
 			'unchangeable' => intval($field['unchangeable']),
 			'field' => safe_gpc_string($field['field']),
 			'field_length' => intval($field['field_length']),
+			'available' => intval($field['available']),
+			'required' => intval($field['required']),
+			'showinregister' => intval($field['showinregister']),
 		);
 		$length = intval($field['field_length']);
 		if (empty($id)) {
@@ -80,7 +90,7 @@ if ('post' == $do) {
 			}
 			pdo_update('profile_fields', $data, array('id' => $id));
 		}
-		iajax(0, '更新字段成功！', url('user/fields'));
+		iajax(0, '更新字段成功！', url('user/fields',array(),true));
 	}
 
 	if (!empty($id)) {

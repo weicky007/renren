@@ -2,9 +2,9 @@
 {template '_header'}
 
 <script type="text/javascript" src="../addons/ewei_shopv2/static/js/dist/area/cascade.js"></script>
-<script type="text/javascript" src="/web/resource/js/lib/moment.js"></script>
-<link rel="stylesheet" href="/web/resource/components/datetimepicker/jquery.datetimepicker.css">
-<link rel="stylesheet" href="/web/resource/components/daterangepicker/daterangepicker.css">
+<script type="text/javascript" src="../web/resource/js/lib/moment.js"></script>
+<link rel="stylesheet" href="../web/resource/components/datetimepicker/jquery.datetimepicker.css">
+<link rel="stylesheet" href="../web/resource/components/daterangepicker/daterangepicker.css">
 <style type='text/css'>
     .tabs-container .form-group {overflow: hidden;}
     .tabs-container .tabs-left > .nav-tabs {}
@@ -89,9 +89,9 @@
                 <li class="ccard-group {if $_GPC['tab']=='ccard'}active{/if}" {if $item['type'] != 20}style="display:none;"{/if}><a href="#tab_ccard">充值说明</a></li>
                 {/if}
 
-				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoods" {if $_GPC['tab']=='verifygoods'}class="active"{/if} ><a href="#tab_verifygoods">核销设置</a></li>
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoods {if $_GPC['tab']=='verifygoods'}active{/if}" ><a href="#tab_verifygoods">记次/时核销</a></li>
 				{if com('wxcard')}
-				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoodscard"  {if $_GPC['tab']=='verifygoodscard'}class="active"{/if} ><a href="#tab_verifygoodscard">微信会员卡设置</a></li>
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoodscard {if $_GPC['tab']=='verifygoodscard'} active{/if}" ><a href="#tab_verifygoodscard">微信会员卡设置</a></li>
 				{/if}
             </ul>
 
@@ -185,7 +185,23 @@
 				$(".presell_info").show();
 			}
 		});
+        $(':radio[name=isverify]').click(function () {
+            if(window.type=='1'||window.type=='4'){
 
+                if( $("input[name='isverify']:checked").val() !=2){
+                    $('.dispatch_info').show();
+                }
+                else {
+                    $('.dispatch_info').hide();
+                }
+
+            } else {
+                $('.dispatch_info').hide();
+            }
+
+
+
+        });
 		$(':radio[name=type]').click(function () {
 			window.type = $("input[name='type']:checked").val();
 			window.virtual = $("#virtual").val();
@@ -222,6 +238,9 @@
             }
 		})
 
+        $('#virtual').change(function(){
+            window.virtual = $(this).val();
+        })
 		$(":checkbox[name='buyshow']").click(function () {
 			if ($(this).prop('checked')) {
 				$(".bcontent").show();
@@ -352,7 +371,7 @@
 			return false;
 		}
 		var spec_item_title = 1;
-		if($("#hasoption").get(0).checked){
+		if($('#hasoption').get(0).checked){
 			$(".spec_item").each(function (i) {
 				var _this = this;
 				if($(_this).find(".spec_item_title").length == 0){
@@ -538,7 +557,10 @@
 
 	function commissionArray()
 	{
-		var specs = [];
+        if(!$('#hasoption').get(0).checked) {
+            return false;
+        }
+	    var specs = [];
 		$(".spec_item").each(function (i) {
 			var _this = $(this);
 
@@ -769,4 +791,3 @@
 
 </script>
 {template '_footer'}
-

@@ -76,7 +76,7 @@
                 <div class="fui-cell-text name">
                     {if $goods['goodstype'] == 0}<label>商品</label>{/if}
                     {if $goods['goodstype'] == 1}<label>优惠券</label>{/if}
-                    {if $goods['goodstype'] == 2}<label>余额</label>{/if}
+                    {if $goods['goodstype'] == 2}<label>{$_W['shopset']['trade']['moneytext']}</label>{/if}
                     {if $goods['goodstype'] == 3}<label>红包</label>{/if}
                     <span>{$goods['title']}</span>
                 </div>
@@ -99,8 +99,8 @@
                 <div class="fui-cell-text">
                     <p>
                     邮费:
-                        {if is_array($goods['dispatch'])}
-                            {php echo number_format($goods['dispatch']['min'],2)} ~ {php echo number_format($goods['dispatch']['max'],2)} 元
+                        {if is_array($goods['areas'])}
+                            {php echo number_format($goods['areas']['min'],2)} ~ {php echo number_format($goods['areas']['max'],2)} 元
                         {else}
                             {php echo $goods['dispatch'] == 0 ? '包邮' : '&yen;'.number_format($goods['dispatch'],2)}
                         {/if}
@@ -111,9 +111,18 @@
             <div class="fui-cell">
                 <div class="fui-cell-text flex">
                     <span class="price" style="text-align: left;">
-                        <span class="big">{if $goods['mincredit']>0}{$goods['mincredit']}{else}{$goods['credit']}{/if}</span>{$_W['shopset']['trade']['credittext']}
-                        {if $goods['money'] > 0}
-                            + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$goods['money']}</span>
+                        {if $goods['hasoption']>0}
+                            <span class="big" style="font-weight: bold;font-size: 0.8rem">{if $goods['mincredit'] == $goods['maxcredit']}{$goods['mincredit']}{else}{$goods['mincredit']}~{$goods['maxcredit']}{/if}</span>
+                            <span style="font-weight: bold;font-size: 0.6rem">{$_W['shopset']['trade']['credittext']}</span>
+                            {if $goods['money'] > 0}
+                                + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;"><span style="font-size: 0.7rem">&yen;</span>{if $goods['minmoney'] == $goods['maxmoney']}{$goods['minmoney']}{else}{$goods['minmoney']}`{$goods['maxmoney']}{/if}</span>
+                            {/if}
+                        {else}
+                            <span class="big" style="font-weight: bold;font-size: 0.8rem">{$goods['credit']}</span>
+                            <span style="font-weight: bold;font-size: 0.6rem">{$_W['shopset']['trade']['credittext']}</span>
+                            {if $goods['money'] > 0}
+                                + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;"><span style="font-size: 0.7rem">&yen;</span>{$goods['money']}</span>
+                            {/if}
                         {/if}
                          <span class="old">原价:{$goods['price']}元</span>
                     </span>
@@ -384,13 +393,29 @@
     </div>
 </div>
 {template 'creditshop/picker'}
+{if is_weixin()}
+<script language='javascript'>
+    var width = window.screen.width *  window.devicePixelRatio;
+    var height = window.screen.height *  window.devicePixelRatio;
+    var h = document.body.offsetHeight *  window.devicePixelRatio;
+
+    if(height==2436 && width==1125){
+        $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex')
+    }
+
+    //  微信版本6.6.7
+    if(h == 1923){
+        $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
+    }
+</script>
+{/if}
 <script>
+
     $("#detailTab a").unbind('click').click(function () {
         var tab = $(this).data('tab');
         $(this).addClass('active').siblings().removeClass('active');
         $("#"+tab).show().siblings().hide();
     });
-
     require(['../addons/ewei_shopv2/plugin/creditshop/static/js/detail.js'],function(modal){
         modal.init({goods: {php echo json_encode($goods)} });
     });

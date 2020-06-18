@@ -1,4 +1,5 @@
-define(['core', 'tpl'], function (core, tpl) {
+define(['core', 'tpl','./video.js'], function (core, tpl,video) {
+     window['videojs'] = video;
     var modal = {
         wsClient: false,
         wsConfig: {},
@@ -14,6 +15,11 @@ define(['core', 'tpl'], function (core, tpl) {
         inputTip: ['跟大家说点什么吧...', '点击键盘回车也可发送信息哦~']
     };
     modal.init = function (params) {
+        require(['../addons/ewei_shopv2/plugin/live/static/js/videojs-contrib-hls.js'], function (videojs) {
+            modal.initInternal(params);
+        });
+    };
+    modal.initInternal = function (params) {
         modal.wsConfig = params.wsConfig || {};
         modal.roomid = modal.wsConfig.roomcount;
         modal.initWs();
@@ -34,42 +40,190 @@ define(['core', 'tpl'], function (core, tpl) {
             $('#input').attr('placeholder', modal.inputTip[tipIndex]);
             if (modal.wsConnected) {
                 modal.wsSend('communication', {toUser: 'system'});
-                modal.clickLike()
+                modal.clickLike();
+            }else{
+                modal.initWs();
             }
-        }, 8000)
+        }, 8000);
+        //隐藏对话
+        $(".btn-hide").off("click").on("click",function () {
+            $(".tab-content").hide();
+            $(".btn-hide").hide();
+            $(".btn-show").show();
+        });
+        $(".btn-show").off("click").on("click",function () {
+            $(".tab-content").show();
+            $(".btn-hide").show();
+            $(".btn-show").hide();
+        });
+        //判断IOS版本兼容
+        var ver = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+        if (ver){
+            ver = parseInt(ver[1], 10);
+            if(ver>=10){
+                $(".block-video").css("z-index","10");
+                return;
+            }
+        }
     };
     modal.initPlayer = function () {
+
+        // 初始化播放器
+        modal.initMyPlayer();
+
+        // 处理播放器位置
         var playerHeight = $('body').width() * 0.56;
         if (!$('.fui-content').hasClass('fullscreen')) {
+            setTimeout(function () {
             $('.block-video').css('height', playerHeight + 'px');
+            // $('.prompt').css('height', playerHeight + 'px');
+            $('.prompt').css({height:playerHeight + 'px',position:'fixed',zIndex:'99',width:'100%'});
             $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px');
             $('.block-notice').css('top', playerHeight + $('.block-tab').height() + 'px')
+            }, 100);
         }
-        var player = $('#player')[0];
+        var player = $('#player_html5_api')[0];
         if (!modal.wsConfig.isMobile || modal.wsConfig.isIos) {
             return
         }
+        //进入全屏时触发
         player.addEventListener("x5videoenterfullscreen", function () {
             $('.fui-content').addClass('player-fullscreen');
             var playerHeight = $('body').width() * 0.56;
             if (!$('.fui-content').hasClass('fullscreen')) {
                 $('.block-video').css('height', 'auto');
+
+                $('#player_html5_api').css({
+                    objectPosition:'0px '+$('.block-title').height()+'px',
+                });
+                $('.prompt').css('height', 'auto');
                 $('.block-tab').css('top', $('.block-title').height() + playerHeight + 'px');
                 $('.block-content').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px');
-                $('.block-notice').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px')
+                $('.block-content').css('position', 'fixed');
+                $('.block-notice').css('top', $('.block-title').height() + playerHeight + $('.block-tab').height() + 'px');
             }
         });
+        //退出全屏时触发
         player.addEventListener("x5videoexitfullscreen", function () {
             modal.x5videoexitfullscreen();
         })
     };
+
+    modal.initMyPlayer = function () {
+
+        modal.myPlayer = window.videojs('player',{
+            bigPlayButton : false,
+            textTrackDisplay : false,
+            posterImage: true,
+            errorDisplay : false,
+            controlBar : false,
+            autoplay:true,
+        },function(){
+            console.log(this);
+            this.on('loadedmetadata',function(){
+                console.log('loadedmetadata');
+                //加载到元数据后开始播放视频
+                modal.startVideo();
+            })
+
+            this.on('ended',function(){
+                console.log('ended')
+            })
+            this.on('firstplay',function(){
+                console.log('firstplay');
+                var tryTimes = 0;
+                clearInterval(modal.isFirstplay);
+                modal.isFirstplay = setInterval(function(){
+                    console.log('waiting'+tryTimes);
+                    var currentTime = modal.myPlayer.currentTime();
+                    if(currentTime == 0){
+                        //此时视频已卡主3s
+                        modal.myPlayer.play();
+                        //尝试6次播放后，如仍未播放成功提示
+                        if(++tryTimes >= 6){
+                            FoxUI.toast.show('您的网速有点慢，请在自动刷新之后重新点击观看！');
+                            tryTimes = 0;
+                            var url = $('#player').attr('src');
+                            $.get(url, function(){});
+                            window.location.reload();
+                        }
+                    }else{
+                        clearInterval(modal.isFirstplay);
+                        tryTimes = 0;
+                    }
+                },1000);
+            })
+            this.on('loadstart',function(){
+                //开始加载
+                console.log('loadstart')
+            })
+            this.on('loadeddata',function(){
+                console.log('loadeddata');
+                $('.btn-play').hide();
+            })
+            this.on('seeking',function(){
+                //正在去拿视频流的路上
+                console.log('seeking')
+            })
+            this.on('seeked',function(){
+                //已经拿到视频流,可以播放
+                console.log('seeked')
+            })
+            this.on('waiting',function(){
+                console.log('waiting');
+                var tryTimes = 0;
+                clearInterval(modal.isWaiting);
+                modal.isWaiting = setInterval(function(){
+                    console.log('waiting'+tryTimes);
+                    var currentTime = modal.myPlayer.currentTime();
+                    if(currentTime == 0){
+                        //此时视频已卡主3s
+                        modal.myPlayer.play();
+                        //尝试6次播放后，如仍未播放成功提示
+                        if(++tryTimes >= 6){
+                            FoxUI.toast.show('您的网速有点慢，请在自动刷新之后重新点击观看！');
+                            tryTimes = 0;
+                            var url = $('#player').attr('src');
+                            $.get(url, function(){});
+                            window.location.reload();
+                        }
+                    }else{
+                        clearInterval(modal.isWaiting);
+                        tryTimes = 0;
+                    }
+                },1000);
+                // modal.myPlayer.play();
+            })
+            this.on('pause',function(){
+                console.log('pause')
+            })
+            this.on('play',function(){
+                console.log('play');
+            })
+            this.on('error',function(){
+                console.log('error');
+            })
+        });
+    };
+
     modal.x5videoexitfullscreen = function () {
         var playerHeight = $('body').width() * 0.56;
         $('.block-tab').css('top', playerHeight + 'px');
         $('.block-content').css('top', playerHeight + $('.block-tab').height() + 'px');
         $('.fui-content').removeClass('player-fullscreen');
-        $('.block-notice').css('top', playerHeight + $('.block-tab').height() + 'px');
-        $('.btn-play').show()
+        if($('.fui-content').hasClass('fullscreen')){
+            $('.block-notice').css('top', '100px');
+        }else {
+            $('.block-notice').css('top', playerHeight + $('.block-tab').height() + 'px');
+
+            $('.prompt').css('height', playerHeight + 'px');
+            $('.block-video').css('height', playerHeight + 'px');
+            $('#player_html5_api').css({
+                objectPosition:'0px 0px',
+            });
+
+        };
+        $('.btn-play').show();
     };
     modal.initWs = function () {
         if (!modal.wsConfig) {
@@ -85,6 +239,7 @@ define(['core', 'tpl'], function (core, tpl) {
         };
         wsClient.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
+            console.log(data);
             if (data.type == 'connected') {
                 FoxUI.toast.show('连接成功');
                 $('.block-input .input-place').html('').hide().siblings().show();
@@ -216,6 +371,8 @@ define(['core', 'tpl'], function (core, tpl) {
             } else if (data.type == 'clicklike') {
                 modal.clickLike()
             } else if (data.type == 'goods') {
+                //删除前面带的://app/
+                data.goodsUrl = data.goodsUrl.substring(6);
                 modal.liveGoods(data)
             } else if (data.type == 'redpack') {
                 modal.liveMsg('redpack', data)
@@ -488,10 +645,12 @@ define(['core', 'tpl'], function (core, tpl) {
             $('.live-tips.play').show().siblings('.live-tips').hide()
         } else if (modal.status == 2) {
             $('.live-tips.pause').show().siblings('.live-tips').hide();
-            $('#player')[0].pause()
+            // $('#player')[0].pause()
+            modal.myPlayer.pause();
         } else {
             $('.live-tips.stop').show().siblings('.live-tips').hide();
-            $('#player')[0].pause()
+            // $('#player')[0].pause()
+            modal.myPlayer.pause();
         }
     };
     modal.initOnline = function () {
@@ -540,17 +699,41 @@ define(['core', 'tpl'], function (core, tpl) {
             if (url == '') {
                 FoxUI.toast.show('视频获取失败或未设置');
                 return
-            }
-            $('#player')[0].play();
-            $('.live-tips').hide()
+            };
+            // $('#player').get(0).play();
+            modal.myPlayer.play();
+            $('.live-tips').hide();
+            // var url = $(this).data('url');
+            // $.ajax({
+            //     url: url,
+            //     type: "GET",
+            //     timeout: 1000,
+            //     complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            //         if(status=='timeout'){//超时,status还有success,error等值的情况
+            //             modal.myPlayer.play();
+            //         }
+            //     }
+            // });
         });
         $('#player')[0].addEventListener("ended", function () {
             $('.live-tips.play').show().siblings('.live-tips').hide()
         });
-        $('#input').focus(function () {
-            $('body').animate({scrollTop: "10000px"}, 500);
-            $('.block-input').addClass('focus')
+        $("#input").off("click").on("click",function () {
+            if (document.documentElement.clientHeight < document.documentElement.offsetHeight){
+                $(this).focus(function () {
+                    if (document.documentElement.clientHeight < document.documentElement.offsetHeight){
+                        $('body').animate({scrollTop: "10000px"}, 500);
+                    }
+                    $('.block-input').addClass('focus')
+                });
+            }
         });
+        /*$('#input').focus(function () {
+            if (document.documentElement.clientHeight < document.documentElement.offsetHeight){
+                $('body').animate({scrollTop: "10000px"}, 500);
+            }
+            $('.block-input').addClass('focus')
+        });*/
         $('#input').blur(function () {
             if ($('.fui-content').hasClass('show-emoji')) {
                 return
@@ -951,5 +1134,46 @@ define(['core', 'tpl'], function (core, tpl) {
         }
         $(elm).trigger('change')
     };
+
+    modal.startVideo= function() {
+        modal.myPlayer.play();
+        //微信内全屏支持
+      /*  document.getElementById('player').style.width = window.screen.width + "px";
+        document.getElementById('player').style.height = window.screen.height + "px";*/
+
+        //判断开始播放视频，移除高斯模糊等待层
+        var isVideoPlaying = setInterval(function(){
+            var currentTime = modal.myPlayer.currentTime();
+            if(currentTime > 0){
+                $('.vjs-poster').remove();
+                clearInterval(isVideoPlaying);
+            }
+        },200);
+        //判断视频是否卡住，卡主3s重新load视频
+        var lastTime = -1,
+            tryTimes = 0;
+        clearInterval(modal.isVideoBreak);
+        modal.isVideoBreak = setInterval(function(){
+            var currentTime = modal.myPlayer.currentTime();
+            console.log('currentTime'+currentTime+'lastTime'+lastTime);
+
+            if(currentTime == lastTime){
+                //此时视频已卡主3s
+                //设置当前播放时间为超时时间，此时videojs会在play()后把currentTime设置为0
+                modal.myPlayer.currentTime(currentTime+10000);
+                modal.myPlayer.play();
+
+                //尝试6次播放后，如仍未播放成功提示刷新
+                if(++tryTimes > 6){
+                    FoxUI.toast.show('您的网速有点慢，请在自动刷新之后重新点击观看！');
+                    tryTimes = 0;
+                }
+            }else{
+                lastTime = currentTime;
+                tryTimes = 0;
+            }
+        },3000)
+
+    }
     return modal
 });

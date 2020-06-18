@@ -12,10 +12,7 @@ $uniacid = intval($_GPC['uniacid']);
 
 if (!empty($uniacid)) {
 	$state = permission_account_user_role($_W['uid'], $uniacid);
-	
-		$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
-	
-	
+	$role_permission = in_array($state, array(ACCOUNT_MANAGE_NAME_OWNER, ACCOUNT_MANAGE_NAME_FOUNDER, ACCOUNT_MANAGE_NAME_MANAGER, ACCOUNT_MANAGE_NAME_VICE_FOUNDER));
 	if (!$role_permission) {
 		itoast('无权限操作！', referer(), 'error');
 	}
@@ -23,7 +20,7 @@ if (!empty($uniacid)) {
 
 if ('save' == $do) {
 	$version_id = intval($_GPC['version_id']);
-	if (empty($uniacid) && empty($account_info['phoneapp_limit']) && !user_is_founder($_W['uid'])) {
+	if (empty($uniacid) && empty($account_info['phoneapp_limit']) && !$_W['isfounder']) {
 		iajax(-1, '创建APP个数已满');
 	}
 	if (empty($_GPC['name']) && empty($_GPC['uniacid'])) {

@@ -108,6 +108,30 @@
                             {/if}
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="col-lg control-label">打印商品编码</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.printer'}
+                            <label class="radio-inline"><input type="radio" name="goodssn" value="0" {if empty($list['goodssn'])}checked{/if}> 不打印</label>
+                            <label class="radio-inline"><input type="radio" name="goodssn" value="1" {if !empty($list['goodssn'])}checked{/if}> 打印</label>
+                            {else}
+                            <div class='form-control-static'>{if empty($list['goodssn'])}不打印{else}打印{/if}</div>
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg control-label">打印商品条码</label>
+                        <div class="col-sm-9 col-xs-12">
+                            {ifp 'sysset.printer'}
+                            <label class="radio-inline"><input type="radio" name="productsn" value="0" {if empty($list['productsn'])}checked{/if}> 不打印</label>
+                            <label class="radio-inline"><input type="radio" name="productsn" value="1" {if !empty($list['productsn'])}checked{/if}> 打印</label>
+                            {else}
+                            <div class='form-control-static'>{if empty($list['productsn'])}不打印{else}打印{/if}</div>
+                            {/if}
+                        </div>
+                    </div>
+
                     <div class="form-group"></div>
                       <div class="form-group">
                         <label class="col-lg control-label" ></label>
@@ -272,4 +296,3 @@
     </script>
 
 {template '_footer'}
-

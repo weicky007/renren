@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="重庆" code="500100">
-<county name="万州" code="500101">
+<city name="重庆市" code="500100">
+<county name="万州区" code="500101">
     <street name="高笋塘街道" code="500101001" />
     <street name="太白街道" code="500101017" />
     <street name="牌楼街道" code="500101018" />
@@ -55,7 +55,7 @@
     <street name="九池乡" code="500101245" />
     <street name="茨竹乡" code="500101247" />
 </county>
-<county name="涪陵" code="500102">
+<county name="涪陵区" code="500102">
     <street name="敦仁街道" code="500102006" />
     <street name="崇义街道" code="500102007" />
     <street name="荔枝街道" code="500102008" />
@@ -83,7 +83,7 @@
     <street name="增福乡" code="500102217" />
     <street name="同乐乡" code="500102222" />
 </county>
-<county name="渝中" code="500103">
+<county name="渝中区" code="500103">
     <street name="七星岗街道" code="500103001" />
     <street name="解放碑街道" code="500103003" />
     <street name="两路口街道" code="500103004" />
@@ -97,7 +97,7 @@
     <street name="化龙桥街道" code="500103013" />
     <street name="石油路街道" code="500103014" />
 </county>
-<county name="大渡口" code="500104">
+<county name="大渡口区" code="500104">
     <street name="新山村街道" code="500104001" />
     <street name="跃进村街道" code="500104002" />
     <street name="九宫庙街道" code="500104003" />
@@ -107,7 +107,7 @@
     <street name="建胜镇" code="500104102" />
     <street name="跳磴镇" code="500104103" />
 </county>
-<county name="江北" code="500105">
+<county name="江北区" code="500105">
     <street name="华新街街道" code="500105001" />
     <street name="江北城街道" code="500105002" />
     <street name="石马河街道" code="500105003" />
@@ -121,7 +121,7 @@
     <street name="复盛镇人民政府" code="500105101" />
     <street name="五宝镇人民政府" code="500105102" />
 </county>
-<county name="沙坪坝" code="500106">
+<county name="沙坪坝区" code="500106">
     <street name="小龙坎街道" code="500106001" />
     <street name="沙坪坝街道" code="500106002" />
     <street name="渝碚路街道" code="500106003" />
@@ -149,7 +149,7 @@
     <street name="土主镇" code="500106111" />
     <street name="中梁镇" code="500106112" />
 </county>
-<county name="九龙坡" code="500107">
+<county name="九龙坡区" code="500107">
     <street name="杨家坪街道" code="500107001" />
     <street name="黄桷坪街道" code="500107002" />
     <street name="谢家湾街道" code="500107003" />
@@ -169,7 +169,7 @@
     <street name="西彭镇" code="500107110" />
     <street name="铜罐驿镇" code="500107111" />
 </county>
-<county name="南岸" code="500108">
+<county name="南岸区" code="500108">
     <street name="铜元局街道" code="500108001" />
     <street name="花园路街道" code="500108002" />
     <street name="南坪街道" code="500108003" />
@@ -186,7 +186,7 @@
     <street name="迎龙镇" code="500108107" />
     <street name="广阳镇" code="500108108" />
 </county>
-<county name="北碚" code="500109">
+<county name="北碚区" code="500109">
     <street name="天生街道" code="500109001" />
     <street name="朝阳街道" code="500109002" />
     <street name="北温泉街道" code="500109003" />
@@ -205,7 +205,7 @@
     <street name="三圣镇" code="500109113" />
     <street name="金刀峡镇" code="500109116" />
 </county>
-<county name="万盛" code="500110">
+<county name="万盛区" code="500110">
     <street name="古南街道" code="500110001" />
     <street name="文龙街道" code="500110002" />
     <street name="三江街道" code="500110003" />
@@ -237,7 +237,7 @@
     <street name="中峰镇" code="500110123" />
     <street name="横山镇" code="500110124" />
 </county>
-<county name="双桥" code="500111">
+<county name="双桥区" code="500111">
     <street name="龙岗街道" code="500111001" />
     <street name="棠香街道" code="500111002" />
     <street name="龙滩子街道" code="500111003" />
@@ -266,7 +266,7 @@
     <street name="双路街道" code="500111122" />
     <street name="通桥街道" code="500111123" />
 </county>
-<county name="渝北" code="500112">
+<county name="渝北区" code="500112">
     <street name="双龙湖街道" code="500112002" />
     <street name="回兴街道" code="500112004" />
     <street name="鸳鸯街道" code="500112007" />
@@ -294,7 +294,7 @@
     <street name="大盛镇" code="500112143" />
     <street name="洛碛镇" code="500112144" />
 </county>
-<county name="巴南" code="500113">
+<county name="巴南区" code="500113">
     <street name="龙洲湾街道" code="500113003" />
     <street name="鱼洞街道" code="500113004" />
     <street name="花溪街道" code="500113005" />
@@ -318,7 +318,7 @@
     <street name="石滩镇" code="500113118" />
     <street name="石龙镇" code="500113119" />
 </county>
-<county name="黔江" code="500114">
+<county name="黔江区" code="500114">
     <street name="城东街道" code="500114001" />
     <street name="城南街道" code="500114002" />
     <street name="城西街道" code="500114003" />
@@ -350,7 +350,7 @@
     <street name="水市乡" code="500114255" />
     <street name="新华乡" code="500114256" />
 </county>
-<county name="长寿" code="500115">
+<county name="长寿区" code="500115">
     <street name="凤城街道" code="500115001" />
     <street name="晏家街道" code="500115002" />
     <street name="江南街道" code="500115003" />
@@ -370,9 +370,39 @@
     <street name="洪湖镇" code="500115136" />
     <street name="万顺镇" code="500115137" />
 </county>
-<county name="綦江" code="500222">
+<county name="綦江区" code="500222">
+    <street name="古南街道办事处" code="500222001" />
+    <street name="文龙街道办事处" code="500222002" />
+    <street name="三江街道办事处" code="500222003" />
+    <street name="万盛街道办事处" code="500222004" />
+    <street name="东林街道办事处" code="500222005" />
+    <street name="万东镇" code="500222100" />
+    <street name="南桐镇" code="500222101" />
+    <street name="青年镇" code="500222102" />
+    <street name="关坝镇" code="500222103" />
+    <street name="丛林镇" code="500222104" />
+    <street name="石林镇" code="500222105" />
+    <street name="金桥镇" code="500222106" />
+    <street name="黑山镇" code="500222107" />
+    <street name="石角镇" code="500222108" />
+    <street name="东溪镇" code="500222109" />
+    <street name="赶水镇" code="500222110" />
+    <street name="打通镇" code="500222111" />
+    <street name="石壕镇" code="500222112" />
+    <street name="永新镇" code="500222113" />
+    <street name="三角镇" code="500222114" />
+    <street name="隆盛镇" code="500222115" />
+    <street name="郭扶镇" code="500222116" />
+    <street name="篆塘镇" code="500222117" />
+    <street name="丁山镇" code="500222118" />
+    <street name="安稳镇" code="500222119" />
+    <street name="扶欢镇" code="500222120" />
+    <street name="永城镇" code="500222121" />
+    <street name="新盛镇" code="500222122" />
+    <street name="中峰镇" code="500222123" />
+    <street name="横山镇" code="500222124" />
 </county>
-<county name="潼南" code="500223">
+<county name="潼南县" code="500223">
     <street name="桂林街道" code="500223001" />
     <street name="梓潼街道" code="500223002" />
     <street name="上和镇" code="500223101" />
@@ -396,7 +426,7 @@
     <street name="别口镇" code="500223123" />
     <street name="寿桥镇" code="500223124" />
 </county>
-<county name="铜梁" code="500224">
+<county name="铜梁县" code="500224">
     <street name="巴川街道" code="500224001" />
     <street name="东城街道" code="500224002" />
     <street name="南城街道" code="500224003" />
@@ -426,9 +456,9 @@
     <street name="双山镇" code="500224131" />
     <street name="庆隆镇" code="500224132" />
 </county>
-<county name="大足" code="500225">
+<county name="大足区" code="500225">
 </county>
-<county name="荣昌" code="500226">
+<county name="荣昌县" code="500226">
     <street name="昌元街道" code="500226001" />
     <street name="昌洲街道" code="500226002" />
     <street name="广顺街道" code="500226003" />
@@ -451,7 +481,7 @@
     <street name="荣隆镇" code="500226118" />
     <street name="龙集镇" code="500226119" />
 </county>
-<county name="璧山" code="500227">
+<county name="璧山县" code="500227">
     <street name="璧城街道" code="500227001" />
     <street name="璧泉街道" code="500227003" />
     <street name="青杠街道" code="500227004" />
@@ -468,7 +498,7 @@
     <street name="三合镇" code="500227109" />
     <street name="健龙镇" code="500227110" />
 </county>
-<county name="梁平" code="500228">
+<county name="梁平县" code="500228">
     <street name="梁平县梁山街道" code="500228001" />
     <street name="梁平县双桂街道" code="500228002" />
     <street name="仁贤镇" code="500228101" />
@@ -505,7 +535,7 @@
     <street name="梁平县农场" code="500228400" />
     <street name="梁平县双桂工业园区" code="500228401" />
 </county>
-<county name="城口" code="500229">
+<county name="城口县" code="500229">
     <street name="葛城街道" code="500229001" />
     <street name="复兴街道" code="500229002" />
     <street name="巴山镇" code="500229102" />
@@ -532,7 +562,7 @@
     <street name="河鱼乡" code="500229221" />
     <street name="东安乡" code="500229223" />
 </county>
-<county name="丰都" code="500230">
+<county name="丰都县" code="500230">
     <street name="三合街道" code="500230001" />
     <street name="名山街道" code="500230002" />
     <street name="虎威镇" code="500230101" />
@@ -564,7 +594,7 @@
     <street name="栗子乡" code="500230209" />
     <street name="三建乡" code="500230210" />
 </county>
-<county name="垫江" code="500231">
+<county name="垫江县" code="500231">
     <street name="桂阳街道" code="500231001" />
     <street name="桂溪街道" code="500231002" />
     <street name="桂溪镇" code="500231100" />
@@ -593,7 +623,7 @@
     <street name="大石乡" code="500231204" />
     <street name="黄沙乡" code="500231205" />
 </county>
-<county name="武隆" code="500232">
+<county name="武隆县" code="500232">
     <street name="巷口镇" code="500232100" />
     <street name="火炉镇" code="500232101" />
     <street name="白马镇" code="500232102" />
@@ -653,7 +683,7 @@
     <street name="金声乡" code="500233208" />
     <street name="兴峰乡" code="500233210" />
 </county>
-<county name="开县" code="500234">
+<county name="开州区" code="500234">
     <street name="镇东街道" code="500234002" />
     <street name="丰乐街道" code="500234003" />
     <street name="白鹤街道" code="500234004" />
@@ -695,7 +725,7 @@
     <street name="紫水乡" code="500234216" />
     <street name="三汇口乡" code="500234225" />
 </county>
-<county name="云阳" code="500235">
+<county name="云阳县" code="500235">
     <street name="双江街道" code="500235001" />
     <street name="青龙街道" code="500235002" />
     <street name="人和街道" code="500235003" />
@@ -739,7 +769,7 @@
     <street name="上坝乡" code="500235239" />
     <street name="清水土家族自治乡" code="500235242" />
 </county>
-<county name="奉节" code="500236">
+<county name="奉节县" code="500236">
     <street name="永安镇" code="500236116" />
     <street name="白帝镇" code="500236117" />
     <street name="草堂镇" code="500236118" />
@@ -772,7 +802,7 @@
     <street name="云雾土家族乡" code="500236278" />
     <street name="白帝城风景区管理委员会" code="500236400" />
 </county>
-<county name="巫山" code="500237">
+<county name="巫山县" code="500237">
     <street name="高唐街道" code="500237001" />
     <street name="龙门街道" code="500237002" />
     <street name="庙宇镇" code="500237101" />
@@ -800,7 +830,7 @@
     <street name="笃坪乡" code="500237229" />
     <street name="邓家乡" code="500237231" />
 </county>
-<county name="巫溪" code="500238">
+<county name="巫溪县" code="500238">
     <street name="宁河街道" code="500238001" />
     <street name="柏杨街道" code="500238002" />
     <street name="城厢镇" code="500238100" />
@@ -835,7 +865,7 @@
     <street name="土城乡" code="500238245" />
     <street name="红池坝经济开发区" code="500238400" />
 </county>
-<county name="石柱" code="500240">
+<county name="石柱县" code="500240">
     <street name="南宾镇" code="500240100" />
     <street name="西沱镇" code="500240101" />
     <street name="下路镇" code="500240102" />
@@ -869,7 +899,7 @@
     <street name="金铃乡" code="500240218" />
     <street name="金竹乡" code="500240219" />
 </county>
-<county name="秀山" code="500241">
+<county name="秀山县" code="500241">
     <street name="中和街道" code="500241001" />
     <street name="乌杨街道" code="500241002" />
     <street name="平凯街道" code="500241003" />
@@ -898,7 +928,7 @@
     <street name="中平乡" code="500241214" />
     <street name="岑溪乡" code="500241215" />
 </county>
-<county name="酉阳" code="500242">
+<county name="酉阳县" code="500242">
     <street name="桃花源街道" code="500242001" />
     <street name="钟多街道" code="500242002" />
     <street name="桃花源镇" code="500242100" />
@@ -940,7 +970,7 @@
     <street name="双泉乡" code="500242223" />
     <street name="楠木乡" code="500242224" />
 </county>
-<county name="彭水" code="500243">
+<county name="彭水县" code="500243">
     <street name="汉葭街道" code="500243001" />
     <street name="绍庆街道" code="500243002" />
     <street name="靛水街道" code="500243003" />
@@ -981,7 +1011,7 @@
     <street name="朗溪乡" code="500243227" />
     <street name="龙塘乡" code="500243228" />
 </county>
-<county name="江津" code="500381">
+<county name="江津区" code="500381">
     <street name="几江街道" code="500116001" />
     <street name="德感街道" code="500116002" />
     <street name="双福街道" code="500116004" />
@@ -1011,7 +1041,7 @@
     <street name="四面山镇" code="500116123" />
     <street name="支坪镇" code="500116124" />
 </county>
-<county name="合川" code="500382">
+<county name="合川区" code="500382">
     <street name="合阳城街道" code="500117001" />
     <street name="钓鱼城街道" code="500117002" />
     <street name="南津街街道" code="500117003" />
@@ -1043,7 +1073,7 @@
     <street name="渭沱镇" code="500117125" />
     <street name="双槐镇" code="500117126" />
 </county>
-<county name="永川" code="500383">
+<county name="永川区" code="500383">
     <street name="中山路街道" code="500118001" />
     <street name="胜利路街道" code="500118002" />
     <street name="南大街街道" code="500118003" />
@@ -1068,7 +1098,7 @@
     <street name="板桥镇" code="500118117" />
     <street name="朱沱镇" code="500118118" />
 </county>
-<county name="南川" code="500384">
+<county name="南川区" code="500384">
     <street name="东城街道" code="500119001" />
     <street name="南城街道" code="500119002" />
     <street name="西城街道" code="500119003" />

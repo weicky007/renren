@@ -11,7 +11,7 @@
     background: #fff;
     padding: 10px;
     overflow: hidden;
-    margin-bottom: 150px;
+    margin-bottom: 290px;
 }
 
 .diy-phone .phone-head {
@@ -118,6 +118,7 @@
     right: 2px;
     bottom: 2px;
     display: none;
+    z-index: 90;
 }
 
 .diy-phone .phone-main .drag .btn-edit-del > div {
@@ -168,7 +169,7 @@
     border-radius: 5px;
     margin-top: 55px;
     display: none;
-    margin-bottom: 150px;
+    margin-bottom: 260px;
 }
 .diy-editor .editor-arrow {
     height: 0;
@@ -391,25 +392,69 @@
 }
 
 .diy-menu .navs {
-    padding: 10px 10px 5px;
+    padding: 22px 24px;
     border-bottom: 1px dotted #ddd;
-    display: none;
+    display: block;
+    position: relative;
+    display:-webkit-box;
+    display:-webkit-flex;
+    display:-ms-flexbox;
+    display:flex;
+}
+.diy-menu .navs .title{
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 10px;
+}
+.diy-menu .navs .btns-local .title{
+    padding-left: 24px;
+}
+
+.diy-menu .navs .btns-global{
+    width: 96px;
+}
+.diy-menu .navs .btns-local{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
 }
 
 .diy-menu .navs nav {
-    width: 92px;
-    padding: 5px 0;
-    margin: 0 5px 5px 0;
+    width: 72px;
+    height: 26px;
+    padding: 0;
+    margin: 0 14px 10px 0;
+    line-height: 24px;
+    border: 1px solid #dddddd;
     text-align: center;
+    border-radius: 2px;
+}
+.diy-menu .navs .btns-global nav{
+    height: 40px;
+    line-height: 38px;
 }
 
+.diy-menu .navs nav.page-setup{
+    width: auto;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border-color: #fff;
+    line-height: 12px;
+}
+.diy-menu .navs nav.page-setup:hover{
+    border-color: #fff;
+}
 .diy-menu .navs nav.special {
     background: #f4f4f4;
 }
 
 .diy-menu .navs nav:hover {
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #00aeff;
     transition: all 0.4s;
     -moz-transition: all 0.4s;
     -webkit-transition: all 0.4s;
@@ -425,7 +470,7 @@
     padding: 10px;
     text-align: right;
     position: relative;
- }
+}
 
 .diy-menu .action:before {
     content: "";
@@ -480,7 +525,6 @@
     width: 840px;
     margin: auto;
 }
-
 
 
 

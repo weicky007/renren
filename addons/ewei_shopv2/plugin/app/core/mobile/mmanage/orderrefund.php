@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,7 +16,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 		global $_GPC;
 
 		if (!cv('order.op.refund')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		$opdata = $this->opData();
@@ -65,12 +65,12 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			}
 			else {
 				$step_array[2]['time'] = $refund['operatetime'];
-				if (($refund['status'] == 1) || (4 <= $refund['status'])) {
+				if ($refund['status'] == 1 || 4 <= $refund['status']) {
 					$step_array[3]['done'] = 1;
 					$step_array[3]['time'] = $refund['sendtime'];
 				}
 
-				if (($refund['status'] == 1) || ($refund['status'] == 5)) {
+				if ($refund['status'] == 1 || $refund['status'] == 5) {
 					$step_array[4]['done'] = 1;
 
 					if ($refund['rtype'] == 1) {
@@ -111,12 +111,12 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 
 		$member = m('member')->getMember($item['openid']);
 		$item['paytime'] = empty($item['paytime']) ? 0 : date('Y-m-d H:i:s', $item['paytime']);
-		app_json(array(
-	'refund' => $refund,
-	'r_type' => $r_type,
-	'order'  => $item,
-	'member' => array('id' => $member['id'], 'nickname' => $member['nickname'], 'avatar' => tomedia($member['avatar']))
-	));
+		return app_json(array(
+			'refund' => $refund,
+			'r_type' => $r_type,
+			'order'  => $item,
+			'member' => array('id' => $member['id'], 'nickname' => $member['nickname'], 'avatar' => tomedia($member['avatar']))
+		));
 	}
 
 	/**
@@ -129,11 +129,11 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 		global $_S;
 
 		if (!cv('order.op.refund.submit')) {
-			app_error(AppError::$PermError, '您无操作权限');
+			return app_error(AppError::$PermError, '您无操作权限');
 		}
 
 		if (!$_W['ispost']) {
-			app_error(AppError::$RequestError);
+			return app_error(AppError::$RequestError);
 		}
 
 		$opdata = $this->opData();
@@ -141,12 +141,12 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 		$shopset = $_S['shop'];
 
 		if (empty($item['refundstate'])) {
-			app_error(AppError::$ParamsError, '订单未申请维权');
+			return app_error(AppError::$ParamsError, '订单未申请维权');
 		}
 
-		if (($refund['status'] < 0) || ($refund['status'] == 1)) {
+		if ($refund['status'] < 0 || $refund['status'] == 1) {
 			pdo_update('ewei_shop_order', array('refundstate' => 0), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
-			app_error(AppError::$ParamsError, '未找需要处理的维权申请');
+			return app_error(AppError::$ParamsError, '未找需要处理的维权申请');
 		}
 
 		if (empty($refund['refundno'])) {
@@ -161,9 +161,10 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 		$uniacid = $_W['uniacid'];
 
 		if ($refundstatus == 0) {
-			app_json();
+			return app_json();
 		}
-		else if ($refundstatus == 3) {
+
+		if ($refundstatus == 3) {
 			$raid = $_GPC['raid'];
 			$message = trim($_GPC['message']);
 
@@ -204,7 +205,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			$change_refund['rexpresscom'] = $_GPC['rexpresscom'];
 			$change_refund['rexpresssn'] = trim($_GPC['rexpresssn']);
 			$change_refund['status'] = 5;
-			if (($refund['status'] != 5) && empty($refund['returntime'])) {
+			if ($refund['status'] != 5 && empty($refund['returntime'])) {
 				$change_refund['returntime'] = $time;
 
 				if (empty($refund['operatetime'])) {
@@ -231,7 +232,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 				$parent_item = pdo_fetch('SELECT id,ordersn,ordersn2,price FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid Limit 1', array(':id' => $item['parentid'], ':uniacid' => $_W['uniacid']));
 
 				if (empty($parent_item)) {
-					app_error(AppError::$ParamsError, '未找到退款订单!');
+					return app_error(AppError::$ParamsError, '未找到退款订单!');
 				}
 
 				$order_price = $parent_item['price'];
@@ -255,12 +256,12 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			$realprice = $refund['applyprice'];
 			$goods = pdo_fetchall('SELECT g.id,g.credit, o.total,o.realprice FROM ' . tablename('ewei_shop_order_goods') . ' o left join ' . tablename('ewei_shop_goods') . ' g on o.goodsid=g.id ' . ' WHERE o.orderid=:orderid and o.uniacid=:uniacid', array(':orderid' => $item['id'], ':uniacid' => $uniacid));
 			$refundtype = 0;
-			if (empty($item['transid']) && ($item['paytype'] == 22) && empty($item['apppay'])) {
+			if (empty($item['transid']) && $item['paytype'] == 22 && empty($item['apppay'])) {
 				$item['paytype'] = 23;
 			}
 
 			if ($item['paytype'] == 1) {
-				m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['ordersn']));
+				m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['ordersn']));
 				$result = true;
 			}
 			else if ($item['paytype'] == 21) {
@@ -290,49 +291,49 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 
 				if (!empty($item['apppay'])) {
 					if (empty($sec['app_alipay']['private_key']) || empty($sec['app_alipay']['appid'])) {
-						app_error(AppError::$RefundFail, '支付参数错误，私钥为空或者APPID为空!');
+						return app_error(AppError::$RefundFail, '支付参数错误，私钥为空或者APPID为空!');
 					}
 
-					$params = array('out_trade_no' => $ordersn, 'refund_amount' => $realprice, 'refund_reason' => $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['ordersn']);
+					$params = array('out_trade_no' => $ordersn, 'refund_amount' => $realprice, 'refund_reason' => $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['ordersn']);
 					$config = array('app_id' => $sec['app_alipay']['appid'], 'privatekey' => $sec['app_alipay']['private_key'], 'publickey' => '', 'alipublickey' => '');
 					$result = m('finance')->newAlipayRefund($params, $config);
 				}
 				else {
 					if (empty($item['transid'])) {
-						app_error(AppError::$RefundFail, '仅支持 升级后此功能后退款的订单!');
+						return app_error(AppError::$RefundFail, '仅支持 升级后此功能后退款的订单!');
 					}
 
 					$setting = uni_setting($_W['uniacid'], array('payment'));
 
 					if (!is_array($setting['payment'])) {
-						app_error(AppError::$RefundFail, '没有设定支付参数');
+						return app_error(AppError::$RefundFail, '没有设定支付参数');
 					}
 
 					$alipay_config = $setting['payment']['alipay'];
 					$batch_no_money = $realprice * 100;
 					$batch_no = date('Ymd') . 'RF' . $item['id'] . 'MONEY' . $batch_no_money;
-					$res = m('finance')->AlipayRefund(array('trade_no' => $item['transid'], 'refund_price' => $realprice, 'refund_reason' => $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['ordersn']), $batch_no, $alipay_config);
+					$res = m('finance')->AlipayRefund(array('trade_no' => $item['transid'], 'refund_price' => $realprice, 'refund_reason' => $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['ordersn']), $batch_no, $alipay_config);
 
 					if (is_error($res)) {
-						app_error(AppError::$RefundFail, $res['message']);
+						return app_error(AppError::$RefundFail, $res['message']);
 					}
 
-					app_json();
+					return app_json();
 				}
 			}
 			else {
-				if (($item['paytype'] == 23) && !empty($item['isborrow'])) {
+				if ($item['paytype'] == 23 && !empty($item['isborrow'])) {
 					$result = m('finance')->refundBorrow($item['borrowopenid'], $ordersn, $refund['refundno'], $order_price * 100, $realprice * 100, !empty($item['ordersn2']) ? 1 : 0);
 				}
 				else {
-					if ($realprice < 1) {
-						app_error(AppError::$RefundFail, '退款金额必须大于1元，才能使用微信企业付款退款!');
+					if ($realprice < 0.29999999999999999) {
+						return app_error(AppError::$RefundFail, '退款金额必须大于0.3元，才能使用微信企业付款退款!');
 					}
 
 					$realprice = round($realprice - $item['deductcredit2'], 2);
 
 					if (0 < $realprice) {
-						$result = m('finance')->pay($item['openid'], 1, $realprice * 100, $refund['refundno'], $shopset['name'] . '退款: ' . $realprice . '元 订单号: ' . $item['ordersn']);
+						$result = m('finance')->pay($item['openid'], 1, $realprice * 100, $refund['refundno'], $shopset['name'] . ('退款: ' . $realprice . '元 订单号: ') . $item['ordersn']);
 					}
 
 					$refundtype = 1;
@@ -340,7 +341,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			}
 
 			if (is_error($result)) {
-				app_error(AppError::$RefundFail, $result['message']);
+				return app_error(AppError::$RefundFail, $result['message']);
 			}
 
 			$credits = m('order')->getGoodsCredit($goods);
@@ -349,7 +350,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			}
 
 			if (0 < $item['deductcredit']) {
-				m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', $shopset['name'] . '购物返还抵扣积分 积分: ' . $item['deductcredit'] . ' 抵扣金额: ' . $item['deductprice'] . ' 订单号: ' . $item['ordersn']));
+				m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', $shopset['name'] . ('购物返还抵扣积分 积分: ' . $item['deductcredit'] . ' 抵扣金额: ' . $item['deductprice'] . ' 订单号: ' . $item['ordersn'])));
 			}
 
 			if (!empty($refundtype)) {
@@ -442,7 +443,7 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 			}
 		}
 
-		app_json();
+		return app_json();
 	}
 
 	protected function opData()
@@ -453,13 +454,13 @@ class Orderrefund_EweiShopV2Page extends AppMobileAuthPage
 		$refundid = intval($_GPC['refundid']);
 
 		if (empty($id)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid Limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 
 		if (empty($item)) {
-			app_error(AppError::$OrderNotFound, '订单未找到');
+			return app_error(AppError::$OrderNotFound, '订单未找到');
 		}
 
 		if (empty($refundid)) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <address>
-<city name="遵义" code="520300">
-<county name="红花岗" code="520302">
+<city name="遵义市" code="520300">
+<county name="红花岗区" code="520302">
     <street name="老城街道" code="520302001" />
     <street name="万里路街道" code="520302002" />
     <street name="中华路街道" code="520302003" />
@@ -24,7 +24,7 @@
     <street name="永乐镇" code="520321109" />
     <street name="喇叭镇" code="520321111" />
 </county>
-<county name="汇川" code="520303">
+<county name="汇川区" code="520303">
     <street name="上海路街道" code="520303001" />
     <street name="洗马路街道" code="520303002" />
     <street name="大连路街道" code="520303003" />
@@ -40,30 +40,7 @@
     <street name="山盆镇" code="520321127" />
     <street name="芝麻镇" code="520321128" />
 </county>
-<county name="遵义" code="520321">
-    <street name="南白镇" code="520321100" />
-    <street name="龙坑镇" code="520321101" />
-    <street name="三岔镇" code="520321102" />
-    <street name="苟江镇" code="520321103" />
-    <street name="三合镇" code="520321104" />
-    <street name="乌江镇" code="520321105" />
-    <street name="龙坪镇" code="520321110" />
-    <street name="团溪镇" code="520321112" />
-    <street name="铁厂镇" code="520321113" />
-    <street name="西坪镇" code="520321114" />
-    <street name="尚嵇镇" code="520321115" />
-    <street name="茅栗镇" code="520321116" />
-    <street name="新民镇" code="520321117" />
-    <street name="鸭溪镇" code="520321118" />
-    <street name="石板镇" code="520321119" />
-    <street name="乐山镇" code="520321120" />
-    <street name="枫香镇" code="520321121" />
-    <street name="泮水镇" code="520321122" />
-    <street name="马蹄镇" code="520321123" />
-    <street name="平正仡佬族乡" code="520321200" />
-    <street name="洪关苗族乡" code="520321201" />
-</county>
-<county name="桐梓" code="520322">
+<county name="桐梓县" code="520322">
     <street name="娄山关镇" code="520322100" />
     <street name="楚米镇" code="520322101" />
     <street name="新站镇" code="520322102" />
@@ -89,7 +66,7 @@
     <street name="芭蕉乡" code="520322206" />
     <street name="马鬃苗族乡" code="520322207" />
 </county>
-<county name="绥阳" code="520323">
+<county name="绥阳县" code="520323">
     <street name="洋川镇" code="520323100" />
     <street name="郑场镇" code="520323101" />
     <street name="旺草镇" code="520323102" />
@@ -106,7 +83,7 @@
     <street name="小关乡" code="520323201" />
     <street name="坪乐乡" code="520323202" />
 </county>
-<county name="正安" code="520324">
+<county name="正安县" code="520324">
     <street name="凤仪镇" code="520324100" />
     <street name="瑞溪镇" code="520324101" />
     <street name="和溪镇" code="520324102" />
@@ -127,7 +104,7 @@
     <street name="桴?乡" code="520324206" />
     <street name="班竹乡" code="520324207" />
 </county>
-<county name="道真" code="520325">
+<county name="道真县" code="520325">
     <street name="玉溪镇" code="520325100" />
     <street name="三江镇" code="520325101" />
     <street name="隆兴镇" code="520325102" />
@@ -143,7 +120,7 @@
     <street name="桃源乡" code="520325202" />
     <street name="河口乡" code="520325203" />
 </county>
-<county name="务川" code="520326">
+<county name="务川县" code="520326">
     <street name="都濡镇" code="520326100" />
     <street name="丰乐镇" code="520326101" />
     <street name="黄都镇" code="520326102" />
@@ -160,7 +137,7 @@
     <street name="红丝乡" code="520326203" />
     <street name="石朝乡" code="520326204" />
 </county>
-<county name="凤冈" code="520327">
+<county name="凤冈县" code="520327">
     <street name="龙泉镇" code="520327100" />
     <street name="进化镇" code="520327101" />
     <street name="琊川镇" code="520327102" />
@@ -176,7 +153,7 @@
     <street name="石径乡" code="520327203" />
     <street name="新建乡" code="520327204" />
 </county>
-<county name="湄潭" code="520328">
+<county name="湄潭县" code="520328">
     <street name="茶城街道" code="520328001" />
     <street name="湄江街道" code="520328002" />
     <street name="桃花江街道" code="520328003" />
@@ -195,7 +172,7 @@
     <street name="抄乐乡" code="520328204" />
     <street name="天城乡" code="520328205" />
 </county>
-<county name="余庆" code="520329">
+<county name="余庆县" code="520329">
     <street name="白泥镇" code="520329100" />
     <street name="小腮镇" code="520329101" />
     <street name="龙溪镇" code="520329102" />
@@ -207,7 +184,7 @@
     <street name="关兴镇" code="520329108" />
     <street name="花山苗族乡" code="520329200" />
 </county>
-<county name="习水" code="520330">
+<county name="习水县" code="520330">
     <street name="东皇镇" code="520330100" />
     <street name="土城镇" code="520330101" />
     <street name="同民镇" code="520330102" />
@@ -232,7 +209,7 @@
     <street name="坭坝乡" code="520330207" />
     <street name="程寨乡" code="520330208" />
 </county>
-<county name="赤水" code="520381">
+<county name="赤水市" code="520381">
     <street name="市中街道" code="520381001" />
     <street name="文华街道" code="520381002" />
     <street name="金华街道" code="520381003" />
@@ -251,7 +228,7 @@
     <street name="石堡乡" code="520381203" />
     <street name="白云乡" code="520381204" />
 </county>
-<county name="仁怀" code="520382">
+<county name="仁怀市" code="520382">
     <street name="盐津街道" code="520382001" />
     <street name="中枢街道" code="520382002" />
     <street name="苍龙街道" code="520382003" />
@@ -273,6 +250,32 @@
     <street name="高大坪乡" code="520382203" />
     <street name="火石岗乡" code="520382204" />
     <street name="沙滩乡" code="520382205" />
+</county>
+<county name="播州区" code="520304">
+    <street name="南白街道办事处" code="520304001" />
+    <street name="播南街道办事处" code="520304002" />
+    <street name="影山湖街道办事处" code="520304003" />
+    <street name="桂花桥街道办事处" code="520304004" />
+    <street name="龙坑街道办事处" code="520304005" />
+    <street name="三岔镇" code="520304102" />
+    <street name="苟江镇" code="520304103" />
+    <street name="三合镇" code="520304104" />
+    <street name="乌江镇" code="520304105" />
+    <street name="龙坪镇" code="520304106" />
+    <street name="团溪镇" code="520304107" />
+    <street name="铁厂镇" code="520304108" />
+    <street name="西坪镇" code="520304109" />
+    <street name="尚嵇镇" code="520304110" />
+    <street name="茅栗镇" code="520304111" />
+    <street name="新民镇" code="520304112" />
+    <street name="鸭溪镇" code="520304113" />
+    <street name="石板镇" code="520304114" />
+    <street name="乐山镇" code="520304115" />
+    <street name="枫香镇" code="520304116" />
+    <street name="泮水镇" code="520304117" />
+    <street name="马蹄镇" code="520304118" />
+    <street name="平正仡佬族乡" code="520304200" />
+    <street name="洪关苗族乡" code="520304201" />
 </county>
 </city>
 </address>

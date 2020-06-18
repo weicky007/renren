@@ -151,7 +151,7 @@
         {elseif $key=='coupon'}
         {php unset($rec['total']);}
         {loop $rec $ke $coupon}
-        <p><button class="btn btn-success btn-xs rec_reward_data" id="rec_coupon{$coupon['id']}" type="button" data-type="5" data-couponid="{$coupon['id']}" data-couponname="{$coupon['couponname']}" data-couponnum="{$coupon['couponnum']}">优惠卷：{$coupon['couponname']}[{$coupon['couponnum']}张] </button>
+        <p><button class="btn btn-success btn-xs rec_reward_data" id="rec_coupon{$coupon['id']}" type="button" data-type="5" data-couponid="{$coupon['id']}" data-couponname="{$coupon['couponname']}" data-couponnum="{$coupon['couponnum']}">优惠券：{$coupon['couponname']}[{$coupon['couponnum']}张] </button>
         </p>
         {/loop}
         {/if}
@@ -234,7 +234,7 @@
         {elseif $key=='coupon'}
         {php unset($sub['total']);}
         {loop $sub $ke $coupon}
-        <p><button class="btn btn-success btn-xs sub_reward_data" id="sub_coupon{$coupon['id']}" type="button" data-type="5" data-couponid="{$coupon['id']}" data-couponname="{$coupon['couponname']}" data-couponnum="{$coupon['couponnum']}">优惠卷：{$coupon['couponname']}[{$coupon['couponnum']}张] </button>
+        <p><button class="btn btn-success btn-xs sub_reward_data" id="sub_coupon{$coupon['id']}" type="button" data-type="5" data-couponid="{$coupon['id']}" data-couponname="{$coupon['couponname']}" data-couponnum="{$coupon['couponnum']}">优惠券：{$coupon['couponname']}[{$coupon['couponnum']}张] </button>
         </p>
         {/loop}
         {/if}
@@ -767,4 +767,3 @@
         return;
     }
 </script>
-

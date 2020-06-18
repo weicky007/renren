@@ -33,13 +33,27 @@
     <label class="col-sm-2 control-label must">活动期限</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'lottery.edit'}
-        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+        {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
         <span class='help-block'>活动进行时间段</span>
         {else}
         <div class='form-control-static'>{php echo date('Y-m-d H:i', $starttime).'-'.date('Y-m-d H:i', $endtime);}</div>
         {/if}
     </div>
 </div>
+
+{if $_GPC['lottery_type'] == 1}
+<div class="form-group">
+    <label class="col-sm-2 control-label must">奖励信息显示</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'lottery.edit'}
+        {php echo tpl_form_field_eweishop_daterange('award_time', array('starttime'=>date('Y-m-d H:i', $award_starttime),'endtime'=>date('Y-m-d H:i', $award_endtime)),true);}
+        <span class='help-block'>显示自定义时间段内的奖励信息</span>
+        {else}
+        <div class='form-control-static'>{php echo date('Y-m-d H:i', $award_starttime).'-'.date('Y-m-d H:i', $award_endtime);}</div>
+        {/if}
+    </div>
+</div>
+{/if}
 
 <div class="form-group">
     <label class="col-sm-2 control-label must">活动奖励有效期限</label>
@@ -61,8 +75,9 @@
             <option value="0">请选择场景</option>
             <option value="1" {if $item['task_type']==1}selected{/if}>消费场景</option>
             <option value="2" {if $item['task_type']==2}selected{/if}>签到场景</option>
+            {if p('task') && !p('task')->isnew()}
             <option value="3" {if p('task') && $item['task_type']==3}selected{/if}>任务场景</option>
-            <!--<option value="4" {if $item['task_type']==4}selected{/if}>其他场景</option>-->
+            {/if}
         </select>
     </div>
     {/if}

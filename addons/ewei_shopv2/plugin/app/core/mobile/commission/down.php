@@ -1,5 +1,5 @@
 <?php
-//haha
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -37,7 +37,7 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 
 		$total = $level1 + $level2 + $level3;
-		app_json(array('total' => $total, 'levels' => $levels, 'textdown' => $this->set['texts']['mydown'], 'textagent' => $this->set['texts']['agent'], 'textyuan' => $this->set['texts']['yuan']));
+		return app_json(array('total' => $total, 'levels' => $levels, 'textdown' => $this->set['texts']['mydown'], 'textagent' => $this->set['texts']['agent'], 'textyuan' => $this->set['texts']['yuan'], 'down' => $this->set['texts']['down']));
 	}
 
 	public function get_list()
@@ -48,7 +48,7 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 		$member = $this->model->getInfo($openid);
 		$total_level = 0;
 		$level = intval($_GPC['level']);
-		((3 < $level) || ($level <= 0)) && ($level = 1);
+		(3 < $level || $level <= 0) && ($level = 1);
 		$condition = '';
 		$levelcount1 = $member['level1'];
 		$levelcount2 = $member['level2'];
@@ -63,11 +63,11 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 		else if ($level == 2) {
 			if (empty($levelcount1)) {
-				app_json(array(
-	'list'     => array(),
-	'total'    => 0,
-	'pagesize' => $psize
-	));
+				return app_json(array(
+					'list'     => array(),
+					'total'    => 0,
+					'pagesize' => $psize
+				));
 			}
 
 			$condition = ' and agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ')';
@@ -77,11 +77,11 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 		else {
 			if ($level == 3) {
 				if (empty($levelcount2)) {
-					app_json(array(
-	'list'     => array(),
-	'total'    => 0,
-	'pagesize' => $psize
-	));
+					return app_json(array(
+						'list'     => array(),
+						'total'    => 0,
+						'pagesize' => $psize
+					));
 				}
 
 				$condition = ' and agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')';
@@ -90,7 +90,7 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 			}
 		}
 
-		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member') . ' where uniacid = ' . $_W['uniacid'] . ' ' . $condition . '  ORDER BY isagent desc,id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize);
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member') . ' where uniacid = ' . $_W['uniacid'] . (' ' . $condition . '  ORDER BY isagent desc,id desc limit ') . ($pindex - 1) * $psize . ',' . $psize);
 		if (!is_array($list) || empty($list)) {
 			$list = array();
 		}
@@ -111,7 +111,7 @@ class Down_EweiShopV2Page extends Base_EweiShopV2Page
 		}
 
 		unset($row);
-		app_json(array('list' => $list, 'total' => $total_level, 'pagesize' => $psize));
+		return app_json(array('list' => $list, 'total' => $total_level, 'pagesize' => $psize));
 	}
 }
 

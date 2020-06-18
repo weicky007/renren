@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -26,7 +27,7 @@ foreach ($sets as $set) {
 	$daytimes = 86400 * $days;
 	$p = p('groups');
 	$pcoupon = com('coupon');
-	$orders = pdo_fetchall('select id from ' . tablename('ewei_shop_groups_order') . ' where uniacid=' . $_W['uniacid'] . ' and status=2 and sendtime + ' . $daytimes . ' <=unix_timestamp() ', array(), 'id');
+	$orders = pdo_fetchall('select id from ' . tablename('ewei_shop_groups_order') . (' where uniacid=' . $_W['uniacid'] . ' and status=2 and sendtime + ' . $daytimes . ' <=unix_timestamp() '), array(), 'id');
 
 	if (!empty($orders)) {
 		$orderkeys = array_keys($orders);

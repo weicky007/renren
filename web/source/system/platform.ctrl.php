@@ -9,8 +9,6 @@ load()->classs('weixin.platform');
 
 setting_load('platform');
 
-$founders = explode(',', $_W['config']['setting']['founder']);
-
 if ($_W['isajax'] && $_W['ispost']) {
 	$data = array();
 	$token = safe_gpc_string(trim($_GPC['token']));
@@ -41,9 +39,28 @@ if (empty($_W['setting']['platform'])) {
 		'appid' => '',
 		'authstate' => 1,
 	);
-	setting_save($_W['setting']['platform'],'platform');
+	setting_save($_W['setting']['platform'], 'platform');
 }
 $siteroot_parse_array = parse_url($_W['siteroot']);
 $account_platform = new WeixinPlatform();
 $authurl = $account_platform->getAuthLoginUrl();
+
+if ($_W['isajax']) {
+	if ($_W['isw7_request']) {
+		$authurl = '';
+		$preauthcode = $account_platform->getPreauthCode();
+		if (!is_error($preauthcode)) {
+			$authurl = sprintf(ACCOUNT_PLATFORM_API_LOGIN, $account_platform->appid,
+				$preauthcode, urlencode($GLOBALS['_W']['siteroot'] . 'index.php?c=account&a=auth&do=forward'), ACCOUNT_PLATFORM_API_LOGIN_ACCOUNT);
+		}
+	}
+	iajax(0, array(
+		'platform' => empty($_W['setting']['platform']) ? array() : $_W['setting']['platform'],
+		'siteroot' => $_W['siteroot'],
+		'siteroot_parse' => $siteroot_parse_array,
+		'authurl' => $authurl,
+		'authurl_error' => empty($preauthcode['message']) ? '' : $preauthcode['message'],
+	));
+}
+
 template('system/platform');

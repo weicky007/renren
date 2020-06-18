@@ -1,4 +1,8 @@
 <?php
+
+echo '
+';
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,10 +24,10 @@ return array(
 				'items' => array(
 					array('title' => '说明&通知设置', 'route' => 'setlottery'),
 					array('title' => '入口设置', 'route' => 'setstart')
-					)
 				)
 			)
 		)
-	);
+	)
+);
 
 ?>

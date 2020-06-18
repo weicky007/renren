@@ -20,7 +20,7 @@ class Styles extends \We7Table {
 	);
 
 	public function searchWithTemplates($fields = 'a.*') {
-		return $this->query->from('site_styles', 'a')->select($fields)->leftjoin('site_templates', 'b')->on(array('a.templateid' => 'b.id'));
+		return $this->query->from('site_styles', 'a')->select($fields)->leftjoin('modules', 'b')->on(array('a.templateid' => 'b.mid'));
 	}
 
 }

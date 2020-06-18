@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,6 +10,7 @@ class Sys_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		empty($_GPC['page']) && $_GPC['page'] = 1;
 		$pagetype = 'sys';
 		$condition = '';
 
@@ -55,7 +57,7 @@ class Sys_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$result = $this->model->verify($do, 'sys');
 		extract($result);
-		if ($template && ($do == 'add')) {
+		if ($template && $do == 'add') {
 			$template['data'] = base64_decode($template['data']);
 			$template['data'] = json_decode($template['data'], true);
 			$page = $template;
@@ -69,6 +71,9 @@ class Sys_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			$data = $_GPC['data'];
+			$data['page']['desc'] = str_replace(array('
+', '', '
+'), '', trim($data['page']['desc']));
 			$this->model->savePage($id, $data);
 		}
 
@@ -83,7 +88,7 @@ class Sys_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$this->model->delPage($id);

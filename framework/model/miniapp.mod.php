@@ -38,6 +38,7 @@ function miniapp_create($account) {
 		'title_initial' => get_first_pinyin($account['name']),
 		'groupid' => 0,
 		'createtime' => TIMESTAMP,
+		'create_uid' => intval($_W['uid']),
 	);
 	if (!pdo_insert('uni_account', $uni_account_data)) {
 		return error(1, '添加失败');
@@ -48,7 +49,7 @@ function miniapp_create($account) {
 		'type' => $account['type'],
 		'hash' => random(8),
 	);
-	if (!user_is_founder($_W['uid'], true)  && $_W['user']['endtime'] > USER_ENDTIME_GROUP_UNLIMIT_TYPE) {
+	if (!$_W['isadmin']  && $_W['user']['endtime'] > USER_ENDTIME_GROUP_UNLIMIT_TYPE) {
 		$account_data['endtime'] = $_W['user']['endtime'];
 	}
 	pdo_insert('account', $account_data);
@@ -81,7 +82,7 @@ function miniapp_create($account) {
 			$user_info = permission_user_account_num($_W['uid']);
 			if (empty($user_info['usergroup_wxapp_limit'])) {
 				pdo_update('account', array('endtime' => strtotime('+1 month', time())), array('uniacid' => $uniacid));
-				pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => ACCOUNT_TYPE_APP_NORMAL));
+				pdo_insert('site_store_create_account', array('endtime' => strtotime('+1 month', time()), 'uid' => $_W['uid'], 'uniacid' => $uniacid, 'type' => $account['type']));
 			}
 		}
 	} else {
@@ -107,13 +108,13 @@ function miniapp_create($account) {
 
 	pdo_insert($account_type_info['table_name'], $data);
 	if (empty($_W['isfounder'])) {
-		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
+		uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_OWNER);
 	}
 	if (user_is_vice_founder()) {
-		uni_user_account_role($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+		uni_account_user_role_insert($uniacid, $_W['uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 	}
 	if (!empty($_W['user']['owner_uid'])) {
-		uni_user_account_role($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
+		uni_account_user_role_insert($uniacid, $_W['user']['owner_uid'], ACCOUNT_MANAGE_NAME_VICE_FOUNDER);
 	}
 	$unisettings['creditnames'] = array('credit1' => array('title' => '积分', 'enabled' => 1), 'credit2' => array('title' => '余额', 'enabled' => 1));
 	$unisettings['creditnames'] = iserializer($unisettings['creditnames']);

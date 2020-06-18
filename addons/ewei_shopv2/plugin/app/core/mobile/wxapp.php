@@ -1,8 +1,8 @@
 <?php
-//haha
+
 function app_error($errcode = 0, $message = '')
 {
-	exit(json_encode(array('error' => $errcode, 'message' => empty($message) ? AppError::getError($errcode) : $message)));
+	return json_encode(array('error' => $errcode, 'message' => empty($message) ? AppError::getError($errcode) : $message));
 }
 
 function app_json($result = NULL, $openid)
@@ -19,7 +19,7 @@ function app_json($result = NULL, $openid)
 	$key = time() . '@' . $openid;
 	$auth = array('authkey' => base64_encode(authcode($key, 'ENCODE', 'ewei_shopv2_wxapp')));
 	m('cache')->set($auth['authkey'], 1);
-	exit(json_encode(array_merge($ret, $auth, $result)));
+	return json_encode(array_merge($ret, $auth, $result));
 }
 
 if (!defined('IN_IA')) {
@@ -47,7 +47,7 @@ class Wxapp_EweiShopV2Page extends Page
 		$code = trim($_GPC['code']);
 
 		if (empty($code)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' . $this->appid . '&secret=' . $this->appsecret . '&js_code=' . $code . '&grant_type=authorization_code';
@@ -55,7 +55,7 @@ class Wxapp_EweiShopV2Page extends Page
 		$resp = ihttp_request($url);
 
 		if (is_error($resp)) {
-			app_error(AppError::$SystemError, $resp['message']);
+			return app_error(AppError::$SystemError, $resp['message']);
 		}
 
 		$arr = @json_decode($resp['content'], true);
@@ -66,10 +66,10 @@ class Wxapp_EweiShopV2Page extends Page
 		}
 
 		if (!is_array($arr) || !isset($arr['openid'])) {
-			app_error(AppError::$WxAppLoginError);
+			return app_error(AppError::$WxAppLoginError);
 		}
 
-		app_json($arr, $arr['openid']);
+		return app_json($arr, $arr['openid']);
 	}
 
 	/**
@@ -83,7 +83,7 @@ class Wxapp_EweiShopV2Page extends Page
 		$iv = trim($_GPC['iv']);
 		$sessionKey = trim($_GPC['sessionKey']);
 		if (empty($encryptedData) || empty($iv)) {
-			app_error(AppError::$ParamsError);
+			return app_error(AppError::$ParamsError);
 		}
 
 		$pc = new WXBizDataCrypt($this->appid, $sessionKey);
@@ -91,6 +91,7 @@ class Wxapp_EweiShopV2Page extends Page
 
 		if ($errCode == 0) {
 			$data = json_decode($data, true);
+			$this->refine($data['openId']);
 			$member = m('member')->getMember('sns_wa_' . $data['openId']);
 
 			if (empty($member)) {
@@ -99,44 +100,41 @@ class Wxapp_EweiShopV2Page extends Page
 				$id = pdo_insertid();
 				$data['id'] = $id;
 				$data['uniacid'] = $_W['uniacid'];
+
+				if (method_exists(m('member'), 'memberRadisCountDelete')) {
+					m('member')->memberRadisCountDelete();
+				}
 			}
 			else {
 				$updateData = array('nickname' => !empty($data['nickName']) ? $data['nickName'] : '', 'avatar' => !empty($data['avatarUrl']) ? $data['avatarUrl'] : '', 'gender' => !empty($data['gender']) ? $data['gender'] : '-1');
 				pdo_update('ewei_shop_member', $updateData, array('id' => $member['id'], 'uniacid' => $member['uniacid']));
 				$data['id'] = $member['id'];
 				$data['uniacid'] = $member['uniacid'];
+				$data['isblack'] = $member['isblack'];
 			}
 
 			if (p('commission')) {
 				p('commission')->checkAgent($member['openid']);
 			}
 
-			app_json($data, $data['openId']);
+			return app_json($data, $data['openId']);
 		}
 
-		app_error(AppError::$WxAppError, '登录错误, 错误代码: ' . $errCode);
+		return app_error(AppError::$WxAppError, '登录错误, 错误代码: ' . $errCode);
 	}
 
-	public function check()
+	/**
+     * 处理注册用户openid多生成一个sns_wa_前缀的问题
+     * 例如:
+     *   正常:sns_wa_oX-v90Cdn4BpQSByrQZgS8dKLK_w
+     *   异常:sns_wa_sns_wa_oX-v90Cdn4BpQSByrQZgS8dKLK_w
+     * @param $openid string
+     */
+	protected function refine(&$openid)
 	{
-		global $_GPC;
-		global $_W;
-		$openid = trim($_GPC['openid']);
-
-		if (empty($openid)) {
-			app_error(AppError::$ParamsError);
+		if (substr($openid, 0, 7) == 'sns_wa_') {
+			$openid = substr($openid, 7);
 		}
-
-		$wxopenid = 'sns_wa_' . $openid;
-		$member = m('member')->getMember($wxopenid);
-
-		if (empty($member)) {
-			$member = array('uniacid' => $_W['uniacid'], 'uid' => 0, 'openid' => $wxopenid, 'openid_wa' => $openid, 'comefrom' => 'sns_wa', 'createtime' => time(), 'status' => 0);
-			pdo_insert('ewei_shop_member', $member);
-			$member['id'] = pdo_insertid();
-		}
-
-		app_json(array('uniacid' => $member['uniacid'], 'openid' => $member['openid'], 'id' => $member['id'], 'nickname' => $member['nickname'], 'avatarUrl' => tomedia($member['avatar'])), $member['openid']);
 	}
 }
 

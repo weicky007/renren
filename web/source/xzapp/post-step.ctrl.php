@@ -34,7 +34,7 @@ if (4 == $step) {
 		itoast('非法访问', '', '');
 	}
 	$owner_info = account_owner($uniacid);
-	if (!(user_is_founder($_W['uid'], true) || $_W['uid'] == $owner_info['uid'])) {
+	if (!($_W['isadmin'] || $_W['uid'] == $owner_info['uid'])) {
 		itoast('非法访问');
 	}
 	$account = account_fetch($uni_account['default_acid']);

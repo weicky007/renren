@@ -24,9 +24,9 @@
             <div class="fui-list-group" id='addressInfo' data-addressid="{php echo intval($address['id'])}">
                 <a  class="fui-list"
                     {if empty($address)}
-                    href="{php echo mobileUrl('groups/address/post')}"
+                    href="{php echo mobileUrl('member/address/post')}"
                     {else}
-                    href="{php echo mobileUrl('groups/address/selector')}"
+                    href="{php echo mobileUrl('member/address/selector')}"
                     {/if} data-nocache="true">
                     <div class="fui-list-media">
                         <i class="icon icon-location"></i>
@@ -88,8 +88,17 @@
                     </a>
                     <div class="text">
                         <span class="price ">数量：1</span>
+                        {if $goods['more_spec']==1}
+                        <span class="price ">规格：{$option['title']}</span>
+                        {/if}
                         <span class="total">
-                            （<span class='text-danger'>¥ {if !empty($is_team)}{$goods['groupsprice']}{else}{$goods['singleprice']}{/if}</span>/{if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if}）
+                            （<span class='text-danger'>¥ {if !empty($is_team)}{$goods['groupsprice']}
+                            {elseif $type == 'single' && $goods['more_spec'] ==1}
+                            {$goodsprice}
+                            {else}
+                            {$goods['singleprice']}
+                            {/if}</span>/
+                            {if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if}）
                         </span>
                         <div style="clear:both;"></div>
                         {if $goods['showstock'] > 0}
@@ -169,7 +178,7 @@
         </div></div>
     {/if}
 
-    {if !empty($order_formInfo)}
+    {if !empty($template_flag)}
     {template 'diyform/formfields'}
     {else}
     <div class="fui-cell-group sm ">
@@ -198,7 +207,7 @@
         {if $heads == 1 && $set['discount'] ==1 && $goods['headsmoney'] > 0}
         <div class="fui-cell">
             <div class="fui-cell-label" style='width:auto' >
-                团长优惠 <span class="text-danger">{if $goods['headstype']==1}{php echo number_format($goods['headsdiscount'] / 10,1)}折{/if}</span>
+                团长优惠 <span class="text-danger">{if $goods['headstype']==1}{php echo (number_format($goods['headsdiscount'] / 10,1))}折{/if}</span>
             </div>
             <div class="fui-cell-info"></div>
             <div class="fui-cell-remark noremark">
@@ -220,6 +229,7 @@
 <div class="fui-navbar order-create-checkout">
     <input type="submit" name="submit" value="提交订单" id= 'submit' style="-webkit-appearance: none;" class="nav-item btn btn-danger buybtn" />
     <input type="hidden" name="token" value="{$_W['token']}" />
+    <input type="hidden" name="groups" value="" />
     <a href="javascript:;" class="nav-item total">
         需付：¥ <span class="text-danger totalprice">{php echo number_format($price+$goods['freight'],2)}</span>
     </a>

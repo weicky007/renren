@@ -1,0 +1,160 @@
+{template '_header'}
+
+<div class="page-header">
+    当前位置：<span class="text-primary">直播间管理</span>
+</div>
+
+<div class="alert alert-primary">
+    <p>小程序直播运营操作说明：</p>
+    <p>1、登录微信小程序后台，在左侧功能栏“直播”<a href="https://mp.weixin.qq.com/" target="_blank">点击创建直播间</a>。</p>
+    <p>2、在小程序后台成功创建直播间后，点击列表中的 同步直播间 按钮。同步直播间后商城页面中会显示小程序列表中的直播间。</p>
+</div>
+
+<div class="page-content">
+    <form action="./index.php" method="get" class="form-horizontal" plugins="form">
+        <input type="hidden" name="c" value="site">
+        <input type="hidden" name="a" value="entry">
+        <input type="hidden" name="m" value="ewei_shopv2">
+        <input type="hidden" name="do" value="web">
+        <input type="hidden" name="r" value="wxlive.room">
+        <div class="page-toolbar">
+            <div class="col-sm-6">
+                   <span class="">
+                        <a href="https://mp.weixin.qq.com/" class="btn btn-primary btn-sm" target="_blank"><i class="fa fa-plus"></i> 添加新直播间</a>
+                        <a href="javascript:;" class="btn btn-success btn-sm" id="btn-sync"><i class="fa fa-refresh"></i> 同步直播间</a>
+                    </span>
+            </div>
+            <div class="col-sm-6 pull-right">
+                <div class="input-group">
+                    <div class="input-group-select">
+                        <select name="is_top" class="form-control" style="width:80px;">
+                            <option value="">置顶</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                    <div class="input-group-select">
+                        <select name="is_recommend" class="form-control" style="width:80px;">
+                            <option value="">推荐</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                    <input type="text" class=" form-control" name="keywords" value="{$_GPC['keywords']}"
+                           placeholder="请输入关键词"> <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button> </span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body" style="text-align: center;padding:30px;">
+            未找到相关直播间
+        </div>
+    </div>
+    {else}
+    <table class="table table-hover table-responsive">
+        <thead class="navbar-inner">
+        <tr>
+            <th style="width: 70px;">直播间ID</th>
+            <th>直播标题</th>
+            <th style="width: 200px;">主播昵称</th>
+            <th style="width: 100px;">直播间封面</th>
+            <th style="width: 100px;">直播状态</th>
+            <th style="width: 140px;">开播时间</th>
+            <th style="width: 140px;">结束直播</th>
+            <th style="width: 50px; text-align: center;">置顶</th>
+            <th style="width: 50px; text-align: center;">推荐</th>
+            <th style="width: 70px; text-align: center;">显示</th>
+            <th style="width: 100px;">操作</th>
+        </tr>
+        </thead>
+        <tbody id="sort">
+        {loop $list $row}
+        <tr>
+            <td>{$row['room_id']}</td>
+            <td>{$row['name']}</td>
+            <td>{$row['anchor_name']}</td>
+            <td>
+                <img src="{php echo tomedia($row['cover_img'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"/>
+            </td>
+            <td>{$row['live_status_text']}</td>
+            <td>{php echo date('Y-m-d H:i:s', $row['start_time'])}</td>
+            <td>{php echo date('Y-m-d H:i:s', $row['end_time'])}</td>
+            <td style="text-align: center;">
+                <span class='label {if $row['is_top']==1}label-success{else}label-default{/if}'
+                {ife 'live.room' $item}
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$row['is_top']}'
+                data-switch-value0='0|否|label label-default|{php echo webUrl('wxlive/room/property',array('type'=>'is_top', 'value'=>1,'id'=>$row['id']))}'
+                data-switch-value1='1|是|label label-success|{php echo webUrl('wxlive/room/property',array('type'=>'is_top', 'value'=>0,'id'=>$row['id']))}'
+                {/if}>{if $row['is_top']==1}是{else}否{/if}</span>
+            </td>
+            <td style="text-align: center;">
+                <span class='label {if $row['is_recommend']==1}label-success{else}label-default{/if}'
+                {ife 'live.room' $item}
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$row['is_recommend']}'
+                data-switch-value0='0|否|label label-default|{php echo webUrl('wxlive/room/property',array('type'=>'is_recommend', 'value'=>1,'id'=>$row['id']))}'
+                data-switch-value1='1|是|label label-success|{php echo webUrl('wxlive/room/property',array('type'=>'is_recommend', 'value'=>0,'id'=>$row['id']))}'
+                {/if}>{if $row['is_recommend']==1}是{else}否{/if}</span>
+            </td>
+            <td style="text-align: center;">
+                <span class='label {if $row['status']==1}label-primary{else}label-default{/if}'
+                {ife 'live.room' $item}
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$row['status']}'
+                data-switch-value0='0|隐藏|label label-default|{php echo webUrl('wxlive/room/property',array('type'=>'status', 'value'=>1,'id'=>$row['id']))}'
+                data-switch-value1='1|显示|label label-primary|{php echo webUrl('wxlive/room/property',array('type'=>'status', 'value'=>0,'id'=>$row['id']))}'
+                {/if}>{if $row['status']==1}显示{else}隐藏{/if}</span>
+            </td>
+            <td style="text-align:left;">
+                <a class="btn btn-op btn-operation js-clip" data-href="plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id={$row['room_id']}">
+                         <span data-toggle="tooltip" data-placement="top"  data-original-title="复制直播间地址">
+                           <i class='icow icow-lianjie2'></i>
+                       </span>
+                </a>
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td class="text-right" colspan="11">{$pager}</td>
+        </tr>
+        </tfoot>
+    </table>
+    {/if}
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        // 同步直播间列表
+        $("#btn-sync").unbind('click').click(function () {
+            var _this = $(this);
+
+            if(_this.attr('stop')){
+                return;
+            }
+
+            // 设置禁用状态
+            _this.attr('stop', 1).addClass('disabled').text("正在同步中...");
+
+            $.post(biz.url('wxlive/room/sync'),{}, function (ret) {
+                if(ret.status==1){
+                    tip.msgbox.suc("操作成功");
+                }else{
+                    tip.msgbox.err(ret.result.message);
+                }
+
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            }, 'json')
+        });
+    });
+</script>
+
+{template '_footer'}

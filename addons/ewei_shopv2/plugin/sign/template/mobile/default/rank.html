@@ -7,13 +7,17 @@
 <div class='fui-page fui-page-current'>
     <div class="fui-header">
         <div class="fui-header-left">
+            {if !$_SESSION['sign_xcx_isminiprogram']}
             <a class="back"></a>
+            {/if}
         </div>
         <div class="title">{$set['textsign']}排行</div>
         <div class="fui-header-right">
+            {if !$_SESSION['sign_xcx_isminiprogram']}
             <a href="{php echo mobileUrl()}" class="external">
                 <i class="icon icon-home"></i>
             </a>
+            {/if}
         </div>
     </div>
     <div class='fui-content navbar'>
@@ -52,3 +56,4 @@
 </div>
 {php $this->footerMenus(null, false, $texts)}
 {template '_footer'}
+<!--NDAwMDA5NzgyNw==-->

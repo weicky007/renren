@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,7 +24,7 @@ class GroupsProcessor extends PluginProcessor
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
 		@session_start();
-		if (($msgtype == 'text') || ($event == 'click')) {
+		if ($msgtype == 'text' || $event == 'click') {
 			$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if (empty($saler)) {
@@ -41,7 +42,8 @@ class GroupsProcessor extends PluginProcessor
 				if (is_numeric($content)) {
 					if (8 <= strlen($content)) {
 						$_SESSION[$this->codekey] = $verifycode = trim($content);
-						$order = pdo_fetch('select id,orderno,price,goodid from ' . tablename('ewei_shop_groups_order') . "\r\n\t\t\t\t\t\t\twhere uniacid=:uniacid and verifycode = :verifycode limit 1 ", array(':uniacid' => $_W['uniacid'], ':verifycode' => 'PT' . $verifycode));
+						$order = pdo_fetch('select id,orderno,price,goodid from ' . tablename('ewei_shop_groups_order') . '
+							where uniacid=:uniacid and verifycode = :verifycode limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => 'PT' . $verifycode));
 
 						if (empty($order)) {
 							unset($_SESSION[$this->sessionkey]);
@@ -57,20 +59,38 @@ class GroupsProcessor extends PluginProcessor
 
 						extract($allow);
 						$_SESSION[$this->sessionkey] = json_encode(array('orderid' => $allow['order']['id'], 'verifytype' => $allow['order']['verifytype'], 'lastverifys' => $allow['lastverifys']));
+						$member = pdo_get('ewei_shop_member', array('openid' => $order['openid']));
+						$paytime = date('Y-m-d H:i:s', $order['paytime']);
 						$str = '';
-						$str .= '订单：' . $order['orderno'] . "\r\n金额：" . $order['price'] . " 元\r\n";
-						$str .= "商品：\r\n";
-						$str .= 1 . '、' . $goods['title'] . "\r\n";
+						$str .= '订单：' . $order['orderno'] . '
+金额：' . $order['price'] . ' 元
+';
+						$str .= '用户昵称：' . $member['nickname'] . '
+';
+						$str .= '付款时间：' . $paytime . '
+';
+						$str .= '商品名称：';
+						$str .= $goods['title'] . '
+';
+
+						if (!empty($goods['optiontitle'])) {
+							$str .= '商品规格：';
+							$str .= $goods['optiontitle'] . '
+';
+						}
 
 						if ($order['dispatchtype'] == 1) {
-							$str .= "\r\n信息正确请回复 y 进行自提确认，回复 n 退出。";
+							$str .= '
+信息正确请回复 y 进行自提确认，回复 n 退出。';
 						}
 						else if ($order['verifytype'] == 0) {
-							$str .= "\r\n正确请回复 y 进行订单核销，回复 n 退出。";
+							$str .= '
+正确请回复 y 进行订单核销，回复 n 退出。';
 						}
 						else {
 							if ($order['verifytype'] == 1) {
-								$str .= "\r\n信息正确请输入核销次数进行核销（可核销剩余 " . $lastverifys . ' 次），回复 n 退出。';
+								$str .= '
+信息正确请输入核销次数进行核销（可核销剩余 ' . $lastverifys . ' 次），回复 n 退出。';
 								return $obj->respText($str);
 							}
 						}

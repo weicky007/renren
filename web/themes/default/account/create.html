@@ -248,7 +248,7 @@
 							<input type="text" name="appid" ng-model="account.appid" class="form-control wxapp-name" placeholder="AppId">
 						</div>
 					</div>
-					<div class="form-group" ng-if="account.sign == 'baiduapp' || account.sign == 'toutiaoapp'">
+					<div class="form-group" ng-if="account.sign == 'baiduapp'>
 						<label for="" class="control-label col-sm-2">AppKey</label>
 						<div class="form-controls col-sm-10">
 							<input type="text" name="key" ng-model="account.key" class="form-control wxapp-name" placeholder="AppKey">
@@ -511,7 +511,6 @@
 		//设置权限
 		unigroups: {php echo !empty($unigroups) ? json_encode($unigroups) : 'null'},
 		modules: {php echo !empty($modules) ? json_encode($modules) : 'null'},
-		templates: {php echo !empty($templates) ? json_encode($templates) : 'null'},
 		links: {
 			userinfo: "{php echo url('account/create/get_user_info', array('sign' => $sign))}",
 			check_params: "{php echo url('account/create/check_params')}",

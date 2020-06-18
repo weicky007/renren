@@ -13,8 +13,6 @@ if ('display' == $do) {
 	$pageindex = max(1, intval($_GPC['page']));
 	$pagesize = 10;
 
-	$condition = '';
-	$params = array();
 	$group_name = safe_gpc_string($_GPC['group_name']);
 
 	if (!empty($group_name)) {
@@ -35,19 +33,27 @@ if ('display' == $do) {
 			$total = $create_groups['total'];
 			$page = $create_groups['pager'];
 		}
-	
-
+	if ($_W{'isajax'}) {
+		$message = array(
+			'total'        => $total,
+			'page' 	       => $pageindex,
+			'page_size'    => $pagesize,
+			'list'         => $lists,
+		);
+		iajax(0, $message);
+	}
 	template('user/create-group-display');
 }
 
 if ('post' == $do) {
 	$id = intval($_GPC['id']);
 	if (!empty($id)) {
-		$account_group_info = $account_group_table->getCreateGroupInfoById($id);
+		$account_group_info = $account_group_table->getById($id);
 	}
+
 	$account_all_type = uni_account_type();
 	$account_all_type_sign = array_keys(uni_account_type_sign());
-	if (checksubmit('submit')) {
+	if ($_W['ispost']) {
 		$user_account_group = array(
 			'id' => intval($_GPC['id']),
 			'group_name' => safe_gpc_string($_GPC['group_name']),
@@ -60,17 +66,29 @@ if ('post' == $do) {
 		}
 
 		if ($max_type_all <= 0) {
+			if ($_W['isajax']) {
+				iajax(-1, '至少能创建一个账号!');
+			}
 			itoast('至少能创建一个账号!', '', '');
 		}
 
 		$res = user_save_create_group($user_account_group);
 
 		if (is_error($res)) {
+			if ($_W['isajax']) {
+				iajax(-1, $res['message']);
+			}
 			itoast($res['message'], '', '');
+		}
+		if ($_W['isajax']) {
+			iajax(0, '操作成功!');
 		}
 		itoast('操作成功!', url('user/create-group/display'), '');
 	}
 
+	if ($_W['iajax']) {
+		iajax(0, $account_group_info);
+	}
 	template('user/create-group-post');
 }
 
@@ -80,6 +98,8 @@ if ('del' == $do) {
 	table('users_founder_own_create_groups')->where('create_group_id', $id)->delete();
 	$url = url('user/create-group/display');
 	$msg = $res ? '成功' : '失败';
-
+	if ($_W['isajax']) {
+		iajax(0, '操作' . $msg);
+	}
 	itoast('操作' . $msg, $url);
 }
