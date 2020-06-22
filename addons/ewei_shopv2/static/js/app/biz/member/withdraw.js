@@ -1,1 +1,223 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1i([\'J\',\'13\'],o(J,13){8 6={};6.H=o(){4(!$(\'#a\').10()||$(\'#a\').s()){7 K}l{8 a=1k($(\'#a\').d());4(a<=0){7 K}4(6.L>0){4(a<6.L){7 K}}4(a>6.E){7 K}}4(6.G>0&&a!=0){8 k=a/F*6.G;k=1a.1b(k*F)/F;4(k>=6.T&&k<=6.R){k=0}8 y=a-k;y=1a.1b(y*F)/F;$("#k").h(k);$("#y").h(y);$(".1d-9").5()}7 X};6.1g=o(w){6.G=w.G;6.T=w.T;6.R=w.R;6.L=w.L;6.E=w.E;8 W=$(\'#c\').Y("N");4(W==2){$(\'.j-9\').5();$(\'.j-t\').b();$(\'.e-9\').5();$(\'.u-9\').b()}l 4(W==3){$(\'.j-t\').5();$(\'.j-9\').b();$(\'.e-9\').b();$(\'.u-9\').5()}l{$(\'.j-t\').b();$(\'.j-9\').b();$(\'.e-9\').b();$(\'.u-9\').b()}$(\'.x\').U(o(){8 x=$(\'.x\');1j(8 i=0;i<x.1h;i++){x.17(i).z(".v-M").D("16","");x.17(i).z(".v-M").14("S")}$(Z).z(".v-M").D("16","c");$(Z).z(".v-M").1f("S","S");8 c=$(\'#c\').Y("N");4(c==2){$(\'.j-9\').5();$(\'.j-t\').b();$(\'.e-9\').5();$(\'.u-9\').b()}l 4(c==3){$(\'.j-9\').b();$(\'.j-t\').5();$(\'.e-9\').b();$(\'.u-9\').5()}l{$(\'.j-t\').b();$(\'.j-9\').b();$(\'.e-9\').b();$(\'.u-9\').b()}});$(\'#n-1C\').U(o(){4(6.E<=0){7}$(\'#a\').d(6.E);4(!6.H()){$(\'#n-B\').12(\'P\')}l{$(\'#n-B\').19(\'P\')}});$(\'#a\').1B(\'1v 1u\',o(){4(!6.H()){$(\'#n-B\').12(\'P\')}l{$(\'#n-B\').19(\'P\')}});$(\'#n-B\').U(o(){8 a=$.1o($(\'#a\').d());4($(Z).D(\'C\')){7}4(!6.H()){7}4($(\'.n-11\').D(\'C\')){7}8 a=$(\'#a\').d();4(!$(\'#a\').10()){f.g.5(\'请输入提现金额!\');7}8 h=\'\';8 p=\'\';8 e=\'\';8 r=\'\';8 A=\'\';8 m=\'\';8 q=\'\';8 c=$(\'#c\').Y("N");8 I=$(\'#c\').1q(".v-18").z(".v-18-1t").h();4(c==1s){f.g.5(\'未选择提现方式，请您选择提现方式后重试!\');7}4(c==0){h=I}l 4(c==2){4($(\'#p\').s()){f.g.5(\'请填写姓名!\');7}4($(\'#e\').s()){f.g.5(\'请填写支付宝帐号!\');7}4($(\'#r\').s()){f.g.5(\'请填写确认帐号!\');7}4($(\'#e\').d()!=$(\'#r\').d()){f.g.5(\'支付宝帐号与确认帐号不一致!\');7}p=$(\'#p\').d();e=$(\'#e\').d();r=$(\'#r\').d();h=I+"?<O>姓名:"+p+"<O>支付宝帐号:"+e}l 4(c==3){4($(\'#1c\').s()){f.g.5(\'请填写姓名!\');7}4($(\'#m\').s()){f.g.5(\'请填写银行卡号!\');7}4(!$(\'#m\').10()){f.g.5(\'银行卡号格式不正确!\');7}4($(\'#q\').s()){f.g.5(\'请填写确认卡号!\');7}4($(\'#m\').d()!=$(\'#q\').d()){f.g.5(\'银行卡号与确认卡号不一致!\');7}p=$(\'#1c\').d();m=$(\'#m\').d();q=$(\'#q\').d();A=$(\'#A\').z("1A:1w").h();h=I+"?<O>姓名:"+p+"<O>"+A+" 卡号:"+$(\'#m\').d()}4(c<2){8 Q=\'确认要\'+h+"?"}l{8 Q=\'确认要\'+h}4(6.G>0){Q+=\' 扣除手续费 \'+$("#k").h()+\' 元,实际到账金额 \'+$("#y").h()+\' 元\'}f.1e(Q,o(){$(\'.n-11\').D(\'C\',1);J.1l(\'15/11/C\',{c:c,p:p,e:e,r:r,A:A,m:m,q:q,a:a},o(V){4(V.1p!=1){$(\'.n-1m\').14(\'C\');f.g.5(V.1z.1n);7}f.g.5(\'提现申请成功，请等待审核!\');1D.1r=J.1x(\'15/1y\',{N:1})},X,X)})})};7 6});',62,102,'||||if|show|modal|return|var|group|money|hide|applytype|val|alipay|FoxUI|toast|html||ab|deductionmoney|else|bankcard|btn|function|realname|bankcard1|alipay1|isEmpty|group2|bank|fui|params|applyradio|realmoney|find|bankname|next|submit|attr|max|100|withdrawcharge|allow|typename|core|false|min|radio|type|br|disabled|confirm_msg|withdrawend|checked|withdrawbegin|click|rjson|checked_applytype|true|data|this|isNumber|withdraw|addClass|tpl|removeAttr|member|id|eq|cell|removeClass|Math|round|realname2|charge|confirm|prop|init|length|define|for|parseFloat|json|widthdraw|message|trim|status|closest|href|undefined|info|propertychange|input|selected|getUrl|log|result|option|bind|all|location'.split('|'),0,{}))
+define(['core', 'tpl'], function (core, tpl) {
+    var modal = {};
+    modal.allow = function () {
+
+        if (!$('#money').isNumber() || $('#money').isEmpty()) {
+            return false
+        } else {
+            var money = parseFloat($('#money').val());
+            if (money <= 0) {
+                return false
+            }
+            if (modal.min > 0) {
+                if (money < modal.min) {
+                    return false
+                }
+            }
+            if (money > modal.max) {
+                return false
+            }
+        }
+
+        if (modal.withdrawcharge > 0 && money != 0) {
+            var deductionmoney = money / 100 * modal.withdrawcharge;
+            deductionmoney = Math.round(deductionmoney*100)/100;
+
+            if (deductionmoney >= modal.withdrawbegin && deductionmoney <= modal.withdrawend) {
+                deductionmoney = 0;
+            }
+
+            var realmoney = money - deductionmoney;
+            realmoney = Math.round(realmoney*100)/100;
+
+            $("#deductionmoney").html(deductionmoney);
+            $("#realmoney").html(realmoney);
+            $(".charge-group").show();
+        }
+
+
+        return true
+    };
+    modal.init = function (params) {
+        modal.withdrawcharge = params.withdrawcharge;
+        modal.withdrawbegin = params.withdrawbegin;
+        modal.withdrawend = params.withdrawend;
+        modal.min = params.min;
+        modal.max = params.max;
+        // var checked_applytype = $('#applytype').find("option:selected").val();//原
+        var checked_applytype = $('#applytype').data("type");
+// console.log(checked_applytype);
+        if (checked_applytype == 2) {
+            $('.ab-group').show();
+            $('.ab-group2').hide();
+            $('.alipay-group').show();
+            $('.bank-group').hide();
+        } else if (checked_applytype == 3) {
+            $('.ab-group2').show();
+            $('.ab-group').hide();
+            $('.alipay-group').hide();
+            $('.bank-group').show();
+        } else {
+            $('.ab-group2').hide();
+            $('.ab-group').hide();
+            $('.alipay-group').hide();
+            $('.bank-group').hide();
+        }
+
+        $('.applyradio').click(function () {
+            //var applytype = $(this).find("option:selected").val();//原
+            var applyradio =$('.applyradio');
+            for(var i=0;i<applyradio.length;i++){
+                applyradio.eq(i).find(".fui-radio").attr("id","");
+                applyradio.eq(i).find(".fui-radio").removeAttr("checked");
+            }
+            $(this).find(".fui-radio").attr("id","applytype");
+            $(this).find(".fui-radio").prop("checked","checked");
+            var applytype = $('#applytype').data("type");
+            // console.log(applytype);
+            if (applytype == 2) {
+                $('.ab-group').show();
+                $('.ab-group2').hide();
+                $('.alipay-group').show();
+                $('.bank-group').hide();
+            } else if (applytype == 3) {
+                $('.ab-group').hide();
+                $('.ab-group2').show();
+                $('.alipay-group').hide();
+                $('.bank-group').show();
+            } else {
+                $('.ab-group2').hide();
+                $('.ab-group').hide();
+                $('.alipay-group').hide();
+                $('.bank-group').hide();
+            }
+        });
+
+        $('#btn-all').click(function () {
+            if (modal.max <= 0) {
+                return
+            }
+            $('#money').val(modal.max);
+            if (!modal.allow()) {
+                $('#btn-next').addClass('disabled')
+            } else {
+                $('#btn-next').removeClass('disabled')
+            }
+        });
+        $('#money').bind('input propertychange', function () {
+            if (!modal.allow()) {
+                $('#btn-next').addClass('disabled')
+            } else {
+                $('#btn-next').removeClass('disabled')
+            }
+        });
+        $('#btn-next').click(function () {
+            var money = $.trim($('#money').val());
+            if ($(this).attr('submit')) {
+                return
+            }
+            if (!modal.allow()) {
+                return
+            }
+            if ($('.btn-withdraw').attr('submit')) {
+                return
+            }
+            var money = $('#money').val();
+            if (!$('#money').isNumber()) {
+                FoxUI.toast.show('请输入提现金额!');
+                return
+            }
+
+            var html = '';
+            var realname = '';
+            var alipay = '';
+            var alipay1 = '';
+            var bankname = '';
+            var bankcard = '';
+            var bankcard1 = '';
+            // var applytype = $('#applytype').find("option:selected").val();//原
+            // var typename = $('#applytype').find("option:selected").html();//原
+            var applytype = $('#applytype').data("type");
+            var typename = $('#applytype').closest(".fui-cell").find(".fui-cell-info").html();
+            if (applytype == undefined) {
+                FoxUI.toast.show('未选择提现方式，请您选择提现方式后重试!');
+                return
+            }
+
+            if (applytype == 0) {
+                html = typename;
+            } else if (applytype == 2) {
+                if ($('#realname').isEmpty()) {
+                    FoxUI.toast.show('请填写姓名!');
+                    return
+                }
+                if ($('#alipay').isEmpty()) {
+                    FoxUI.toast.show('请填写支付宝帐号!');
+                    return
+                }
+                if ($('#alipay1').isEmpty()) {
+                    FoxUI.toast.show('请填写确认帐号!');
+                    return
+                }
+                if ($('#alipay').val() != $('#alipay1').val()) {
+                    FoxUI.toast.show('支付宝帐号与确认帐号不一致!');
+                    return
+                }
+                realname = $('#realname').val();
+                alipay = $('#alipay').val();
+                alipay1 = $('#alipay1').val();
+                html = typename + "?<br>姓名:" + realname + "<br>支付宝帐号:" + alipay;
+            } else if (applytype == 3) {
+                if ($('#realname2').isEmpty()) {
+                    FoxUI.toast.show('请填写姓名!');
+                    return
+                }
+                if ($('#bankcard').isEmpty()) {
+                    FoxUI.toast.show('请填写银行卡号!');
+                    return
+                }
+                if (!$('#bankcard').isNumber()) {
+                    FoxUI.toast.show('银行卡号格式不正确!');
+                    return
+                }
+                if ($('#bankcard1').isEmpty()) {
+                    FoxUI.toast.show('请填写确认卡号!');
+                    return
+                }
+                if ($('#bankcard').val() != $('#bankcard1').val()) {
+                    FoxUI.toast.show('银行卡号与确认卡号不一致!');
+                    return
+                }
+                realname = $('#realname2').val();
+                bankcard = $('#bankcard').val();
+                bankcard1 = $('#bankcard1').val();
+                bankname = $('#bankname').find("option:selected").html();
+                html = typename + "?<br>姓名:" + realname + "<br>" + bankname + " 卡号:" + $('#bankcard').val();
+            }
+
+            if (applytype < 2) {
+                var confirm_msg = '确认要' + html + "?";
+            } else {
+                var confirm_msg = '确认要' + html;
+            }
+
+            if (modal.withdrawcharge > 0) {
+                confirm_msg += ' 扣除手续费 ' + $("#deductionmoney").html() + ' 元,实际到账金额 ' + $("#realmoney").html() + ' 元';
+            }
+
+            FoxUI.confirm(confirm_msg, function () {
+                $('.btn-withdraw').attr('submit', 1);
+                core.json('member/withdraw/submit', {applytype: applytype, realname: realname, alipay: alipay, alipay1: alipay1, bankname: bankname, bankcard: bankcard, bankcard1: bankcard1, money: money}, function (rjson) {
+                    if (rjson.status != 1) {
+                        $('.btn-widthdraw').removeAttr('submit');
+                        FoxUI.toast.show(rjson.result.message);
+                        return
+                    }
+                    FoxUI.toast.show('提现申请成功，请等待审核!');
+                    location.href = core.getUrl('member/log',{type:1})
+                }, true, true)
+            })
+        })
+    };
+    return modal
+});

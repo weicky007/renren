@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,7 +13,7 @@ class Register_EweiShopV2Page extends GlobonusMobileLoginPage
 		$openid = $_W['openid'];
 		$set = set_medias($this->set, 'regbg');
 		$member = m('member')->getMember($openid);
-		if ($member['ispartner'] == 1 && $member['partnerstatus'] == 1) {
+		if (($member['ispartner'] == 1) && ($member['partnerstatus'] == 1)) {
 			header('location: ' . mobileUrl('globonus'));
 			exit();
 		}
@@ -102,13 +101,13 @@ class Register_EweiShopV2Page extends GlobonusMobileLoginPage
 			show_json(1, array('check' => $become_check));
 		}
 
-		$order_status = intval($set['become_order']) == 0 ? 1 : 3;
+		$order_status = (intval($set['become_order']) == 0 ? 1 : 3);
 		$become_check = intval($set['become_check']);
 		$to_check_partner = false;
 
 		if ($set['become'] == '2') {
 			$status = 1;
-			$ordercount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . (' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1'), array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			$ordercount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if ($ordercount < intval($set['become_ordercount'])) {
 				$status = 0;
@@ -121,7 +120,7 @@ class Register_EweiShopV2Page extends GlobonusMobileLoginPage
 		}
 		else if ($set['become'] == '3') {
 			$status = 1;
-			$moneycount = pdo_fetchcolumn('select sum(price) from ' . tablename('ewei_shop_order') . (' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1'), array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			$moneycount = pdo_fetchcolumn('select sum(goodsprice) from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and openid=:openid and status>=' . $order_status . ' limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if ($moneycount < floatval($set['become_moneycount'])) {
 				$status = 0;
@@ -135,7 +134,7 @@ class Register_EweiShopV2Page extends GlobonusMobileLoginPage
 		else {
 			if ($set['become'] == 4) {
 				$goods = pdo_fetch('select id,title,thumb,marketprice from' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $set['become_goodsid'], ':uniacid' => $_W['uniacid']));
-				$goodscount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order_goods') . ' og ' . '  left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid' . (' where og.goodsid=:goodsid and o.openid=:openid and o.status>=' . $order_status . '  limit 1'), array(':goodsid' => $set['become_goodsid'], ':openid' => $openid));
+				$goodscount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_order_goods') . ' og ' . '  left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid' . ' where og.goodsid=:goodsid and o.openid=:openid and o.status>=' . $order_status . '  limit 1', array(':goodsid' => $set['become_goodsid'], ':openid' => $openid));
 
 				if ($goodscount <= 0) {
 					$status = 0;

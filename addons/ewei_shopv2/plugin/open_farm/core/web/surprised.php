@@ -161,7 +161,7 @@ class Surprised_EweiShopV2Page extends PluginWebPage
      */
 	public function getCategory()
 	{
-		$table = tablename('ewei_open_farm_surprised');
+		$table = 'ims_ewei_open_farm_surprised';
 		$field = 'category';
 		$categoryArr = $this->model->getEnumList($table, $field);
 		$this->model->returnJson($categoryArr);

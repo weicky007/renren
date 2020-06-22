@@ -363,7 +363,7 @@ class Data_EweiShopV2Page extends ComWebPage
 				'fields'  => array(),
 				'uniacid' => $_W['uniacid'],
 				'status'  => $col['status']
-			);
+				);
 			unset($col['status']);
 			$data['fields'] = iserializer($col);
 			$datas[] = $data;

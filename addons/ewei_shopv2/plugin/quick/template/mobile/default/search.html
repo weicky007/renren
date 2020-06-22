@@ -1,0 +1,194 @@
+{template '_header'}
+<style>
+    .empty_more{
+        width: 65%;
+        margin: 1.5em auto;
+        line-height: 1.6em;
+        font-size: 14px;
+        text-align: center;
+        position: relative;
+        color: #999;
+    }
+    .empty_more::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid #E5E5E5;
+    }
+    .empty_more .text {
+        padding: 0 10px;
+        background: #f3f3f3;
+        position: relative;
+        text-align: center;
+        z-index: 2;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+</style>
+<div class='fui-page  fui-page-current page-goods-list'>
+    <div class="fui-header">
+        <div class="fui-header-left">
+            <a class="back"></a>
+        </div>
+        <div class="title">
+            <form method="post">
+                <div class="searchbar">
+                    <div class="search-input">
+                        <i class="icon icon-search"></i>
+                        <input type="search" id="search" placeholder="输入关键字..." value="{$_GPC['keywords']}">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="fui-header-right" data-nomenu="true">
+            <a href="javascript:;"><i class="icon icon-sort" id="listblock" data-state="list"></i></a>
+        </div>
+    </div>
+    <div class="sort" style="display: none;">
+        <div class="item on"><span class='text'>综合</span></div>
+        <div class="item" data-order="sales"><span class='text'>销量</span></div>
+        <div class="item item-price"  data-order="minprice"><span class='text'>价格</span>
+            <span class="sorting">
+		<i class="icon icon-sanjiao2"></i>
+		<i class="icon icon-sanjiao1"></i>
+	    </span>
+        </div>
+        <div class="item"  data-order="filter"><span class='text'>筛选 <i class="icon icon-filter "></i></span> </div>
+    </div>
+
+
+
+    <div class="fui-content navbar" style="top: 2.2rem">
+        <div class='fui-content-inner'>
+            <div class='content-empty' style='display:none;'>
+                <i class='icon icon-searchlist'></i><br/>暂时没有任何商品
+            </div>
+            <div class="fui-goods-group container block" id="goods-list-container"></div>
+            <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+            <div class="empty_more" style="display: none;">
+                <div class="text">没有更多了</div>
+            </div>
+        </div>
+        {template '_copyright'}
+    </div>
+
+    <div class='fui-mask-m'></div>
+
+
+    <script type='text/html' id='tpl_goods_list_promotion'>
+        <%each list as g%>
+        <div class="fui-goods-item" data-goodsid="<%g.id%>" data-type="<%g.type%>">
+            <a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
+            <div class="image" data-lazy-background="<%g.thumb%>">
+
+                {if !empty($_W['shopset']['shop']['saleout'])}
+                <%if g.total<=0%><div class="salez" style="background-image: url('{php echo tomedia($_W['shopset']['shop']['saleout'])}'); "></div><%/if%>
+                {else}
+                <%if g.total<=0%><div class="salez" style="background-image: url('{php echo '../addons/ewei_shopv2/static/images/shouqin.png'}'); "></div><%/if%>
+                {/if}
+
+                <!--分销佣金-->
+                <%if g.cansee>0 && g.seecommission>0%>
+                <div class="goods-Commission"><%g.seetitle || "预计最高佣金"%>￥<%g.seecommission%> </div>
+                <%/if%>
+            </div>
+            </a>
+
+            <div class="detail">
+                <a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
+                <div class="name"><%if g.type == 9%><span class="cycle-tip">周期购</span><%/if%> <%g.title%></div>
+                </a>
+                <div style="line-height:0.7rem;height:0.7rem;color:#b2b2b2;font-size:0.6rem;margin-top: .2rem;text-decoration: line-through"><%if g.productprice > 0%><%g.productprice%><% /if %></div>
+                <div class="price" style="margin-top: 0">
+                    <span class="text">￥<%g.minprice%></span>
+                    <%if g.levelbuy ==0 || g.groupbuy==0 %>
+
+                    <%else%>
+                    <span class="buy<%if g.bargain >0%> bargain-btn<%/if%>" data-type="<%g.type%>"  <%if g.total<=0%> style="display:none;" <%/if%>><%if g.bargain >0%>砍价活动<%else%>购买<%/if%></span>
+                    <%/if%>
+
+
+                </div>
+            </div>
+        </div>
+        <%/each%>
+    </script>
+
+    <script id="tpl_cate_list" type="text/html">
+        <div class="item">
+            <%each category as c%>
+            <nav class="on"><%c.catname%></nav>
+            <%/each%>
+        </div>
+    </script>
+    {template 'goods/picker'}
+    {template 'goods/wholesalePicker'}
+    <script language="javascript">
+        window.category = false;
+        {if $catlevel!=-1}
+        window.category = {php echo json_encode($allcategory)};
+        {/if}
+            require(['biz/plugin/quick/list'], function (modal) {
+                modal.init({
+                    page: "1",
+                    id: "{$_GPC['id']}",
+                    keywords: "{$_GPC['keywords']}",
+                    isrecommand: "{$_GPC['isrecommand']}",
+                    ishot: "{$_GPC['ishot']}",
+                    isnew: "{$_GPC['isnew']}",
+                    isdiscount: "{$_GPC['isdiscount']}",
+                    issendfree: "{$_GPC['issendfree']}",
+                    istime: "{$_GPC['istime']}",
+                    cate: "{$_GPC['cate']}",
+                    order: "{$_GPC['order']}",
+                    by: "{$_GPC['by']}",
+                    merchid: "{$_GPC['merchid']}",
+                    frommyshop: "{php echo intval($_GPC['frommyshop'])}"
+                });
+            });
+    </script>
+    {php $this->footerMenus()}
+</div>
+
+{template '_footer'}
+<script language='javascript'>
+    $(function () {
+        setTimeout(function () {
+            var width = window.screen.width *  window.devicePixelRatio;
+            var height = window.screen.height *  window.devicePixelRatio;
+            var h = document.body.offsetHeight *  window.devicePixelRatio;
+            function isIPhoneX() {
+                var u = navigator.userAgent;
+                var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+                if (isIOS) {
+                    if (screen.height === 812 && screen.width === 375) {
+                        //是iphoneX
+                        return true;
+                    } else {
+                        //不是iphoneX
+                        return false;
+                    }
+                }
+            }
+            if (isIPhoneX()) {
+                if(window.history.length != 1) {
+                    $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
+                }    else{
+                    $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex');
+                }
+            }
+            //  微信版本6.6.7
+            /*if(h == 1923){
+                $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
+                return;
+            }
+
+            if(height==2436 && width==1125){
+                $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex')
+            }*/
+        },600)
+    })
+</script>

@@ -1,5 +1,4 @@
 <?php
-
 require '../framework/bootstrap.inc.php';
 load()->web('common');
 load()->web('template');

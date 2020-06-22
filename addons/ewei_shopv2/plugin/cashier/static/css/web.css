@@ -66,15 +66,6 @@
 .pagination li a{
     color:#333;
 }
-
-.panel-class table td.page{
-    color: #23527c;
-}
-.panel-class table td input{
-    height: 18px;
-    outline: none;
-    border: none;
-}
 .panel-class .panel-heading{
     background: transparent; color:#fff;
     border:none;
@@ -220,7 +211,11 @@ select.form-control option{
     background: none;
     border-radius: 0;
     border-left:none; border-bottom:none;
+
+
+
 }
+
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li > a:hover,

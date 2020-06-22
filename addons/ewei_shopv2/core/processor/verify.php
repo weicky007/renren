@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -28,7 +27,7 @@ class VerifyProcessor extends ComProcessor
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
 		@session_start();
-		if ($msgtype == 'text' || $event == 'click') {
+		if (($msgtype == 'text') || ($event == 'click')) {
 			$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if (empty($saler)) {
@@ -56,33 +55,14 @@ class VerifyProcessor extends ComProcessor
 				if (is_numeric($content)) {
 					if (8 <= strlen($content)) {
 						$_SESSION[$this->codekey] = $verifycode = trim($content);
-
-						if (strlen($content) == 8) {
-							$orderid = pdo_fetchcolumn('select id from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and ( verifycode=:verifycode or verifycodes like :verifycodes ) limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode, ':verifycodes' => '%|' . $verifycode . '|%'));
-						}
-						else {
-							if (strlen($content) == 9 && substr($content, 0, 1) == '8') {
-								$verifygood = m('verifygoods')->search($content);
-
-								if (is_error($verifygood)) {
-									return $obj->respText($verifygood['message']);
-								}
-
-								$orderid = $verifygood['orderid'];
-							}
-						}
+						$orderid = pdo_fetchcolumn('select id from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and ( verifycode=:verifycode or verifycodes like :verifycodes ) limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode, ':verifycodes' => '%|' . $verifycode . '|%'));
 
 						if (empty($orderid)) {
 							unset($_SESSION[$this->sessionkey]);
 							return $obj->respText('未找到订单，请继续输入，退出请回复 n。');
 						}
 
-						if (strlen($content) == 8) {
-							$allow = com('verify')->allow($orderid, 0, $openid);
-						}
-						else {
-							$allow = m('verifygoods')->allow($content, 0);
-						}
+						$allow = com('verify')->allow($orderid, 0, $openid);
 
 						if (is_error($allow)) {
 							unset($_SESSION[$this->sessionkey]);
@@ -90,52 +70,28 @@ class VerifyProcessor extends ComProcessor
 						}
 
 						extract($allow);
-						$_SESSION[$this->sessionkey] = json_encode(array('verifygoods' => strlen($content) == 9 && substr($content, 0, 1) == '8', 'orderid' => $allow['order']['id'], 'verifytype' => $allow['order']['verifytype'], 'lastverifys' => $allow['lastverifys']));
-						$member = pdo_get('ewei_shop_member', array('openid' => $order['openid']));
-						$paytime = date('Y-m-d H:i:s', $order['paytime']);
+						$_SESSION[$this->sessionkey] = json_encode(array('orderid' => $allow['order']['id'], 'verifytype' => $allow['order']['verifytype'], 'lastverifys' => $allow['lastverifys']));
 						$str = '';
-						$str .= '订单：' . $order['ordersn'] . '
-金额：' . $order['price'] . ' 元
-';
-						$str .= '用户昵称：' . $member['nickname'] . '
-';
-						$str .= '付款时间：' . $paytime . '
-';
-						$str .= '商品名称：';
+						$str .= '订单：' . $order['ordersn'] . "\r\n金额：" . $order['price'] . " 元\r\n";
+						$str .= "商品：\r\n";
 
-						if ($this->isMultiArray($allgoods)) {
-							foreach ($allgoods as $index => $g) {
-								$str .= $g['title'] . '
-';
-								$str .= '商品规格：' . $g['optiontitle'] . '
-';
-							}
-						}
-						else {
-							$str .= $allgoods['title'] . '
-';
-							$str .= '商品规格：' . $allgoods['optiontitle'] . '
-';
+						foreach ($allgoods as $index => $g) {
+							$str .= ($index + 1) . '、' . $g['title'] . "\r\n";
 						}
 
 						if ($order['dispatchtype'] == 1) {
-							$str .= '
-信息正确请回复 y 进行自提确认，回复 n 退出。';
+							$str .= "\r\n信息正确请回复 y 进行自提确认，回复 n 退出。";
 						}
 						else if ($order['verifytype'] == 0) {
-							$str .= '
-正确请回复 y 进行订单核销，回复 n 退出。';
+							$str .= "\r\n正确请回复 y 进行订单核销，回复 n 退出。";
 						}
 						else if ($order['verifytype'] == 1) {
-							$str .= '
-信息正确请输入核销次数进行核销（可核销剩余 ' . $lastverifys . ' 次），回复 n 退出。';
+							$str .= "\r\n信息正确请输入核销次数进行核销（可核销剩余 " . $lastverifys . ' 次），回复 n 退出。';
 						}
 						else {
 							if ($order['verifytype'] == 2) {
-								$str .= '
-消费码：' . $verifycode;
-								$str .= '
-确认信息正确请回复 y 进行确认，回复 n 退出。';
+								$str .= "\r\n消费码：" . $verifycode;
+								$str .= "\r\n确认信息正确请回复 y 进行确认，回复 n 退出。";
 							}
 						}
 
@@ -144,27 +100,21 @@ class VerifyProcessor extends ComProcessor
 
 					if (isset($_SESSION[$this->sessionkey])) {
 						$session = json_decode($_SESSION[$this->sessionkey], true);
-						$verifycode = $_SESSION[$this->codekey];
 
 						if ($session['verifytype'] == 1) {
 							if (intval($content) <= 0) {
 								return $obj->respText('订单最少核销 1 次!');
 							}
 
-							if ($session['verifygoods']) {
-								$result = m('verifygoods')->complete($verifycode, intval($content), '');
+							if ($session['lastverifys'] < intval($content)) {
+								return $obj->respText('此订单最多核销 ' . $session['lastverifys'] . ' 次!');
 							}
-							else {
-								if ($session['lastverifys'] < intval($content)) {
-									return $obj->respText('此订单最多核销 ' . $session['lastverifys'] . ' 次!');
-								}
 
-								$result = com('verify')->verify($session['orderid'], intval($content), '', $openid);
-							}
+							$result = com('verify')->verify($session['orderid'], intval($content), '', $openid);
 
 							if (is_error($result)) {
 								unset($_SESSION[$this->sessionkey]);
-								return $obj->respText($result['message'] . ' 请输入其他消费码或自提码，退出请回复 n。');
+								return $obj->respText($allow['message'] . ' 请输入其他消费码或自提码，退出请回复 n。');
 							}
 
 							$obj->endContext();
@@ -204,21 +154,6 @@ class VerifyProcessor extends ComProcessor
 				return $obj->respText('退出成功.');
 			}
 		}
-	}
-
-	private function isMultiArray($array)
-	{
-		return count($array) && count($array, true);
-	}
-
-	private function responseEmpty()
-	{
-		ob_clean();
-		ob_start();
-		echo '';
-		ob_flush();
-		ob_end_flush();
-		exit(0);
 	}
 }
 

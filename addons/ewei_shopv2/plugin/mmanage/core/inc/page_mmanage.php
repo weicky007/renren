@@ -1,6 +1,6 @@
 <?php
 
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -15,6 +15,7 @@ class MmanageMobilePage extends PluginMobilePage
 			$this->message('公众号参数错误');
 		}
 
+
 		$GLOBALS['_W']['uniacid'] = intval($_GPC['i']);
 		parent::__construct(false);
 		$this->set = m('common')->getPluginset('mmanage');
@@ -22,6 +23,7 @@ class MmanageMobilePage extends PluginMobilePage
 		if (empty($this->set['open'])) {
 			$this->message('暂未开放', mobileUrl());
 		}
+
 
 		$this->checkLogin();
 		$this->setShare();
@@ -38,15 +40,11 @@ class MmanageMobilePage extends PluginMobilePage
 
 			if ($islogin) {
 				$GLOBALS['_W']['mmanage'] = $islogin;
-				$GLOBALS['_W']['role'] = '';
-
-				if (p('mmanage')) {
-					$GLOBALS['_W']['role'] = p('mmanage')->uni_permission($islogin['uid'], $_W['uniacid']);
-				}
-
+				$GLOBALS['_W']['role'] = p('mmanage')->uni_permission($islogin['uid'], $_W['uniacid']);
 				$GLOBALS['_W']['uid'] = $islogin['uid'];
-				return NULL;
+				return;
 			}
+
 
 			unset($GLOBALS['_W']['mmanage']);
 			$session_key = '__mmanage_' . $_W['uniacid'] . '_session';
@@ -55,6 +53,7 @@ class MmanageMobilePage extends PluginMobilePage
 			header('location: ' . mobileUrl('mmanage/login', array('backurl' => $backurl)));
 			exit();
 		}
+
 	}
 
 	protected function isLogin()
@@ -67,10 +66,12 @@ class MmanageMobilePage extends PluginMobilePage
 
 		if (is_array($session)) {
 			$account = user_single(array('username' => $session['username']));
-			if (is_array($account) && $session['hash'] == md5($account['password'] . $account['salt'])) {
+			if (is_array($account) && ($session['hash'] == md5($account['password'] . $account['salt']))) {
 				return $account;
 			}
+
 		}
+
 
 		return false;
 	}
@@ -80,8 +81,9 @@ class MmanageMobilePage extends PluginMobilePage
 		global $_W;
 		$shopset = $_W['shopset']['shop'];
 		$set = $this->set;
-		$GLOBALS['_W']['shopshare'] = array('title' => !empty($set['title']) ? $set['title'] : $shopset['name'] . '管理后台', 'imgUrl' => !empty($set['thumb']) ? tomedia($set['thumb']) : tomedia($shopset['logo']), 'desc' => !empty($set['desc']) ? $set['desc'] : $shopset['description'], 'link' => mobileUrl('mmanage', array(), true));
+		$GLOBALS['_W']['shopshare'] = array('title' => (!(empty($set['title'])) ? $set['title'] : $shopset['name'] . '管理后台'), 'imgUrl' => (!(empty($set['thumb'])) ? tomedia($set['thumb']) : tomedia($shopset['logo'])), 'desc' => (!(empty($set['desc'])) ? $set['desc'] : $shopset['description']), 'link' => mobileUrl('mmanage', array(), true));
 	}
 }
+
 
 ?>

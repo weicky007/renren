@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,7 +20,7 @@ class CreditshopProcessor extends PluginProcessor
 		$content = $obj->message['content'];
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-		if ($msgtype == 'text' || $event == 'click') {
+		if (($msgtype == 'text') || ($event == 'click')) {
 			$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if (empty($saler)) {
@@ -72,11 +71,11 @@ class CreditshopProcessor extends PluginProcessor
 					}
 				}
 
-				if (0 < $goods['money'] && empty($log['paystatus'])) {
+				if ((0 < $goods['money']) && empty($log['paystatus'])) {
 					return $obj->respText('未支付，无法进行兑换!');
 				}
 
-				if (0 < $goods['dispatch'] && empty($log['dispatchstatus'])) {
+				if ((0 < $goods['dispatch']) && empty($log['dispatchstatus'])) {
 					return $obj->respText('未支付运费，无法进行兑换!');
 				}
 

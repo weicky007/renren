@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,14 +17,14 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$boardcount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_board') . ' where uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		$postcount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid=0 limit 1', array(':uniacid' => $_W['uniacid']));
 		$replycount = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid>0 limit 1', array(':uniacid' => $_W['uniacid']));
-		$createtime1 = strtotime(date('Y-m-d', time() - 3600 * 24));
+		$createtime1 = strtotime(date('Y-m-d', time() - (3600 * 24)));
 		$createtime2 = strtotime(date('Y-m-d', time()));
-		$postcount1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where uniacid=:uniacid and pid=0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1'), array(':uniacid' => $_W['uniacid']));
-		$replycount1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where uniacid=:uniacid and pid>0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1'), array(':uniacid' => $_W['uniacid']));
-		$createtime1 = strtotime(date('Y-m-d', time() - 7 * 3600 * 24));
+		$postcount1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid=0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1', array(':uniacid' => $_W['uniacid']));
+		$replycount1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid>0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1', array(':uniacid' => $_W['uniacid']));
+		$createtime1 = strtotime(date('Y-m-d', time() - (7 * 3600 * 24)));
 		$createtime2 = strtotime(date('Y-m-d', time()));
-		$postcount2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where uniacid=:uniacid and pid=0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1'), array(':uniacid' => $_W['uniacid']));
-		$replycount2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where uniacid=:uniacid and pid>0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1'), array(':uniacid' => $_W['uniacid']));
+		$postcount2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid=0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1', array(':uniacid' => $_W['uniacid']));
+		$replycount2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and pid>0 and createtime between ' . $createtime1 . ' and ' . $createtime2 . ' limit 1', array(':uniacid' => $_W['uniacid']));
 		show_json(1, array('boardcount' => $boardcount, 'postcount' => $postcount, 'replycount' => $replycount, 'postcount1' => $postcount1, 'replycount1' => $replycount1, 'postcount2' => $postcount2, 'replycount2' => $replycount2));
 	}
 
@@ -36,7 +35,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			ca('sns.set.edit');
-			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
 			$data['share_icon'] = save_media($data['share_icon']);
 			$data['avatar'] = save_media($data['avatar']);
 			$data['banner'] = save_media($data['banner']);
@@ -60,7 +59,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($handle = opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if ($file != '..' && $file != '.') {
+				if (($file != '..') && ($file != '.')) {
 					if (is_dir($dir . '/' . $file)) {
 						$styles[] = $file;
 					}
@@ -82,7 +81,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 
-				$managers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . (') and uniacid=' . $_W['uniacid']));
+				$managers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . ') and uniacid=' . $_W['uniacid']);
 			}
 		}
 
@@ -93,14 +92,12 @@ class Index_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$set = m('common')->getPluginset('sns');
+		$set = $this->set;
 
 		if ($_W['ispost']) {
 			ca('sns.notice.edit');
-			$data = is_array($_GPC['tm']) ? $_GPC['tm'] : array();
-			m('common')->updatePluginset(array(
-				'sns' => array('tm' => $data)
-			));
+			$data = (is_array($_GPC['tm']) ? $_GPC['tm'] : array());
+			$this->updateSet(array('tm' => $data));
 			plog('sns.notice.edit', '修改通知设置');
 			show_json(1);
 		}
@@ -116,24 +113,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 
-				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . (') and uniacid=' . $_W['uniacid']));
+				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . ') and uniacid=' . $_W['uniacid']);
 			}
-		}
-
-		$template_list = pdo_fetchall('SELECT id,title,typecode FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
-		$templatetype_list = pdo_fetchall('SELECT * FROM  ' . tablename('ewei_shop_member_message_template_type'));
-		$template_group = array();
-
-		foreach ($templatetype_list as $type) {
-			$templates = array();
-
-			foreach ($template_list as $template) {
-				if ($template['typecode'] == $type['typecode']) {
-					$templates[] = $template;
-				}
-			}
-
-			$template_group[$type['typecode']] = $templates;
 		}
 
 		include $this->template();

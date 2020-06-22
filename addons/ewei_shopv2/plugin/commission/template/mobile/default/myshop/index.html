@@ -92,8 +92,6 @@
 						<a <%if g.bargain>0%>href="{php echo mobileUrl('bargain/detail')}&id=<%g.bargain%>"<%/if%><%if g.bargain<=0 && g.type!=9%>href="{php echo mobileUrl('goods/detail')}&id=<%g.id%>"<%else%>href="{php echo mobileUrl('cycelbuy/goods/detail')}&id=<%g.id%>" <%/if%>>
 							<div class="name"><%if g.type == 9%><span class="cycle-tip">周期购</span><%/if%> <%g.title%></div>
 						</a>
-							<div class="name"><%g.title%></div>
-						</a>
 						<div class="price">
 							<span class="text">￥<%g.minprice%></span>
 							<%if g.bargain > 0%>

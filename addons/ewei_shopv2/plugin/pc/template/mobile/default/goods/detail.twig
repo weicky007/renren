@@ -940,7 +940,7 @@
                                 {% for footerMark in goods.footerMark %}
 
                                     <li>
-                                        <a href="{{ pcUrl('pc.goods.detail', {id: footerMark.id}) }}">
+                                        <a href="{{ pcUrl('goods.detail', {id: footerMark.id}) }}">
                                             <img src="{{ footerMark.thumb }}" alt="">
                                             <span>{{ footerMark.title }}</span>
                                             <span class="price">￥{{ footerMark.marketprice }}</span>
@@ -979,7 +979,7 @@
 
                                         {% for key,goods in package.goods %}
                                             <div class="tab-selected-item">
-                                                <a href="{{ pcUrl('pc.goods.detail', {id: goods.id}) }}">
+                                                <a href="{{ pcUrl('goods.detail', {id: goods.id}) }}">
                                                     <img src="{{ goods.thumb }}" alt="{{ goods.title }}">
                                                     <span class="tab-selected-title">{{ goods.title }}</span>
                                                     <span class="price">￥{{ goods.marketprice }}</span>

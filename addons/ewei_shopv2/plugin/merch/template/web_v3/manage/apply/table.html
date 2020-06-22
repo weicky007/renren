@@ -19,7 +19,7 @@
         <tbody>
         {loop $list $row}
         <tr class="orderlist" data="{$row['id']}">
-            <td style="width:25px;">{if $is_check == 1}<input type='checkbox' {if $row['select']}checked{/if} class="checkitem" value="{$row['id']}"/>{/if}</td>
+            <td style="width:25px;">{if $is_check == 1}<input type='checkbox' class="checkitem" value="{$row['id']}"/>{/if}</td>
             <td style="width:180px;" data-toggle="tooltip" title="{$row['nickname']}" style="width:80px;">
                 {$row['ordersn']}
             </td>
@@ -106,24 +106,15 @@
 
                         <td style='width:110px'>秒杀优惠：</td>
                         <td style='width:100px'>{$row['seckilldiscountprice']}</td>
-                        {if $row['refundprice']>0}
-                        <td style='width:110px'>申请售后剩余金额</td>
-                        <td style='width:100px'>{$row['refundprice']}</td>
-                        {else}
+
                         <td style='width:110px'></td>
                         <td style='width:100px'></td>
-                        {/if}
                     </tr>
                 </table>
             </td>
         </tr>
 
         {/loop}
-        <tfoot>
-        <tr>
-            <td colspan="8" class="text-right">{$list_pager}</td>
-        </tr>
-        </tfoot>
         </tbody>
     </table>
 </div>

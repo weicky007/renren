@@ -40,12 +40,7 @@
                             {if $setting['weixin']>0}&nbsp;<img src="{php echo EWEI_SHOPV2_LOCAL}static/images/plugingrant/weixin.png" width="70px" alt="">{/if}
                         </label>
                     </div>
-
-                    {if empty($is_repeat)}
-                        <a class="grant-shop-btn" href="{php echo webUrl('plugingrant/create',array('id'=>$item['id'],'cate'=>$type))}" target="_blank">立即购买</a>
-                    {else}
-                        <a  class="grant-shop-btn" style="background: #999;" href="" data-toggle="popover" data-trigger="hover" data-html="true" data-content="您已经购买过此插件了">立即购买</a>
-                    {/if}
+                    <a class="grant-shop-btn" href="{php echo webUrl('plugingrant/create',array('id'=>$item['id'],'cate'=>$type))}" target="_blank">立即购买</a>
                 </div>
             </div>
         </div>

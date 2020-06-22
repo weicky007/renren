@@ -52,13 +52,11 @@
 				      </div>
 				</div>
 				<div class="subtitle">
-					<%if user.isagent==1 && user.status==1%>
-				    成为{php echo $this->set['texts']['agent']}时间:<%if user.agenttime=='1970-01-01 08:00' %> <%user.createtime%> <%else%> <%user.agenttime%> <%/if%>
+				      <%if user.isagent==1 && user.status==1%>
+				    成为{php echo $this->set['texts']['agent']}时间: <%user.agenttime%>
 				    <%else%>
 				    注册时间:  <%user.createtime%>
 				    <%/if%>
-
-
 				    
 				</div>
 			</div>
@@ -84,3 +82,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+

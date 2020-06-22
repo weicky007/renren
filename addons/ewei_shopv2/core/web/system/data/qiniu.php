@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,11 +9,6 @@ class Qiniu_EweiShopV2Page extends SystemPage
 	{
 		global $_W;
 		global $_GPC;
-
-		if (!com('qiniu')) {
-			header('Location: ' . webUrl());
-		}
-
 		$path = IA_ROOT . '/addons/ewei_shopv2/data/global';
 
 		if (!is_dir($path)) {
@@ -23,7 +17,7 @@ class Qiniu_EweiShopV2Page extends SystemPage
 		}
 
 		if ($_W['ispost']) {
-			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
 
 			if ($data['upload']) {
 				$check = com('qiniu')->save('addons/ewei_shopv2/static/images/nopic100.jpg', $data);

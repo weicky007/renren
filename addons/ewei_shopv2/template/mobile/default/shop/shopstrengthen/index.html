@@ -69,7 +69,6 @@
         })
     };
     function setTimer() {
-        //每十秒请求一次服务器，获取时间
         if(lasttime%10==0){
             $.ajax({
                 url: '../addons/ewei_shopv2/map.json',cache:false,

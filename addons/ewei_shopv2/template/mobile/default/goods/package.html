@@ -22,7 +22,7 @@
 		<div class="fui-goods-group container">
 			{loop $packages $item}
 			<div class="fui-goods-item fui-list">
-				<a href="{php echo mobileUrl('goods/package/detail',array('pid'=>$item['id']))}">
+				<a href="{php echo mobileUrl('goods/package/detail',array('pid'=>$item['pid']))}">
 					<div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
 				</a>
 				<div class="detail fui-list-inner">

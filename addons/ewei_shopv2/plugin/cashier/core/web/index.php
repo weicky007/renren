@@ -1,24 +1,22 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-class Index_EweiShopV2Page extends PluginWebPage
+class Index_EweiShopV2Page extends PluginWebPage 
 {
-	public function main()
+	public function main() 
 	{
-		if (cv('cashier.user')) {
+		if (cv('cashier.user')) 
+		{
 			header('location: ' . webUrl('cashier/user'));
 		}
-		else {
-			if (cv('cashier.user')) {
-				header('location: ' . webUrl('cashier/user'));
-			}
+		else if (cv('cashier.user')) 
+		{
+			header('location: ' . webUrl('cashier/user'));
 		}
 	}
-
-	public function ajaxcleartotle()
+	public function ajaxcleartotle() 
 	{
 		global $_W;
 		$status0 = (int) pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_cashier_clearing') . ' WHERE uniacid=:uniacid AND status=0 AND deleted=0', array(':uniacid' => $_W['uniacid']));
@@ -27,5 +25,4 @@ class Index_EweiShopV2Page extends PluginWebPage
 		show_json(1, array('status0' => $status0, 'status1' => $status1, 'status2' => $status2));
 	}
 }
-
 ?>

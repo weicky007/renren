@@ -1,4 +1,4 @@
-define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (core, tpl, diyform, invoice) {
+define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
     var modal = {
         params: {
             orderid: 0,
@@ -23,10 +23,7 @@ define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (cor
             city_express_state:false
         }
     };
-    modal.init = function (params, invoice_info) {
-        if (invoice_info.title){
-            modal.invoice_info = invoice_info;
-        }
+    modal.init = function (params) {
         modal.params = $.extend(modal.params, params || {});
         modal.params.couponid = 0;
         $('#coupondiv').find('.fui-cell-label').html('优惠券');
@@ -242,7 +239,7 @@ define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (cor
             var dates = new Date();
             modal.month = $('.predicttime').attr('data-date').substr(4,2);
             modal.tdate= parseInt($('.predicttime').attr('data-date').substr(6,2));
-            modal.tmonth=0;
+
             modal.getDateList();
             $('.date-picker').fadeIn();
         })
@@ -437,12 +434,10 @@ define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (cor
                 if (getjson.result.deductenough_money > 0) {
                     $('#deductenough').show();
                     $('#deductenough_money').html(core.number_format(getjson.result.deductenough_money, 2));
-                    $('#deductenough_enoughdeduct').html(core.number_format(getjson.result.deductenough_money, 2));
                     $('#deductenough_enough').html(core.number_format(getjson.result.deductenough_enough, 2))
                 } else {
                     $('#deductenough').hide();
                     $('#deductenough_money').html('0.00');
-                    $('#deductenough_enoughdeduct').html('0.00');
                     $('#deductenough_enough').html('0.00')
                 }
                 if (getjson.result.merchs) {
@@ -926,6 +921,7 @@ define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (cor
                     modal.tdate = $(this).attr('data-id');
 
                     // $('.day_item').removeClass('active');
+
                         $(this).addClass('active');
                         $(this).prevAll().removeClass('active');
                         $(this).nextAll().removeClass('active');
@@ -933,16 +929,5 @@ define(['core', 'tpl', 'biz/plugin/diyform', 'biz/order/invoice'], function (cor
             }
         });
     };
-    $(document).on('click','#invoicename', function () {
-        var type = $(this).data('type');
-        invoice.open(modal.invoice_info, function (invoice_info) {
-            //纳税号和抬头绝对不允许包含空格！空格用来分隔各类数据
-            modal.invoice_info = invoice_info;
-            var text = '['+(modal.invoice_info.entity==true ? '纸质':'电子')+'] ';
-            text += modal.invoice_info.title;
-            text += ' （' + (modal.invoice_info.company==true ? '单位':'个人') + (modal.invoice_info.number?': '+modal.invoice_info.number:'') +'）';
-            $("#invoicename").val(text);
-        },type);
-    });
     return modal
 });

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -41,10 +40,10 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		$join = '';
-		$sql = 'select * from ' . tablename('ewei_shop_member') . (' dm ' . $join . ' where 1 ' . $condition . '  ORDER BY id DESC');
+		$sql = 'select * from ' . tablename('ewei_shop_member') . ' dm ' . $join . ' where 1 ' . $condition . '  ORDER BY id DESC';
 
 		if (empty($_GPC['export'])) {
-			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -105,7 +104,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		unset($row);
-		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . (' dm ' . $join . ' where 1 ' . $condition . ' '), $params);
+		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' dm ' . $join . ' where 1 ' . $condition . ' ', $params);
 		show_json(1, array('total' => $total, 'list' => $list, 'pagesize' => $psize));
 	}
 
@@ -138,7 +137,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 
 		$followed = m('user')->followed($member['openid']);
 		$openbind = 0;
-		if (empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind']) || !empty($_W['shopset']['wap']['open'])) {
+		if ((empty($_W['shopset']['app']['isclose']) && !empty($_W['shopset']['app']['openbind'])) || !empty($_W['shopset']['wap']['open'])) {
 			$openbind = 1;
 		}
 
@@ -159,28 +158,13 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					}
 
 					$m = pdo_fetch('select id from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and mobileverify=1 and uniacid=:uniaicd limit 1 ', array(':mobile' => $data['mobile'], ':uniaicd' => $_W['uniacid']));
-					if (!empty($m) && $m['id'] != $id) {
+					if (!empty($m) && ($m['id'] != $id)) {
 						show_json(0, '此手机号已绑定其他用户!(uid:' . $m['id'] . ')');
 					}
 
 					if (!empty($data['mobileverify']) && empty($password)) {
 						show_json(0, '开启绑定前请为用户设置密码');
 					}
-
-					if (!empty($password)) {
-						$salt = $member['salt'];
-
-						if (empty($salt)) {
-							$salt = m('account')->getSalt();
-						}
-
-						$data['pwd'] = md5($password . $salt);
-						$data['salt'] = $salt;
-					}
-				}
-
-				if (!empty($member['mobileverify']) && !empty($member['mobile'])) {
-					$password = trim($_GPC['password']);
 
 					if (!empty($password)) {
 						$salt = $member['salt'];
@@ -251,7 +235,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$hascommission = 1;
 			$plugin_com_set = $plugin_commission->getSet();
 			$agentlevels = $plugin_commission->getLevels();
-			$comlevel_title = empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname'];
+			$comlevel_title = (empty($plugin_com_set['levelname']) ? '普通等级' : $plugin_com_set['levelname']);
 			if (!empty($member['agentlevel']) && !empty($agentlevels)) {
 				foreach ($agentlevels as $agentlevel) {
 					if ($member['agentlevel'] == $agentlevel['id']) {
@@ -265,7 +249,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$groups = m('member')->getGroups();
 		$levels = m('member')->getLevels();
 		$shop = $_W['shopset']['shop'];
-		$level_title = empty($shop['levelname']) ? '普通会员' : $shop['levelname'];
+		$level_title = (empty($shop['levelname']) ? '普通会员' : $shop['levelname']);
 		if (!empty($member['level']) && $levels) {
 			foreach ($levels as $level) {
 				if ($level['id'] == $member['level']) {
@@ -308,10 +292,10 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$members = pdo_fetchall('select id,openid,nickname,realname,mobile from ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$members = pdo_fetchall('select id,openid,nickname,realname,mobile from ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 		$black = intval($_GPC['isblack']);
 
 		foreach ($members as $member) {
@@ -336,18 +320,13 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($members as $member) {
 			pdo_delete('ewei_shop_member', array('id' => $member['id']));
-
-			if (method_exists(m('member'), 'memberRadisCountDelete')) {
-				m('member')->memberRadisCountDelete();
-			}
-
 			plog('member.list.delete', '删除会员  ID: ' . $member['id'] . ' <br/>会员信息: ' . $member['openid'] . '/' . $member['nickname'] . '/' . $member['realname'] . '/' . $member['mobile']);
 		}
 

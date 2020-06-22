@@ -1876,6 +1876,7 @@
             <county name="昆山市" code="320583" />
             <county name="吴江区" code="320584" />
             <county name="太仓市" code="320585" />
+            <county name="工业园新区" code="320585" />
         </city>
         <city name="南通市" code="320600">
             <county name="崇川区" code="320602" />
@@ -3653,7 +3654,6 @@
             <county name="奉化市" code="330283" />
         </city>
         <city name="温州市" code="330300">
-            <county name="龙港市" code="330301" />
             <county name="鹿城区" code="330302" />
             <county name="龙湾区" code="330303" />
             <county name="瓯海区" code="330304" />
@@ -3661,6 +3661,7 @@
             <county name="永嘉县" code="330324" />
             <county name="平阳县" code="330326" />
             <county name="苍南县" code="330327" />
+            <county name="龙港市" code="330301" />
             <county name="文成县" code="330328" />
             <county name="泰顺县" code="330329" />
             <county name="瑞安市" code="330381" />

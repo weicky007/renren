@@ -78,7 +78,8 @@
                                 <option value=''>等级</option>
                                 <option value='0'>{php echo empty($set['levelname'])?'普通等级': $set['levelname']}</option>
                                 {loop $levels $level}
-                                <option value='{$level["id"]}'>{$level['levelname']}</option>
+                                <option value='{$level[' id
+                                ']}'>{$level['levelname']}</option>
                                 {/loop}
                             </select>
                         </div>

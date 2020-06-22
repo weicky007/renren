@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-header">
     当前位置：<span class="text-primary">{if !empty($item['id'])}编辑{else}添加{/if}商品 <small>{if !empty($item['id'])}修改【{$item['title']}】
-    <a href='javascript:;' title='点击复制连接' class='js-clip' data-url='{php echo mobileUrl('groups/goods',array('id'=>$item['id']),true)}'>复制连接</a> {/if} </small></span>
+    <a href='javascript:;' title='点击复制连接' class='js-clip' data-url='{php echo pcUrl('groups/goods',array('id'=>$item['id']),true)}'>复制连接</a> {/if} </small></span>
 </div>
 <div class="page-content">
     <div class="page-sub-toolbar">

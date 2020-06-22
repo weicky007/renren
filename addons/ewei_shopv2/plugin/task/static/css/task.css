@@ -136,13 +136,12 @@
 	/*padding-top: 0.15rem;*/
 	font-size: 0.7rem;
 	color: #000;
-	line-height: 0.8rem;
+	line-height: 0.7rem;
 	overflow : hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
-	height: 0.72rem;
 }
 .task-list .task-list-inner .task-icon-group{
 	margin-top: 0.25rem;
@@ -298,12 +297,6 @@
     top: 2.2rem;
     background: #fff;
 }
-.fui-statusbar ~ .fui-page .fui-header ~ .fui-tab{
-	top: 3.2rem;
-}
-.fui-statusbar ~ .fui-page .fui-header ~ .fui-tab ~ .fui-content{
-	top: 5.2rem;
-}
 .task-list .fui-tab a{
 	font-size: 0.7rem;
 	color: #000;
@@ -353,14 +346,12 @@
 .mytask-list-inner .title{
 	/*padding-top: 0.1rem;*/
 	margin-bottom: 0.55rem;
-	height: 0.72rem;
+	height: 0.7rem;
 	overflow : hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
-	font-size: 0.7rem;
-	line-height: 0.8rem;
 }
 .mytask-list-top .mytask-list-inner .time{
 	color: #999;
@@ -485,11 +476,11 @@
 	flex: 1;
 }
 .taskdetail-list-inner .title{
-	font-size: 0.72rem;
-	line-height: 0.8rem;
+	font-size: 0.75rem;
+	line-height: 0.75rem;
 	margin-bottom: 0.3rem;
 	color: #000;
-	height: 0.72rem;
+	height: 0.75rem;
 	overflow : hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
@@ -643,3 +634,4 @@
 	position: relative;
 	top:0;
 }
+/*NDAwMDA5NzgyNw==*/

@@ -2,7 +2,7 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label">排序</label>
 	<div class="col-sm-9 col-xs-12">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket.share' $item}
 		<input type="text" name="order" class="form-control" value="{$item['order']}"  />
 		<span class='help-block'>数字越大越靠前</span>
 		{else}
@@ -14,7 +14,7 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label must">发券条件</label>
 	<div class="col-sm-9 col-xs-12">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket.share' $item}
 		<div class="input-group">
 			<input type='number' class='form-control' name='enough' value="{$item['enough']}" data-rule-required="true"/>
 			<span class="input-group-addon">元</span>
@@ -31,7 +31,7 @@
 	<label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">设置活动时间</label>
 	<div class="col-xs-12 col-sm-8">
 		<div class="input-group">
-			{ife 'sale.coupon.shareticket' $item}
+			{ife 'sale.sendticket.share' $item}
 			<label class="radio radio-inline">
 				<input type="radio" name="expiration" value="0" {if intval($item['expiration']) ==0}checked="checked"{/if}> 否
 			</label>
@@ -48,7 +48,7 @@
 <div class="form-group presell_info" {if intval($item['expiration']) == 0}style="display:none"{/if} id="exptime">
 <label class="col-sm-2 control-label">活动有效期限</label>
 <div class="col-sm-9 col-xs-12">
-	{ife 'sale.coupon.shareticket' $item}
+	{ife 'goods' $item}
 	<div class="input-group">
             <span class="input-group-addon">
                 开始时间
@@ -79,9 +79,9 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label must">分享标题</label>
 	<div class="col-sm-9 col-xs-12">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket.share' $item}
 		<input type="text" name="share_title" id="share_title" class="form-control" value="{$item['sharetitle']}" data-rule-required="true"/>
-		<span class='help-block'>分享标题的字数长度不能超过12</span>
+		<span class='help-block'>分享标题的字数长度不能超过30</span>
 		{else}
 		<div class='form-control-static'>{$item['share_title']}</div>
 		{/if}
@@ -91,7 +91,7 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label">分享图标</label>
 	<div class="col-sm-9 col-xs-12">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket.share' $item}
 		{php echo tpl_form_field_image('share_icon', $item['shareicon'])}
 		<span class='help-block'>如果不选择，默认为店铺图标</span>
 		{else}
@@ -106,7 +106,7 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label" must>分享描述</label>
 	<div class="col-sm-9 col-xs-12">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.gift' $item}
 		<textarea name="share_desc" class="form-control">{$item['sharedesc']}</textarea>
 		<span class='help-block'>如果不填写，则使用系统随机描述</span>
 		{else}
@@ -121,7 +121,7 @@
 	<label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">使用统一优惠券</label>
 	<div class="col-xs-12 col-sm-8">
 		<div class="input-group">
-			{ife 'sale.coupon.shareticket' $item}
+			{ife 'sale.sendticket.share' $item}
 			<label class="radio radio-inline">
 				<input type="radio" name="issync" value="0" {if intval($item['issync']) ==0}checked="checked"{/if}> 是
 			</label>
@@ -137,7 +137,7 @@
 
 <div>
 	<div class="form-group">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket' $item}
 		<label class="col-sm-2 control-label must" id="stitle">选择优惠券</label>
 		<div class="col-sm-9 col-xs-12" id="share1">
 			{php echo tpl_selector('couponid',array('required'=>false,'multi'=>1,'type'=>'coupon_share','autosearch'=>1, 'preview'=>true,'url'=>webUrl('sale/coupon/querycplist'),'text'=>'couponname','items'=>$coupons_pay,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券'))}
@@ -186,7 +186,7 @@
 <div class="sync_n" {if intval($item['issync']) == 0}style="display:none"{elseif intval($item['issync']) == 1}style="display:block"{/if}>
 
 	<div class="form-group">
-		{ife 'sale.coupon.shareticket' $item}
+		{ife 'sale.sendticket' $item}
 		<label class="col-sm-2 control-label must">被分享人优惠券</label>
 		<div class="col-sm-9 col-xs-12" id="share2">
 			{php echo tpl_selector('couponids',array('required'=>false,'multi'=>1,'type'=>'coupon_shares','autosearch'=>1, 'preview'=>true,'url'=>webUrl('sale/coupon/querycplist'),'text'=>'couponname','items'=>$coupons_share,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券'))}
@@ -236,7 +236,7 @@
 	<label class="col-xs-12 col-sm-3 col-md-2 col-lg-2 control-label">状态</label>
 	<div class="col-xs-12 col-sm-8">
 		<div class="input-group">
-			{ife 'sale.coupon.shareticket' $item}
+			{ife 'sale.sendticket.share' $item}
 			<label class="radio radio-inline">
 				<input type="radio" name="status" value="0" {if intval($item['status']) ==0}checked="checked"{/if}> 关闭
 			</label>

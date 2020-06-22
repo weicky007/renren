@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,12 +23,12 @@ class Index_EweiShopV2Page extends WebPage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
+			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
+			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
 		}
 
 		$sql = 'select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid = :uniacid and createtime between :createtime1 and :createtime2';
@@ -46,20 +45,15 @@ class Index_EweiShopV2Page extends WebPage
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = ' and uniacid=:uniacid';
 
-		if (!empty($_GPC['no_wa'])) {
-			$condition .= ' and openid not like \'sns_wa_%\'';
-		}
-
 		if (!empty($kwd)) {
 			$condition .= ' AND (`realname` LIKE :keyword or `nickname` LIKE :keyword or `mobile` LIKE :keyword or `openid` LIKE :keyword)';
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . (' WHERE 1 ' . $condition . ' order by id asc'), $params);
+		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
 
 		foreach ($ds as &$value) {
 			$value['nickname'] = htmlspecialchars($value['nickname'], ENT_QUOTES);
-			$value['nickname_wechat'] = htmlspecialchars($value['nickname_wechat'], ENT_QUOTES);
 		}
 
 		unset($value);

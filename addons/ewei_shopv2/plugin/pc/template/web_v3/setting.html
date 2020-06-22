@@ -31,6 +31,7 @@
                 <span class='help-block'>多个请用逗号隔开</span>
             </div>
         </div>
+
         <div class="form-group">
             <label class="col-lg control-label">底部版权</label>
             <div class="col-sm-9 col-xs-12">
@@ -84,6 +85,20 @@
                     <p><a href="javascript:;" onclick="removewx(this);" style="float: left;margin-left: 10px">删除</a></p>
                 </div>
                 {/loop}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg control-label" >独立域名</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type='text' class='form-control' name='domain' value="{$data['domain']}" style="width: 50%;"/>
+                <span class='help-block red'>开启独立域名之后将会pc的所有链接都走独立链接</span>
+            </div>
+        </div>
+      <div class="form-group">
+            <label class="col-lg control-label" >手机端域名</label>
+            <div class="col-sm-9 col-xs-12">
+                <input type='text' class='form-control' name='mobile_domain' value="{$data['mobile_domain']}" style="width: 50%;"/>
+                <span class='help-block red'>用于生成二维码手机扫描</span>
             </div>
         </div>
         <div class="form-group">

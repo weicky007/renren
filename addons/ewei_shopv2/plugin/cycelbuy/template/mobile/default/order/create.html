@@ -133,7 +133,7 @@
                         <i class="icon icon-dingwei"></i>
                     </div>
                     <div class="fui-list-inner">
-                        <div class="no-address"><i class="icon icon-icon02"></i> 请选择门店</div>
+                        <div class="no-address"><i class="icon icon-icon02"></i> 请选择自提门店</div>
                         <div class="subtitle" style="display: none">
                             <span style="overflow: hidden;display: inline-block;">联系人：</span>
                             <span class='realname'></span>
@@ -400,9 +400,12 @@
 <div class="fui-cell-group">
     <div class="fui-cell">
         <div class="fui-cell-label">发票抬头</div>
-        <div class="fui-cell-info c000">
-            <input type='text' class='fui-input' value="{$invoicename}" id='invoicename' placeholder="请填写发票抬头(选填)" readonly data-type="{$invoice_type}"/></div>
+        <div class="fui-cell-info c000"><input type='text' class='fui-input' value="{$invoicename}" id='invoicename' placeholder="请填写发票抬头(选填)" /></div>
     </div>
+    <!--<div class="fui-cell">-->
+        <!--<div class="fui-cell-label">税号</div>-->
+        <!--<div class="fui-cell-info c000"><input type="text" id="realname" name="realname" value="" placeholder="请填写税号(选填)" class="fui-input"></div>-->
+    <!--</div>-->
 </div>
 {/if}
 {if p('offic') && p('commission') && empty($member['agentid']) && $offic_register}
@@ -576,13 +579,7 @@
     </div>
 
     <div class="fui-cell" id="deductenough" {if !$saleset['showenough']}style='display:none'{/if}>
-    <div class="fui-cell-label" style='width:auto' >商城优惠
-        <span style="font-size: .6rem">：单笔满 ￥
-            <span id="deductenough_enough">{php echo number_format($saleset['enoughmoney'],2)}</span> 元立减￥
-            {if $saleset['showenough']}
-            <span id="deductenough_enoughdeduct">{php echo number_format($saleset['enoughdeduct'],2)}{/if}</span>
-        </span>
-    </div>
+    <div class="fui-cell-label" style='width:auto' >商城优惠 <span style="font-size: .6rem">：单笔满 ￥<span id="deductenough_enough">{php echo number_format($saleset['enoughmoney'],2)}</span> 元立减￥{if $saleset['showenough']}{php echo number_format($saleset['enoughdeduct'],2)}{/if}</span></div>
     <div class="fui-cell-info"></div>
     <div class="fui-cell-remark noremark">-&yen; <span id='deductenough_money'>{if $saleset['showenough']}{php echo number_format($saleset['enoughdeduct'],2)}{/if}</span></div>
 </div>
@@ -714,7 +711,7 @@
 </div>
 
 <div id="addaddress"   style="display:none">
-    <div class="address-alert style1">
+    <div class="address-alert">
         <div class="address-title">请填写收货地址哦！</div>
         <div class="fui-cell-group" style="margin-top:0">
             <div class="fui-cell">
@@ -767,7 +764,7 @@
 <script language='javascript'>
 
     require(['../addons/ewei_shopv2/plugin/cycelbuy/static/js/app/order/create.js'], function (modal) {
-    modal.init({php echo json_encode($createInfo)},{$invoice_arr}||{});
+    modal.init({php echo json_encode($createInfo)});
 
 
     {if !$followed && !empty($share['followqrcode'])&& empty($trade['shop_strengthen'])}

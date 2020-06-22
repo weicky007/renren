@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +11,7 @@ class Util_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$num = $_GPC['num'];
 		$len = intval($_GPC['len']);
-		$len == 0 && ($len = 1);
+		($len == 0) && ($len = 1);
 		$arr = array($num);
 		$maxlen = strlen($num);
 		$i = 1;
@@ -22,7 +21,7 @@ class Util_EweiShopV2Page extends WebPage
 			$addlen = strlen($add);
 
 			if ($maxlen < $addlen) {
-				continue;
+				$maxlen = $addlen;
 			}
 
 			$arr[] = $add;
@@ -60,9 +59,7 @@ class Util_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$express = trim($_GPC['express']);
 		$expresssn = trim($_GPC['expresssn']);
-		$mobile = trim($_GPC['mobile']);
-		$expresssn = str_replace(' ', '', $expresssn);
-		$list = m('util')->getExpressList($express, $expresssn, $mobile);
+		$list = m('util')->getExpressList($express, $expresssn);
 		include $this->template();
 	}
 }

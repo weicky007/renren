@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -32,7 +31,7 @@ class Level_EweiShopV2Page extends PluginWebPage
 			$orderby = 'credit';
 		}
 
-		$others = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_level') . (' WHERE 1 ' . $condition . ' ORDER BY ' . $orderby . ' asc'), $params);
+		$others = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_level') . ' WHERE 1 ' . $condition . ' ORDER BY ' . $orderby . ' asc', $params);
 		$list = array_merge(array($default), $others);
 		include $this->template();
 	}
@@ -68,7 +67,7 @@ class Level_EweiShopV2Page extends PluginWebPage
 
 			if (!empty($id)) {
 				if ($id == 'default') {
-					$updatecontent = '<br/>等级名称: ' . $set['levelname'] . '->' . $data['levelname'] . ('<br/>积分: ' . $set['credit'] . '->' . $data['credit']);
+					$updatecontent = '<br/>等级名称: ' . $set['levelname'] . '->' . $data['levelname'] . '<br/>积分: ' . $set['credit'] . '->' . $data['credit'];
 					$set['levelname'] = $data['levelname'];
 					$set['levelcredit'] = $data['credit'];
 					$set['levelpost'] = $data['post'];
@@ -78,7 +77,7 @@ class Level_EweiShopV2Page extends PluginWebPage
 					plog('sns.level.edit', '修改默认等级' . $updatecontent);
 				}
 				else {
-					$updatecontent = '<br/>等级名称: ' . $level['levelname'] . '->' . $data['levelname'] . ('<br/>积分: ' . $level['credit'] . '->' . $data['credit']);
+					$updatecontent = '<br/>等级名称: ' . $level['levelname'] . '->' . $data['levelname'] . '<br/>积分: ' . $level['credit'] . '->' . $data['credit'];
 					pdo_update('ewei_shop_sns_level', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 					plog('sns.level.edit', '修改会员等级 ID: ' . $id . $updatecontent);
 				}
@@ -102,10 +101,10 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_sns_level') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_sns_level') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_sns_level', array('id' => $item['id']));
@@ -122,14 +121,14 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_sns_level') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_sns_level') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_sns_level', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('sns.level.edit', '修改会员等级状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['levelname'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '启用' : '禁用');
+			plog('sns.level.edit', ('修改会员等级状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['levelname'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '启用' : '禁用');
 		}
 
 		show_json(1, array('url' => referer()));

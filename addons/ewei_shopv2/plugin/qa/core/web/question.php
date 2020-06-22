@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -38,9 +37,9 @@ class Question_EweiShopV2Page extends PluginWebPage
 			$params[':cate'] = intval($_GPC['cate']);
 		}
 
-		$sql = 'SELECT q.*, c.name as catename FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . (' c on c.id=q.cate where  1 and ' . $condition . ' ORDER BY q.displayorder DESC,q.id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
+		$sql = 'SELECT q.*, c.name as catename FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . ' c on c.id=q.cate where  1 and ' . $condition . ' ORDER BY q.displayorder DESC,q.id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . (' c on c.id=q.cate where  1 and ' . $condition), $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_qa_question') . ' q left join' . tablename('ewei_shop_qa_category') . ' c on c.id=q.cate where  1 and ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		$category = pdo_fetchall('select * from ' . tablename('ewei_shop_qa_category') . ' where uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
 
@@ -73,7 +72,6 @@ class Question_EweiShopV2Page extends PluginWebPage
 		if (!empty($id)) {
 			$item = pdo_fetch('select * from ' . tablename('ewei_shop_qa_question') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 			$item['content'] = iunserializer($item['content']);
-			$item['content'] = m('common')->html_to_images($item['content']);
 		}
 
 		$category = pdo_fetchall('select * from ' . tablename('ewei_shop_qa_category') . ' where uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
@@ -104,7 +102,7 @@ class Question_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . (' WHERE id = \'' . $id . '\' AND uniacid=') . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . '');
 
 		if (empty($item)) {
 			show_json(0, '抱歉，问题不存在或是已经被删除！', array('url' => webUrl('qa/question')));
@@ -121,7 +119,7 @@ class Question_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_qa_question', array('displayorder' => $displayorder), array('id' => $id));
@@ -138,14 +136,14 @@ class Question_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_qa_question', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('qa.question.edit', '修改问题显示状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '显示' : '隐藏');
+			plog('qa.question.edit', ('修改问题显示状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1);
@@ -158,14 +156,14 @@ class Question_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_qa_question') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_qa_question', array('isrecommand' => intval($_GPC['isrecommand'])), array('id' => $item['id']));
-			plog('qa.question.edit', '修改问题显示状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['isrecommand'] == 1 ? '推荐' : '取消推荐');
+			plog('qa.question.edit', ('修改问题显示状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['isrecommand']) == 1 ? '推荐' : '取消推荐');
 		}
 
 		show_json(1);

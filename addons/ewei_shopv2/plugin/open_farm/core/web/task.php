@@ -6,13 +6,25 @@ if (!defined('IN_IA')) {
 
 class Task_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_task';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'logo', 'title', 'feed', 'get_max', 'start_time', 'end_time', 'category', 'core', 'order_feed', 'money_feed', 'goods_id', 'goods_feed', 'core_feed', 'member_level', 'member_level_feed', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array('title' => '请输入任务标题', 'logo' => '请选择任务logo', 'category' => '请选择任务种类', 'get_max' => '请选择当前任务每天能够最多获取多少饲料', 'start_time' => '请选择开始时间', 'end_time' => '请选择结束时间');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $categoryMessage = array(
 		'签到'       => array('feed' => '请填写签到所获取的饲料数'),
 		'任务中心' => array('core_feed' => '请填写完成任务所获取的饲料数', 'core' => '请选择任务'),
@@ -20,23 +32,34 @@ class Task_EweiShopV2Page extends PluginWebPage
 		'商城下单' => array('order_feed' => '请填写每单可获取的饲料数', 'money_feed' => '请填写多少元可获得一克饲料'),
 		'会员领取' => array('member_level_feed' => '请填写会员一次可领取的饲料数', 'member_level' => '请选择会员等级')
 	);
-	/**     * 需要验证图片文件是否存在     * @var array     */
+	/**
+     * 需要验证图片文件是否存在
+     * @var array
+     */
 	private $imageArr = array('logo');
 
-	/**     * 初始化配置类     * Task_EweiShopV2Page constructor.     * @param bool $_init     */
+	/**
+     * 初始化配置类
+     * Task_EweiShopV2Page constructor.
+     * @param bool $_init
+     */
 	public function __construct($_init = true)
 	{
 		parent::__construct($_init);
 	}
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
 		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 添加一条数据     */
+	/**
+     * 添加一条数据
+     */
 	public function addInfo()
 	{
 		global $_W;
@@ -63,7 +86,9 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($taskInfo);
 	}
 
-	/**     * 获取任务信息     */
+	/**
+     * 获取任务信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -73,7 +98,9 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($taskInfo);
 	}
 
-	/**     * 编辑任务信息     */
+	/**
+     * 编辑任务信息
+     */
 	public function editInfo()
 	{
 		global $_W;
@@ -85,7 +112,9 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 获取任务种类     */
+	/**
+     * 获取任务种类
+     */
 	public function getCategory()
 	{
 		$table = 'ims_ewei_open_farm_task';
@@ -94,28 +123,36 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($categoryArr);
 	}
 
-	/**     * 获取所有用户等级     */
+	/**
+     * 获取所有用户等级
+     */
 	public function getMemberLevel()
 	{
 		$taskArr = $this->model->getAllMemberLevel();
 		$this->model->returnJson($taskArr);
 	}
 
-	/**     * 获取任务中心任务     */
+	/**
+     * 获取任务中心任务
+     */
 	public function getTaskCore()
 	{
 		$taskArr = $this->model->getAllTask();
 		$this->model->returnJson($taskArr);
 	}
 
-	/**     * 获取任务中心任务     */
+	/**
+     * 获取任务中心任务
+     */
 	public function getGoods()
 	{
 		$taskArr = $this->model->getAllGoods();
 		$this->model->returnJson($taskArr);
 	}
 
-	/**     * 删除任务     */
+	/**
+     * 删除任务
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -126,7 +163,10 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);
@@ -135,7 +175,11 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->checkImageExists($data, $this->imageArr);
 	}
 
-	/**     * 任务列表     * Task_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 任务列表
+     * Task_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -166,7 +210,11 @@ class Task_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($list, $pages);
 	}
 
-	/**     * 查询任务名     * @param $data     * @return mixed     */
+	/**
+     * 查询任务名
+     * @param $data
+     * @return mixed
+     */
 	private function getTaskName($data)
 	{
 		if (!$data || !(0 < count($data))) {

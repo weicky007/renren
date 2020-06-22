@@ -44,10 +44,10 @@
     <label class="col-lg control-label">分享描述</label>
     <div class="col-sm-9 col-xs-12">
              {ife 'goods' $item}
-        <textarea name="share_desc" class="form-control" rows="5">{$item['share_desc']}</textarea>
+        <textarea name="description" class="form-control" rows="5">{$item['description']}</textarea>
         <span class='help-block'>如果不填写，则默认使用版块描述</span>
              {else}
-        <div class='form-control-static'>{$item['share_desc']}</div>
+        <div class='form-control-static'>{$item['description']}</div>
         {/if}
     </div>
 </div>

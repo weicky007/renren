@@ -16,7 +16,7 @@
         <span class="label">全部商品</span>
     </a>
     {/if}
-
+    
     {if !empty($commission)}
     <a href="{$commission['url']}&v={php echo substr(time(),0,6)}" class="external nav-item {if $_W['routes']=='commission.register'}active{/if}">
         <span class="icon icon-fenxiao2"></span>

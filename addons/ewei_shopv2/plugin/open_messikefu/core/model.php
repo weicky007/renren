@@ -3,7 +3,6 @@
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 class Open_MessikefuModel extends PluginModel
 {
 	public function checkOpen($key = '', $plugin = '', $domain)
@@ -17,7 +16,7 @@ class Open_MessikefuModel extends PluginModel
 		}
 
 		$data = array('ip' => $ip, 'site_id' => $auth['id'], 'auth_key' => $auth['code'], 'domain' => $domain, 'plugins' => $plugin, 'app_key' => $key);
-		$resp = ihttp_post(EWEI_SHOPV2_AUTH_URL . '/grant', $data);
+		$resp = ihttp_post(EWEI_SHOPV2_AUTH_WXAPP . '/grant', $data);
 
 		if (empty($resp['content'])) {
 			return array('errno' => -1, 'errmsg' => '访问失败');

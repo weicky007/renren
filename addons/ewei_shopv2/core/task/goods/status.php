@@ -1,5 +1,4 @@
 <?php
-
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -21,7 +20,7 @@ foreach ($sets as $set) {
 	$goods = pdo_fetchall('select id,statustimestart,statustimeend from ' . tablename('ewei_shop_goods') . ' where uniacid = ' . $_W['uniacid'] . ' and isstatustime > 0 and deleted = 0 ');
 
 	foreach ($goods as $key => $value) {
-		if ($value['statustimestart'] < time() && time() < $value['statustimeend']) {
+		if (($value['statustimestart'] < time()) && (time() < $value['statustimeend'])) {
 			$value['status'] = 1;
 		}
 		else {

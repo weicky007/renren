@@ -16,13 +16,13 @@
                     <ul class="aside-submenu">
                         <li>
                             <ul class="aside_menu">
-                                <li><a href="{{ pcUrl('pc.member') }}" class="cuurent">个人中心</a></li>
+                                <li><a href="{{ pcUrl('member') }}" class="cuurent">个人中心</a></li>
 
                             </ul>
                         </li>
                         <li>
                             <ul class="aside_menu">
-                                <li><a href="{{ pcUrl('pc.order') }}">我的订单</a></li>
+                                <li><a href="{{ pcUrl('order') }}">我的订单</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -72,11 +72,11 @@
                             </div>
                             <div class="state-icon">
                                 <ul class="flex">
-                                    <li><a href="{{ pcUrl('pc.order',{'status':0}) }}">{% if ordercount.order_0>0 %}<i class="num">{{ ordercount.order_0?:0 }}</i>{% endif %}<span class="iconfont">&#xe613;</span><span>待付款</span></a></li>
-                                    <li><a href="{{ pcUrl('pc.order',{'status':2}) }}">{% if ordercount.order_2>0 %}<i class="num">{{ ordercount.order_2?:0 }}</i>{% endif %}<span class="iconfont">&#xe615;</span><span>待收货</span></a></li>
-                                    <li><a href="{{ pcUrl('pc.order',{'status':3}) }}">{% if ordercount.order_3>0 %}<i class="num">{{ ordercount.order_3?:0 }}</i>{% endif %}<span class="iconfont">&#xe617;</span><span>已完成</span></a></li>
-                                    <li><a href="{{ pcUrl('pc.order',{'status':4}) }}">{% if ordercount.order_4>0 %}<i class="num">{{ ordercount.order_4?:0 }}</i>{% endif %}<span class="iconfont">&#xe618;</span><span>退换/售后</span></a></li>
-                                    <li><a href="{{ pcUrl('pc.order',{'status':6}) }}"><span class="iconfont" style="color: #ccc;">&#xe619;</span><span>全部订单</span></a></li>
+                                    <li><a href="{{ pcUrl('order',{'status':0}) }}">{% if ordercount.order_0>0 %}<i class="num">{{ ordercount.order_0?:0 }}</i>{% endif %}<span class="iconfont">&#xe613;</span><span>待付款</span></a></li>
+                                    <li><a href="{{ pcUrl('order',{'status':2}) }}">{% if ordercount.order_2>0 %}<i class="num">{{ ordercount.order_2?:0 }}</i>{% endif %}<span class="iconfont">&#xe615;</span><span>待收货</span></a></li>
+                                    <li><a href="{{ pcUrl('order',{'status':3}) }}">{% if ordercount.order_3>0 %}<i class="num">{{ ordercount.order_3?:0 }}</i>{% endif %}<span class="iconfont">&#xe617;</span><span>已完成</span></a></li>
+                                    <li><a href="{{ pcUrl('order',{'status':4}) }}">{% if ordercount.order_4>0 %}<i class="num">{{ ordercount.order_4?:0 }}</i>{% endif %}<span class="iconfont">&#xe618;</span><span>退换/售后</span></a></li>
+                                    <li><a href="{{ pcUrl('order',{'status':6}) }}"><span class="iconfont" style="color: #ccc;">&#xe619;</span><span>全部订单</span></a></li>
                                 </ul>
                             </div>
                             <!-- user-order-list -->
@@ -97,7 +97,7 @@
                                     <div class="state">
                                         <p>{{ order.status }}</p>
                                         <a href="javascript:;" onclick="getCode({{ order.id }})">查看</a>
-                                        <span id="getcodeurl" style="display: none">{{ pcUrl('pc/getCode')}}</span>
+                                        <span id="getcodeurl" style="display: none">{{ pcUrl('getCode')}}</span>
                                     </div>
                                 </div>
                                     {% else %}

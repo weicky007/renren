@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('ES_PATH')) {
+if (!(defined('ES_PATH'))) {
 	exit('Access Denied');
 }
 
@@ -22,24 +21,28 @@ class HomeController extends Controller
 			exit('请先到【系统设置】->【网站】->【基础设置】 配置网站数据.');
 		}
 
-		if (!empty($set['content']) && !is_array($set['content'])) {
+
+		if (!(empty($set['content'])) && !(is_array($set['content']))) {
 			if (strexists($set['content'], '{"')) {
 				$data = json_decode($set['content'], true);
 			}
-			else {
+			 else {
 				$data = unserialize($set['content']);
 			}
 		}
 
-		if (!is_array($data)) {
+
+		if (!(is_array($data))) {
 			$data = array();
 		}
+
 
 		$this->site = $data;
 
 		if (empty($data['status'])) {
 			$this->shutdown($data);
 		}
+
 	}
 
 	public function index()
@@ -68,22 +71,28 @@ class HomeController extends Controller
 			exit(json_encode(array('status' => 'error', 'message' => '姓名不能为空!', 'type' => 'nickname')));
 		}
 
+
 		if (empty($guestbookform['mobile'])) {
 			exit(json_encode(array('status' => 'error', 'message' => '电话不能为空!', 'type' => 'mobile')));
 		}
+
 
 		if (empty($guestbookform['email'])) {
 			exit(json_encode(array('status' => 'error', 'message' => '邮箱不能为空!', 'type' => 'email')));
 		}
 
+
 		if (empty($guestbookform['content'])) {
 			exit(json_encode(array('status' => 'error', 'message' => '内容不能为空!', 'type' => 'content')));
 		}
 
+
 		$guestbook = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_system_guestbook') . ' WHERE clientip=:clientip ORDER BY createtime DESC LIMIT 1', array(':clientip' => ES_CLIENT_IP));
-		if (!empty($guestbook) && TIMESTAMP <= $guestbook['createtime'] + 60) {
+
+		if (!(empty($guestbook)) && (TIMESTAMP <= $guestbook['createtime'] + 60)) {
 			exit(json_encode(array('status' => 'error', 'message' => '距离上次留言时间小于1分钟!')));
 		}
+
 
 		$guestbookform['createtime'] = TIMESTAMP;
 		$guestbookform['clientip'] = ES_CLIENT_IP;
@@ -92,7 +101,7 @@ class HomeController extends Controller
 		if (pdo_insertid()) {
 			echo json_encode(array('status' => 'success', 'message' => '留言成功!'));
 		}
-		else {
+		 else {
 			echo json_encode(array('status' => 'error', 'message' => '留言失败!'));
 		}
 	}
@@ -104,7 +113,7 @@ class HomeController extends Controller
 		if (empty($url)) {
 			exit('网站已经关闭');
 		}
-		else {
+		 else {
 			header('location: ' . $url);
 			exit();
 		}
@@ -113,21 +122,21 @@ class HomeController extends Controller
 	protected function banner($status = 'all')
 	{
 		$statusSql = $this->statusSql($status);
-		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_banner') . (' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC'), $statusSql['param']);
+		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_banner') . ' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC', $statusSql['param']);
 		return $result;
 	}
 
 	protected function casus($status = 'all')
 	{
 		$statusSql = $this->statusSql($status);
-		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_case') . (' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC'), $statusSql['param']);
+		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_case') . ' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC', $statusSql['param']);
 		return $result;
 	}
 
 	protected function link($status = 'all')
 	{
 		$statusSql = $this->statusSql($status);
-		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_link') . (' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC'), $statusSql['param']);
+		$result = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_link') . ' WHERE 1 ' . $statusSql['sql'] . '  ORDER BY displayorder DESC', $statusSql['param']);
 		return $result;
 	}
 
@@ -135,7 +144,7 @@ class HomeController extends Controller
 	{
 		$statusSql = $this->statusSql($status);
 		$statusSql['sql'] = str_replace(' status ', ' a.status ', $statusSql['sql']);
-		$result = pdo_fetchall('SELECT a.id,a.title,a.content,a.createtime,c.name FROM ' . tablename('ewei_shop_system_article') . ' AS a LEFT JOIN ' . tablename('ewei_shop_system_category') . (' AS c ON a.cate = c.id WHERE 1 ' . $statusSql['sql'] . '  ORDER BY a.displayorder DESC LIMIT ' . $limit), $statusSql['param']);
+		$result = pdo_fetchall('SELECT a.id,a.title,a.content,a.createtime,c.name FROM ' . tablename('ewei_shop_system_article') . ' AS a LEFT JOIN ' . tablename('ewei_shop_system_category') . ' AS c ON a.cate = c.id WHERE 1 ' . $statusSql['sql'] . '  ORDER BY a.displayorder DESC LIMIT ' . $limit, $statusSql['param']);
 		return $result;
 	}
 
@@ -143,7 +152,7 @@ class HomeController extends Controller
 	{
 		$statusSql = $this->statusSql($status);
 		$statusSql['sql'] = str_replace(' status ', ' a.status ', $statusSql['sql']);
-		$result = pdo_fetchall('SELECT a.*,c.id as cid,c.name FROM ' . tablename('ewei_shop_system_company_article') . ' AS a LEFT JOIN ' . tablename('ewei_shop_system_company_category') . (' AS c ON a.cate = c.id WHERE 1 ' . $statusSql['sql'] . '  ORDER BY a.displayorder DESC LIMIT ' . $limit), $statusSql['param']);
+		$result = pdo_fetchall('SELECT a.*,c.id as cid,c.name FROM ' . tablename('ewei_shop_system_company_article') . ' AS a LEFT JOIN ' . tablename('ewei_shop_system_company_category') . ' AS c ON a.cate = c.id WHERE 1 ' . $statusSql['sql'] . '  ORDER BY a.displayorder DESC LIMIT ' . $limit, $statusSql['param']);
 		return $result;
 	}
 
@@ -163,8 +172,10 @@ class HomeController extends Controller
 			$param[':status'] = $status;
 		}
 
+
 		return array('sql' => $condition, 'param' => $param);
 	}
 }
+
 
 ?>

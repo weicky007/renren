@@ -56,17 +56,16 @@
     {/if}
 </ul>
 {/if}
-
-  {ifp 'order.op.refund'}
+  {ifp 'order.list.status4|order.list.status5'}
 <div class='menu-header'>维权</div>
 <ul class='order-list'>
-    {ifp 'order.op.refund'}
+    {ifp 'order.list.status4'}
     <li {if $_W['routes']=='order.list.status4'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status4')}">维权申请 <span class='text-danger status4'>--</span></a>
     </li>
     {/if}
      
-    {ifp 'order.op.refund'}
+    {ifp 'order.list.status5'}
     <li {if $_W['routes']=='order.list.status5'}class="active"{/if}>
         <a href="{php echo webUrl('order/list/status5')}">维权完成 <span class="status5">--</span></a>
     </li>

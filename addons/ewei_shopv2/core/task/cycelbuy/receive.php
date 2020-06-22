@@ -1,5 +1,4 @@
 <?php
-
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -14,24 +13,26 @@ $pcoupon = com('coupon');
 $_W['uniacid'] = $_GPC['uniacid'];
 $trade = m('common')->getSysset('trade', $_W['uniacid']);
 $days = intval($trade['receive']);
-$receive_goods = empty($cycel['receive_goods']) ? $days : $cycel['receive_goods'];
-
-if (empty($receive_goods)) {
+$receive_goods = ((empty($cycel['receive_goods']) ? $days : $cycel['receive_goods']));
+if (empty($receive_goods)) 
+{
 	return false;
 }
-
-$order = pdo_fetchall('select id,openid,deductcredit2,price,address,ordersn,isparent,deductcredit,deductprice,status,isparent,isverify,`virtual`,`virtual_info`,createtime,cycelbuy_periodic from ' . tablename('ewei_shop_order') . (' where uniacid=' . $_W['uniacid'] . '  and paytype<>3   and status=2 and iscycelbuy = 1'));
-
-if (!empty($order)) {
-	foreach ($order as $k => $v) {
+$order = pdo_fetchall('select id,openid,deductcredit2,price,address,ordersn,isparent,deductcredit,deductprice,status,isparent,isverify,`virtual`,`virtual_info`,createtime,cycelbuy_periodic from ' . tablename('ewei_shop_order') . ' where uniacid=' . $_W['uniacid'] . '  and paytype<>3   and status=2 and iscycelbuy = 1');
+if (!(empty($order))) 
+{
+	foreach ($order as $k => $v ) 
+	{
 		$last_periods = pdo_fetch('select * from ' . tablename('ewei_shop_cycelbuy_periods') . ' where uniacid=:uniacid and orderid=:orderid order by id desc  limit 1', array(':uniacid' => $_W['uniacid'], ':orderid' => $v['id']));
 		$cycel = pdo_fetchall('select * from ' . tablename('ewei_shop_cycelbuy_periods') . ' where  orderid = ' . $v['id'] . ' and status = 1 and uniacid = ' . $_W['uniacid'] . ' order by receipttime asc limit 1');
 		$days = 86400 * $receive_goods;
 		$sendtime = $cycel[0]['sendtime'];
-
-		if (time() <= $sendtime + $days) {
-			if (!empty($last_periods)) {
-				if ($last_periods['id'] == $cycel[0]['id']) {
+		if (time() <= $sendtime + $days) 
+		{
+			if (!(empty($last_periods))) 
+			{
+				if ($last_periods['id'] == $cycel[0]['id']) 
+				{
 					pdo_update('ewei_shop_cycelbuy_periods', array('status' => 2, 'finishtime' => time()), array('orderid' => $v['id'], 'uniacid' => $_W['uniacid']));
 					pdo_update('ewei_shop_order', array('status' => 3, 'finishtime' => time()), array('id' => $v['id'], 'status' => 2));
 					m('member')->upgradeLevel($v['openid'], $v['id']);
@@ -39,25 +40,25 @@ if (!empty($order)) {
 					m('notice')->sendOrderMessage($v['id']);
 					m('order')->fullback($v['id']);
 					m('order')->setStocksAndCredits($v['id'], 3);
-
-					if ($pcoupon) {
+					if ($pcoupon) 
+					{
 						com('coupon')->sendcouponsbytask($v['id']);
-
-						if (!empty($order['couponid'])) {
+						if (!(empty($order['couponid']))) 
+						{
 							$pcoupon->backConsumeCoupon($v['id']);
 						}
 					}
-
-					if ($p) {
+					if ($p) 
+					{
 						$p->checkOrderFinish($v['id']);
 					}
 				}
-				else {
+				else 
+				{
 					pdo_update('ewei_shop_cycelbuy_periods', array('status' => 2, 'finishtime' => time()), array('id' => $cycel[0]['id'], 'uniacid' => $_W['uniacid']));
 				}
 			}
 		}
 	}
 }
-
 ?>

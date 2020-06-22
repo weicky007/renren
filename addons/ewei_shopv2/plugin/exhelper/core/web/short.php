@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -38,9 +37,9 @@ class Short_EweiShopV2Page extends PluginWebPage
 			$params[':status'] = $_GPC['status'];
 		}
 
-		$sql = 'SELECT id,title,shorttitle,status FROM ' . tablename('ewei_shop_goods') . (' where  1 and ' . $condition . ' ORDER BY  shorttitle desc, status desc, id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
+		$sql = 'SELECT id,title,shorttitle,status FROM ' . tablename('ewei_shop_goods') . ' where  1 and ' . $condition . ' ORDER BY  shorttitle desc, status desc, id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . (' where 1 and ' . $condition), $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . ' where 1 and ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -53,11 +52,11 @@ class Short_EweiShopV2Page extends PluginWebPage
 		$shorttitle = trim($_GPC['value']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 			$shorttitle = '';
 		}
 
-		$goods = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . (' WHERE id in( ' . $id . ' ) and merchid=0 AND uniacid=') . $_W['uniacid']);
+		$goods = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . ' WHERE id in( ' . $id . ' ) and merchid=0 AND uniacid=' . $_W['uniacid']);
 
 		foreach ($goods as $good) {
 			pdo_update('ewei_shop_goods', array('shorttitle' => $shorttitle), array('id' => $good['id'], 'uniacid' => $_W['uniacid']));

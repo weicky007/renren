@@ -6,12 +6,22 @@ if (!defined('IN_IA')) {
 
 class Notice_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_notice';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'title', 'content', 'create_time');
 
-	/**     *公告列表     * Task_EweiShopV2Page constructor.     * @param     */
+	/**
+     *公告列表
+     * Task_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;

@@ -95,6 +95,7 @@
 </div>
 
 <script>
+    window.partners = [];
     window.current = 0;
 
     $(function () {
@@ -102,11 +103,6 @@
         $('.checkall').click(function () {
             var checked = $(this).prop('checked');
             $('.checkitem').prop('checked', checked);
-            if(checked){
-                change_bill_select(1,-1)
-            }else{
-                change_bill_select(0,-1)
-            }
         });
 
         $('#btnnoconfirm').click(function () {
@@ -116,19 +112,18 @@
         });
 
         $('#btnconfirm').click(function () {
+            if ($('.checkitem:checked').length<=0) {
+                tip.msgbox.err('请选择通过申请的订单!');
+                return;
+            }
+
+            $('.checkitem:checked').each(function(){
+                window.partners.push( $(this).val() );
+            });
+
             tip.confirm('通过申请后无法进行修改，确认吗？',function(){
                 confirm(1);
             });
-        });
-
-        $('.checkitem').click(function(){
-            var checked = $(this).prop('checked');
-            if(checked){
-                change_bill_select(1,$(this).val())
-            }else{
-                change_bill_select(0,$(this).val())
-            }
-
         });
 
         $('#btnpay').click(function () {
@@ -209,7 +204,7 @@
             type: 'post',
             dataType: 'json',
             data: {
-                id: "{$item['id']}", 'type': type
+                id: "{$item['id']}", 'type': type, 'bpid': window.partners
             },
             success: function (ret) {
                 if (type == 1) {
@@ -225,26 +220,10 @@
                 location.href = biz.url("merch.check.status{$status}");
             }
         });
+
+
+
     }
-
-    function change_bill_select(type,bpid){
-        $('#btnconfirm').button('loading');
-        $('#btnnoconfirm').button('loading');
-
-        $.ajax({
-            url: "{php echo webUrl('merch/check/change_bill_select')}",
-            type: 'post',
-            dataType: 'json',
-            data: {
-                id: "{$item['id']}", 'type': type, 'bpid': bpid
-            },
-            success: function (ret) {
-                $('#btnconfirm').button('reset');
-                $('#btnnoconfirm').button('reset');
-            }
-        });
-    }
-
 
 </script>
 

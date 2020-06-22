@@ -1,1 +1,778 @@
-define(["core","tpl","biz/goods/picker","biz/member/favorite","biz/member/cart","biz/plugin/diyform","biz/sale/coupon/couponpicker","biz/goods/wholesalePicker"],function(l,t,s,e,i,r,o,n){var d={init:function(t){d.seckillinfo=t.seckillinfo,d.goodsid=t.goodsid,d.offic=t.offic,d.optionid=0,d.buyoptions=[],d.total=1,d.getComments=t.getComments,d.attachurl_local=t.attachurl_local,d.attachurl_remote=t.attachurl_remote,d.coupons=t.coupons,d.new_temp=t.new_temp,d.liveid=t.liveid,d.officType=0,d.close_preview=t.close_preview,d.timeout=!1,"offic"==d.offic&&($("#tab .tab.active").removeClass("active"),$("#offic-tab").addClass("active"),d.showOffic()),d.new_temp?(d.getDetail(),FoxUI.tab({container:$("#tabnew"),handlers:{tab2:function(){$(".detail-tab-panel .tab-panel[data-tab='tab2']").show().siblings().hide()},tab3:function(){$(".detail-tab-panel .tab-panel[data-tab='tab3']").show().siblings().hide()},tab4:function(){$(".detail-tab-panel .tab-panel[data-tab='tab4']").show().siblings().hide(),$(".comment-block").attr("loaded")||($(".comment-block").attr("loaded",1),d.getCommentList())}}}),$(".detail-block").find(".content-block").css("height","auto")):FoxUI.tab({container:$("#tab"),handlers:{tab1:function(){$(".basic-block").show(),d.hideDetail(),d.hideParams(),d.hideComment(),d.hideOffic(),$(".fui-navbar").show()},tab2:function(){d.hideParams(),d.hideComment(),d.hideOffic(),d.showDetail(),$(".fui-navbar").show()},tab3:function(){d.showParams(),d.hideComment(),d.hideOffic(),$(".fui-navbar").show()},tab4:function(){d.showComment(),d.hideOffic(),$(".fui-navbar").show()},tab5:function(){d.showOffic()}}}),$(".coupon-selector").click(function(){d.couponPicker()}),d.couponPicker=function(t){o.show({coupons:d.coupons})},d.hideDetail(),d.hideParams(),d.hideComment(),$(".option-selector").click(function(){d.optionPicker(1)}),$("#alert-click").on("click",function(){$("#alert-picker").show(),$(".alert-content").show()}),$(".alert-close").on("click",function(){$("#alert-picker").hide()}),$("#alert-mask").on("click",function(){$("#alert-picker").hide()}),$("#city-picker").click(function(){d.salePicker=new FoxUIModal({content:$("#city-picker-modal").html(),extraClass:"picker-modal",maskClick:function(){d.salePicker.close()}}),d.salePicker.container.find(".btn-danger").click(function(){d.salePicker.close()}),d.salePicker.show()}),$("#picker-sales").click(function(){d.pickerSales=new FoxUIModal({content:$("#picker-sales-modal").html(),extraClass:"picker-modal",maskClick:function(){d.pickerSales.close()}}),d.pickerSales.container.find(".btn-danger").click(function(){d.pickerSales.close()}),d.pickerSales.show()}),$("#fullback-picker").click(function(){d.salePicker=new FoxUIModal({content:$("#fullback-picker-modal").html(),extraClass:"picker-modal",maskClick:function(){d.salePicker.close()}}),d.salePicker.container.find(".btn-danger").click(function(){d.salePicker.close()}),d.salePicker.show()}),$("#sale-picker").click(function(){d.salePicker=new FoxUIModal({content:$("#sale-picker-modal").html(),extraClass:"picker-modal",maskClick:function(){d.salePicker.close()}}),FoxUI.according.init(),d.salePicker.container.find(".btn-danger").click(function(){d.salePicker.close()}),d.salePicker.show()}),$(".bottom-buttons .cartbtn").click(function(){4==$(this).data("type")?d.wholesalePicker("cart"):d.optionPicker("cart")}),$(".bottom-buttons .buybtn").click(function(){if(d.timeout=$(this).data("timeout"),"access_time"==$(this).data("time")||"timeout"==$(this).data("time")){if(0==d.timeout)return void $(".goods-layer").css("display","block");if(1==d.timeout){if("access_time"==$(this).data("time"))return $(".goods-layer").css("display","none"),void(4==$(this).data("type")?d.wholesalePicker("buy"):d.optionPicker("buy"));if("timeout"==$(this).data("time"))return void $(".goods-layer").css("display","none")}}4==$(this).data("type")?d.wholesalePicker("buy"):d.optionPicker("buy")}),0<$("#time-container").length||0<$("#discount-container").length?$(".fui-labeltext").timer({onEnd:function(){location.reload()},onStart:function(){location.reload()}}):(0<$("#time-presell").length||0<$("#discount-container").length)&&$(".fui-labeltext").timer({onEnd:function(){location.reload()},onStart:function(){location.reload()}}),0<$(".seckill-container").length&&d.initSeckill(),$(".favorite-item").click(function(){var i=$(this);if("1"!=i.attr("submit")){i.attr("submit",1);var t=i.attr("data-isfavorite"),o=i.find(".icon");o.addClass("icon-like").removeClass("icon-likefill"),i.removeClass("active"),t="1"==i.attr("data-isfavorite")?0:1,e.toggle(d.goodsid,t,function(t){i.removeAttr("submit").attr("data-isfavorite",t?"1":0),t&&(o.addClass("icon-likefill").removeClass("icon-like"),i.addClass("active"))})}}),l.isWeixin()?($("#btn-share").click(function(){$("#cover").fadeIn(200)}),$("#cover").click(function(){$("#cover").hide()})):$("#btn-share").click(function(){l.ish5app()||FoxUI.alert("请复制链接发送给好友")}),d.getComments&&l.json("goods/detail/get_comments",{id:d.goodsid},function(t){var i=t.result;$(".fui-icon-col[data-level='all']").find(".count").html(i.count.all),$(".fui-icon-col[data-level='good']").find(".count").html(i.count.good),$(".fui-icon-col[data-level='normal']").find(".count").html(i.count.normal),$(".fui-icon-col[data-level='bad']").find(".count").html(i.count.bad),$(".fui-icon-col[data-level='pic']").find(".count").html(i.count.pic),1==t.status&&0<i.list.length&&(d.initComment(),d.new_temp||($("#tabcomment").show(),l.tpl("#comments-container","tpl_goods_detail_comments",t.result),$("#comments-container .fui-cell:first-child").click(function(){$("#tabcomment").click()})),$(".btn-show-allcomment").off("click").on("click",function(){$(".fui-tab a").removeClass("active"),$(".fui-tab a[data-tab='tab4']").addClass("active"),d.new_temp?($(".detail-tab-panel .tab-panel[data-tab='tab4']").show().siblings().hide(),$(".comment-block").attr("loaded")||($(".comment-block").attr("loaded",1),d.getCommentList())):(d.showComment(),d.hideOffic(),$(".fui-navbar").show())}),$("#comments-container").lazyload()),l.showImages("#comments-container .remark.img img")}),d.new_temp||$(".basic-block").pullToLoading({onLoadingReady:function(){$(".look-detail").html("<i class='icon icon-unfold'></i> <span>释放查看图文详情</span>")},onLoading:function(){$(".look-detail").html("<i class='icon icon-fold'></i> <span>上拉查看图文详情</span>"),$(".basic-block").pullToLoading("done"),d.showDetail(),$("#tab .tab.active").removeClass("active"),$("#tab .tab:eq(1)").addClass("active")}}),void 0!==window.cartcount&&s.changeCartcount(window.cartcount),"0"==d.close_preview&&l.showImages(" .fui-swipe-item img"),$(".fui-cell-giftclick").click(function(){d.giftPicker=new FoxUIModal({content:$("#gift-picker-modal").html(),extraClass:"picker-modal",maskClick:function(){d.giftPicker.close()}}),d.giftPicker.container.find(".btn-danger").click(function(){d.giftPicker.close()}),d.giftPicker.show();var t=$("#giftid").val();$(".gift-item").each(function(){$(this).val()==t&&$(this).prop("checked","true")}),$(".gift-item").on("click",function(){$.ajax({url:l.getUrl("goods/detail/querygift",{id:$(this).val()}),cache:!0,success:function(t){0<(t=window.JSON.parse(t)).status&&($("#giftid").val(t.result.id),$("#gifttitle").text(t.result.title))}})})}),$(".offic-list-tab a").off("click").on("click",function(){var t=$(this);d.officType=t.attr("data-type"),$(".offic-list-tab a").removeClass("active"),t.addClass("active"),d.getOfficList()}),d.officcode(),$(".show-allshop-btn").click(function(){$(this).closest(".store-container").addClass("open")})},wholesalePicker:function(e){n.open({goodsid:d.goodsid,total:d.total,split:";",action:e,optionid:"",showConfirm:!0,autoClose:!1,mustbind:d.mustbind,backurl:d.backurl,onConfirm:function(o){require(["biz/member/cart"],function(t){if(d.buyoptions=o,"buy"==e)if(0<$(".diyform-container").length){var i=r.getData(".diyform-container");if(!i)return;l.json("order/create/diyform",{id:d.goodsid,diyformdata:i},function(t){$.router.load(l.getUrl("order/create",{id:d.goodsid,iswholesale:1,buyoptions:window.JSON.stringify(d.buyoptions),gdid:t.result.goods_data_id}),!0)},!0,!0),n.close()}else n.close(),$.router.load(l.getUrl("order/create",{id:d.goodsid,iswholesale:1,buyoptions:window.JSON.stringify(d.buyoptions)}),!1);else"cart"==e&&t.addwholesale(d.goodsid,d.buyoptions,function(t){$(".cart-item").find(".badge").html(t.cartcount).removeClass("out").addClass("in"),window.cartcount=t.cartcount}),n.close()})}})},giftPicker:function(){d.giftPicker=new FoxUIModal({content:$("#option-picker-modal").html(),extraClass:"picker-modal",maskClick:function(){d.packagePicker.close()}})},getDetail:function(){""==$(".detail-block").find(".content-block").html()&&(FoxUI.loader.show("mini"),$.ajax({url:l.getUrl("goods/detail/get_detail",{id:d.goodsid}),cache:!0,success:function(e){FoxUI.loader.hide();var t=$(".detail-block").css("height");$(".detail-block").find(".content-block").css("height",d.new_temp?"auto":t).html(e),setTimeout(function(){$(".fui-content").lazyload(),$(".detail-block").find(".content-block").css("height","auto"),0==d.close_preview&&(l.showImages(".content-block img"),l.showImages(".fui-swipe-item img"));var t=$(e).find("img");if(0<t.length)for(var i=0,o=t.length;i<o;i++)t[i].onerror=function(){var t=$(this),i=t.attr("data-lazy");if(!t.attr("check-src")&&(-1<i.indexOf("http://")||-1<i.indexOf("https://"))){var o=-1==i.indexOf(d.attachurl_local)?i.replace(d.attachurl_remote,d.attachurl_local):i.replace(d.attachurl_local,d.attachurl_remote);t.attr("data-lazy",o),t.attr("check-src",!0)}}},1e3),d.new_temp||$(".detail-block").pullToRefresh({onRefreshReady:function(){$(".look-basic").html("<i class='icon icon-fold'></i> <span>释放返回商品详情</span>")},onRefresh:function(){$(".look-basic").html("<i class='icon icon-unfold'></i> <span>下拉返回商品详情</span>"),$(".basic-block").show(),$(".detail-block").removeClass("in").pullToRefresh("done"),$("#tab .tab.active").removeClass("active"),$("#tab .tab:first-child").addClass("active")}})}}))},showDetail:function(){$(".basic-block").hide(),d.getDetail(),$(".detail-block").transition(300).addClass("in").transitionEnd(function(){$(".detail-block").transition("")})},hideDetail:function(){$(".basic-block").show(),$(".detail-block").transition(300).removeClass("in").transitionEnd(function(){$(".detail-block").transition("")})},showParams:function(){$(".param-block").show().addClass("in")},hideParams:function(){$(".param-block").removeClass("in")},optionPicker:function(a){s.open({goodsid:d.goodsid,total:d.total,split:";",action:a,optionid:d.optionid,showConfirm:!0,autoClose:!0,mustbind:d.mustbind,backurl:d.backurl,liveid:d.liveid,refresh:!1,cangift:0,onConfirm:function(t,n,c){require(["biz/member/cart"],function(i){if(d.total=t,d.optionid=n,$(".option-selector").html("已选: 数量x"+t+" "+c),"buy"==a){var o=$("#giftid").val();if($("#giftid")&&""==o)FoxUI.alert("请选择赠品！"),$(".picker-modal").remove();else if(0<$(".diyform-container").length){if(!(e=r.getData(".diyform-container")))return;l.json("order/create/diyform",{id:d.goodsid,diyformdata:e},function(t){$.router.load(l.getUrl("order/create",{id:d.goodsid,optionid:d.optionid,total:d.total,gdid:t.result.goods_data_id,giftid:o,liveid:d.liveid}),!0)},!0,!0),s.close()}else s.close(),$.router.load(l.getUrl("order/create",{id:d.goodsid,optionid:d.optionid,total:d.total,giftid:o,liveid:d.liveid}),!1)}else if("cart"==a)if(0<$(".diyform-container").length){var e;if(!(e=r.getData(".diyform-container")))return;l.json("order/create/diyform",{id:d.goodsid,diyformdata:e},function(t){i.add(d.goodsid,d.optionid,d.total,e,function(t){$(".cart-item").find(".badge").html(t.cartcount).removeClass("out").addClass("in"),window.cartcount=t.cartcount,s.changeCartcount(cartcount),FoxUI.toast.show("添加成功")})},!0,!0),s.close()}else i.add(d.goodsid,d.optionid,d.total,!1,function(t){$(".cart-item").find(".badge").html(t.cartcount).removeClass("out").addClass("in"),window.cartcount=t.cartcount,s.changeCartcount(cartcount),FoxUI.toast.show("添加成功")}),s.close();else s.close()})}})},showComment:function(){$(".comment-block").show().addClass("in").transitionEnd(function(){$(".comment-block").attr("loaded")||($(".comment-block").attr("loaded",1),d.getCommentList())})},showOffic:function(){$(".offic-block").show().addClass("in").transitionEnd(function(){$(".offic-block").attr("loaded")||($(".offic-block").attr("loaded",1),d.getOfficList())}),$(".offic-goods-edit").show(),$(".fui-navbar").hide(),$(".look-basic").hide()},hideOffic:function(){$(".offic-block").removeClass("in"),$(".offic-goods-edit").hide()},hideComment:function(){$(".comment-block").removeClass("in")},initComment:function(){d.commentPage=1,d.commentLevel="",d.commentCount=1,$(".fui-content").infinite({onLoading:function(){d.getCommentList()}}),1==d.commentPage&&d.getCommentList()},getCommentList:function(){$("#comments-list-container .content-empty").hide(),$("#comments-list-container .infinite-loading").show(),l.json("goods/detail/get_comment_list",{id:d.goodsid,page:d.commentPage,level:d.commentLevel,getcount:d.commentCount},function(t){var i=t.result;i.total<=0?($("#comments-list-container .container").html("").hide(),$("#comments-list-container .content-empty").show(),$("#comments-list-container").infinite("stop")):($("#comments-list-container .container").show(),$("#comments-list-container .content-empty").hide(),$("#comments-list-container").infinite("init"),(i.list.length<=0||i.list.length<i.pagesize)&&$("#comments-list-container").infinite("stop")),d.commentCount=0,d.commentPage++,l.tpl("#comments-list-container .container","tpl_goods_detail_comments_list",i,1<d.commentPage),$("#comments-list-container .fui-icon-group .fui-icon-col").unbind("click").click(function(){$("#comments-list-container .fui-icon-group .fui-icon-col span.text-danger").removeClass("text-danger"),$(this).find("span").addClass("text-danger"),d.commentPage=1,d.commentCount=1,d.commentLevel=$(this).data("level"),$("#comments-list-container .container").html(""),d.getCommentList()}),l.showImages("#comments-all .remark.img img")},!1)},getOfficList:function(){$("#offic-list-container .content-empty").hide(),$("#offic-list-container .infinite-loading").show(),l.json("goods/detail/get_offic_list",{id:d.goodsid,page:d.officPage,type:d.officType},function(t){var i=t.result;i.total<=0?($("#offic-list-container .container").html("").hide(),$("#offic-list-container .content-empty").show(),$("#offic-list-container").infinite("stop")):($("#offic-list-container .container").show(),$("#offic-list-container .content-empty").hide(),$("#offic-list-container").infinite("init"),(i.officlist.length<=0||i.officlist.length<i.pagesize)&&$("#offic-list-container").infinite("stop")),d.officPage++,l.tpl("#offic-list-container .cantainer","tpl_offic_find_list",i,1<d.officPage),l.showImages(".find-list-content-images a img"),d.officcode(),$(".offic-download").off("click").on("click",function(){d.pickerDown=new FoxUIModal({content:$("#picker-download-modal").html(),extraClass:"picker-modal",maskClick:function(){d.pickerDown.close()}}),d.pickerDown.container.find(".btn-default").click(function(){d.pickerDown.close()}),d.pickerDown.show()}),$("#offic-mask").off("click").on("click",function(){$("#offic-picker").hide()})},!1)},officcode:function(){$(".offic-qrcode").off("click").on("click",function(){d.pickerCode=new FoxUIModal({content:$("#picker-qrcode-modal").html(),extraClass:"picker-modal",maskClick:function(){d.pickerCode.close()}}),d.pickerCode.container.find(".btn-default").click(function(){d.pickerCode.close()}),d.pickerCode.show(),$(".offic-cell-code").off("click").on("click",function(){d.pickerCode.close(),$("#alert-picker").show(),$(".alert-content").show()})})},formatSeconds:function(t){var i=parseInt(t),o=0,e=0;return 60<i&&(o=parseInt(i/60),i=parseInt(i%60),60<o&&(e=parseInt(o/60),o=parseInt(o%60))),{hour:e<10?"0"+e:e,min:o<10?"0"+o:o,sec:i<10?"0"+i:i}},initSeckill:function(){var t=$(".seckill-container"),i=t.data("starttime"),o=t.data("endtime"),e=t.data("status")||0;$.ajax({url:"../addons/ewei_shopv2/map.json",complete:function(t){currenttime=+parseInt(new Date/1e3),d.lasttime=0==e?o-currenttime:i-currenttime,clearInterval(d.timer),d.setSeckillTimer(),d.timer=d.setSeckillTimerInterval()}})},setSeckillTimer:function(){if(d.lasttime%10==0){var t=$(".seckill-container"),i=t.data("starttime"),o=t.data("endtime"),e=t.data("status")||0;$.ajax({url:"../addons/ewei_shopv2/map.json",cache:!1,complete:function(t){currenttime=+parseInt(new Date/1e3),d.lasttime=0==e?o-currenttime:i-currenttime}})}d.lasttime-=1;var n=d.formatSeconds(d.lasttime),c=$(".seckill-container");c.find(".time-hour").html(n.hour),c.find(".time-min").html(n.min),c.find(".time-sec").html(n.sec),d.lasttime<=0&&location.reload()},setSeckillTimerInterval:function(){return setInterval(function(){d.setSeckillTimer()},1e3)}};return d});
+define(['core', 'tpl', 'biz/goods/picker', 'biz/member/favorite', 'biz/member/cart', 'biz/plugin/diyform', 'biz/sale/coupon/couponpicker', 'biz/goods/wholesalePicker'], function (core, tpl, picker, favorite, cart, diyform, couponpicker, wholesalePicker) {
+    var modal = {};
+    modal.init = function (params) {
+        modal.seckillinfo = params.seckillinfo;
+        modal.goodsid = params.goodsid;
+        modal.offic = params.offic;
+        modal.optionid = 0;
+        modal.buyoptions = [];
+        modal.total = 1;
+        modal.getComments = params.getComments;
+        modal.attachurl_local = params.attachurl_local;
+        modal.attachurl_remote = params.attachurl_remote;
+        modal.coupons = params.coupons;
+        modal.new_temp = params.new_temp;
+        modal.liveid = params.liveid;
+        modal.officType = 0;
+        modal.close_preview = params.close_preview;
+        modal.timeout = false;
+        if (modal.offic == "offic") {
+            $('#tab .tab.active').removeClass('active');
+            $("#offic-tab").addClass("active");
+            modal.showOffic();
+        }
+        //alert( $('.goods-swipe').outerWidth());
+        if (!modal.new_temp) {
+            FoxUI.tab({
+                container: $('#tab'), handlers: {
+                    tab1: function () {
+                        $('.basic-block').show();
+                        modal.hideDetail();
+                        modal.hideParams();
+                        modal.hideComment();
+                        modal.hideOffic();
+                        $(".fui-navbar").show()
+                    }, tab2: function () {
+                        modal.hideParams();
+                        modal.hideComment();
+                        modal.hideOffic();
+                        modal.showDetail();
+                        $(".fui-navbar").show()
+                    }, tab3: function () {
+                        modal.showParams();
+                        modal.hideComment();
+                        modal.hideOffic();
+                        $(".fui-navbar").show()
+                    }, tab4: function () {
+                        modal.showComment();
+                        modal.hideOffic();
+                        $(".fui-navbar").show()
+                    }, tab5: function () {
+                        modal.showOffic()
+                    }
+                }
+            })
+        } else {
+            modal.getDetail();
+            FoxUI.tab({
+                container: $('#tabnew'), handlers: {
+                    tab2: function () {
+                        $(".detail-tab-panel .tab-panel[data-tab='tab2']").show().siblings().hide()
+                    }, tab3: function () {
+                        $(".detail-tab-panel .tab-panel[data-tab='tab3']").show().siblings().hide()
+                    }, tab4: function () {
+                        $(".detail-tab-panel .tab-panel[data-tab='tab4']").show().siblings().hide();
+                        if (!$('.comment-block').attr('loaded')) {
+                            $('.comment-block').attr('loaded', 1);
+                            modal.getCommentList()
+                        }
+                    }
+                }
+            });
+            $('.detail-block').find('.content-block').css('height', 'auto')
+        }
+        $('.coupon-selector').click(function () {
+            modal.couponPicker()
+        });
+        modal.couponPicker = function (action) {
+            couponpicker.show({coupons: modal.coupons})
+        };
+        modal.hideDetail();
+        modal.hideParams();
+        modal.hideComment();
+        $('.option-selector').click(function () {
+            modal.optionPicker(1)
+        });
+        $('#alert-click').on("click", function () {
+            $("#alert-picker").show();
+            $(".alert-content").show()
+        });
+        $('.alert-close').on("click", function () {
+            $("#alert-picker").hide()
+        });
+        $('#alert-mask').on("click", function () {
+            $("#alert-picker").hide()
+        });
+        $('#city-picker').click(function () {
+            modal.salePicker = new FoxUIModal({
+                content: $('#city-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.salePicker.close()
+                }
+            });
+            modal.salePicker.container.find('.btn-danger').click(function () {
+                modal.salePicker.close()
+            });
+            modal.salePicker.show()
+        });
+        $('#picker-sales').click(function () {
+            modal.pickerSales = new FoxUIModal({
+                content: $('#picker-sales-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.pickerSales.close()
+                }
+            });
+            modal.pickerSales.container.find('.btn-danger').click(function () {
+                modal.pickerSales.close()
+            });
+            modal.pickerSales.show()
+        });
+        $('#fullback-picker').click(function () {
+            modal.salePicker = new FoxUIModal({
+                content: $('#fullback-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.salePicker.close()
+                }
+            });
+            modal.salePicker.container.find('.btn-danger').click(function () {
+                modal.salePicker.close()
+            });
+            modal.salePicker.show()
+        });
+        $('#sale-picker').click(function () {
+            modal.salePicker = new FoxUIModal({
+                content: $('#sale-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.salePicker.close()
+                }
+            });
+            FoxUI.according.init();
+            modal.salePicker.container.find('.btn-danger').click(function () {
+                modal.salePicker.close()
+            });
+            modal.salePicker.show()
+        });
+        $(".bottom-buttons .cartbtn").click(function () {
+            var type = $(this).data('type');
+            if (type == 4) {
+                modal.wholesalePicker('cart')
+            } else {
+                modal.optionPicker('cart')
+            }
+        });
+        $(".bottom-buttons .buybtn").click(function () {
+            modal.timeout = $(this).data('timeout');
+
+            if($(this).data('time') == 'access_time' || $(this).data('time') == 'timeout'){
+                if(modal.timeout == false) {
+                    $('.goods-layer').css('display', 'block');
+                    return;
+                }else if(modal.timeout == true){
+                    if($(this).data('time') == 'access_time'){
+                        $('.goods-layer').css('display', 'none');
+                        var type = $(this).data('type');
+                        if (type == 4) {
+                            modal.wholesalePicker('buy')
+                        } else {
+                            modal.optionPicker('buy')
+                        }
+                        return;
+                    }
+                    if($(this).data('time') == 'timeout'){
+                        $('.goods-layer').css('display', 'none');
+                        return;
+                    }
+                }
+            }
+
+            var type = $(this).data('type');
+            if (type == 4) {
+                modal.wholesalePicker('buy')
+            } else {
+                modal.optionPicker('buy')
+            }
+        });
+        if ($('#time-container').length > 0 || $('#discount-container').length > 0) {
+            $('.fui-labeltext').timer({
+                onEnd: function () {
+                    location.reload()
+                }, onStart: function () {
+                    location.reload()
+                }
+            })
+        } else if ($('#time-presell').length > 0 || $('#discount-container').length > 0) {
+            $('.fui-labeltext').timer({
+                onEnd: function () {
+                    location.reload()
+                }, onStart: function () {
+                    location.reload()
+                }
+            })
+        }
+        if ($('.seckill-container').length > 0) {
+            modal.initSeckill()
+        }
+        $('.favorite-item').click(function () {
+            var self = $(this);
+            if (self.attr('submit') == '1') {
+                return
+            }
+            self.attr('submit', 1);
+            var isfavorite = self.attr('data-isfavorite') == '1';
+            var icon = self.find('.icon');
+            icon.addClass('icon-like').removeClass('icon-likefill');
+            self.removeClass('active');
+            isfavorite = self.attr('data-isfavorite') == '1' ? 0 : 1;
+            favorite.toggle(modal.goodsid, isfavorite, function (is) {
+                self.removeAttr('submit').attr("data-isfavorite", is ? "1" : 0);
+                if (is) {
+                    icon.addClass('icon-likefill').removeClass('icon-like');
+                    self.addClass('active')
+                }
+            })
+        });
+        if (core.isWeixin()) {
+            $('#btn-share').click(function () {
+                $('#cover').fadeIn(200)
+            });
+            $('#cover').click(function () {
+                $('#cover').hide()
+            })
+        } else {
+            $('#btn-share').click(function () {
+                if (core.ish5app()) {
+                    return
+                }
+                FoxUI.alert("请复制链接发送给好友")
+            })
+        }
+        if (modal.getComments) {
+            core.json('goods/detail/get_comments', {id: modal.goodsid}, function (ret) {
+                var result = ret.result;
+                $(".fui-icon-col[data-level='all']").find('.count').html(result.count.all);
+                $(".fui-icon-col[data-level='good']").find('.count').html(result.count.good);
+                $(".fui-icon-col[data-level='normal']").find('.count').html(result.count.normal);
+                $(".fui-icon-col[data-level='bad']").find('.count').html(result.count.bad);
+                $(".fui-icon-col[data-level='pic']").find('.count').html(result.count.pic);
+                if (ret.status == 1 && result.list.length > 0) {
+                    modal.initComment();
+                    if (!modal.new_temp) {
+                        $('#tabcomment').show();
+                        core.tpl('#comments-container', 'tpl_goods_detail_comments', ret.result);
+                        $('#comments-container .fui-cell:first-child').click(function () {
+                            $("#tabcomment").click()
+                        });
+                    };
+                    //查看全部评价
+                    $(".btn-show-allcomment").off("click").on("click",function () {
+                        $(".fui-tab a").removeClass('active');
+                        $(".fui-tab a[data-tab='tab4']").addClass('active');
+                        if (!modal.new_temp) {
+                            modal.showComment();
+                            modal.hideOffic();
+                            $(".fui-navbar").show();
+                        }else{
+                            $(".detail-tab-panel .tab-panel[data-tab='tab4']").show().siblings().hide();
+                            if (!$('.comment-block').attr('loaded')) {
+                                $('.comment-block').attr('loaded', 1);
+                                modal.getCommentList();
+                            }
+                        }
+                    });
+                    $('#comments-container').lazyload();
+                };
+                core.showImages('#comments-container .remark.img img');
+            })
+        }
+        if (!modal.new_temp) {
+            $('.basic-block').pullToLoading({
+                onLoadingReady: function () {
+                    $(".look-detail").html("<i class='icon icon-unfold'></i> <span>释放查看图文详情</span>")
+                }, onLoading: function () {
+                    $(".look-detail").html("<i class='icon icon-fold'></i> <span>上拉查看图文详情</span>");
+                    $('.basic-block').pullToLoading('done');
+                    modal.showDetail();
+                    $('#tab .tab.active').removeClass('active');
+                    $('#tab .tab:eq(1)').addClass('active')
+                }
+            })
+        }
+        if (typeof(window.cartcount) !== 'undefined') {
+            picker.changeCartcount(window.cartcount)
+        }
+        ;
+
+       if(modal.close_preview=='0'){
+
+           core.showImages(' .fui-swipe-item img');
+       }
+
+        $(".fui-cell-giftclick").click(function () {
+            modal.giftPicker = new FoxUIModal({
+                content: $('#gift-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.giftPicker.close()
+                }
+            });
+            modal.giftPicker.container.find('.btn-danger').click(function () {
+                modal.giftPicker.close()
+            });
+            modal.giftPicker.show();
+            var giftid = $("#giftid").val();
+            $(".gift-item").each(function () {
+                if ($(this).val() == giftid) {
+                    $(this).prop("checked", "true")
+                }
+            });
+            $(".gift-item").on("click", function () {
+                $.ajax({
+                    url: core.getUrl('goods/detail/querygift', {id: $(this).val()}),
+                    cache: true,
+                    success: function (data) {
+                        data = window.JSON.parse(data);
+                        if (data.status > 0) {
+                            $("#giftid").val(data.result.id);
+                            $("#gifttitle").text(data.result.title)
+                        }
+                    }
+                })
+            })
+        });
+        $(".offic-list-tab a").off("click").on("click", function () {
+            var _this = $(this);
+            modal.officType = _this.attr("data-type");
+            $(".offic-list-tab a").removeClass("active");
+            _this.addClass("active");
+            modal.getOfficList()
+        });
+        modal.officcode();
+        $('.show-allshop-btn').click(function () {
+            $(this).closest('.store-container').addClass('open')
+        })
+    };
+    modal.wholesalePicker = function (action) {
+        wholesalePicker.open({
+            goodsid: modal.goodsid,
+            total: modal.total,
+            split: ';',
+            action: action,
+            optionid: '',
+            showConfirm: true,
+            autoClose: false,
+            mustbind: modal.mustbind,
+            backurl: modal.backurl,
+            onConfirm: function (buyoptions) {
+                require(['biz/member/cart'],function(cart){
+                    modal.buyoptions = buyoptions;
+                    if (action == 'buy') {
+                        if ($('.diyform-container').length > 0) {
+                            var diyformdata = diyform.getData('.diyform-container');
+                            if (!diyformdata) {
+                                return
+                            } else {
+                                core.json('order/create/diyform', {
+                                    id: modal.goodsid,
+                                    diyformdata: diyformdata
+                                }, function (ret) {
+                                    $.router.load(core.getUrl('order/create', {
+                                        id: modal.goodsid,
+                                        iswholesale: 1,
+                                        buyoptions: window.JSON.stringify(modal.buyoptions),
+                                        gdid: ret.result.goods_data_id
+                                    }), true)
+                                }, true, true);
+                                wholesalePicker.close()
+                            }
+                        }else{
+                            wholesalePicker.close();
+                            $.router.load(core.getUrl('order/create', {
+                                id: modal.goodsid,
+                                iswholesale: 1,
+                                buyoptions: window.JSON.stringify(modal.buyoptions)
+                            }), false)
+                        }
+                    } else if (action == 'cart') {
+                        cart.addwholesale(modal.goodsid, modal.buyoptions, function (ret) {
+                            $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
+                            window.cartcount = ret.cartcount
+                        });
+                        wholesalePicker.close()
+                    } else {
+                        wholesalePicker.close()
+                    }
+                });
+            }
+        })
+    };
+    modal.giftPicker = function () {
+        modal.giftPicker = new FoxUIModal({
+            content: $('#option-picker-modal').html(),
+            extraClass: 'picker-modal',
+            maskClick: function () {
+                modal.packagePicker.close()
+            }
+        })
+    };
+    modal.getDetail = function () {
+        if ($('.detail-block').find('.content-block').html() != '') {
+            return
+        }
+        FoxUI.loader.show('mini');
+        $.ajax({
+            url: core.getUrl('goods/detail/get_detail', {id: modal.goodsid}),
+            cache: true,
+            success: function (html) {
+                // html =  html.split('<video').join('<video webkit-playsinline="true" x-webkit-airplay="true"  playsinline="true" x5-video-player-type="h5" x5-video-player-fullscreen="true" ')
+                // console.log(html)
+                FoxUI.loader.hide();
+                var detailHeight = $('.detail-block').css('height');
+                $('.detail-block').find('.content-block').css('height', !modal.new_temp ? detailHeight : 'auto').html(html);
+                setTimeout(function () {
+                    $('.fui-content').lazyload();
+                    $('.detail-block').find('.content-block').css('height', 'auto');
+                    if (modal.close_preview ==0) {
+                        core.showImages('.content-block img');
+                        core.showImages('.fui-swipe-item img');
+                    }
+                    var $html = $(html).find('img');
+                    if ($html.length > 0) {
+                        for (var i = 0, len = $html.length; i < len; i++) {
+                            $html[i].onerror = function () {
+                                var $this = $(this);
+                                var data_lazy = $this.attr('data-lazy');
+                                if (!$this.attr('check-src') && (data_lazy.indexOf('http://') > -1 || data_lazy.indexOf('https://') > -1)) {
+                                    var src = data_lazy.indexOf(modal.attachurl_local) == -1 ? data_lazy.replace(modal.attachurl_remote, modal.attachurl_local) : data_lazy.replace(modal.attachurl_local, modal.attachurl_remote);
+                                    $this.attr('data-lazy', src);
+                                    $this.attr('check-src', true)
+                                }
+                            }
+                        }
+                    }
+                }, 1000);
+                if (!modal.new_temp) {
+                    $('.detail-block').pullToRefresh({
+                        onRefreshReady: function () {
+                            $(".look-basic").html("<i class='icon icon-fold'></i> <span>释放返回商品详情</span>")
+                        }, onRefresh: function () {
+                            $(".look-basic").html("<i class='icon icon-unfold'></i> <span>下拉返回商品详情</span>");
+                            $('.basic-block').show();
+                            $('.detail-block').removeClass('in').pullToRefresh('done');
+                            $('#tab .tab.active').removeClass('active');
+                            $('#tab .tab:first-child').addClass('active')
+                        }
+                    })
+                }
+            }
+        })
+    };
+    modal.showDetail = function () {
+        $('.basic-block').hide();
+        modal.getDetail();
+        $('.detail-block').transition(300).addClass('in').transitionEnd(function () {
+            $('.detail-block').transition('')
+        })
+    };
+    modal.hideDetail = function () {
+        $('.basic-block').show();
+        $('.detail-block').transition(300).removeClass('in').transitionEnd(function () {
+            $('.detail-block').transition('')
+        })
+    };
+    modal.showParams = function () {
+        $('.param-block').show().addClass('in')
+    };
+    modal.hideParams = function () {
+        $('.param-block').removeClass('in')
+    };
+    modal.optionPicker = function (action) {
+        picker.open({
+            goodsid: modal.goodsid,
+            total: modal.total,
+            split: ';',
+            action: action,
+            optionid: modal.optionid,
+            showConfirm: true,
+            autoClose: true,
+            mustbind: modal.mustbind,
+            backurl: modal.backurl,
+            liveid: modal.liveid,
+            refresh: false,
+            cangift:0,
+            onConfirm: function (total, optionid, optiontitle) {
+                require(['biz/member/cart'],function(cart){
+                    modal.total = total;
+                    modal.optionid = optionid;
+                    $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
+                    if (action == 'buy') {
+                        var giftid = $("#giftid").val();
+                        if ($("#giftid") && giftid == '') {
+                            FoxUI.alert("请选择赠品！");
+                            $(".picker-modal").remove()
+                        } else {
+                            if ($('.diyform-container').length > 0) {
+                                var diyformdata = diyform.getData('.diyform-container');
+                                if (!diyformdata) {
+                                    return
+                                } else {
+                                    core.json('order/create/diyform', {
+                                        id: modal.goodsid,
+                                        diyformdata: diyformdata
+                                    }, function (ret) {
+                                        $.router.load(core.getUrl('order/create', {
+                                            id: modal.goodsid,
+                                            optionid: modal.optionid,
+                                            total: modal.total,
+                                            gdid: ret.result.goods_data_id,
+                                            giftid: giftid,
+                                            liveid: modal.liveid
+                                        }), true)
+                                    }, true, true);
+                                    picker.close()
+                                }
+                            } else {
+                                picker.close();
+                                $.router.load(core.getUrl('order/create', {
+                                    id: modal.goodsid,
+                                    optionid: modal.optionid,
+                                    total: modal.total,
+                                    giftid: giftid,
+                                    liveid: modal.liveid
+                                }), false)
+                            }
+                        }
+                    } else if (action == 'cart') {
+                        if ($('.diyform-container').length > 0) {
+                            var diyformdata = diyform.getData('.diyform-container');
+                            if (!diyformdata) {
+                                return
+                            } else {
+                                core.json('order/create/diyform', {
+                                    id: modal.goodsid,
+                                    diyformdata: diyformdata
+                                }, function (ret) {
+                                    cart.add(modal.goodsid, modal.optionid, modal.total, diyformdata, function (ret) {
+                                        $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
+                                        window.cartcount = ret.cartcount;
+                                        picker.changeCartcount(cartcount);
+                                        FoxUI.toast.show('添加成功')
+                                    })
+                                }, true, true);
+                                picker.close()
+                            }
+                        } else {
+                            cart.add(modal.goodsid, modal.optionid, modal.total, false, function (ret) {
+                                $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
+                                window.cartcount = ret.cartcount;
+                                picker.changeCartcount(cartcount);
+                                FoxUI.toast.show('添加成功')
+                            });
+                            picker.close()
+                        }
+                    } else {
+                        picker.close()
+                    }
+                });
+            }
+
+        })
+    };
+    modal.showComment = function () {
+        $('.comment-block').show().addClass('in').transitionEnd(function () {
+            if (!$('.comment-block').attr('loaded')) {
+                $('.comment-block').attr('loaded', 1);
+                modal.getCommentList()
+            }
+        })
+    };
+    modal.showOffic = function () {
+        $('.offic-block').show().addClass('in').transitionEnd(function () {
+            if (!$('.offic-block').attr('loaded')) {
+                $('.offic-block').attr('loaded', 1);
+                modal.getOfficList()
+            }
+        });
+        $(".offic-goods-edit").show();
+        $(".fui-navbar").hide();
+        $(".look-basic").hide()
+    };
+    modal.hideOffic = function () {
+        $('.offic-block').removeClass('in');
+        $(".offic-goods-edit").hide()
+    };
+    modal.hideComment = function () {
+        $('.comment-block').removeClass('in')
+    };
+    modal.initComment = function () {
+        modal.commentPage = 1;
+        modal.commentLevel = '';
+        modal.commentCount = 1;
+        $('.fui-content').infinite({
+            onLoading: function () {
+                modal.getCommentList()
+            }
+        });
+        if (modal.commentPage == 1) {
+            modal.getCommentList()
+        }
+    };
+    modal.getCommentList = function () {
+        $('#comments-list-container .content-empty').hide();
+        $('#comments-list-container .infinite-loading').show();
+        core.json('goods/detail/get_comment_list', {
+            id: modal.goodsid,
+            page: modal.commentPage,
+            level: modal.commentLevel,
+            getcount: modal.commentCount
+        }, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('#comments-list-container .container').html('').hide();
+                $('#comments-list-container .content-empty').show();
+                $('#comments-list-container').infinite('stop')
+            } else {
+                $('#comments-list-container .container').show();
+                $('#comments-list-container .content-empty').hide();
+                $('#comments-list-container').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('#comments-list-container').infinite('stop')
+                }
+            }
+            modal.commentCount = 0;
+            modal.commentPage++;
+            core.tpl('#comments-list-container .container', 'tpl_goods_detail_comments_list', result, modal.commentPage > 1);
+            $('#comments-list-container .fui-icon-group .fui-icon-col').unbind('click').click(function () {
+                $('#comments-list-container .fui-icon-group .fui-icon-col span.text-danger').removeClass('text-danger');
+                $(this).find('span').addClass('text-danger');
+                modal.commentPage = 1;
+                modal.commentCount = 1;
+                modal.commentLevel = $(this).data('level');
+                $('#comments-list-container .container').html('');
+                modal.getCommentList()
+            });
+            core.showImages('#comments-all .remark.img img')
+        }, false)
+    };
+    modal.getOfficList = function () {
+        $('#offic-list-container .content-empty').hide();
+        $('#offic-list-container .infinite-loading').show();
+        core.json('goods/detail/get_offic_list', {
+            id: modal.goodsid,
+            page: modal.officPage,
+            type: modal.officType
+        }, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('#offic-list-container .container').html('').hide();
+                $('#offic-list-container .content-empty').show();
+                $('#offic-list-container').infinite('stop')
+            } else {
+                $('#offic-list-container .container').show();
+                $('#offic-list-container .content-empty').hide();
+                $('#offic-list-container').infinite('init');
+                if (result.officlist.length <= 0 || result.officlist.length < result.pagesize) {
+                    $('#offic-list-container').infinite('stop')
+                }
+            }
+            modal.officPage++;
+            core.tpl('#offic-list-container .cantainer', 'tpl_offic_find_list', result, modal.officPage > 1);
+            core.showImages('.find-list-content-images a img');
+            modal.officcode();
+            $(".offic-download").off("click").on("click", function () {
+                modal.pickerDown = new FoxUIModal({
+                    content: $('#picker-download-modal').html(),
+                    extraClass: 'picker-modal',
+                    maskClick: function () {
+                        modal.pickerDown.close()
+                    }
+                });
+                modal.pickerDown.container.find('.btn-default').click(function () {
+                    modal.pickerDown.close()
+                });
+                modal.pickerDown.show()
+            });
+            $('#offic-mask').off("click").on("click", function () {
+                $("#offic-picker").hide()
+            })
+        }, false)
+    };
+    modal.officcode = function () {
+        $('.offic-qrcode').off("click").on("click", function () {
+            modal.pickerCode = new FoxUIModal({
+                content: $('#picker-qrcode-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.pickerCode.close()
+                }
+            });
+            modal.pickerCode.container.find('.btn-default').click(function () {
+                modal.pickerCode.close()
+            });
+            modal.pickerCode.show();
+            $(".offic-cell-code").off("click").on("click", function () {
+                modal.pickerCode.close();
+                $("#alert-picker").show();
+                $(".alert-content").show()
+            })
+        })
+    };
+    modal.formatSeconds = function (value) {
+        var theTime = parseInt(value);
+        var theTime1 = 0;
+        var theTime2 = 0;
+        if (theTime > 60) {
+            theTime1 = parseInt(theTime / 60);
+            theTime = parseInt(theTime % 60);
+            if (theTime1 > 60) {
+                theTime2 = parseInt(theTime1 / 60);
+                theTime1 = parseInt(theTime1 % 60)
+            }
+        }
+        return {
+            'hour': theTime2 < 10 ? '0' + theTime2 : theTime2,
+            'min': theTime1 < 10 ? '0' + theTime1 : theTime1,
+            'sec': theTime < 10 ? '0' + theTime : theTime
+        }
+    };
+    modal.initSeckill = function () {
+        var container = $('.seckill-container'), starttime = container.data('starttime'), endtime = container.data('endtime'), status = container.data('status') || 0;
+        $.ajax({
+            url: '../addons/ewei_shopv2/map.json', complete: function (x) {
+                currenttime = +parseInt(new Date() / 1000);
+                if (status == 0) {
+                    modal.lasttime = endtime-currenttime;
+                } else {
+                    modal.lasttime = starttime-currenttime;
+                }
+                clearInterval(modal.timer);
+                modal.setSeckillTimer();
+                modal.timer = modal.setSeckillTimerInterval()
+            }
+        })
+    };
+    modal.setSeckillTimer = function () {
+        //每十秒请求一次服务器，获取时间
+        if(modal.lasttime%10==0){
+            var container = $('.seckill-container'), starttime = container.data('starttime'), endtime = container.data('endtime'), status = container.data('status') || 0;
+            $.ajax({
+                url: '../addons/ewei_shopv2/map.json',cache:false,complete: function (x) {
+                    currenttime = +parseInt(new Date() / 1000);
+                    if (status == 0) {
+                        modal.lasttime = endtime-currenttime;
+                    } else {
+                        modal.lasttime = starttime-currenttime;
+                    }
+                }
+            })
+        }
+        modal.lasttime -= 1;
+        var times = modal.formatSeconds(modal.lasttime);
+        var obj = $('.seckill-container');
+        obj.find('.time-hour').html(times.hour);
+        obj.find('.time-min').html(times.min);
+        obj.find('.time-sec').html(times.sec);
+        if (modal.lasttime <= 0) {
+            location.reload()
+        }
+    };
+    modal.setSeckillTimerInterval = function () {
+        return setInterval(function () {
+            modal.setSeckillTimer()
+        }, 1000)
+    };
+    return modal
+});

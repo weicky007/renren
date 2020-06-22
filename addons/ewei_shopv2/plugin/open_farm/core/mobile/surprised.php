@@ -6,12 +6,22 @@ if (!defined('IN_IA')) {
 
 class Surprised_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_surprised';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'value', 'category', 'probability', 'create_time');
 
-	/**     * 删除彩蛋     * @param $id     * @return bool     */
+	/**
+     * 删除彩蛋
+     * @param $id
+     * @return bool
+     */
 	public function deleteInfo($id)
 	{
 		global $_W;
@@ -20,7 +30,9 @@ class Surprised_EweiShopV2Page extends PluginMobilePage
 		return $query;
 	}
 
-	/**     * 删除用户彩蛋     */
+	/**
+     * 删除用户彩蛋
+     */
 	public function deleteUserSurprised()
 	{
 		global $_W;
@@ -31,7 +43,10 @@ class Surprised_EweiShopV2Page extends PluginMobilePage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 删除用户彩蛋     * @param $id     */
+	/**
+     * 删除用户彩蛋
+     * @param $id
+     */
 	public function deleteInfoByCoupon($id)
 	{
 		global $_W;
@@ -52,7 +67,10 @@ class Surprised_EweiShopV2Page extends PluginMobilePage
 		pdo_query($sql);
 	}
 
-	/**     * 删除无效彩蛋     * @return string     */
+	/**
+     * 删除无效彩蛋
+     * @return string
+     */
 	public function clearCouponSurprised()
 	{
 		global $_W;

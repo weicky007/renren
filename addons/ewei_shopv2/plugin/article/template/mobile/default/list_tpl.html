@@ -16,7 +16,7 @@
 					<div class="title">{$article['article_title']}</div>
 					<div class="subtitle">{$article['resp_desc']}</div>
 						{if $article['article_rule_money']>0 || !empty($article['article_rule_credit'])}
-							<div class="subtitle">
+							<div class="subtitle">  
 								<span class="fui-label fui-label-danger">
 									{if $article['article_rule_money']>0}
 										{$article['article_rule_money']}元{$_W['shopset']['trade']['moneytext']}
@@ -69,7 +69,7 @@
 									</div>
 									<div class="text">
 										<span class="subtitle">{$k}</span>
-									</div>
+									</div> 
 								</div>
 								<div class="fui-card-first">
 									<div class="image">
@@ -110,3 +110,4 @@
 		</div>
 	{/loop}
 {/if}
+

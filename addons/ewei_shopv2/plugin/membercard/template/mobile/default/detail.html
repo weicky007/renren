@@ -103,7 +103,7 @@
 			<%if list.coupon_card.length>0||list.is_card_points>0%>
 			<div class='card-group'>
 				<div class='card-title'>开卡赠送</div>
-				<div class='card-subtitle'>会员开卡即送<%if list.coupon_card.length>0%>优惠券<%/if%><%if list.coupon_card.length>0&&list.is_card_points>0 %>、<%/if%><%if list.is_card_points>0%>{php echo empty($data['credittext'])?'积分':$data['credittext']}<%/if%></div>
+				<div class='card-subtitle'>会员开卡即送<%if list.coupon_card.length>0%>优惠券<%/if%><%if list.coupon_card.length>0&&list.is_card_points>0 %>、<%/if%><%if list.is_card_points>0%>积分<%/if%></div>
 				<%if list.coupon_card.length>0%>
 				<div class='coupon-list left'>
 					<%each list.coupon_card as kai_card%>
@@ -127,7 +127,7 @@
 							<div>购物返<span><%kai_card.backmoney%></span>余额</div>
 							<%/if%>
 							<%if kai_card.backcredit>0%>
-							<div>购物返<span><%kai_card.backcredit%></span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+							<div>购物返<span><%kai_card.backcredit%></span>积分</div>
 							<%/if%>
 							<%if kai_card.backredpack>0%>
 							<div>购物返<span><%kai_card.backredpack%></span>现金</div>
@@ -155,16 +155,16 @@
 						<i class="icon icon-kaiqiajifen"></i>
 					</div>
 					<div class='fiche-inner'>
-						<div class='title'>开通立享{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='title'>开通立享积分</div>
 						<div class='subtitle'><%list.card_points%>
-							<span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</span>
+							<span>积分</span>
 						</div>
 					</div>
 					<div class='fiche-btn'>
 						<%if list.kaika_jifen%>
 						<div class='btn-submit border'>已发放</div>
 						<%else%>
-						<div class='btn-submit border'>开通送{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='btn-submit border'>开通送积分</div>
 						<%/if%>
 					</div>
 				</div>
@@ -176,7 +176,7 @@
 			<%if list.coupon_month.length>0||list.is_month_points>0%>
 			<div class='card-group' style='padding-bottom: 0.85rem;'>
 				<div class='card-title'>每月领取</div>
-				<div class='card-subtitle'>会员可每月领取<%if list.coupon_month.length>0%>优惠券<%/if%><%if list.coupon_month.length>0&&list.is_month_points>0%>、<%/if%><%if list.is_month_points>0%>{php echo empty($data['credittext'])?'积分':$data['credittext']}<%/if%></div>
+				<div class='card-subtitle'>会员可每月领取<%if list.coupon_month.length>0%>优惠券<%/if%><%if list.coupon_month.length>0&&list.is_month_points>0%>、<%/if%><%if list.is_month_points>0%>积分<%/if%></div>
 				<%if list.coupon_month.length>0%>
 				<div class='coupon-list left'>
 
@@ -201,7 +201,7 @@
 							<div>购物返<span><%kai_month_card.backmoney%></span>余额</div>
 							<%/if%>
 							<%if kai_month_card.backcredit>0%>
-							<div>购物返<span><%kai_month_card.backcredit%></span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+							<div>购物返<span><%kai_month_card.backcredit%></span>积分</div>
 							<%/if%>
 							<%if kai_month_card.backredpack>0%>
 							<div>购物返<span><%kai_month_card.backredpack%></span>现金</div>
@@ -234,14 +234,14 @@
 					</div>
 
 					<div class='fiche-inner'>
-						<div class='title'>会员每月领取{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='title'>会员每月领取积分</div>
 						<div class='subtitle'><%list.month_points%>
-							<span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</span>
+							<span>积分</span>
 						</div>
 					</div>
 					<div class='fiche-btn'>
 						<%if list.goumai==1%>
-						<div class='btn-submit border'>每月领{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='btn-submit border'>每月领积分</div>
 						<%else%>
 						<%if list.is_check_month_point%>
 						<div class='btn-submit border'>已领取</div>
@@ -261,7 +261,7 @@
 			<%if list.coupon_month.length>0||list.is_month_points%>
 			<div class='card-group' style='padding-bottom: 0.85rem;'>
 				<div class='card-title'>每月领取</div>
-				<div class='card-subtitle'>会员可每月领取<%if list.coupon_month.length>0%>优惠券<%/if%><%if list.is_month_points>0&&list.coupon_month.length>0%>、<%/if%><%if list.is_month_points>0%>{php echo empty($data['credittext'])?'积分':$data['credittext']}<%/if%></div>
+				<div class='card-subtitle'>会员可每月领取<%if list.coupon_month.length>0%>优惠券<%/if%><%if list.is_month_points>0&&list.coupon_month.length>0%>、<%/if%><%if list.is_month_points>0%>积分<%/if%></div>
 				<%if list.coupon_month.length>0%>
 				<div class='coupon-list left'>
 					<%each list.coupon_month as kai_month_card%>
@@ -283,7 +283,7 @@
 								<div>购物返<span><%kai_month_card.backmoney%></span>余额</div>
 								<%/if%>
 								<%if kai_month_card.backcredit>0%>
-								<div>购物返<span><%kai_month_card.backcredit%></span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+								<div>购物返<span><%kai_month_card.backcredit%></span>积分</div>
 								<%/if%>
 								<%if kai_month_card.backredpack>0%>
 								<div>购物返<span><%kai_month_card.backredpack%></span>现金</div>
@@ -325,14 +325,14 @@
 					</div>
 
 					<div class='fiche-inner'>
-						<div class='title'>会员每月领取{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='title'>会员每月领取积分</div>
 						<div class='subtitle'><%list.month_points%>
-							<span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</span>
+							<span>积分</span>
 						</div>
 					</div>
 					<div class='fiche-btn'>
 						<%if list.goumai==1%>
-						<div class='btn-submit border'>每月领{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='btn-submit border'>每月领积分</div>
 						<%else%>
 						<%if list.is_check_month_point%>
 						<div class='btn-submit border'>已领取</div>
@@ -350,7 +350,7 @@
 			<%if list.coupon_card.length>0||list.is_card_points>0%>
 			<div class='card-group'>
 				<div class='card-title'>开卡赠送</div>
-				<div class='card-subtitle'>会员开卡即送<%if list.coupon_card.length>0%>优惠券<%/if%><%if list.coupon_card.length>0&& list.is_card_points>0%>、<%/if%><%if list.is_card_points>0 %>{php echo empty($data['credittext'])?'积分':$data['credittext']}<%/if%></div>
+				<div class='card-subtitle'>会员开卡即送<%if list.coupon_card.length>0%>优惠券<%/if%><%if list.coupon_card.length>0&& list.is_card_points>0%>、<%/if%><%if list.is_card_points>0 %>积分<%/if%></div>
 				<%if list.coupon_card.length>0%>
 				<div class='coupon-list left'>
 					<%each list.coupon_card as kai_card%>
@@ -371,7 +371,7 @@
 								<div class='price'>购物返<span><%kai_card.backnum%></span>余额</div>
 								<%/if%>
 								<%if kai_card.backcredit>0%>
-								<div class='price'>购物返<span><%kai_card.backcredit%></span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+								<div class='price'>购物返<span><%kai_card.backcredit%></span>积分</div>
 								<%/if%>
 								<%if kai_card.backredpack>0%>
 								<div class='price'>购物返<span><%kai_card.backredpack%></span>现金</div>
@@ -402,16 +402,16 @@
 						<i class="icon icon-kaiqiajifen"></i>
 					</div>
 					<div class='fiche-inner'>
-						<div class='title'>开通立享{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='title'>开通立享积分</div>
 						<div class='subtitle'><%list.card_points%>
-							<span>{php echo empty($data['credittext'])?'积分':$data['credittext']}</span>
+							<span>积分</span>
 						</div>
 					</div>
 					<div class='fiche-btn'>
 						<%if list.kaika_jifen%>
 						<div class='btn-submit border'>已发放</div>
 						<%else%>
-						<div class='btn-submit border'>开通送{php echo empty($data['credittext'])?'积分':$data['credittext']}</div>
+						<div class='btn-submit border'>开通送积分</div>
 						<%/if%>
 					</div>
 				</div>

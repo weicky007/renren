@@ -49,12 +49,6 @@
 </div>
 <script type="text/javascript">
 
-    $(function () {
-        if (confirm('由于京东防盗链规则改变，请使用淘宝助手客户端进行抓取!\n现在去配置客户端?')) {
-            location.href = "{php echo webUrl('taobao/set')}";
-        }
-    });
-
     var category = {php echo json_encode($children)};
 
     var len = 0;

@@ -67,13 +67,9 @@
                     </div>
                     <div class='text'>
                         商品总额: {$ordercredit}{$_W['shopset']['trade']['credittext']}
-                        {if $ordermoney > 0} + &yen;{$ordermoney}{/if}
+                        {if $ordermoney > 0} + &yen; {$ordermoney}{/if}
                         {if $goods['goodstype']==0 && $goods['isverify']==0}
-                            {if $goods['dispatch'] > 0}
-                                <span class="dispatchprice">运费：￥{$goods['dispatch']}</span>
-                            {else}
-                                <span class="dispatchprice">免运费</span>
-                            {/if}
+                            {if $goods['dispatch'] > 0}运费：&yen; {$goods['dispatch']}{else}免运费{/if}
                         {/if}
                     </div>
                 </div>
@@ -137,7 +133,7 @@
             <div class="fui-cell ">
                 <div class="fui-cell-label ">收货地址</div>
                 <a class="fui-cell-info" href="{php echo mobileUrl('member/address/selector')}">
-                    <div class="fui-cell-remark" id="address_select">请选择收货地址</div>
+                    <input type="text" class="fui-input" placeholder="点击选择收货地址" readonly id="address_select" value="{$address['province']}{$address['city']}{$address['area']}{$address['address']}" />
                 </a>
             </div>
         </div>
@@ -328,7 +324,7 @@
             <div class="fui-cell">
                 <div class="fui-cell-label">运费</div>
                 <div class="fui-cell-info"></div>
-                <div class="fui-cell-remark noremark">{if $goods['dispatch'] > 0}<span class="dispatch">¥ {$goods['dispatch']}</span>{else}<span class="dispatch">免运费</span>{/if}</div>
+                <div class="fui-cell-remark noremark">{if $goods['dispatch'] > 0}¥ {$goods['dispatch']}{else}免运费{/if}</div>
             </div>
             {/if}
             <div class="fui-cell">
@@ -377,7 +373,7 @@
     </div>
 
     <div class='fui-footer'>
-        {if $goods['isverify']==0 && $goods['goodstype']==0 && $log['dispatchstatus'] == 0}
+        {if $goods['isverify']==0 && $goods['goodstype']==0 && $log['addressid']==0 }
             {if $goods['dispatch'] >0}
                 <div class="btn btn-warning block btn-1">支付运费</div>
             {else}

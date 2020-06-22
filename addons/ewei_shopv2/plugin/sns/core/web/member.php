@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -51,10 +50,10 @@ class Member_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and sm.isblack=' . intval($_GPC['isblack']);
 		}
 
-		$sql = 'select sm.id as sns_id,sm.credit as sns_credit, sm.level as sns_level,sm.createtime,sm.isblack,sm.openid, ' . ' dm.id,dm.nickname,dm.avatar,dm.agentid, dm.isagent,dm.status,dm.realname,dm.mobile,' . ' a.nickname as agentnickname,a.avatar as agentavatar,' . ' f.follow as followed from ' . tablename('ewei_shop_sns_member') . ' sm ' . ' left join ' . tablename('ewei_shop_member') . ' dm on dm.openid = sm.openid and dm.uniacid = sm.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' a on a.id=dm.agentid' . ' left join ' . tablename('ewei_shop_sns_level') . ' l on sm.level =l.id' . ' left join ' . tablename('mc_mapping_fans') . ('f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid']) . (' where 1 ' . $condition . '  ORDER BY sm.id DESC');
+		$sql = 'select sm.id as sns_id,sm.credit as sns_credit, sm.level as sns_level,sm.createtime,sm.isblack,sm.openid, ' . ' dm.id,dm.nickname,dm.avatar,dm.agentid, dm.isagent,dm.status,dm.realname,dm.mobile,' . ' a.nickname as agentnickname,a.avatar as agentavatar,' . ' f.follow as followed from ' . tablename('ewei_shop_sns_member') . ' sm ' . ' left join ' . tablename('ewei_shop_member') . ' dm on dm.openid = sm.openid and dm.uniacid = sm.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' a on a.id=dm.agentid' . ' left join ' . tablename('ewei_shop_sns_level') . ' l on sm.level =l.id' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid'] . ' where 1 ' . $condition . '  ORDER BY sm.id DESC';
 
 		if (empty($_GPC['export'])) {
-			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -73,7 +72,7 @@ class Member_EweiShopV2Page extends PluginWebPage
 		}
 
 		unset($row);
-		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_sns_member') . ' sm ' . ' left join ' . tablename('ewei_shop_member') . ' dm on dm.openid = sm.openid and dm.uniacid = sm.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' a on a.id=dm.agentid' . ' left join ' . tablename('ewei_shop_sns_level') . ' l on sm.level =l.id' . ' left join ' . tablename('mc_mapping_fans') . ('f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid']) . (' where 1 ' . $condition . ' '), $params);
+		$total = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_sns_member') . ' sm ' . ' left join ' . tablename('ewei_shop_member') . ' dm on dm.openid = sm.openid and dm.uniacid = sm.uniacid' . ' left join ' . tablename('ewei_shop_member') . ' a on a.id=dm.agentid' . ' left join ' . tablename('ewei_shop_sns_level') . ' l on sm.level =l.id' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid'] . ' where 1 ' . $condition . ' ', $params);
 		$pager = pagination2($total, $pindex, $psize);
 		$levels = $this->model->getLevels();
 		$opencommission = false;
@@ -97,10 +96,10 @@ class Member_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,openid FROM ' . tablename('ewei_shop_sns_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,openid FROM ' . tablename('ewei_shop_sns_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_sns_member', array('id' => $item['id']));
@@ -122,15 +121,15 @@ class Member_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,openid FROM ' . tablename('ewei_shop_sns_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,openid FROM ' . tablename('ewei_shop_sns_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_sns_member', array('isblack' => intval($_GPC['isblack'])), array('id' => $item['id']));
 			$member = m('member')->getMember($item['openid']);
-			plog('sns.member.edit', '设置黑名单<br/>ID: ' . $item['id'] . '<br/>昵称: ' . $member['nickname'] . '<br/>状态: ' . $_GPC['isblack'] == 1 ? '显示' : '隐藏');
+			plog('sns.member.edit', ('设置黑名单<br/>ID: ' . $item['id'] . '<br/>昵称: ' . $member['nickname'] . '<br/>状态: ' . $_GPC['isblack']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));

@@ -1,5 +1,4 @@
 <?php
-
 class User_EweiShopV2Model
 {
 	private $sessionid;
@@ -35,15 +34,15 @@ class User_EweiShopV2Model
 			$need_openid = true;
 
 			if ($_W['container'] != 'wechat') {
-				if ($_GPC['do'] == 'order' && $_GPC['p'] == 'pay') {
+				if (($_GPC['do'] == 'order') && ($_GPC['p'] == 'pay')) {
 					$need_openid = false;
 				}
 
-				if ($_GPC['do'] == 'member' && $_GPC['p'] == 'recharge') {
+				if (($_GPC['do'] == 'member') && ($_GPC['p'] == 'recharge')) {
 					$need_openid = false;
 				}
 
-				if ($_GPC['do'] == 'plugin' && $_GPC['p'] == 'article' && $_GPC['preview'] == '1') {
+				if (($_GPC['do'] == 'plugin') && ($_GPC['p'] == 'article') && ($_GPC['preview'] == '1')) {
 					$need_openid = false;
 				}
 			}

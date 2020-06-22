@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -52,20 +51,18 @@ class Complain_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$complains = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_complain') . '
-					WHERE 1=1 ' . $condition . ' ORDER BY id DESC limit ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$complains = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_complain') . "\r\n\t\t\t\t\tWHERE 1=1 " . $condition . ' ORDER BY id DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 
 		if (empty($complains)) {
 			$complains = array();
 		}
 
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_complain') . (' WHERE 1 ' . $condition), $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_complain') . ' WHERE 1 ' . $condition, $params);
 
 		foreach ($complains as $key => $value) {
 			$complains[$key]['complainant'] = $this->getMember($value['complainant']);
 			$complains[$key]['defendant'] = $this->getMember($value['defendant']);
-			$post = pdo_fetch('select content from ' . tablename('ewei_shop_sns_post') . '
-											where id = ' . $value['postsid'] . ' and uniacid = ' . $value['uniacid'] . ' ');
+			$post = pdo_fetch('select content from ' . tablename('ewei_shop_sns_post') . "\r\n\t\t\t\t\t\t\t\t\t\t\twhere id = " . $value['postsid'] . ' and uniacid = ' . $value['uniacid'] . ' ');
 			$content = $this->model->replaceContent($post['content']);
 			$complains[$key]['content'] = $content;
 
@@ -73,8 +70,7 @@ class Complain_EweiShopV2Page extends PluginWebPage
 				$complains[$key]['typename'] = '其他';
 			}
 			else {
-				$complaint_type = pdo_fetch('select name from ' . tablename('ewei_shop_sns_complaincate') . '
-											where id = ' . $value['complaint_type'] . ' and uniacid = ' . $value['uniacid'] . ' ');
+				$complaint_type = pdo_fetch('select name from ' . tablename('ewei_shop_sns_complaincate') . "\r\n\t\t\t\t\t\t\t\t\t\t\twhere id = " . $value['complaint_type'] . ' and uniacid = ' . $value['uniacid'] . ' ');
 				$complains[$key]['typename'] = $complaint_type['name'];
 			}
 
@@ -96,10 +92,10 @@ class Complain_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,checked FROM ' . tablename('ewei_shop_sns_complain') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,checked FROM ' . tablename('ewei_shop_sns_complain') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (empty($items)) {
 			$items = array();
@@ -130,10 +126,10 @@ class Complain_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_sns_complain') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_sns_complain') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (empty($items)) {
 			$items = array();
@@ -185,8 +181,7 @@ class Complain_EweiShopV2Page extends PluginWebPage
 			if ($status == 1) {
 				$delete_update = pdo_update('ewei_shop_sns_post', array('deleted' => 1), array('id' => $complain['postsid'], 'uniacid' => $_W['uniacid']));
 				$delete_update = pdo_update('ewei_shop_sns_post', array('deleted' => 1), array('rpid' => $complain['postsid'], 'uniacid' => $_W['uniacid']));
-				$complainPost = pdo_fetchall('select id from ' . tablename('ewei_shop_sns_complain') . '
-				where postsid = ' . $complain['postsid'] . ' and uniacid = ' . $_W['uniacid'] . ' and checked = 0 ');
+				$complainPost = pdo_fetchall('select id from ' . tablename('ewei_shop_sns_complain') . "\r\n\t\t\t\twhere postsid = " . $complain['postsid'] . ' and uniacid = ' . $_W['uniacid'] . ' and checked = 0 ');
 
 				if (empty($complainPost)) {
 					$complainPost = array();
@@ -259,7 +254,7 @@ class Complain_EweiShopV2Page extends PluginWebPage
 		$msg = array(
 			'first'  => array('value' => '投诉消息通知', 'color' => '#4a5077'),
 			'remark' => array('value' => $remark, 'color' => '#4a5077')
-		);
+			);
 		m('message')->sendCustomNotice($complain['complainant'], $msg);
 	}
 
@@ -270,10 +265,10 @@ class Complain_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_sns_complain') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_sns_complain') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (empty($items)) {
 			$items = array();
@@ -326,7 +321,7 @@ class Complain_EweiShopV2Page extends PluginWebPage
 			show_json(1);
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_complaincate') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder asc'));
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sns_complaincate') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder asc');
 		include $this->template();
 	}
 

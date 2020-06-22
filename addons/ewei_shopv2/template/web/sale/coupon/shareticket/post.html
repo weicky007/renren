@@ -2,7 +2,7 @@
 <div class="page-heading">
 
 	<span class='pull-right'>
-		  {ifp 'sale.coupon.shareticket'}
+		  {ifp 'sale.sendticket.share.add'}
 				 	<a class='btn btn-primary btn-sm' href="{php echo webUrl('sale/coupon/shareticket/add')}"><i class='fa fa-plus'></i>添加活动</a>
 	   		{/if}
 		<a class="btn btn-default  btn-sm" href="{php echo webUrl('sale/coupon/shareticket')}">返回列表</a>
@@ -16,7 +16,7 @@
 	<p>分享标题项为必填项。</p>
 	<p>优惠券设置：添加活动时，可设置统一优惠券，也可设置分享人优惠券和被分享人优惠券，最多可选择三张优惠券，每张优惠券的每人领取数量不能超过三张且优惠券须在有效期内。此处发放的优惠券数量不影响库存！</p>
 </div>
-<form {ifp 'sale.coupon.shareticket'}action="" method='post'{/if} class='form-horizontal form-validate'>
+<form {ife 'sale.sendticket.share' $item}action="" method='post'{/if} class='form-horizontal form-validate'>
     <input type="hidden" name="id" value="{$item['id']}">
  <input type="hidden" name="tab" id='tab' value="{$_GPC['tab']}" />
 
@@ -31,7 +31,7 @@
             <div class="form-group">
                     <label class="col-sm-2 control-label"></label>
                     <div class="col-sm-9 col-xs-12">
-                         {ifp 'sale.coupon.shareticket'}
+                         {ife 'sale.sendticket.share' $item}
                             <input type="submit" name="submit" value="提交" class="btn btn-primary"  />
 
                         {/if}

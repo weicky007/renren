@@ -53,7 +53,7 @@
                             <td>{if $value['status']}<span class="label label-primary">已支付</span>{else}<span class="label label-default">未支付</span>{/if}
                             </td>
                             <td>{php echo date('Y-m-d H:i',$value['createtime'])}</td>
-                            <td class="text-navy">{php echo $value['money']+$value['deduction']}</td>
+                            <td class="text-navy">{$value['money']}</td>
                             <td>{$user[$value['openid']]['nickname']}</td>
                             <td class="text-navy">{$value['logno']}</td>
                             <td>{if $value['is_applypay']=='0'}<span class="label label-default">未结算</span>{elseif $value['is_applypay']=='1'}<span class="label label-warning">申请中</span>{elseif $value['is_applypay']=='2'}<span class="label label-primary">已结算</span>{/if}</td>
@@ -183,4 +183,3 @@
     });
 </script>
 {template '_footer'}
-<!--4000097827-->

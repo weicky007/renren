@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,7 +17,7 @@ class Adv_EweiShopV2Page extends PluginWebPage
 
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 15;
-		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_diypage_plu') . ' where merch=:merch and `type`=1 and uniacid=:uniacid ' . $condition . ' order by id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_diypage_plu') . ' where merch=:merch and `type`=1 and uniacid=:uniacid ' . $condition . ' order by id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diypage_plu') . ' where merch=:merch and `type`=1 and uniacid=:uniacid ' . $condition, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
@@ -78,10 +77,10 @@ class Adv_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,`name` FROM ' . tablename('ewei_shop_diypage_plu') . (' WHERE id in( ' . $id . ' ) and merch=:merch and uniacid=:uniacid and `type`=1 '), array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,`name` FROM ' . tablename('ewei_shop_diypage_plu') . ' WHERE id in( ' . $id . ' ) and merch=:merch and uniacid=:uniacid and `type`=1 ', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_diypage_plu', array('id' => $item['id'], 'uniacid' => $_W['uniacid'], 'merch' => intval($_W['merchid'])));

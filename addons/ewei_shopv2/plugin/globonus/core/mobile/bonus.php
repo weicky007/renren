@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -47,8 +46,8 @@ class Bonus_EweiShopV2Page extends GlobonusMobileLoginPage
 			}
 
 			$id = implode(',', $ids);
-			$list = pdo_fetchall('select *  from ' . tablename('ewei_shop_globonus_billp') . (' where 1 ' . $condition . ' and billid in(') . $id . ') order by id desc LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
-			$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_globonus_billp') . (' where 1 ' . $condition . ' and billid in(') . $id . ')', $params);
+			$list = pdo_fetchall('select *  from ' . tablename('ewei_shop_globonus_billp') . ' where 1 ' . $condition . ' and billid in(' . $id . ') order by id desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+			$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_globonus_billp') . ' where 1 ' . $condition . ' and billid in(' . $id . ')', $params);
 			show_json(1, array('total' => $total, 'list' => $list, 'pagesize' => $psize));
 		}
 		else {

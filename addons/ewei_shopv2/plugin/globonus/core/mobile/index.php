@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,7 +13,7 @@ class Index_EweiShopV2Page extends GlobonusMobileLoginPage
 		$set = $this->getSet();
 		$member = m('member')->getMember($_W['openid']);
 		$bonus = $this->model->getBonus($_W['openid'], array('ok', 'lock', 'total'));
-		$levelname = empty($set['levelname']) ? '默认等级' : $set['levelname'];
+		$levelname = (empty($set['levelname']) ? '默认等级' : $set['levelname']);
 		$level = $this->model->getLevel($_W['openid']);
 
 		if (!empty($level)) {

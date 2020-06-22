@@ -6,31 +6,31 @@ if (!defined('IN_IA')) {
 
 class Mood_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**     * 当前数据表名称     * @var string     */
 	private $table = 'ewei_open_farm_mood';
-	/**     * 当前数据表名称     * @var string     */
+	/**     * 当前数据表名称     * @var string     */
 	private $sonTable = 'ewei_open_farm_mood_image';
-	/**     * 当前类的所有字段     * @var array     */
+	/**     * 当前类的所有字段     * @var array     */
 	private $field = array('id', 'uniacid', 'background', 'logo', 'create_time');
-	/**     * 当前类的所有字段     * @var array     */
+	/**     * 当前类的所有字段     * @var array     */
 	private $sonField = array('id', 'uniacid', 'picture', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
 	private $message = array('background' => '请选择心情背景', 'picture_list' => '请选择心情图');
 
-	/**     * 初始化配置类     * Task_EweiShopV2Page constructor.     * @param bool $_init     */
+	/**     * 初始化配置类     * Task_EweiShopV2Page constructor.     * @param bool $_init     */
 	public function __construct($_init = true)
 	{
 		parent::__construct($_init);
 	}
 
-	/**     * 首页主方法     */
+	/**     * 首页主方法     */
 	public function main()
 	{
 		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 获取信息     */
+	/**     * 获取信息     */
 	public function getInfo()
 	{
 		global $_W;
@@ -42,7 +42,7 @@ class Mood_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($moodInfo);
 	}
 
-	/**     * 获取子表数据     */
+	/**     * 获取子表数据     */
 	public function getSon()
 	{
 		global $_W;
@@ -58,7 +58,7 @@ class Mood_EweiShopV2Page extends PluginWebPage
 		return $data;
 	}
 
-	/**     * 添加一条数据     */
+	/**     * 添加一条数据     */
 	public function addInfo()
 	{
 		global $_W;
@@ -72,7 +72,7 @@ class Mood_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($mood || $moodPicture);
 	}
 
-	/**     * 添加心情     * @param $data     * @return bool     */
+	/**     * 添加心情     * @param $data     * @return bool     */
 	public function addMood($data)
 	{
 		$imagesPrefix = $_SERVER['DOCUMENT_ROOT'] . '/attachment/';
@@ -106,7 +106,7 @@ class Mood_EweiShopV2Page extends PluginWebPage
 		return $query;
 	}
 
-	/**     * 添加心情图片     * @param $data     * @return bool     */
+	/**     * 添加心情图片     * @param $data     * @return bool     */
 	public function addMoodPicture($data)
 	{
 		$imagesPrefix = $_SERVER['DOCUMENT_ROOT'] . '/attachment/';
@@ -142,7 +142,7 @@ class Mood_EweiShopV2Page extends PluginWebPage
 		return $bool;
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**     * 验证提交数据     * @param $data     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

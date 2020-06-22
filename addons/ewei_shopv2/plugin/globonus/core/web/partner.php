@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -57,14 +56,14 @@ class Partner_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and dm.partnerstatus=' . intval($_GPC['partnerstatus']);
 		}
 
-		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_globonus_level') . ' l on l.id = dm.partnerlevel' . ' where dm.uniacid = ' . $_W['uniacid'] . (' and (dm.ispartner =1 or dm.ispartner=-1)  ' . $condition . ' ORDER BY dm.partnertime desc');
+		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_globonus_level') . ' l on l.id = dm.partnerlevel' . ' where dm.uniacid = ' . $_W['uniacid'] . ' and (dm.ispartner =1 or dm.ispartner=-1)  ' . $condition . ' ORDER BY dm.partnertime desc';
 
 		if (empty($_GPC['export'])) {
-			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm  ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_globonus_level') . ' l on l.id = dm.partnerlevel' . ' where dm.uniacid =' . $_W['uniacid'] . (' and (dm.ispartner =1 or dm.ispartner=-1) ' . $condition), $params);
+		$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm  ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_globonus_level') . ' l on l.id = dm.partnerlevel' . ' where dm.uniacid =' . $_W['uniacid'] . ' and (dm.ispartner =1 or dm.ispartner=-1) ' . $condition, $params);
 
 		foreach ($list as &$row) {
 			$bonus = $this->model->getBonus($row['openid'], array('ok'));
@@ -90,23 +89,23 @@ class Partner_EweiShopV2Page extends PluginWebPage
 
 			unset($row);
 			m('excel')->export($list, array(
-				'title'   => '股东数据-' . date('Y-m-d-H-i', time()),
-				'columns' => array(
-					array('title' => 'ID', 'field' => 'id', 'width' => 12),
-					array('title' => '昵称', 'field' => 'nickname', 'width' => 12),
-					array('title' => '姓名', 'field' => 'realname', 'width' => 12),
-					array('title' => '手机号', 'field' => 'mobile', 'width' => 12),
-					array('title' => '微信号', 'field' => 'weixin', 'width' => 12),
-					array('title' => 'openid', 'field' => 'openid', 'width' => 24),
-					array('title' => '推荐人', 'field' => 'parentname', 'width' => 12),
-					array('title' => '股东等级', 'field' => 'levelname', 'width' => 12),
-					array('title' => '累计分红', 'field' => 'bonus', 'width' => 12),
-					array('title' => '注册时间', 'field' => 'createtime', 'width' => 12),
-					array('title' => '成为股东时间', 'field' => 'partneragenttime', 'width' => 12),
-					array('title' => '审核状态', 'field' => 'statusstr', 'width' => 12),
-					array('title' => '是否关注', 'field' => 'followstr', 'width' => 12)
-				)
-			));
+	'title'   => '股东数据-' . date('Y-m-d-H-i', time()),
+	'columns' => array(
+		array('title' => 'ID', 'field' => 'id', 'width' => 12),
+		array('title' => '昵称', 'field' => 'nickname', 'width' => 12),
+		array('title' => '姓名', 'field' => 'realname', 'width' => 12),
+		array('title' => '手机号', 'field' => 'mobile', 'width' => 12),
+		array('title' => '微信号', 'field' => 'weixin', 'width' => 12),
+		array('title' => 'openid', 'field' => 'openid', 'width' => 24),
+		array('title' => '推荐人', 'field' => 'parentname', 'width' => 12),
+		array('title' => '股东等级', 'field' => 'levelname', 'width' => 12),
+		array('title' => '累计分红', 'field' => 'bonus', 'width' => 12),
+		array('title' => '注册时间', 'field' => 'createtime', 'width' => 12),
+		array('title' => '成为股东时间', 'field' => 'partneragenttime', 'width' => 12),
+		array('title' => '审核状态', 'field' => 'statusstr', 'width' => 12),
+		array('title' => '是否关注', 'field' => 'followstr', 'width' => 12)
+		)
+	));
 		}
 
 		$pager = pagination2($total, $pindex, $psize);
@@ -121,10 +120,10 @@ class Partner_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($members as $member) {
 			pdo_update('ewei_shop_member', array('ispartner' => 0, 'partnerstatus' => 0), array('id' => $member['id']));
@@ -158,7 +157,7 @@ class Partner_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and id<>' . intval($_GPC['selfid']);
 		}
 
-		$ds = pdo_fetchall('SELECT id,avatar,openid,nickname,openid,realname,mobile FROM ' . tablename('ewei_shop_member') . (' WHERE 1 ' . $condition . ' order by createtime desc'), $params);
+		$ds = pdo_fetchall('SELECT id,avatar,nickname,openid,realname,mobile FROM ' . tablename('ewei_shop_member') . ' WHERE 1 ' . $condition . ' order by createtime desc', $params);
 		include $this->template('globonus/query');
 	}
 
@@ -169,11 +168,11 @@ class Partner_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
 		$status = intval($_GPC['status']);
-		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,partnerstatus FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile,partnerstatus FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 		$time = time();
 
 		foreach ($members as $member) {
@@ -202,11 +201,11 @@ class Partner_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
 		$partnerblack = intval($_GPC['partnerblack']);
-		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile FROM ' . tablename('ewei_shop_member') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$members = pdo_fetchall('SELECT id,openid,nickname,realname,mobile FROM ' . tablename('ewei_shop_member') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($members as $member) {
 			if ($member['partnerblack'] === $partnerblack) {

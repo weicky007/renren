@@ -21,11 +21,10 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 		$_GPC['merch'] = empty($_GPC['merch']) ? 0 : $_GPC['merch'];
 		$_GPC['orderid'] = empty($_GPC['orderid']) ? 0 : $_GPC['orderid'];
-		$url = $info['url'];
 
 		if (!is_error($redis)) {
 			if ($redis->get($redis_key)) {
-				$url .= '&qudao=renren&goodsid=' . $_GPC['goodsid'] . '&merch=' . $_GPC['merch'] . '&orderid=' . $_GPC['orderid'];
+				$url = $info['url'] . '&goodsid=' . $_GPC['goodsid'] . '&merch=' . $_GPC['merch'] . '&orderid=' . $_GPC['orderid'] . '&qudao=renren';
 			}
 			else {
 				$res = p('open_messikefu')->checkOpen($info['key'], $info['plugin'], $info['domain']);

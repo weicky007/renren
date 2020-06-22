@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,8 +20,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_message_mass_task') . (' WHERE 1 ' . $condition . '  ORDER BY id asc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_task') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_message_mass_task') . ' WHERE 1 ' . $condition . '  ORDER BY id asc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_task') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 
 		foreach ($list as &$item) {
@@ -98,8 +97,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_message_mass_sign') . (' WHERE 1 ' . $condition . '  ORDER BY id asc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_sign') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_message_mass_sign') . ' WHERE 1 ' . $condition . '  ORDER BY id asc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_sign') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -142,14 +141,14 @@ class Index_EweiShopV2Page extends PluginWebPage
 						$openids[] = '\'' . $openid . '\'';
 					}
 
-					$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . (') and uniacid=' . $_W['uniacid']));
+					$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . ') and uniacid=' . $_W['uniacid']);
 				}
 			}
 		}
 
-		$list = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_member_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc'));
-		$list2 = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_member_group') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc'));
-		$list3 = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_commission_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc'));
+		$list = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_member_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc');
+		$list2 = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_member_group') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc');
+		$list3 = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_commission_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc');
 
 		if ($_W['ispost']) {
 			$data = array('uniacid' => $_W['uniacid'], 'title' => trim($_GPC['title']), 'messagetype' => intval($_GPC['messagetype']), 'sendlimittype' => intval($_GPC['sendlimittype']), 'status' => 0, 'pagecount' => 30);
@@ -239,7 +238,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params = array(':taskid' => $item['id'], ':uniacid' => $_W['uniacid']);
 			$sql = 'insert into  ' . tablename('ewei_message_mass_sign') . '  (uniacid,openid,nickname,taskid,`status`) ';
 			$sql .= ' SELECT  :uniacid,sm.openid,sm.nickname,:taskid,1 from ' . tablename('ewei_shop_member') . ' sm  inner join ' . tablename('mc_mapping_fans') . ' mf  on sm.openid=mf.openid and mf.follow=1 where sm.uniacid=:uniacid ';
-			if (intval($item['sendlimittype']) == 1 || intval($item['sendlimittype']) == 2) {
+			if ((intval($item['sendlimittype']) == 1) || (intval($item['sendlimittype']) == 2)) {
 				if (!empty($item['send_openid'])) {
 					$openids[] = array();
 					$openids = explode(',', $item['send_openid']);
@@ -259,15 +258,10 @@ class Index_EweiShopV2Page extends PluginWebPage
 					$sql .= ' and sm.level =:send_level';
 					$params[':send_level'] = $item['send_level'];
 				}
-
-				if ($item['send_level'] == -1) {
-					$sql .= ' and sm.level =:send_level';
-					$params[':send_level'] = 0;
-				}
 			}
 			else if (intval($item['sendlimittype']) == 4) {
 				if (!empty($item['send_group'])) {
-					$sql .= ' and find_in_set(:send_group,sm.groupid)';
+					$sql .= ' and sm.groupid =:send_group';
 					$params[':send_group'] = $item['send_group'];
 				}
 			}
@@ -289,7 +283,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 			pdo_delete('ewei_message_mass_sign', array('taskid' => $id, 'uniacid' => $_W['uniacid']));
 			pdo_query($sql, $params);
-			$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . ('WHERE taskid =\'' . $id . '\' and uniacid = \'' . $_W['uniacid'] . '\''));
+			$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . 'WHERE taskid =\'' . $id . '\' and uniacid = \'' . $_W['uniacid'] . '\'');
 			$data = array('sendnum' => intval($total), 'successnum' => 0, 'failnum' => 0, 'status' => 1);
 			pdo_update('ewei_message_mass_task', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 		}
@@ -336,16 +330,16 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$successnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . ('WHERE taskid =\'' . $id . '\'  and status =3  and uniacid = \'' . $_W['uniacid'] . '\''));
-		$failnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . ('WHERE taskid =\'' . $id . '\'  and status =4  and uniacid = \'' . $_W['uniacid'] . '\''));
-		$sendnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . ('WHERE taskid =\'' . $id . '\'   and uniacid = \'' . $_W['uniacid'] . '\''));
+		$successnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . 'WHERE taskid =\'' . $id . '\'  and status =3  and uniacid = \'' . $_W['uniacid'] . '\'');
+		$failnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . 'WHERE taskid =\'' . $id . '\'  and status =4  and uniacid = \'' . $_W['uniacid'] . '\'');
+		$sendnum = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_message_mass_sign') . 'WHERE taskid =\'' . $id . '\'   and uniacid = \'' . $_W['uniacid'] . '\'');
 		$data = array('sendnum' => intval($sendnum), 'successnum' => intval($successnum), 'failnum' => intval($failnum));
 		pdo_update('ewei_message_mass_task', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 		$item = pdo_fetch('SELECT  *   FROM ' . tablename('ewei_message_mass_task') . ' WHERE id =:id AND uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$remainnum = intval($item['sendnum']) - intval($item['successnum']) - intval($item['failnum']);
-		$jindu = ((double) $item['sendnum'] - (double) $remainnum) / (double) $item['sendnum'] * 100;
+		$jindu = (((double) $item['sendnum'] - (double) $remainnum) / (double) $item['sendnum']) * 100;
 		$jindu = round($jindu, 2);
-		$status = intval($item['status']) == 0 ? '未生成发送列表,请返回任务列表页生成发送列表然后进行消息群发操作' : '准备开始';
+		$status = (intval($item['status']) == 0 ? '未生成发送列表,请返回任务列表页生成发送列表然后进行消息群发操作' : '准备开始');
 		include $this->template();
 	}
 
@@ -354,31 +348,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$pagecount = empty($_GPC['pagecount']) ? 30 : intval($_GPC['pagecount']);
+		$pagecount = (empty($_GPC['pagecount']) ? 30 : intval($_GPC['pagecount']));
 
 		if (empty($id)) {
 			show_json(0, '发送任务ID错误!');
 		}
 
-		$mess_task = pdo_fetch('SELECT messagetype,templateid,resptitle,respthumb,respdesc,respurl,customertype,resdesc2 FROM ' . tablename('ewei_message_mass_task') . 'WHERE id =:id AND uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
-
-		if (empty($mess_task)) {
-			show_json(0, '发送任务未找到');
-		}
-
-		$items = pdo_fetchall('SELECT id,taskid,openid  FROM ' . tablename('ewei_message_mass_sign') . (' WHERE taskid =:id AND uniacid=:uniacid and status =1 order by id limit  ' . $pagecount), array(':id' => $id, ':uniacid' => $_W['uniacid']));
-
-		foreach ($items as $key => $val) {
-			$items[$key]['messagetype'] = $mess_task['messagetype'];
-			$items[$key]['templateid'] = $mess_task['templateid'];
-			$items[$key]['resptitle'] = $mess_task['resptitle'];
-			$items[$key]['respthumb'] = $mess_task['respthumb'];
-			$items[$key]['respdesc'] = $mess_task['respdesc'];
-			$items[$key]['respurl'] = $mess_task['respurl'];
-			$items[$key]['customertype'] = $mess_task['customertype'];
-			$items[$key]['resdesc2'] = $mess_task['resdesc2'];
-		}
-
+		$items = pdo_fetchall('SELECT s.id,s.taskid,s.openid,s.nickname,t.messagetype,t.templateid,t.resptitle,t.respthumb,t.respdesc,t.respurl,t.customertype,t.resdesc2  FROM ' . tablename('ewei_message_mass_sign') . ' s inner join ' . tablename('ewei_message_mass_task') . " t\r\n          on s.taskid = t.id  WHERE s.taskid =:id AND s.uniacid=:uniacid and s.status =1 order by id limit  " . $pagecount, array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$successnum = 0;
 		$failnum = 0;
 		$count = count($items);
@@ -443,14 +419,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$template = pdo_fetch('SELECT * FROM ' . tablename('ewei_message_mass_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $templateid, ':uniacid' => $_W['uniacid']));
 			$data = iunserializer($template['data']);
 			$template['first'] = str_replace('[商城名称]', $_W['shopset']['shop']['name'], $template['first']);
-			$template['first'] = str_replace('[粉丝昵称]', $member['nickname'], $template['first']);
+			$template['first'] = str_replace('[粉丝昵称]', $nickname, $template['first']);
 			$template['remark'] = str_replace('[商城名称]', $_W['shopset']['shop']['name'], $template['remark']);
-			$template['remark'] = str_replace('[粉丝昵称]', $member['nickname'], $template['remark']);
+			$template['remark'] = str_replace('[粉丝昵称]', $nickname, $template['remark']);
 			$msg = array(
 				'first'  => array('value' => $template['first'], 'color' => $template['firstcolor']),
-				'remark' => array('value' => '
-' . $template['remark'], 'color' => $template['remarkcolor'])
-			);
+				'remark' => array('value' => $template['remark'], 'color' => $template['remarkcolor'])
+				);
 			$i = 0;
 
 			while ($i < count($data)) {

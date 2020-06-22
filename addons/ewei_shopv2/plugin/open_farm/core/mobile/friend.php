@@ -6,13 +6,17 @@ if (!defined('IN_IA')) {
 
 class Mood_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 首页方法     */
+	/**
+     * 首页方法
+     */
 	public function main()
 	{
 		require_once $this->template();
 	}
 
-	/**     * 绑定用户,成为好友     */
+	/**
+     * 绑定用户,成为好友
+     */
 	public function relation()
 	{
 		global $_W;

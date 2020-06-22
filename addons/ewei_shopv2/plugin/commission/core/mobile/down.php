@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,11 +16,11 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 		$levelcount3 = $member['level3'];
 		$level1 = $level2 = $level3 = 0;
 		$level1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid=:agentid and uniacid=:uniacid limit 1', array(':agentid' => $member['id'], ':uniacid' => $_W['uniacid']));
-		if (2 <= $this->set['level'] && 0 < $levelcount1) {
+		if ((2 <= $this->set['level']) && (0 < $levelcount1)) {
 			$level2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
 
-		if (3 <= $this->set['level'] && 0 < $levelcount2) {
+		if ((3 <= $this->set['level']) && (0 < $levelcount2)) {
 			$level3 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
 
@@ -37,7 +36,7 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 		$member = $this->model->getInfo($openid);
 		$total_level = 0;
 		$level = intval($_GPC['level']);
-		(3 < $level || $level <= 0) && ($level = 1);
+		((3 < $level) || ($level <= 0)) && ($level = 1);
 		$condition = '';
 		$levelcount1 = $member['level1'];
 		$levelcount2 = $member['level2'];
@@ -53,10 +52,10 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 		else if ($level == 2) {
 			if (empty($levelcount1)) {
 				show_json(1, array(
-					'list'     => array(),
-					'total'    => 0,
-					'pagesize' => $psize
-				));
+	'list'     => array(),
+	'total'    => 0,
+	'pagesize' => $psize
+	));
 			}
 
 			$condition = ' and agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ')';
@@ -67,10 +66,10 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 			if ($level == 3) {
 				if (empty($levelcount2)) {
 					show_json(1, array(
-						'list'     => array(),
-						'total'    => 0,
-						'pagesize' => $psize
-					));
+	'list'     => array(),
+	'total'    => 0,
+	'pagesize' => $psize
+	));
 				}
 
 				$condition = ' and agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')';
@@ -79,7 +78,7 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 			}
 		}
 
-		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member') . ' where uniacid = ' . $_W['uniacid'] . (' ' . $condition . '  ORDER BY childtime DESC limit ') . ($pindex - 1) * $psize . ',' . $psize);
+		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member') . ' where uniacid = ' . $_W['uniacid'] . ' ' . $condition . '  ORDER BY isagent desc,id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize);
 
 		foreach ($list as &$row) {
 			if ($member['isagent'] && $member['status']) {

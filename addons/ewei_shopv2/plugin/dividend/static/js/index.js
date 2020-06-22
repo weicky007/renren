@@ -12,7 +12,6 @@ define(['core', 'tpl'], function (core, tpl) {
                 }else if(ret.status == 1){
                     FoxUI.toast.show(result.message);
                     FoxUI.loader.hide();
-                    location.reload();
                     return
                 }
             })

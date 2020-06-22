@@ -1,11 +1,15 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-class Storegroup_EweiShopV2Page extends WebPage
+class Storegroup_EweiShopV2Page extends ComWebPage
 {
+	public function __construct($_com = 'verify')
+	{
+		parent::__construct($_com);
+	}
+
 	public function main()
 	{
 		global $_W;

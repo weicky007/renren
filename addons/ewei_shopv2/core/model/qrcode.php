@@ -1,5 +1,4 @@
 <?php
-
 class Qrcode_EweiShopV2Model
 {
 	/**

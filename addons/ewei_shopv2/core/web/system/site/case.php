@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +24,8 @@ class Case_EweiShopV2Page extends SystemPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_case') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_system_case') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_case') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_system_case') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -49,7 +48,7 @@ class Case_EweiShopV2Page extends SystemPage
 
 		if ($_W['ispost']) {
 			empty($_GPC['title']) && show_json(0, array('message' => '合作伙伴名称不能为空', 'url' => referer()));
-			$data = array('title' => trim($_GPC['title']), 'thumb' => save_media($_GPC['thumb']), 'qr' => save_media($_GPC['qr']), 'displayorder' => intval($_GPC['displayorder']), 'status' => intval($_GPC['status']), 'cate' => intval($_GPC['cate']), 'description' => trim($_GPC['description']));
+			$data = array('title' => trim($_GPC['title']), 'thumb' => trim($_GPC['thumb']), 'qr' => trim($_GPC['qr']), 'displayorder' => intval($_GPC['displayorder']), 'status' => intval($_GPC['status']), 'cate' => intval($_GPC['cate']), 'description' => trim($_GPC['description']));
 
 			if (!empty($id)) {
 				pdo_update('ewei_shop_system_case', $data, array('id' => $id));
@@ -76,10 +75,10 @@ class Case_EweiShopV2Page extends SystemPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . (' WHERE id in( ' . $id . ' )'));
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . ' WHERE id in( ' . $id . ' )');
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_system_case', array('id' => $item['id']));
@@ -95,7 +94,7 @@ class Case_EweiShopV2Page extends SystemPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . (' WHERE id in( ' . $id . ' )'));
+		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . ' WHERE id in( ' . $id . ' )');
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_system_case', array('displayorder' => $displayorder), array('id' => $id));
@@ -111,14 +110,14 @@ class Case_EweiShopV2Page extends SystemPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . (' WHERE id in( ' . $id . ' )'));
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_case') . ' WHERE id in( ' . $id . ' )');
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_system_case', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('system.site.csae.edit', '修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '显示' : '隐藏');
+			plog('system.site.csae.edit', ('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));

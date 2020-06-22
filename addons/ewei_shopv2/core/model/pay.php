@@ -1,5 +1,4 @@
 <?php
-
 class Pay_EweiShopV2Model
 {
 	private $qpay;

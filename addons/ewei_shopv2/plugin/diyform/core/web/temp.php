@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,23 +11,23 @@ class Temp_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$globalData = $this->model->globalData();
 		extract($globalData);
-		$page = empty($_GPC['page']) ? '' : $_GPC['page'];
+		$page = (empty($_GPC['page']) ? '' : $_GPC['page']);
 		$pindex = max(1, intval($page));
 		$psize = 20;
-		$kw = empty($_GPC['keyword']) ? '' : $_GPC['keyword'];
-		$items = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE uniacid=:uniacid and title like :name order by id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':name' => '%' . $kw . '%', ':uniacid' => $_W['uniacid']));
+		$kw = (empty($_GPC['keyword']) ? '' : $_GPC['keyword']);
+		$items = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE uniacid=:uniacid and title like :name order by id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':name' => '%' . $kw . '%', ':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE uniacid=:uniacid and title like :name order by id desc ', array(':uniacid' => $_W['uniacid'], ':name' => '%' . $kw . '%'));
 		$pager = pagination2($total, $pindex, $psize);
 		$set = $this->getSet();
 
 		foreach ($items as $key => &$value) {
 			$value['err'] = false;
-			if ($set['user_diyform_open'] && $set['user_diyform'] == $value['id']) {
+			if ($set['user_diyform_open'] && ($set['user_diyform'] == $value['id'])) {
 				$value['use_flag1'] = 1;
 				$value['err'] = true;
 			}
 
-			if ($set['commission_diyform_open'] && $set['commission_diyform'] == $value['id']) {
+			if ($set['commission_diyform_open'] && ($set['commission_diyform'] == $value['id'])) {
 				$value['use_flag2'] = 1;
 				$value['err'] = true;
 			}
@@ -66,11 +65,11 @@ class Temp_EweiShopV2Page extends PluginWebPage
 			$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 			$dfields = iunserializer($item['fields']);
 			$set = $this->getSet();
-			if ($set['user_diyform_open'] && $set['user_diyform'] == $id) {
+			if ($set['user_diyform_open'] && ($set['user_diyform'] == $id)) {
 				$use_flag1 = 1;
 			}
 
-			if ($set['commission_diyform_open'] && $set['commission_diyform'] == $id) {
+			if ($set['commission_diyform_open'] && ($set['commission_diyform'] == $id)) {
 				$use_flag2 = 1;
 			}
 
@@ -105,19 +104,19 @@ class Temp_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$types = pdo_fetchall('SELECT id,title  FROM ' . tablename('ewei_shop_diyform_type') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$types = pdo_fetchall('SELECT id,title  FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 		$errmsg = '';
 
 		foreach ($types as $type) {
 			$err = '';
-			if ($set['user_diyform_open'] && $set['user_diyform'] == $id) {
+			if ($set['user_diyform_open'] && ($set['user_diyform'] == $id)) {
 				$err .= '用户资料正在使用该表单，请关闭后再进行删除。<br/>';
 			}
 
-			if ($set['commission_diyform_open'] && $set['commission_diyform'] == $id) {
+			if ($set['commission_diyform_open'] && ($set['commission_diyform'] == $id)) {
 				$err .= '分销商申请资料正在使用该表单，请关闭后再进行删除。<br/>';
 			}
 

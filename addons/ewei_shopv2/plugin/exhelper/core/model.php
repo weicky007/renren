@@ -27,9 +27,9 @@ class ExhelperModel extends PluginModel
 			$params[':expressname'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$sql = 'SELECT id,expressname,expresscom,isdefault FROM ' . tablename('ewei_shop_exhelper_express') . (' where  1 and ' . $condition . ' ORDER BY isdefault desc, id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
+		$sql = 'SELECT id,expressname,expresscom,isdefault FROM ' . tablename('ewei_shop_exhelper_express') . ' where  1 and ' . $condition . ' ORDER BY isdefault desc, id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exhelper_express') . (' where 1 and ' . $condition), $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exhelper_express') . ' where 1 and ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		return array('list' => $list, 'total' => $total, 'pager' => $pager, 'type' => $type);
 	}
@@ -57,7 +57,7 @@ class ExhelperModel extends PluginModel
 	public function tempDelete($id, $type)
 	{
 		global $_W;
-		$items = pdo_fetchall('SELECT id,expressname FROM ' . tablename('ewei_shop_exhelper_express') . (' WHERE id in( ' . $id . ' ) and type=:type and uniacid=:uniacid and merchid=0'), array(':type' => $type, ':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,expressname FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE id in( ' . $id . ' ) and type=:type and uniacid=:uniacid and merchid=0', array(':type' => $type, ':uniacid' => $_W['uniacid']));
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_exhelper_express', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));

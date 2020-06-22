@@ -6,11 +6,11 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">{php echo $this->set['texts']['dividend']}订单</div>
+        <div class="title">分红订单</div>
         <div class="fui-header-right"></div>
     </div>
     <div class="fui-content footbar" >
-        <div class='moneytop'>{php echo $this->set['texts']['dividend_total']}：+{$member['dividend_total']}{php echo $this->set['texts']['yuan']}</div>
+        <div class='moneytop'>累计分红：+{$member['dividend_total']}元</div>
         <div class='flex topnav' id="tab">
             <a class='active' data-tab='status'>所有</a>
             <a href="javascript:void(0)" data-tab='status0'>待付款</a>
@@ -54,7 +54,7 @@
                 <div>订单编号：<% order.ordersn %></div>
                 <div>下单时间：<% order.createtime %></div>
             </div>
-            <div class='moneytotal'>预计{php echo $this->set['texts']['dividend']}：<span>+<% order.dividend_price %></span></div>
+            <div class='moneytotal'>预计分红：<span>+<% order.dividend_price %></span></div>
         </div>
         <%/each%>
     </script>
@@ -62,15 +62,15 @@
     <div class="share-footbar">
         <a  href="{php echo mobileUrl('dividend')}"  class='item external'>
             <i class="icon icon-dividendhome"></i>
-            <span class='text'>{php echo $this->set['texts']['dividend']}中心</span>
+            <span class='text'>分红中心</span>
         </a>
         <a href="{php echo mobileUrl('dividend/withdraw')}" class='item'>
             <i class="icon icon-fenxiaoyongjin1"></i>
-            <span class='text'>{php echo $this->set['texts']['dividend']}佣金</span>
+            <span class='text'>分红佣金</span>
         </a>
         <a href="#" class='item active'>
             <i class="icon icon-fenxiaodingdan1"></i>
-            <span class='text'>{php echo $this->set['texts']['dividend']}订单</span>
+            <span class='text'>分红订单</span>
         </a>
         <a href="{php echo mobileUrl('dividend/down')}" class='item'>
             <i class="icon icon-wodetuandui2"></i>

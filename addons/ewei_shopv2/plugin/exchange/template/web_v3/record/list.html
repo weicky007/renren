@@ -9,7 +9,7 @@
 
 <div class="page-header">
     当前位置：<span class="text-primary">订单管理</span>
-    <span>订单数:  <span class='text-danger'>{$total}</span> 订单金额:  <span class='text-danger'>￥{$totalmoney}</span> {if !empty($magent['nickname'])}订单推广人:  <span class='text-danger'>{$magent['nickname']}</span>{/if}</span>
+    <span>订单数:  <span class='text-danger'>{$total}</span> 订单金额:  <span class='text-danger'>{$totalmoney}</span> {if !empty($magent['nickname'])}订单推广人:  <span class='text-danger'>{$magent['nickname']}</span>{/if}</span>
 
 </div>
 <div class="page-content">
@@ -288,7 +288,7 @@
             <a class='op text-primary'  href="{php echo webUrl('order/op/refund', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a><br/>
             {/if}
             {if $item['addressid']!=0 && $item['statusvalue']>=2}
-            <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'],'mobile'=>$item['addressdata']['mobile']))}"   >物流信息</a>
+            <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}"   >物流信息</a>
             {/if}
 
         </td>

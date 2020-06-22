@@ -1,10 +1,9 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require dirname(__DIR__) . '/../defines.php';
+require MODULE_ROOT . '/defines.php';
 class ComProcessor extends WeModuleProcessor
 {
 	public $model;

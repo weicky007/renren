@@ -49,25 +49,17 @@
 <div class="form-group">
     <label class="col-sm-1 control-label"></label>
     <div class="col-sm-11">
-        {ife 'goods' $item}
-            {if $item['type'] == 3}
-            <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
-            {else}
-            <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
-            <label for="totalcnf2" class="radio-inline"><input type="radio" name="totalcnf" value="1" id="totalcnf2"  {if !empty($item) && $item['totalcnf'] == 1}checked="true"{/if} /> 付款减库存</label>
-            <label for="totalcnf3" class="radio-inline"><input type="radio" name="totalcnf" value="2" id="totalcnf3"  {if !empty($item) && $item['totalcnf'] == 2}checked="true"{/if} /> 永不减库存</label>
-            {/if}
+              {ife 'goods' $item}
+        <label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
+        <label for="totalcnf2" class="radio-inline"><input type="radio" name="totalcnf" value="1" id="totalcnf2"  {if !empty($item) && $item['totalcnf'] == 1}checked="true"{/if} /> 付款减库存</label>
+        <label for="totalcnf3" class="radio-inline"><input type="radio" name="totalcnf" value="2" id="totalcnf3"  {if !empty($item) && $item['totalcnf'] == 2}checked="true"{/if} /> 永不减库存</label>
         {else}
-        {if $item['type'] == 3}
-        {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
-        {else}
+        
         <div class='form-control-static'>
-            {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
-            {if !empty($item) && $item['totalcnf'] == 1}付款减库存{/if}
-            {if !empty($item) && $item['totalcnf'] == 2}永不减库存{/if}
-        </div>
-        {/if}
-
+           {if empty($item) || $item['totalcnf'] == 0}拍下减库存{/if}
+           {if !empty($item) && $item['totalcnf'] == 1}付款减库存{/if}
+           {if !empty($item) && $item['totalcnf'] == 2}永不减库存{/if}
+         </div>
         
         {/if}
     </div>
@@ -80,8 +72,11 @@
 		<input type="checkbox" id="hasoption" value="1" name="hasoption" {if $item['hasoption']==1}checked{/if} />启用商品规格
 	</label>
 	  <span class="help-block">启用商品规格后，商品的价格及库存以商品规格为准,库存设置为0则会到”已售罄“中，手机也不会显示, -1为不限制</span>
-       {else}
+	 
+       {else} 
+      
            <div class='form-control-static'>{if $item['hasoption']==1}启用{else}不启用{/if} </div>
+           
        {/if}
            </div>
 </div>
@@ -104,11 +99,6 @@
 				<a href="javascript:;" onclick="refreshOptions();" title="刷新规格项目表" class="btn btn-primary"><i class="fa fa-refresh"></i> 刷新规格项目表</a></h4>
 			</td>
 		</tr>
-        <tr style="display: none;" id="optiontip">
-            <td>
-                <div class="alert alert-danger">警告：规格数据有变动，请重新点击上方 [刷新规格项目表] 按钮！</div>
-            </td>
-        </tr>
 	</table>
     {/if}
 	<div class="alert alert-info wholesalewarning"  {if $item['type']!=4}  style="display: none"{/if}>
@@ -149,12 +139,6 @@
 <input type="hidden" name="commissionArray" value=''>
 <script language="javascript">
 	$(function(){
-        $(document).on('input propertychange change', '#specs input', function () {
-            // 改变规格锁定提交
-            window.optionchanged = true;
-            $('#optiontip').show();
-        });
-
 		$(".spec_item_thumb").find('i').click(function(){
 			var group  =$(this).parent();
 			group.find('img').attr('src',"{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg");
@@ -181,11 +165,7 @@
 		$("#hasoption").click(function(){
 			var obj = $(this);
 			if (obj.get(0).checked){
-                $('#goodssn').attr('readonly',true);
-                $('#productsn').attr('readonly',true);
-                $('#weight').attr('readonly',true);
-                $('#total').attr('readonly',true);
-
+				$('.hasoption').attr('readonly',true);
 				$("#tboption").show();
 				$("#tbdiscount").show();
 				$("#isdiscount_discounts").show();
@@ -216,14 +196,8 @@
 				$("#isdiscount_discounts_default").show();
 
 				$("#commission_default").show();
-                $('#goodssn').removeAttr('readonly');
-                $('#productsn').removeAttr('readonly');
+				$('.hasoption').removeAttr('readonly');
 
-                // 商品类型如果为虚拟卡密则不允许修改库存
-                if(type !=3){
-                    $('#weight').removeAttr('readonly');
-                    $('#total').removeAttr('readonly');
-                }
 				$("#discounts_type1").hide().parent().hide();
 				$("#discounts_type0").click();
 			}
@@ -309,11 +283,6 @@
 	}
     
 	function refreshOptions(){
-        // 刷新后重置
-        window.optionchanged = false;
-        $('#optiontip').hide();
-
-
  var html = '<table class="table table-bordered table-condensed"><thead><tr class="active">';
 	var specs = [];
          if($('.spec_item').length<=0){
@@ -379,17 +348,11 @@
 		}
 	}
 
-    //  商品类型如果为虚拟卡密则不允许修改库存
-    if(type==3){
-        html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">库存</div><div class="input-group"><input type="text" class="form-control  input-sm option_stock_all" readonly="readonly" VALUE=""/><span class="input-group-addon disabled"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置"></a></span></div></div></th>';
-    }else{
-        html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">库存</div><div class="input-group"><input type="text" class="form-control  input-sm option_stock_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_stock\');"></a></span></div></div></th>';
-    }
-
-	html += '<th class="type-4"><div class=""><div style="padding-bottom:10px;text-align:center;">预售价</div><div class="input-group"><input type="text" class="form-control  input-sm option_presell_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_presell\');"></a></span></div></div></th>';
-	html += '<th class="type-4"><div class=""><div style="padding-bottom:10px;text-align:center;">现价</div><div class="input-group"><input type="text" class="form-control  input-sm option_marketprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_marketprice\');"></a></span></div></div></th>';
-	html+='<th class="type-4"><div class=""><div style="padding-bottom:10px;text-align:center;">原价</div><div class="input-group"><input type="text" class="form-control  input-sm option_productprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_productprice\');"></a></span></div></div></th>';
-	html+='<th class="type-4"><div class=""><div style="padding-bottom:10px;text-align:center;">成本价</div><div class="input-group"><input type="text" class="form-control  input-sm option_costprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_costprice\');"></a></span></div></div></th>';
+	html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">库存</div><div class="input-group"><input type="text" class="form-control  input-sm option_stock_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_stock\');"></a></span></div></div></th>';
+	html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">预售价</div><div class="input-group"><input type="text" class="form-control  input-sm option_presell_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_presell\');"></a></span></div></div></th>';
+	html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">现价</div><div class="input-group"><input type="text" class="form-control  input-sm option_marketprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_marketprice\');"></a></span></div></div></th>';
+	html+='<th><div class=""><div style="padding-bottom:10px;text-align:center;">原价</div><div class="input-group"><input type="text" class="form-control  input-sm option_productprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_productprice\');"></a></span></div></div></th>';
+	html+='<th><div class=""><div style="padding-bottom:10px;text-align:center;">成本价</div><div class="input-group"><input type="text" class="form-control  input-sm option_costprice_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_costprice\');"></a></span></div></div></th>';
 	html+='<th><div class=""><div style="padding-bottom:10px;text-align:center;">编码</div><div class="input-group"><input type="text" class="form-control  input-sm option_goodssn_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_goodssn\');"></a></span></div></div></th>';
 	html+='<th><div class=""><div style="padding-bottom:10px;text-align:center;">条码</div><div class="input-group"><input type="text" class="form-control  input-sm option_productsn_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_productsn\');"></a></span></div></div></th>';
 	html+='<th><div class=""><div style="padding-bottom:10px;text-align:center;">重量（克）</div><div class="input-group"><input type="text" class="form-control  input-sm option_weight_all"VALUE=""/><span class="input-group-addon"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置" onclick="setCol(\'option_weight\');"></a></span></div></div></th>';
@@ -446,21 +409,16 @@
 		}
 
 		hh += '<td>'
-        //  商品类型如果为虚拟卡密则不允许修改库存
-        if(type==3){
-            hh += '<input data-name="option_stock_' + ids +'" type="text" class="form-control option_stock option_stock_' + ids +'" readonly="readonly"  value=""/></td>';
-        }else{
-            hh += '<input data-name="option_stock_' + ids +'" type="text" class="form-control option_stock option_stock_' + ids +'" value="' +(val.stock=='undefined'?'':val.stock )+'"/></td>';
-        }
+		hh += '<input data-name="option_stock_' + ids +'" type="text" class="form-control option_stock option_stock_' + ids +'" value="' +(val.stock=='undefined'?'':val.stock )+'"/></td>';
 		hh += '<input data-name="option_id_' + ids+'" type="hidden" class="form-control option_id option_id_' + ids +'" value="' +(val.id=='undefined'?'':val.id )+'"/>';
 		hh += '<input data-name="option_ids" type="hidden" class="form-control option_ids option_ids_' + ids +'" value="' + ids +'"/>';
 		hh += '<input data-name="option_title_' + ids +'" type="hidden" class="form-control option_title option_title_' + ids +'" value="' +(val.title=='undefined'?'':val.title )+'"/></td>';
         hh += '<input data-name="option_virtual_' + ids +'" type="hidden" class="form-control option_virtual option_virtual_' + ids +'" value="' +(val.virtual=='undefined'?'':val.virtual )+'"/></td>';
 		hh += '</td>';
-		hh += '<td class="type-4"><input data-name="option_presell_' + ids+'" type="text" class="form-control option_presell option_presell_' + ids +'" value="' +(val.presell=='undefined'?'':val.presell )+'"/></td>';
-		hh += '<td class="type-4"><input data-name="option_marketprice_' + ids+'" type="text" class="form-control option_marketprice option_marketprice_' + ids +'" value="' +(val.marketprice=='undefined'?'':val.marketprice )+'"/></td>';
-		hh += '<td class="type-4"><input data-name="option_productprice_' + ids+'" type="text" class="form-control option_productprice option_productprice_' + ids +'" " value="' +(val.productprice=='undefined'?'':val.productprice )+'"/></td>';
-		hh += '<td class="type-4"><input data-name="option_costprice_' +ids+'" type="text" class="form-control option_costprice option_costprice_' + ids +'" " value="' +(val.costprice=='undefined'?'':val.costprice )+'"/></td>';
+		hh += '<td><input data-name="option_presell_' + ids+'" type="text" class="form-control option_presell option_presell_' + ids +'" value="' +(val.presell=='undefined'?'':val.presell )+'"/></td>';
+		hh += '<td><input data-name="option_marketprice_' + ids+'" type="text" class="form-control option_marketprice option_marketprice_' + ids +'" value="' +(val.marketprice=='undefined'?'':val.marketprice )+'"/></td>';
+		hh += '<td><input data-name="option_productprice_' + ids+'" type="text" class="form-control option_productprice option_productprice_' + ids +'" " value="' +(val.productprice=='undefined'?'':val.productprice )+'"/></td>';
+		hh += '<td><input data-name="option_costprice_' +ids+'" type="text" class="form-control option_costprice option_costprice_' + ids +'" " value="' +(val.costprice=='undefined'?'':val.costprice )+'"/></td>';
 		hh += '<td><input data-name="option_goodssn_' +ids+'" type="text" class="form-control option_goodssn option_goodssn_' + ids +'" " value="' +(val.goodssn=='undefined'?'':val.goodssn )+'"/></td>';
 		hh += '<td><input data-name="option_productsn_' +ids+'" type="text" class="form-control option_productsn option_productsn_' + ids +'" " value="' +(val.productsn=='undefined'?'':val.productsn )+'"/></td>';
 		hh += '<td><input data-name="option_weight_' + ids +'" type="text" class="form-control option_weight option_weight_' + ids +'" " value="' +(val.weight=='undefined'?'':val.weight )+'"/></td>';
@@ -476,12 +434,6 @@
 		commission_change();
 		{/if}
 		isdiscount_change();
-
-        if(window.type=='4'){
-            $('.type-4').hide();
-        }else{
-            $('.type-4').show();
-        }
 }
 
 	function refreshDiscount() {

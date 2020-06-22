@@ -1,6 +1,6 @@
 {template '_header'}
 <div class="page-heading"> <h2>1688助手</h2> </div>
-<div class='alert alert-danger'>每次添加的商品链接请保持在3个以内.尽量在服务器空闲时间来操作，会占用大量内存与带宽，在获取过程中，请不要进行任何操作!</div>
+<div class='alert alert-danger'>尽量在服务器空闲时间来操作，会占用大量内存与带宽，在获取过程中，请不要进行任何操作!</div>
 
 <form id="dataform" action="" method="post" class="form-horizontal form">
 
@@ -58,15 +58,6 @@
 
         urls = $("#url").val().split('\n');
         total = urls.length;
-
-        if(total>3)
-        {
-            tip.msgbox.err("单次获取的商品数量请不要超过3个,以免会影响抓取效率!");
-
-            $("#btn_submit").val("立即获取").addClass("btn-primary").removeAttr("disabled");
-            return;
-        }
-
         $("#btn_submit").val("检测到需要获取 " + total + " 个宝贝, 请等待开始....");
         fetch_next();
         return;
@@ -104,4 +95,3 @@
 
 {template '_footer'}
 
-<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

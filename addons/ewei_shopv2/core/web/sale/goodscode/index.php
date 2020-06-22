@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,8 +22,7 @@ class Index_EweiShopV2Page extends WebPage
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$goodscodes = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goodscode_good') . '
-                    WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$goodscodes = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goodscode_good') . "\r\n                    WHERE 1 " . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_goodscode_good') . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();
@@ -42,7 +40,7 @@ class Index_EweiShopV2Page extends WebPage
 			$id = trim($_GPC['ids']);
 		}
 
-		$items = pdo_fetchall('SELECT id,title,qrcode FROM ' . tablename('ewei_shop_goodscode_good') . (' WHERE id in(' . $id . ') AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,qrcode FROM ' . tablename('ewei_shop_goodscode_good') . ' WHERE id in(' . $id . ') AND uniacid=' . $_W['uniacid']);
 		$res = array();
 
 		foreach ($items as $key => $value) {
@@ -165,10 +163,10 @@ class Index_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goodscode_good', array('deleted' => 1, 'status' => 0), array('id' => $item['id']));
@@ -185,14 +183,14 @@ class Index_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goodscode_good', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('sale.goodscode.edit', '修改二维码商品状态<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '开启' : '关闭');
+			plog('sale.goodscode.edit', ('修改二维码商品状态<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '开启' : '关闭');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -205,10 +203,10 @@ class Index_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goodscode_good') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_goodscode_good', array('id' => $item['id']));
@@ -262,8 +260,7 @@ class Index_EweiShopV2Page extends WebPage
 			$params[':keywords'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title,thumb,content FROM ' . tablename('ewei_shop_goods') . ('
-            WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$ds = pdo_fetchall('SELECT id,title,thumb,content FROM ' . tablename('ewei_shop_goods') . "\r\n            WHERE 1 " . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
 		$ds = set_medias($ds, array('thumb'));

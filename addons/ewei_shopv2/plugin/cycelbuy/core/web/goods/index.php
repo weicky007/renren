@@ -457,8 +457,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$com_virtual = com('virtual');
 		$dispatch_data = pdo_fetchall('select * from ' . tablename('ewei_shop_dispatch') . ' where uniacid=:uniacid and merchid=:merchid and enabled=1 order by displayorder desc', array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
 		$levels = array_merge(array(
-			array('id' => 0, 'key' => 'default', 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
-		), $levels);
+	array('id' => 0, 'key' => 'default', 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
+	), $levels);
 
 		if ($com_virtual) {
 			$virtual_types = pdo_fetchall('select * from ' . tablename('ewei_shop_virtual_type') . ' where uniacid=:uniacid and merchid=:merchid and recycled = 0 order by id asc', array(':uniacid' => $_W['uniacid'], ':merchid' => 0));

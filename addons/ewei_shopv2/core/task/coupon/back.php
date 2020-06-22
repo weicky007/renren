@@ -1,5 +1,4 @@
 <?php
-
 ini_set('display_errors', 'On');
 error_reporting(32767);
 require '../../../../../framework/bootstrap.inc.php';
@@ -22,7 +21,7 @@ foreach ($sets as $set) {
 	$trade = m('common')->getSysset('trade', $_W['uniacid']);
 	$days = intval($trade['refunddays']);
 	$daytimes = 86400 * $days;
-	$orders = pdo_fetchall('select id,couponid from ' . tablename('ewei_shop_order') . (' where  uniacid=' . $_W['uniacid'] . ' and status=3 and isparent=0 and couponid<>0 and finishtime + ' . $daytimes . ' <=unix_timestamp() '));
+	$orders = pdo_fetchall('select id,couponid from ' . tablename('ewei_shop_order') . ' where  uniacid=' . $_W['uniacid'] . ' and status=3 and isparent=0 and couponid<>0 and finishtime + ' . $daytimes . ' <=unix_timestamp() ');
 
 	if (!empty($orders)) {
 		if ($p) {

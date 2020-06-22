@@ -138,7 +138,7 @@ define(['jquery', 'jquery.gcjs', 'foxui', 'tpl'], function ($, gc, FoxUI, tpl) {
 		return output;
 	};
 
-	/*商品组*/
+	//商品组
 	if ($('.fui-goods-group').length) {
 		var resizeImages = function () {
 			$('.fui-goods-group img').not(".exclude").each(function () {
@@ -148,10 +148,5 @@ define(['jquery', 'jquery.gcjs', 'foxui', 'tpl'], function ($, gc, FoxUI, tpl) {
 		window.onload = resizeImages;
 		window.resize = resizeImages;
 	}
-
-    /*页面空白处理*/
-    if ($('.fui-page').length) {
-        $('.fui-page').closest('.fui-page').css('height', $('.fui-page').closest('.fui-page').height()+'px');
-    }
 	FoxUI.init();
 });

@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -14,15 +13,20 @@ class Index_EweiShopV2Page extends MobilePage
 		$catlevel = intval($_W['shopset']['category']['level']);
 		$opencategory = true;
 		$plugin_commission = p('commission');
-		if ($plugin_commission && 0 < intval($_W['shopset']['commission']['level'])) {
+		if ($plugin_commission && (0 < intval($_W['shopset']['commission']['level']))) {
 			$mid = intval($_GPC['mid']);
-			if (!empty($mid) && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {
+
+			if (!(empty($mid)) && empty($_W['shopset']['commission']['closemyshop']) && !(empty($_W['shopset']['commission']['select_goods']))) {
 				$shop = p('commission')->getShop($mid);
-				if (empty($shop['selectcategory']) && !empty($shop['selectgoods'])) {
+
+				if (empty($shop['selectcategory']) && !(empty($shop['selectgoods']))) {
 					$opencategory = false;
 				}
+
 			}
+
 		}
+
 
 		include $this->template();
 	}
@@ -37,13 +41,14 @@ class Index_EweiShopV2Page extends MobilePage
 		$giftgoodsid = explode(',', $gift['giftgoodsid']);
 		$giftgoods = array();
 
-		if (!empty($giftgoodsid)) {
-			foreach ($giftgoodsid as $key => $value) {
-				$giftgoods[$key] = pdo_fetch('select id,status,title,thumb,marketprice,total from ' . tablename('ewei_shop_goods') . ' where uniacid = ' . $uniacid . ' and deleted = 0  and id = ' . $value . ' and status = 2 ');
+		if (!(empty($giftgoodsid))) {
+			foreach ($giftgoodsid as $key => $value ) {
+				$giftgoods[$key] = pdo_fetch('select id,status,title,thumb,marketprice from ' . tablename('ewei_shop_goods') . ' where uniacid = ' . $uniacid . ' and deleted = 0 and total > 0 and id = ' . $value . ' and status = 2 ');
 			}
 
 			$giftgoods = array_filter($giftgoods);
 		}
+
 
 		include $this->template();
 	}
@@ -54,17 +59,21 @@ class Index_EweiShopV2Page extends MobilePage
 		global $_W;
 		$args = array('pagesize' => 10, 'page' => intval($_GPC['page']), 'isnew' => trim($_GPC['isnew']), 'ishot' => trim($_GPC['ishot']), 'isrecommand' => trim($_GPC['isrecommand']), 'isdiscount' => trim($_GPC['isdiscount']), 'istime' => trim($_GPC['istime']), 'issendfree' => trim($_GPC['issendfree']), 'keywords' => trim($_GPC['keywords']), 'cate' => trim($_GPC['cate']), 'order' => trim($_GPC['order']), 'by' => trim($_GPC['by']));
 		$plugin_commission = p('commission');
-		if ($plugin_commission && 0 < intval($_W['shopset']['commission']['level']) && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {
+		if ($plugin_commission && (0 < intval($_W['shopset']['commission']['level'])) && empty($_W['shopset']['commission']['closemyshop']) && !(empty($_W['shopset']['commission']['select_goods']))) {
 			$frommyshop = intval($_GPC['frommyshop']);
 			$mid = intval($_GPC['mid']);
-			if (!empty($mid) && !empty($frommyshop)) {
+
+			if (!(empty($mid)) && !(empty($frommyshop))) {
 				$shop = p('commission')->getShop($mid);
 
-				if (!empty($shop['selectgoods'])) {
+				if (!(empty($shop['selectgoods']))) {
 					$args['ids'] = $shop['goodsids'];
 				}
+
 			}
+
 		}
+
 
 		$this->_condition($args);
 	}
@@ -86,13 +95,16 @@ class Index_EweiShopV2Page extends MobilePage
 			$args['merchid'] = intval($_GPC['merchid']);
 		}
 
+
 		if (isset($_GPC['nocommission'])) {
 			$args['nocommission'] = intval($_GPC['nocommission']);
 		}
+
 
 		$goods = m('goods')->getList($args);
 		show_json(1, array('list' => $goods['list'], 'total' => $goods['total'], 'pagesize' => $args['pagesize']));
 	}
 }
+
 
 ?>

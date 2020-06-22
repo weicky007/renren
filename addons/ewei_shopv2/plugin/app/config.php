@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,18 +18,18 @@ $config = array(
 			array('title' => '商品二维码', 'route' => 'goods'),
 			array('title' => '底部导航', 'route' => 'tabbar'),
 			array('title' => '小程序设置', 'route' => 'setting'),
-//			array('title' => '发布与审核', 'route' => 'newrelease'),
-			array(
+			array('title' => '发布与审核', 'route' => 'newrelease'),
+						array(
 				'title' => '其他设置',
 				'items' => array(
 					array('title' => '模板消息', 'route' => 'tmessage'),
 					array('title' => '分销海报', 'route' => 'poster'),
 					array('title' => '启动广告', 'route' => 'startadv')
+					)
 				)
 			)
 		)
-	)
-);
+	);
 $hasSysWxapp = @is_file(IA_ROOT . '/addons/ewei_shopwxapp/wxapp.php');
 
 if ($hasSysWxapp) {

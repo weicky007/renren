@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,7 +14,7 @@ class Set_EweiShopV2Page extends CommissionMobileLoginPage
 		$shop = pdo_fetch('select * from ' . tablename('ewei_shop_commission_shop') . ' where uniacid=:uniacid and mid=:mid limit 1', array(':uniacid' => $_W['uniacid'], ':mid' => $member['id']));
 
 		if ($_W['ispost']) {
-			$shopdata = is_array($_GPC['shopdata']) ? $_GPC['shopdata'] : array();
+			$shopdata = (is_array($_GPC['shopdata']) ? $_GPC['shopdata'] : array());
 			$shopdata['uniacid'] = $_W['uniacid'];
 			$shopdata['mid'] = $member['id'];
 
@@ -33,7 +32,7 @@ class Set_EweiShopV2Page extends CommissionMobileLoginPage
 		$openselect = false;
 
 		if ($this->set['select_goods'] == '1') {
-			if (empty($member['agentselectgoods']) || $member['agentselectgoods'] == 2) {
+			if (empty($member['agentselectgoods']) || ($member['agentselectgoods'] == 2)) {
 				$openselect = true;
 			}
 		}

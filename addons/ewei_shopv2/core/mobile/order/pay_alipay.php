@@ -1,5 +1,5 @@
 <?php
-
+//dezend by http://www.yunlu99.com/ QQ:270656184
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -31,23 +31,13 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage
 		if (is_h5app()) {
 			$sec = m('common')->getSec();
 			$sec = iunserializer($sec['sec']);
-			$alidata = base64_decode($_GET['alidata']);
-			$alidata = json_decode($alidata, true);
-			$sign_type = trim($alidata['sign_type'], '"');
-
-			if ($sign_type == 'RSA') {
-				$public_key = $sec['app_alipay']['public_key'];
-			}
-			else {
-				if ($sign_type == 'RSA2') {
-					$public_key = $sec['app_alipay']['public_key_rsa2'];
-				}
-			}
-
+			$public_key = $sec['app_alipay']['public_key'];
 			if (empty($set['pay']['app_alipay']) || empty($public_key)) {
 				$this->message('支付出现错误，请重试(1)!', mobileUrl('order'));
 			}
 
+			$alidata = base64_decode($_GET['alidata']);
+			$alidata = json_decode($alidata, true);
 			$alisign = m('finance')->RSAVerify($alidata, $public_key, false);
 			$tid = $this->str($alidata['out_trade_no']);
 
@@ -67,7 +57,7 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage
 
 			if (!m('finance')->isAlipayNotify($_GET)) {
 				$log = pdo_fetch('SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':tid' => $tid));
-				if ($log['status'] == 1 && $log['fee'] == $_GPC['total_fee']) {
+				if (($log['status'] == 1) && ($log['fee'] == $_GPC['total_fee'])) {
 					if ($fromwechat) {
 						$this->message(array('message' => '请返回微信查看支付状态', 'title' => '支付成功!', 'buttondisplay' => false), NULL, 'success');
 					}
@@ -89,12 +79,41 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage
 		if (is_h5app()) {
 			$alidatafee = $this->str($alidata['total_fee']);
 			$alidatastatus = $this->str($alidata['success']);
-			if ($log['fee'] != $alidatafee || !$alidatastatus) {
+			if (($log['fee'] != $alidatafee) || !$alidatastatus) {
 				$this->message('支付出现错误，请重试(4)!', mobileUrl('order'));
 			}
 		}
 
-		$orderid = pdo_fetchcolumn('select id from ' . tablename('ewei_shop_order') . ' where ordersn=:ordersn and uniacid=:uniacid', array(':ordersn' => $log['tid'], ':uniacid' => $_W['uniacid']));
+		if ($log['status'] != 1) {
+			$record = array();
+			$record['status'] = '1';
+			$record['type'] = 'alipay';
+			pdo_update('core_paylog', $record, array('plid' => $log['plid']));
+			$orderid = pdo_fetchcolumn('select id from ' . tablename('ewei_shop_order') . ' where ordersn=:ordersn and uniacid=:uniacid', array(':ordersn' => $log['tid'], ':uniacid' => $_W['uniacid']));
+
+			if (!empty($orderid)) {
+				m('order')->setOrderPayType($orderid, 22);
+				$data_alipay = array('transid' => $_GET['trade_no']);
+
+				if (is_h5app()) {
+					$data_alipay['transid'] = $alidata['trade_no'];
+					$data_alipay['apppay'] = 1;
+				}
+
+				pdo_update('ewei_shop_order', $data_alipay, array('id' => $orderid));
+			}
+
+			$ret = array();
+			$ret['result'] = 'success';
+			$ret['type'] = 'alipay';
+			$ret['from'] = 'return';
+			$ret['tid'] = $log['tid'];
+			$ret['user'] = $log['openid'];
+			$ret['fee'] = $log['fee'];
+			$ret['weid'] = $log['weid'];
+			$ret['uniacid'] = $log['uniacid'];
+			m('order')->payResult($ret);
+		}
 
 		if (is_h5app()) {
 			$url = mobileUrl('order/detail', array('id' => $orderid), true);
@@ -121,28 +140,18 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage
 		if (is_h5app()) {
 			$sec = m('common')->getSec();
 			$sec = iunserializer($sec['sec']);
+			$public_key = $sec['app_alipay']['public_key'];
 
 			if (empty($_GET['alidata'])) {
 				$this->message('支付出现错误，请重试(1)!', mobileUrl('member'));
-			}
-
-			$alidata = base64_decode($_GET['alidata']);
-			$alidata = json_decode($alidata, true);
-			$sign_type = $alidata['sign_type'];
-
-			if ($sign_type == 'RSA') {
-				$public_key = $sec['app_alipay']['public_key'];
-			}
-			else {
-				if ($sign_type == 'RSA2') {
-					$public_key = $sec['app_alipay']['public_key_rsa2'];
-				}
 			}
 
 			if (empty($set['pay']['app_alipay']) || empty($public_key)) {
 				$this->message('支付出现错误，请重试(2)!', mobileUrl('order'));
 			}
 
+			$alidata = base64_decode($_GET['alidata']);
+			$alidata = json_decode($alidata, true);
 			$alisign = m('finance')->RSAVerify($alidata, $public_key, false);
 			$logno = $this->str($alidata['out_trade_no']);
 
@@ -179,6 +188,14 @@ class Pay_Alipay_EweiShopV2Page extends MobilePage
 		}
 
 		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_log') . ' WHERE `logno`=:logno and `uniacid`=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':logno' => $logno));
+		if (!empty($log) && empty($log['status'])) {
+			pdo_update('ewei_shop_member_log', array('status' => 1, 'rechargetype' => 'alipay', 'apppay' => is_h5app() ? 1 : 0, 'transid' => $transid), array('id' => $log['id']));
+			m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, $_W['shopset']['shop']['name'] . '会员充值:alipayreturn:credit2:' . $log['money']));
+			m('member')->setRechargeCredit($log['openid'], $log['money']);
+			com_run('sale::setRechargeActivity', $log);
+			com_run('coupon::useRechargeCoupon', $log);
+			m('notice')->sendMemberLogMessage($log['id']);
+		}
 
 		if (is_h5app()) {
 			$url = mobileUrl('member', NULL, true);

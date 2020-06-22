@@ -1,1 +1,180 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1r([\'l\',\'15\',\'1s/e/f\'],6(l,15,f,h){7 3={n:{}};3.1l=6(n){3.n=$.1p(3.n,n||{});7 z=3.n.z;7 e=3.n.e;$(\'#t-16-a\').1m(\'w\').w(6(){7 e=[];7 J=0;$(".e-U").O(6(F){7 4=$("#4"+F+"").q("c-4");7 5=$("#5"+F+"").T();9(5===1n){5=0}m 9(!5){1o.1t.13(\'请选择规格!\');J=1;u v}e[F]={4:4,5:5}});9(J==1){u v}e=1u.1z(e);9($(j).q(\'J\')){u}1A.1y=l.E(\'C/B\',{z:z,e:e})});$(".1x").w(6(){7 4=$(j).q("c-4");7 P=$(".1e"+4+"").T();$.1v({1w:l.E(\'e/t/d\',{1B:z,4:4}),1k:"R",1f:p,1h:"1i",1g:6(){},1j:6(c){9(c.1q>0){$(".K-L").8(8);7 d=c.19;7 8=\'\';1H(7 o S d){9(d[o].5){8+="<i 1V=\'t-i\' c-5=\'"+d[o].5+"\' c-11=\'"+d[o].M+"\' c-4=\'"+4+"\'>"+d[o].1U+"</i>"}}$(".K-L").8(8)}m{$(".K-L").8(\'暂无规格！\')}9(P){$(".t-i").O(6(){9($(j).q("c-5")==P){$(j).G("N")}})}$(".t-i").1T("w",6(){$(".t-i").V("N");7 4=$(j).G("N").q("c-4");7 5=$(j).q("c-5");7 M=$(j).q("c-11");7 d=$(j).8();$(".1X"+4+"").8(d);$(".1d"+4+"").8(M);$(".1e"+4+"").T(5);7 I=0;$(".1d").O(6(){I+=1S($(j).8())});$(".I").8(I.1W(2))})},20:6(){},1Z:6(){}});3.y=1Y 1R({1P:$(\'#d-f-3\').8(),1Q:\'f-3\',1C:6(){3.y.r()}});3.y.A.W(\'.1G-1F\').w(6(){3.y.r()});3.y.13()})};3.1D=6(Q){f.1E({4:3.4,b:3.b,1I:\';\',5:3.5,1J:p,1O:v,18:3.18,14:3.14,1N:6(b,5,17){3.b=b;3.5=5;$(\'.d-1M\').8("已选: 数量x"+b+" "+17);9(Q==\'16\'){9($(\'.h-A\').Y>0){7 g=h.10(\'.h-A\');9(!g){u}m{l.R(\'C/B/h\',{H:3.4,g:g},6(k){$.1b.1a(l.E(\'C/B\',{H:3.4,5:3.5,b:3.b,1K:k.19.1L}),p)},p,p);f.r()}}m{f.r();$.1b.1a(l.E(\'C/B\',{H:3.4,5:3.5,b:3.b}),v)}}m 9(Q==\'D\'){9($(\'.h-A\').Y>0){7 g=h.10(\'.h-A\');9(!g){u}m{l.R(\'C/B/h\',{H:3.4,g:g},6(k){D.12(3.4,3.5,3.b,g,6(k){$(\'.D-U\').W(\'.X\').8(k.s).V(\'Z\').G(\'S\');1c.s=k.s})},p,p);f.r()}}m{D.12(3.4,3.5,3.b,v,6(k){$(\'.D-U\').W(\'.X\').8(k.s).V(\'Z\').G(\'S\');1c.s=k.s});f.r()}}m{f.r()}}})};u 3});',62,125,'|||modal|goodsid|optionid|function|var|html|if||total|data|option|goods|picker|diyformdata|diyform||this|ret|core|else|params||true|attr|close|cartcount|package|return|false|click||packagePicker|packageid|container|create|order|cart|getUrl|index|addClass|id|totalprice|stop|dispatching|info|packageprice|active|each|default_option|action|json|in|val|item|removeClass|find|badge|length|out|getData|price|add|show|backurl|tpl|buy|optiontitle|mustbind|result|load|router|window|marketprice|inputoption|async|beforeSend|type|GET|success|dataType|init|unbind|undefined|FoxUI|extend|status|define|biz|toast|JSON|ajax|url|optionbtn|href|stringify|location|pid|maskClick|optionPicker|open|danger|btn|for|split|showConfirm|gdid|goods_data_id|selector|onConfirm|autoClose|content|extraClass|FoxUIModal|parseFloat|on|title|class|toFixed|packoption|new|error|complete'.split('|'),0,{}))
+define(['core', 'tpl', 'biz/goods/picker'], function (core, tpl, picker, diyform) {
+    var modal = {params: {}};
+    modal.init = function (params) {
+        modal.params = $.extend(modal.params, params || {});
+        var packageid = modal.params.packageid;
+        var goods = modal.params.goods;
+        $('#package-buy-a').unbind('click').click(function () {
+            var goods = [];
+            var stop = 0;
+            $(".goods-item").each(function(index){
+                var goodsid = $("#goodsid"+index+"").attr("data-goodsid");
+                var optionid = $("#optionid"+index+"").val();
+                if(optionid===undefined){
+                    optionid = 0;
+                }else if(!optionid){
+                    FoxUI.toast.show('请选择规格!');
+                    stop = 1;
+                    return false;
+                }
+                goods[index] = {goodsid:goodsid,optionid:optionid};
+            });
+            if(stop == 1){
+                return false;
+            }
+            goods = JSON.stringify(goods);
+
+            if ($(this).attr('stop')) {
+                return
+            }
+            location.href = core.getUrl('order/create',{packageid:packageid,goods:goods});
+        });
+        $(".optionbtn").click(function () {
+            var goodsid = $(this).attr("data-goodsid");
+            var default_option = $(".inputoption"+goodsid+"").val();
+            $.ajax({
+                url: core.getUrl('goods/package/option',{pid:packageid,goodsid:goodsid}),    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: true, //请求是否异步，默认为异步，这也是ajax重要特性
+                type: "GET",   //请求方式
+                beforeSend: function() {
+                    //请求前的处理
+                },
+                success: function(data) {
+                    if(data.status > 0){
+                        $(".dispatching-info").html(html);
+                        var option = data.result;
+                        var html = '';
+                        for (var o in option) {
+                            if(option[o].optionid){
+                                html += "<i class='package-i' data-optionid='"+option[o].optionid+"' data-price='"+option[o].packageprice+"' data-goodsid='"+goodsid+"'>"+option[o].title+"</i>";
+                            }
+                        }
+                        $(".dispatching-info").html(html);
+                    }else{
+                        $(".dispatching-info").html('暂无规格！');
+                    }
+
+
+                    if(default_option){
+                        $(".package-i").each(function(){
+                            if($(this).attr("data-optionid")==default_option){
+                                $(this).addClass("active");
+                            }
+                        })
+                    }
+
+                    //请求成功时处理
+                    $(".package-i").on("click",function(){
+                        $(".package-i").removeClass("active");
+                        var goodsid = $(this).addClass("active").attr("data-goodsid");
+                        var optionid = $(this).attr("data-optionid");
+                        var packageprice = $(this).attr("data-price");
+                        var option = $(this).html();
+                        $(".packoption"+goodsid+"").html(option);
+                        $(".marketprice"+goodsid+"").html(packageprice);
+                        $(".inputoption"+goodsid+"").val(optionid);
+                        var totalprice = 0;
+                        $(".marketprice").each(function(){
+                           totalprice += parseFloat($(this).html());
+                        });
+                        $(".totalprice").html(totalprice.toFixed(2));
+
+
+                    });
+                },
+                complete: function() {
+                    //请求完成的处理
+                },
+                error: function() {
+                    //请求出错处理
+                }
+            });
+
+            modal.packagePicker = new FoxUIModal({
+                content: $('#option-picker-modal').html(),
+                extraClass: 'picker-modal',
+                maskClick: function () {
+                    modal.packagePicker.close()
+                }
+            });
+            modal.packagePicker.container.find('.btn-danger').click(function () {
+                modal.packagePicker.close()
+            });
+            modal.packagePicker.show()
+        });
+    };
+    modal.optionPicker = function (action) {
+        picker.open({
+            goodsid: modal.goodsid,
+            total: modal.total,
+            split: ';',
+            optionid: modal.optionid,
+            showConfirm: true,
+            autoClose: false,
+            mustbind: modal.mustbind,
+            backurl: modal.backurl,
+            onConfirm: function (total, optionid, optiontitle) {
+                modal.total = total;
+                modal.optionid = optionid;
+                $('.option-selector').html("已选: 数量x" + total + " " + optiontitle);
+                if (action == 'buy') {
+                    if ($('.diyform-container').length > 0) {
+                        var diyformdata = diyform.getData('.diyform-container');
+                        if (!diyformdata) {
+                            return
+                        } else {
+                            core.json('order/create/diyform', {
+                                id: modal.goodsid,
+                                diyformdata: diyformdata
+                            }, function (ret) {
+                                $.router.load(core.getUrl('order/create', {
+                                    id: modal.goodsid,
+                                    optionid: modal.optionid,
+                                    total: modal.total,
+                                    gdid: ret.result.goods_data_id
+                                }), true);
+                            }, true, true);
+                            picker.close()
+                        }
+                    } else {
+                        picker.close();
+                        $.router.load(core.getUrl('order/create', {
+                            id: modal.goodsid,
+                            optionid: modal.optionid,
+                            total: modal.total
+                        }), false);
+                    }
+                } else if (action == 'cart') {
+                    if ($('.diyform-container').length > 0) {
+                        var diyformdata = diyform.getData('.diyform-container');
+                        if (!diyformdata) {
+                            return
+                        } else {
+                            core.json('order/create/diyform', {
+                                id: modal.goodsid,
+                                diyformdata: diyformdata
+                            }, function (ret) {
+                                cart.add(modal.goodsid, modal.optionid, modal.total, diyformdata, function (ret) {
+                                    $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
+                                    window.cartcount = ret.cartcount
+                                });
+                            }, true, true);
+                            picker.close()
+                        }
+                    } else {
+                        cart.add(modal.goodsid, modal.optionid, modal.total, false, function (ret) {
+                            $('.cart-item').find('.badge').html(ret.cartcount).removeClass('out').addClass('in');
+                            window.cartcount = ret.cartcount
+                        });
+                        picker.close()
+                    }
+                } else {
+                    picker.close()
+                }
+            }
+        })
+    };
+
+    return modal
+});

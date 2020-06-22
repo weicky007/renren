@@ -374,7 +374,7 @@ class MobilePage extends Page
 
 		if (method_exists(m('plugin'), 'permission')) {
 			if (p('membercard') && m('plugin')->permission('membercard')) {
-				$list_membercard = p('membercard')->get_Mycard('', 0, 100, 'all');
+				$list_membercard = p('membercard')->get_Mycard('', 0, 100);
 				$all_membercard = p('membercard')->get_Allcard(1, 100);
 				if (p('membercard') && $list_membercard['total'] <= 0 && $all_membercard['total'] <= 0) {
 					$canmembercard = false;
@@ -515,12 +515,11 @@ class MobilePage extends Page
 				return NULL;
 			}
 
-			$matchCount = preg_match('/^((0\\d{2,3}-\\d{7,8})|(1[3584]\\d{9}))$/', $diylayer['params']['linkurl']);
-			if (!empty($goods) && $matchCount) {
+			if (!empty($goods)) {
 				$diylayer['params']['linkurl'] .= '&goodsid=' . $goods['id'] . '&merch=' . $goods['merch'];
 			}
 
-			if (!empty($order) && $matchCount) {
+			if (!empty($order)) {
 				$diylayer['params']['linkurl'] .= '&orderid=' . $order['id'];
 			}
 

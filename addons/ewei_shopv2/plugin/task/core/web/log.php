@@ -37,8 +37,8 @@ class Log_EweiShopV2Page extends PluginWebPage
 			$params[':endtime'] = $endtime;
 		}
 
-		$list = pdo_fetchall('SELECT log.*, m.avatar,m.nickname,m.realname,m.mobile,m1.avatar as avatar1,m1.nickname as nickname1,m1.realname as realname1,m1.mobile as mobile1 FROM ' . tablename('ewei_shop_task_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m1 on m1.openid = log.from_openid and m1.uniacid = log.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = log.openid  and m.uniacid = log.uniacid' . (' WHERE 1 ' . $condition . ' ORDER BY log.createtime desc ') . '  LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*)  FROM ' . tablename('ewei_shop_task_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m1 on m1.openid = log.from_openid and m1.uniacid = log.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = log.openid and m.uniacid = log.uniacid ' . (' where 1 ' . $condition . '  '), $params);
+		$list = pdo_fetchall('SELECT log.*, m.avatar,m.nickname,m.realname,m.mobile,m1.avatar as avatar1,m1.nickname as nickname1,m1.realname as realname1,m1.mobile as mobile1 FROM ' . tablename('ewei_shop_task_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m1 on m1.openid = log.from_openid and m1.uniacid = log.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = log.openid  and m.uniacid = log.uniacid' . ' WHERE 1 ' . $condition . ' ORDER BY log.createtime desc ' . '  LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*)  FROM ' . tablename('ewei_shop_task_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m1 on m1.openid = log.from_openid and m1.uniacid = log.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = log.openid and m.uniacid = log.uniacid ' . ' where 1 ' . $condition . '  ', $params);
 		$pager = pagination2($total, $pindex, $psize);
 		load()->func('tpl');
 		include $this->template();

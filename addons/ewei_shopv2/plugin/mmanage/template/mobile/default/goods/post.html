@@ -29,10 +29,10 @@
         {/if}
 
         <div class="fui-cell-group">
-            <div class="fui-cell fui-cell-textarea" style="height: auto;">
-                <div class="fui-cell-label " style="margin-top:0.5rem">商品名称</div>
+            <div class="fui-cell fui-cell-textarea">
+                <div class="fui-cell-label ">商品名称</div>
                 <div class="fui-cell-info">
-                    <textarea rows="3" placeholder="请输入商品名称" style="margin-top: 8px" id="title">{$item['title']}</textarea>
+                    <textarea rows="3" placeholder="请输入商品民称" id="title">{$item['title']}</textarea>
                 </div>
             </div>
             <div class="fui-cell">
@@ -54,7 +54,7 @@
                     <ul class="fui-images" id="thumbs">
                         {loop $piclist $picitem}
                             <li style="background-image:url({php echo tomedia($picitem)})" class="image" data-filename="{$picitem}">
-                                <span class="image-remove"><i class="icon icon-close"></i></span>
+                                <span class="image-remove">×</span>
                             </li>
                         {/loop}
                     </ul>

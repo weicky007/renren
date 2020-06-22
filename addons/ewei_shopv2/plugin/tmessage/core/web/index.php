@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -15,14 +14,15 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$condition = ' and uniacid=:uniacid';
 		$params = array(':uniacid' => $_W['uniacid']);
 
-		if (!empty($_GPC['keyword'])) {
+		if (!(empty($_GPC['keyword']))) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and title  like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition . '  ORDER BY id asc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition), $params);
+
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition . '  ORDER BY id asc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -43,10 +43,11 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 
-		if (!empty($_GPC['id'])) {
+		if (!(empty($_GPC['id']))) {
 			$list = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $_GPC['id'], ':uniacid' => $_W['uniacid']));
 			$data = iunserializer($list['data']);
 		}
+
 
 		if ($_W['ispost']) {
 			$id = $_GPC['id'];
@@ -54,13 +55,14 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$value = $_GPC['tp_value'];
 			$color = $_GPC['tp_color'];
 
-			if (!empty($keywords)) {
+			if (!(empty($keywords))) {
 				$data = array();
 
-				foreach ($keywords as $key => $val) {
+				foreach ($keywords as $key => $val ) {
 					$data[] = array('keywords' => $keywords[$key], 'value' => $value[$key], 'color' => $color[$key]);
 				}
 			}
+
 
 			$insert = array('title' => $_GPC['tp_title'], 'template_id' => trim($_GPC['tp_template_id']), 'first' => trim($_GPC['tp_first']), 'firstcolor' => trim($_GPC['firstcolor']), 'data' => iserializer($data), 'remark' => trim($_GPC['tp_remark']), 'remarkcolor' => trim($_GPC['remarkcolor']), 'url' => trim($_GPC['tp_url']), 'uniacid' => $_W['uniacid']);
 
@@ -68,12 +70,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 				pdo_insert('ewei_shop_member_message_template', $insert);
 				$id = pdo_insertid();
 			}
-			else {
+			 else {
 				pdo_update('ewei_shop_member_message_template', $insert, array('id' => $id));
 			}
 
 			show_json(1, array('url' => webUrl('tmessage')));
 		}
+
 
 		include $this->template();
 	}
@@ -85,12 +88,13 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
-		foreach ($items as $item) {
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+
+		foreach ($items as $item ) {
 			pdo_delete('ewei_shop_member_message_template', array('id' => $id, 'uniacid' => $_W['uniacid']));
 			plog('tmessage.delete', '删除群发模板 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
 		}
@@ -107,16 +111,18 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = ' and uniacid=:uniacid';
 
-		if (!empty($kwd)) {
+		if (!(empty($kwd))) {
 			$condition .= ' AND `title` LIKE :keyword';
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition . ' order by id asc'), $params);
+
+		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
 
 		if ($_GPC['suggest']) {
 			exit(json_encode(array('value' => $ds)));
 		}
+
 
 		include $this->template();
 	}
@@ -129,5 +135,6 @@ class Index_EweiShopV2Page extends PluginWebPage
 		include $this->template();
 	}
 }
+
 
 ?>

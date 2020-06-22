@@ -1,1 +1,189 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1J([\'O\'],5($){4 3={};3.1j=5(){4 D=$(\'3.3-E\');4 p;b(D.x>0){4 p=D.1e(\'.E\');p.1k("1l",5(){D.1m()})}4 L=$(\'3.3-G\');b(L.x>0){4 13={1p:\'1r\',1s:\'1i-1v-G\',1u:R,1x:5(7){4 k=$(7).A(\'k\')||\'\';b(k){$(k).1a(\'F-f\')}B{$(7).1c(\'.3-l\').1a(\'F-f\')}},1z:5(7){$(7).1b()},1B:5(7){$(7).1b()},N:5(7){4 k=$(7).A(\'k\')||\'\';b(k){$(k).1d(\'F-f\')}B{$(7).1c(\'.3-l\').1d(\'F-f\')}},1G:5(f,7){4 l=7.1e(".m-l");l.x>0?l.18(f):7.18(f)},1h:5(3){4 J=R;b($(".3-C-l").x>0){$(".3-C-l").u(5(){4 m=$(e).1g(".3-C-m");b(m.Q(\'A-1H-16\')&&$.1F(m.y())==\'\'){$(e).1g(".3-C-1C").1y(\'1t\');m.15().1A().15();J=I;o I}})}b(!J){o}4 8=$("m[X=\'Y\']",3);4 t=\'m\';4 c=[];8.u(5(n){4 11=$(e);c[n]=11.y()});b(8.x<=0){8=$("s[X=\'Y\']",3);t=\'s\';c[0]=8.c()}b($(3).Q(\'1q\')==\'1\'){o}4 r=8.A(\'r\')||8.A(\'r\');4 M=5(){b(t==\'s\'){8.c(\'<i 1o="T T-1n T-1I"></i> \'+g.v.17)}B{8.y(g.v.17)}4 U=1K*1M;8.Q(\'P\',R);$(3).27({U:U,28:"29",N:5(a){b(a.d.j){a.d.j=a.d.j.V(/&2a;/2b,"&");a.d.j=a.d.j.V(\'¬\',"&2c")}b(a.2d!=1){8.14(\'P\');8.u(5(n){t==\'s\'?$(e).c(c[n]):$(e).y(c[n])});p&&p.E("12"),g.K.10(a.d.Z||a.d||g.v.f,a.d.j)}B{g.K.2f(a.d.Z||g.v.N,a.d.j)}},f:5(a){8.14(\'P\');8.u(5(n){t==\'s\'?$(e).c(c[n]):$(e).y(c[n])});p&&p.E("12");g.K.10(g.v.f)}});o I};b(r){g.r(r,M)}B{M()}}};2g([\'O.3\',\'O.G\'],5(){4 1f={16:"此项必须填写",2h:"请修正该字段",2i:"请输入正确格式的电子邮件",j:"请输入正确的网址",2j:"请输入正确的日期",2k:"请输入合法的日期 (2l).",2m:"请输入数字格式",2e:"请输入整数格式",25:"请输入合法的信用卡号",1U:"请再次输入相同的值",23:"请输入拥有合法后缀名的字符串",24:$.h.q("请输入一个长度最多是 {0} 的字符串"),1N:$.h.q("请输入一个长度最少是 {0} 的字符串"),1O:$.h.q("请输入一个长度介于 {0} 和 {1} 之间的字符串"),1P:$.h.q("请输入一个介于 {0} 和 {1} 之间的值"),1Q:$.h.q("请输入一个最大为 {0} 的值"),1R:$.h.q("请输入一个最小为 {0} 的值")};$.1S($.h.1L,1f);$.h.1T("S",5(H,7){4 S=/^[\\1V-\\1W]+$/;o e.19(7)||(S.W(H))},"只能输入中文"),$.h.1X.j=5(H,7){o e.19(7)||/^((1Y|1Z|20):\\/\\/)?(\\w(\\:\\w)?@)?([0-21-22-]+\\.)*?([a-z]{2,6}(\\.[a-z]{2})?(\\:[0-9]{2,6})?)((\\/[^?#<>\\/\\\\*":]*)+(\\?[^#]*)?(#.*)?)?$/i.W(H)};L.u(5(){4 3=26(e);3.G(13)});$(\'#1E-1w\').1D()})}};o 3})',62,147,'|||form|var|function||element|submit_button|||if|html|result|this|error|tip|validator||url|parent|group|input|index|return|form_modal|format|confirm|button|buttontype|each|lang||length|val||data|else|editor|modal_form|modal|has|validate|value|false|cansubmit|msgbox|form_validate|handler|success|jquery|disabled|attr|true|chinese|fa|timeout|replace|test|type|submit|message|err|but|hide|validate_rule|removeAttr|focus|required|processing|after|optional|addClass|valid|closest|removeClass|parents|cnmsg|find|submitHandler|help|init|on|hidden|resetForm|spinner|class|errorElement|stop|span|errorClass|click|focusInvalid|block|loading|highlight|trigger|onkeyup|blur|onfocusout|btn|remove|page|trim|errorPlacement|rule|spin|define|1000|messages|3600|minlength|rangelength|range|max|min|extend|addMethod|equalTo|u4e00|u9fa5|methods|http|https|ftp|9a|z_|accept|maxlength|creditcard|jQuery|ajaxSubmit|dataType|json|amp|ig|not|status|digits|suc|myrequire|remote|email|date|dateISO|ISO|number'.split('|'),0,{}))
+define(['jquery'], function ($) {
+
+	var form = {};
+	form.init = function () {
+
+		var modal_form = $('form.form-modal');
+		var form_modal;
+		if (modal_form.length > 0) {
+			var form_modal = modal_form.parents('.modal');
+			form_modal.on("hidden", function () {
+				modal_form.resetForm()
+			});
+		}
+
+
+
+		var form_validate = $('form.form-validate');
+
+
+		if (form_validate.length > 0) {
+			var validate_rule = {
+				errorElement: 'span',
+				errorClass: 'help-block-validate',
+				focusInvalid: true,
+				highlight: function (element) {
+					var parent = $(element).data('parent') || '';
+					if (parent) {
+						$(parent).addClass('has-error');
+					} else {
+						$(element).closest('.form-group').addClass('has-error');
+					}
+
+				}, onkeyup: function (element) {
+					$(element).valid();
+				}, onfocusout: function (element) {
+					$(element).valid();
+				},
+				success: function (element) {
+					var parent = $(element).data('parent') || '';
+					if (parent) {
+						$(parent).removeClass('has-error');
+					}
+					else {
+						$(element).closest('.form-group').removeClass('has-error');
+					}
+
+				},
+				errorPlacement: function (error, element) {
+					var group = element.parents(".input-group");
+					group.length > 0 ? group.after(error) : element.after(error);
+				}
+				, submitHandler: function (form) {
+
+					var cansubmit = true;
+					if($(".form-editor-group").length>0){
+						$(".form-editor-group").each(function () {
+							var input = $(this).find(".form-editor-input");
+							if(input.attr('data-rule-required') && $.trim(input.val())==''){
+								$(this).find(".form-editor-btn").trigger('click');
+								input.focus().blur().focus();
+								cansubmit = false;
+								return false;
+							}
+						});
+					}
+					if(!cansubmit){
+						return;
+					}
+
+					var submit_button = $("input[type='submit']", form);
+					var buttontype = 'input';
+
+					var html=[];
+                    submit_button.each(function(index){
+                        var but  = $(this);
+						html[index]=but.val();
+                    });
+
+					if (submit_button.length <= 0) {
+						submit_button = $("button[type='submit']", form);
+						buttontype = 'button';
+                        html[0]=submit_button.html();
+					}
+				  if ($(form).attr('stop') == '1') {
+						return;
+					}
+				  var confirm = submit_button.data('confirm') || submit_button.data('confirm');
+
+					var handler = function () {
+						if (buttontype == 'button') {
+							submit_button.html('<i class="fa fa-spinner fa-spin"></i> ' + tip.lang.processing);
+						} else {
+							submit_button.val(tip.lang.processing)
+						}
+
+						var timeout = 1000 * 3600;
+						submit_button.attr('disabled', true);
+
+						$(form).ajaxSubmit({
+							timeout: timeout,
+							dataType: "json",
+							success: function (a) {
+
+								if (a.result.url) {
+									a.result.url = a.result.url.replace(/&amp;/ig, "&");
+									a.result.url = a.result.url.replace('¬', "&not");
+								}
+
+								if (a.status != 1) {
+									// submit_button.removeAttr('disabled'),
+									// buttontype == 'button' ? submit_button.html(html) : submit_button.val(html);
+                                    submit_button.removeAttr('disabled');
+                                    submit_button.each(function(index){
+                                        buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index]);
+                                    });
+									form_modal && form_modal.modal("hide"), tip.msgbox.err(a.result.message || a.result || tip.lang.error, a.result.url);
+								} else {
+
+									tip.msgbox.suc(a.result.message || tip.lang.success, a.result.url);
+								}
+							}, error: function (a) {
+								// submit_button.removeAttr('disabled'),
+								// buttontype == 'button' ? submit_button.html(html) : submit_button.val(html),
+                                submit_button.removeAttr('disabled');
+                                submit_button.each(function(index){
+                                    buttontype == 'button' ? $(this).html(html[index]) : $(this).val(html[index]);
+                                });
+								form_modal && form_modal.modal("hide");
+								tip.msgbox.err(tip.lang.error)
+							}});
+
+						return false;
+					};
+                    
+					if (confirm) {
+						tip.confirm(confirm, handler);
+					} else {
+						handler();
+					}
+
+				}
+			};
+			myrequire(['jquery.form', 'jquery.validate'], function () {
+
+
+				var cnmsg = {
+					required: "此项必须填写",
+					remote: "请修正该字段",
+					email: "请输入正确格式的电子邮件",
+					url: "请输入正确的网址",
+					date: "请输入正确的日期",
+					dateISO: "请输入合法的日期 (ISO).",
+					number: "请输入数字格式",
+					digits: "请输入整数格式",
+					creditcard: "请输入合法的信用卡号",
+					equalTo: "请再次输入相同的值",
+					accept: "请输入拥有合法后缀名的字符串",
+					maxlength: $.validator.format("请输入一个长度最多是 {0} 的字符串"),
+					minlength: $.validator.format("请输入一个长度最少是 {0} 的字符串"),
+					rangelength: $.validator.format("请输入一个长度介于 {0} 和 {1} 之间的字符串"),
+					range: $.validator.format("请输入一个介于 {0} 和 {1} 之间的值"),
+					max: $.validator.format("请输入一个最大为 {0} 的值"),
+					min: $.validator.format("请输入一个最小为 {0} 的值")
+				};
+
+				$.extend($.validator.messages, cnmsg);
+				$.validator.addMethod("chinese", function (value, element) {
+
+					var chinese = /^[\u4e00-\u9fa5]+$/;
+					return this.optional(element) || (chinese.test(value));
+ 
+				}, "只能输入中文"),
+						$.validator.methods.url = function (value, element) {
+							return this.optional(element) || /^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i.test(value);
+
+						};
+						form_validate.each(function () {
+
+							var form = jQuery(this);
+							form.validate(validate_rule);
+
+						});
+				$('#page-loading').remove();
+			});
+		}
+
+	};return form;
+})
+ 

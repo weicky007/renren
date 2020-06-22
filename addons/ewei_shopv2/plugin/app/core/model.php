@@ -1616,11 +1616,11 @@ if (!class_exists('AppModel')) {
 			$siteid = intval($_W['setting']['site']['key']);
 
 			if (empty($siteid)) {
-				//return error(-1, '站点未注册');
+				return error(-1, '站点未注册');
 			}
 
 			load()->func('communication');
-			$request = ihttp_get(EWEI_SHOPV2_AUTH_WXAPP . '/weixin/xcx/auth.html?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid'].'&library='.p("app")->getlibid().'&title='.$_W['account']['name'].$uri);
+			$request = ihttp_get(EWEI_SHOPV2_AUTH_WXAPP . ('xcxapi/auth-xcx-info/validate?site_id=' . $siteid . '&uniacid=' . $_W['uniacid']));
 
 			if ($request['code'] != 200) {
 				return error(-1, '信息查询失败！稍后重试');
@@ -1644,18 +1644,22 @@ if (!class_exists('AppModel')) {
 				return $content['data'];
 			}
 		}
-		public function getRelease($authid,$uri='')
+
+		/**
+         * 获取版本信息
+         * @param $authid
+         * @return array
+         */
+		public function getRelease($authid)
 		{
-		global $_W;
-			if (empty($authid)) 
-			{
+			if (empty($authid)) {
 				return error(-1, 'authid为空');
 			}
 
 			load()->func('communication');
-			$request = ihttp_get(EWEI_SHOPV2_AUTH_WXAPP . '/weixin/xcx/release2.html?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid'].'&library='.p("app")->getlibid().$uri);
-			if ($request['code'] != 200) 
-			{
+			$request = ihttp_get(EWEI_SHOPV2_AUTH_WXAPP . ('xcxapi/auth-xcx-info/view?id=' . $authid));
+
+			if ($request['code'] != 200) {
 				return error(-1, '接口通信失败');
 			}
 

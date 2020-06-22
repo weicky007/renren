@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -29,12 +28,7 @@ class Qrcode_EweiShopV2Page extends CommissionMobileLoginPage
 		}
 
 		if (empty($set['become_reg'])) {
-			$diyform_flag = 0;
-			if (p('diyform') && !empty($member['diymemberdata'])) {
-				$diyform_flag = 1;
-			}
-
-			if (empty($member['realname']) && empty($diyform_flag)) {
+			if (empty($member['realname'])) {
 				$this->message('需要您完善资料才能继续操作!', mobileUrl('member/info', array('returnurl' => $returnurl)), 'info');
 			}
 		}

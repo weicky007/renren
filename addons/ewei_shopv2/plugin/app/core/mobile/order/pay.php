@@ -59,6 +59,8 @@ class Pay_EweiShopV2Page extends AppMobilePage
         }
 
         $set = m('common')->getSysset(array('shop', 'pay'));
+
+      
         $credit = array('success' => false);
         if (isset($set['pay']) && $set['pay']['credit'] == 1) {
             $credit = array(
@@ -66,10 +68,15 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 'current' => $member['credit2']
             );
         }
+
         $wechat = array('success' => false);
         if (!empty($set['pay']['wxapp']) && $order['price']>0 && $this->iswxapp){
+    
             $set = array_merge($set,m('common')->getSysset('app'));
+           
             $subscribe = pdo_fetchall("select type, templateid from ".tablename('ewei_shop_wxapp_subscribe').' where uniacid = :uniacid ', array(':uniacid' => $_W['uniacid']));
+
+            
             $subscribetmp = array();
             foreach ($subscribe as $value){
                 if ($value['type'] == 'pay' && $set['subscribepay'] == 1) {
@@ -119,9 +126,11 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 $wechat = array('success' => false);
             };
         }
+
         if(!empty($order['addressid'])){
             $cash = array('success' => $order['cash'] == 1 && isset($set['pay']) && $set['pay']['cash'] == 1 && $order['isverify'] == 0 && $order['isvirtual'] == 0);
         }
+
         $alipay = array('success' => false);
         if(!empty($set['pay']['nativeapp_alipay']) && $order['price']>0 && !$this->iswxapp){
             $params  = array(
@@ -207,6 +216,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 return app_error(AppError::$OrderPayFail, $data['title'] . '<br/> 已下架!');
             }
             $unit = empty($data['unit']) ? '件' : $data['unit'];
+       
             if ($data['minbuy'] > 0) {
                 if ($data['buycount'] < $data['minbuy']) {
                     return app_error(AppError::$OrderCreateMinBuyLimit, $data['title'] . '<br/> ' . $data['min'] . $unit . "起售!");
@@ -217,6 +227,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                     return app_error(AppError::$OrderCreateOneBuyLimit, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . "!");
                 }
             }
+         
             if ($data['usermaxbuy'] > 0) {
                 $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og '
                     . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id '
@@ -264,6 +275,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 }
             }
         }
+
         if ($type == 'cash') {
             if (empty($set['pay']['cash'])) {
                 return app_error(AppError::$OrderPayFail, "未开启货到付款");
@@ -279,6 +291,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
             $ret['weid'] = $_W['uniacid'];
             $ret['uniacid'] = $_W['uniacid'];
             $pay_result = m('order')->payResult($ret);
+      
             m('notice')->sendOrderMessage($orderid);
             return $this->success($orderid);
         }
@@ -287,6 +300,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
         $ps['user'] = $openid;
         $ps['fee'] = $log['fee'];
         $ps['title'] = $log['title'];
+    
         if ($type == 'credit') {
             if (empty($set['pay']['credit']) && $ps['fee'] > 0) {
                 return app_error(AppError::$OrderPayFail, "未开启余额支付");
@@ -325,7 +339,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
             return $this->success($orderid);
         }
         elseif ($type == 'wechat') {
-            file_put_contents(__DIR__.'/TEST', 111);
+            
             if (empty($set['pay']['wxapp']) && $this->iswxapp) {
                 return app_error(AppError::$OrderPayFail, "未开启微信支付");
             }
@@ -353,6 +367,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 $pay_result = m('order')->payResult($ret);
                 @session_start();
                 $_SESSION[EWEI_SHOPV2_PREFIX . "_order_pay_complete"] = 1;
+            
                 $wxapp_template = $_GPC['template'];
                 $template = '';
                 if (!empty($wxapp_template)) {
@@ -418,10 +433,12 @@ class Pay_EweiShopV2Page extends AppMobilePage
         $order = pdo_fetch("select * from " . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1'
             , array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
         $merchid = $order['merchid'];
+  
         $goods = pdo_fetchall("select og.goodsid,og.price,g.title,g.thumb,og.total,g.credit,og.optionid,og.optionname as optiontitle,g.isverify,g.storeids, og.realprice from " . tablename('ewei_shop_order_goods') . " og "
             . " left join " . tablename('ewei_shop_goods') . " g on g.id=og.goodsid "
             . " where og.orderid=:orderid and og.uniacid=:uniacid ", array(':uniacid' => $uniacid, ':orderid' => $orderid));
 
+     
         $address = false;
         if (!empty($order['addressid'])) {
             $address = iunserializer($order['address']);
@@ -429,10 +446,14 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 $address = pdo_fetch('select * from  ' . tablename('ewei_shop_member_address') . ' where id=:id limit 1', array(':id' => $order['addressid']));
             }
         }
+
+
         $carrier = @iunserializer($order['carrier']);
         if (!is_array($carrier) || empty($carrier)) {
             $carrier = false;
         }
+
+     
         $store = false;
         if (!empty($order['storeid'])) {
             if ($merchid > 0) {
@@ -441,8 +462,11 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 $store = pdo_fetch('select * from  ' . tablename('ewei_shop_store') . ' where id=:id limit 1', array(':id' => $order['storeid']));
             }
         }
+
+
         $stores = false;
         if ($order['isverify']) {
+      
             $storeids = array();
             foreach ($goods as $g) {
                 if (!empty($g['storeids'])) {
@@ -450,6 +474,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 }
             }
             if (empty($storeids)) {
+             
                 if ($merchid > 0) {
                     $stores = pdo_fetchall('select * from ' . tablename('ewei_shop_merch_store') . ' where  uniacid=:uniacid and merchid=:merchid and status=1 and `type` in (2,3)', array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
                 } else {
@@ -463,6 +488,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 }
             }
         }
+
         $goodscircle = p('goodscircle');
         if($goodscircle){
             $goodscircle->importOrder($openid,0,true);
@@ -508,6 +534,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 }
             }
         }
+
         $seckill_color='';
         if($order['seckilldiscountprice']>0){
             $where = ' WHERE uniacid=:uniacid AND type = 5';
@@ -542,6 +569,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
             'icon' => $icon,
             'seckill_color'=>$seckill_color
         );
+
         if(!empty($order['virtual']) && !empty($order['virtual_str'])){
             $result['ordervirtual'] = m('order')->getOrderVirtual($order);
             $result['virtualtemp'] = pdo_fetch('SELECT linktext, linkurl FROM '. tablename('ewei_shop_virtual_type'). ' WHERE id=:id AND uniacid=:uniacid LIMIT 1', array(':id'=>$order['virtual'], ':uniacid'=>$_W['uniacid']));
@@ -559,7 +587,8 @@ class Pay_EweiShopV2Page extends AppMobilePage
         if ((int)$memberSetting['upgrade_condition'] === 2) {
             m('member')->upgradeLevel($order['openid'], $orderid, static::AFTER_PAY);
         }
-       
+        
+      
         if (!empty($order['wxapp_allow_subscribe'])) {
             $template = explode(',', $order['wxapp_allow_subscribe']);
             if (in_array('pay', $template)) {
@@ -580,6 +609,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 $msgdata['time'] = date('Y年m月d日 H:i:s', $order['paytime']);
                 $msgdata['price'] = $order['price'];
                 $msgdata['page'] = '/pages/order/detail/index?id='.$orderid;
+           
                 $this->model->sendSubscribeMessage($openid, $msgdata, 'pay');
             }
         }
@@ -593,6 +623,9 @@ class Pay_EweiShopV2Page extends AppMobilePage
         $str = str_replace("'", '', $str);
         return $str;
     }
+
+
+
     protected function creditpay_log($openid='',$fee=0,$orderid=0){
         global $_W, $_GPC;
         $uniacid = $_W['uniacid'];
@@ -639,6 +672,7 @@ class Pay_EweiShopV2Page extends AppMobilePage
                 return app_error(AppError::$OrderPayFail, $data['title'] . '<br/> 已下架!');
             }
             $unit = empty($data['unit']) ? '件' : $data['unit'];
+      
             if ($data['minbuy'] > 0) {
                 if ($data['buycount'] < $data['minbuy']) {
                     return app_error(AppError::$OrderCreateMinBuyLimit, $data['title'] . '<br/> ' . $data['min'] . $unit . "起售!");

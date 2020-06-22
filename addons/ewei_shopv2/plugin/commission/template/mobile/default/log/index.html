@@ -63,7 +63,7 @@
                 <div class="row">
                     <!--<div class="row-text">编号: <%log.applyno%></div>-->
                     <%if log.type==0%>
-                    <div class="row-text">提现到{php echo $this->set['texts']['moneytext']}</div>
+                    <div class="row-text">提现到余额</div>
                     <%else if log.type==1%>
                     <div class="row-text">提现到微信红包</div>
                     <%else if log.type==2%>
@@ -116,3 +116,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+

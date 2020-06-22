@@ -29,7 +29,7 @@
     {ifp 'sale.coupon.send'}
     <li {if $_W['routes']=='sale.coupon.send'}class="active"{/if}><a href="{php echo webUrl('sale/coupon/sendcoupon')}">手动发送</a></li>
     {/if}
-    {ifp 'sale.coupon'}<li {if $_W['routes']=='sale.coupon.shareticket'}class="active"{/if}><a href="{php echo webUrl('sale/coupon/shareticket')}">购物送券</a></li>{/if}
+    {ifp 'sale.coupon'}<li><a href="{php echo webUrl('sale/coupon/sendtask')}">购物送券</a></li>{/if}
     {ifp 'sale.coupon.log'}<li {if $_W['routes']=='sale.coupon.log'}class="active"{/if}><a href="{php echo webUrl('sale/coupon/log')}">发放记录</a></li>{/if}
    {ifp 'sale.coupon.category'}<li {if $_W['routes']=='sale.coupon.category'}class="active"{/if}><a href="{php echo webUrl('sale/coupon/category')}">分类</a></li>{/if}
    {ifp 'sale.coupon.set'}<li {if $_W['routes']=='sale.coupon.set'}class="active"{/if}><a href="{php echo webUrl('sale/coupon/set')}">设置</a></li>{/if}

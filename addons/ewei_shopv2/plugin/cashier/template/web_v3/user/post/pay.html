@@ -143,21 +143,8 @@
 	</div>
 </div>
 
-<div class="form-group" >
-	<label class="col-lg control-label must">验签方式 (SIGN_TYPE)</label>
-	<div class="col-sm-9">
-		{ifp 'sysset.payset.edit'}
-		<label class="radio-inline"><input type="radio" name="alipay[sign_type]" value="0" {if empty($alipay['sign_type'])}checked="true"{/if}/> RSA</label>
-		<label class="radio-inline"><input type="radio" name="alipay[sign_type]" value="1" {if $alipay['sign_type'] == 1}checked="true"{/if}/> RSA2</label>
-		<div class="help-block">请选择正确的验证签名方式，否则支付宝支付不起作用(<span style="color:red">建议使用RSA2</span>)</div>
-		{else}
-		<div class='form-control-static'>{if !empty($sec['alipay_sec']['alipay_sign_type'])}{$sec['alipay_sec']['alipay_sign_type']}{/if}</div>
-		{/if}
-	</div>
-</div>
-
-<!--<div class="form-group">
-	<label class="col-lg control-label">应用公钥</label>
+<div class="form-group">
+	<label class="col-lg control-label">RSA(SHA1)公钥</label>
 	<div class="col-sm-8 col-xs-12">
 		{ife 'cashier.user' $item}
 		<textarea name="alipay[publickey]" class="form-control" rows="5"></textarea>
@@ -168,10 +155,10 @@
 		<div class='form-control-static'>{$alipay['publickey']}</div>
 		{/if}
 	</div>
-</div>-->
+</div>
 
 <div class="form-group">
-	<label class="col-lg control-label">应用私钥(PRIVATE_KEY)</label>
+	<label class="col-lg control-label">RSA(SHA1)私钥</label>
 	<div class="col-sm-8 col-xs-12">
 		{ife 'cashier.user' $item}
 		<textarea name="alipay[privatekey]" class="form-control" rows="5"></textarea>
@@ -185,7 +172,7 @@
 </div>
 
 <div class="form-group">
-	<label class="col-lg control-label">支付宝公钥(PUBLIC_KEY)</label>
+	<label class="col-lg control-label">支付宝公钥</label>
 	<div class="col-sm-8 col-xs-12">
 		{ife 'cashier.user' $item}
 		<textarea name="alipay[alipublickey]" class="form-control" rows="5"></textarea>

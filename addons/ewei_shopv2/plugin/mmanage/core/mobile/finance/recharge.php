@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,6 +22,8 @@ class Recharge_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
+		$typestr = ($type == 1 ? 'credit1' : 'credit2');
+		ca('finance.recharge.' . $typestr);
 		$member = m('member')->getMember($id);
 
 		if (empty($member)) {
@@ -35,9 +36,9 @@ class Recharge_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		if ($_W['ispost']) {
-			$type = $type == 1 ? 'credit1' : 'credit2';
+			$type = ($type == 1 ? 'credit1' : 'credit2');
 			ca('finance.recharge.' . $type);
-			$typestr = $type == 'credit1' ? '积分' : '余额';
+			$typestr = ($type == 'credit1' ? '积分' : '余额');
 			$num = floatval($_GPC['num']);
 			$remark = trim($_GPC['remark']);
 

@@ -3,11 +3,41 @@
     当前位置：<span class="text-primary">商品库</span>
 </div>
 <div class="page-content">
-    <form action="" method="post" class="form-horizontal form-search page-toolbar" role="form" style="margin-bottom: 0">
+   <!-- <form action="" method="post" class="form-horizontal form-search page-toolbar" role="form" style="margin-bottom: 0">
+        <div class="col-sm-6 pull-left">
+        <select name="status" class="form-control" style="width:112px; float:right ;">
+            <option value="">状态</option>
+            <option value="1">可发起</option>
+            <option value="2">已发起</option>
+        </select>
+        </div>
         <div class="col-sm-6 pull-right">
-            <div class="input-group " >
+            <div class="input-group ">
                 <input type="text" class="input-sm form-control" name="search"  value="{$_GPC['search']}" placeholder="商品名称" > <span class="input-group-btn">
             <button class="btn  btn-primary" type="submit" style="float: left"> 搜索</button> </span>
+            </div>
+        </div>
+    </form>-->
+    <form action="./index.php" method="get" class="form-horizontal" plugins="form">
+        <input type="hidden" name="c" value="site">
+        <input type="hidden" name="a" value="entry">
+        <input type="hidden" name="m" value="ewei_shopv2">
+        <input type="hidden" name="do" value="web">
+        <input type="hidden" name="r" value="bargain.warehouse">
+        <div class="page-toolbar">
+            <div class="col-sm-6 pull-right">
+                <div class="input-group">
+                    <div class="input-group-select">
+                        <select name="status" class="form-control" style="width:112px; float:right ;">
+                            <option value="">状态</option>
+                            <option value="1">可发起</option>
+                            <option value="2">已发起</option>
+                        </select>
+                    </div>
+                    <input type="text" class=" form-control" name="search" value="{$_GPC['keywords']}"
+                           placeholder="请输入关键词"> <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit"> 搜索</button> </span>
+                </div>
             </div>
         </div>
     </form>

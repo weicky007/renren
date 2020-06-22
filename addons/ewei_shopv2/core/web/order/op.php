@@ -968,4 +968,3 @@ class Op_EweiShopV2Page extends WebPage {
         include $this->template();
     }
 }
-

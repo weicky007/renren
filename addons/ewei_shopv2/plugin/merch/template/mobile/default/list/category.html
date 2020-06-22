@@ -30,7 +30,7 @@
         </div>
         <div class="fui-icon-group col-4 noborder">
             {loop $category $item}
-            <a class="fui-icon-col external" href="{php echo mobileUrl('merch/list/merchuser', array('cateid'=>$item['id']))}">
+            <a class="fui-icon-col external" href="{php echo mobileUrl('merch/list/merchuser', array('cate'=>$item['id']))}">
                 <div class="icon">
                     <img src="{php echo tomedia($item['thumb'])}"/>
                 </div>
@@ -43,3 +43,4 @@
     {php $this->footerMenus()}
 </div>
 {template '_footer'}
+

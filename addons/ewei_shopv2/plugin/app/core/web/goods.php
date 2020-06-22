@@ -51,6 +51,7 @@ class Goods_EweiShopV2Page extends PluginWebPage
 			$category[$cate['id']] = $cate;
 		}
 
+		/*不检测版本
 		$auth = $this->model->getAuth();
 		$is_auth = !is_error($auth) && is_array($auth) ? $auth['is_auth'] : false;
 		$showcode = false;
@@ -63,6 +64,8 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		if (!is_error($auth) && empty($is_auth)) {
 			$showcode = true;
 		}
+		*/
+		$showcode = true; //去掉验证后单独添加的
 
 		include $this->template();
 	}

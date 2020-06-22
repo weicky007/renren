@@ -51,7 +51,7 @@ class Upgrade_EweiShopV2Page extends SystemPage
 						if (!is_file($entry) || (md5_file($entry) != $file['hash'])) {
 							$files[] = array('path' => $file['path'], 'download' => 0);
 							if (strexists($entry, 'template/mobile') && strexists($entry, '.html')) {
-								$templatefiles .= '' . $file['path'] . '<br/>';
+							$templatefiles .= '' . $file['path'] . '<br/>';
 							}
 
 						}
@@ -418,8 +418,8 @@ class Upgrade_EweiShopV2Page extends SystemPage
 		header('location: ' . webUrl('system/auth/upgrade'));
 		exit();
 	}
-
-	public function log()
+	
+    	public function log()
 	{
 		global $_W;
 		global $_GPC;

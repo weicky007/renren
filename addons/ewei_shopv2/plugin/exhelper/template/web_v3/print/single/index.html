@@ -113,7 +113,7 @@
 			alert(LodopTip);
 		}
 	});
-	// 执行搜索
+	// 执行搜索 
     function search(){
         var data = {
         	paytype: $.trim($("select[name='paytype'] option:selected").val()),
@@ -126,10 +126,10 @@
         	searchfield: $.trim($("select[name='searchfield'] option:selected").val()),
         	keyword1: $.trim($("input[name='keyword1']").val())
         };
-
-        $('#search-btn').html("<i class='fa fa-spinner fa-spin'></i> 正在搜索");
+        
+        $('#search-btn').html("<i class='fa fa-spinner fa-spin'></i> 正在搜索"); 
         $("#result-tip .panel-body").html("<i class='fa fa-spinner fa-spin'></i> 正在搜索...");
-
+        
         $.ajax({
             url: "{php echo webUrl('exhelper/print/single/getdata')}",
             data: data,
@@ -137,7 +137,7 @@
             success:function(html){
             	$('#search-btn').html("<i class='fa fa-search'></i> 搜索")
                 $('#result').html(html);
-
+                
                 $('.result-item').click(function(){
                        $('#result-order').html("<p style='line-height: 100px; text-align: center;'><i class='fa fa-spinner fa-spin'></i> 正在加载...</p>")
                     $.ajax({
@@ -153,10 +153,10 @@
                       });
 
                   })
-
+                  
             }
         });
-    }
+    }  
 </script>
 
 {template '_footer'}

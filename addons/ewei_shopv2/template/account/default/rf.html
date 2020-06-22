@@ -9,20 +9,6 @@
     border-top: 1px solid{$set['wap']['color']};
     color: {$set['wap']['color']};
     }
-    .agreement {
-        position: fixed;
-        bottom: 20px;
-        width: 100%;
-    }
-    .agreement p{
-        font-size: 14px;
-        text-align: center;
-        vertical-align: middle;
-    }
-    .agreement p a {
-        color: #0066cc;
-        cursor: pointer;
-    }
 </style>
 <div class="fui-page">
     {if is_h5app()}
@@ -82,17 +68,6 @@
             </div>
 
         </div>
-
-
-        {if empty($type)}
-        {if is_h5app()}
-        {if $set['wap']['agr']}
-        <div class="agreement">
-            <p><input type="checkbox" class="agree" value="1" checked name="agree[]"> 登录注册代表同意 <a href="{php echo mobileUrl('account/agr')}" id="useragr">《用户协议与隐私政策》</a></p>
-        </div>
-        {/if}
-        {/if}
-        {/if}
         <script language='javascript'>
             require(['biz/member/account'], function (modal) {
                 modal.initRf({backurl:'{$backurl}', type: {php echo intval($type)}, endtime: {php echo intval($endtime)}, imgcode: {php echo intval($set['wap']['smsimgcode'])}});

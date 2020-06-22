@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,9 +13,6 @@ class Template_EweiShopV2Page extends PluginWebPage
 		$psize = 20;
 		$condition = ' and uniacid=:uniacid';
 		$params = array(':uniacid' => $_W['uniacid']);
-		if ($_GPC['op'] == 'delete' && !empty($_GPC['ids'])) {
-			$this->delete($_GPC['ids']);
-		}
 
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
@@ -24,8 +20,8 @@ class Template_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_message_mass_template') . (' WHERE 1 ' . $condition . '  ORDER BY id asc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_template') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_message_mass_template') . ' WHERE 1 ' . $condition . '  ORDER BY id asc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_message_mass_template') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -72,11 +68,6 @@ class Template_EweiShopV2Page extends PluginWebPage
 				$insert['appid'] = $_GPC['appid'];
 				$insert['pagepath'] = $_GPC['pagepath'];
 			}
-			else {
-				$insert['miniprogram'] = '';
-				$insert['appid'] = '';
-				$insert['pagepath'] = '';
-			}
 
 			if (empty($id)) {
 				pdo_insert('ewei_message_mass_template', $insert);
@@ -101,10 +92,10 @@ class Template_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_message_mass_template') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_message_mass_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_message_mass_template', array('id' => $id, 'uniacid' => $_W['uniacid']));
@@ -128,7 +119,7 @@ class Template_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_message_mass_template') . (' WHERE 1 ' . $condition . ' order by id asc'), $params);
+		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_message_mass_template') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
 
 		if ($_GPC['suggest']) {
 			exit(json_encode(array('value' => $ds)));
@@ -224,10 +215,7 @@ class Template_EweiShopV2Page extends PluginWebPage
 
 			unset($v);
 			$value['contents'] = $matches[0];
-			$result['template_list'][$key]['content'] = str_replace(array('
-
-', '
-'), '<br />', $value['content']);
+			$result['template_list'][$key]['content'] = str_replace(array("\n\n", "\n"), '<br />', $value['content']);
 		}
 
 		unset($value);
@@ -269,7 +257,7 @@ class Template_EweiShopV2Page extends PluginWebPage
 			$msg = array(
 				'first'  => array('value' => $template['first'], 'color' => $template['firstcolor']),
 				'remark' => array('value' => $template['remark'], 'color' => $template['remarkcolor'])
-			);
+				);
 			$i = 0;
 
 			while ($i < count($data)) {

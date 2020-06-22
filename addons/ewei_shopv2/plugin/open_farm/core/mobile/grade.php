@@ -6,16 +6,26 @@ if (!defined('IN_IA')) {
 
 class Grade_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_grade';
 
-	/**     * 首页方法     */
+	/**
+     * 首页方法
+     */
 	public function main()
 	{
 		require_once $this->template();
 	}
 
-	/**     * 获取信息     * @param $chicken     * @param bool $method     * @return bool     */
+	/**
+     * 获取信息
+     * @param $chicken
+     * @param bool $method
+     * @return bool
+     */
 	public function getInfo($chicken, $method = false)
 	{
 		global $_W;
@@ -29,7 +39,11 @@ class Grade_EweiShopV2Page extends PluginMobilePage
 		$this->model->returnJson($gradeInfo);
 	}
 
-	/**     * 验证等级     * @param $data     * @return array     */
+	/**
+     * 验证等级
+     * @param $data
+     * @return array
+     */
 	public function checkLevel($data)
 	{
 		global $_W;

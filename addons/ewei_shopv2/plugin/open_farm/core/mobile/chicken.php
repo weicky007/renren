@@ -1,8 +1,9 @@
 <?php
 
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+
 
 require_once 'seting.php';
 require_once 'grade.php';
@@ -44,12 +45,13 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	public function getInfo($method = false)
 	{
 		global $_W;
-		$sql = 'SELECT * FROM ' . tablename($this->table) . (' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' AND `openid` = \'' . $_W['openid'] . '\' ');
+		$sql = 'SELECT * FROM ' . tablename($this->table) . ' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' AND `openid` = \'' . $_W['openid'] . '\' ';
 		$info = pdo_fetch($sql);
 
 		if ($method) {
 			return $info;
 		}
+
 
 		$this->model->returnJson($info);
 	}
@@ -63,7 +65,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	{
 		global $_W;
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`feed_stock` = `feed_stock` + ' . $number . ' ') . ' WHERE ' . (' `uniacid` = \'' . $_W['uniacid'] . '\' AND ') . (' `openid` = \'' . $_W['openid'] . '\' ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`feed_stock` = `feed_stock` + ' . $number . ' ' . ' WHERE ' . ' `uniacid` = \'' . $_W['uniacid'] . '\' AND ' . ' `openid` = \'' . $_W['openid'] . '\' ';
 		$query = pdo_query($sql);
 		return $query;
 	}
@@ -77,7 +79,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	{
 		global $_W;
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`feed_stock` = `feed_stock` - ' . $number . ' ') . ' WHERE ' . (' `uniacid` = \'' . $_W['uniacid'] . '\' AND ') . (' `openid` = \'' . $_W['openid'] . '\' ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`feed_stock` = `feed_stock` - ' . $number . ' ' . ' WHERE ' . ' `uniacid` = \'' . $_W['uniacid'] . '\' AND ' . ' `openid` = \'' . $_W['openid'] . '\' ';
 		$query = pdo_query($sql);
 		return $query;
 	}
@@ -92,7 +94,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$data = $this->layEggs($chicken);
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`eat_sum` = `eat_sum` + ' . $chicken['feeding_sum'] . ' ,') . ('`lay_eggs_sum` = ' . $data['number'] . ' ') . ' WHERE ' . (' `uniacid` = \'' . $_W['uniacid'] . '\' AND ') . (' `openid` = \'' . $_W['openid'] . '\' ; ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`eat_sum` = `eat_sum` + ' . $chicken['feeding_sum'] . ' ,' . '`lay_eggs_sum` = ' . $data['number'] . ' ' . ' WHERE ' . ' `uniacid` = \'' . $_W['uniacid'] . '\' AND ' . ' `openid` = \'' . $_W['openid'] . '\' ; ';
 		pdo_query($sql);
 		return $data;
 	}
@@ -106,7 +108,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	{
 		global $_W;
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`egg_stock` = `egg_stock` + ' . $number . ' ') . ' WHERE ' . (' `uniacid` = \'' . $_W['uniacid'] . '\' AND ') . (' `openid` = \'' . $_W['openid'] . '\' ; ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`egg_stock` = `egg_stock` + ' . $number . ' ' . ' WHERE ' . ' `uniacid` = \'' . $_W['uniacid'] . '\' AND ' . ' `openid` = \'' . $_W['openid'] . '\' ; ';
 		$query = pdo_query($sql);
 		return $query;
 	}
@@ -120,7 +122,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	{
 		global $_W;
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`egg_stock` = `egg_stock` - ' . $number . ' ,') . ('`last_egg_stock` = `last_egg_stock` - ' . $number . ' ') . (' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ; ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`egg_stock` = `egg_stock` - ' . $number . ' ,' . '`last_egg_stock` = `last_egg_stock` - ' . $number . ' ' . ' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ; ';
 		$query = pdo_query($sql);
 		return $query;
 	}
@@ -137,7 +139,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
 		$number = $laySum;
-		$layEggsEatNumber = $chicken['lay_eggs_eat'] ? $chicken['lay_eggs_eat'] : $seting['lay_eggs_eat'];
+		$layEggsEatNumber = (($chicken['lay_eggs_eat'] ? $chicken['lay_eggs_eat'] : $seting['lay_eggs_eat']));
 		$eggSum = 0;
 		$eggs = array();
 
@@ -167,8 +169,10 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				pdo_update($this->table, $data);
 			}
 
+
 			$number = $layEggsFeedSum;
 		}
+
 
 		$data = array('number' => $number, 'egg_sum' => $eggSum, 'eggs' => $eggs);
 		return $data;
@@ -184,6 +188,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		$surprised->clearCouponSurprised();
 		$seting = new Seting_EweiShopV2Page();
 		$setingInfo = $seting->getInfo(true);
+		$setingInfo['surprised_probability'];
 		$surprisedData = array('yes' => $setingInfo['surprised_probability'], 'no' => 100 - $setingInfo['surprised_probability']);
 		$surprised = $this->model->getRand($surprisedData);
 
@@ -192,13 +197,14 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			$where = array('uniacid' => $_W['uniacid']);
 			$surprisedArr = pdo_getall($surprisedTable, $where);
 
-			if (!$surprisedArr) {
+			if (!($surprisedArr)) {
 				return $surprisedArr;
 			}
 
+
 			$probabilityArr = array();
 
-			foreach ($surprisedArr as $key => $value) {
+			foreach ($surprisedArr as $key => $value ) {
 				$probabilityArr[$value['id']] = $value['probability'];
 			}
 
@@ -208,6 +214,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			$query = pdo_insert($userSurprised, $data);
 			return $query;
 		}
+
 	}
 
 	/**
@@ -255,9 +262,12 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		$setingInfo = $seting->getInfo(true);
 		$eatTime = (double) $setingInfo['eat_time'] * (double) $feed;
 		$chicket = $this->getInfo(true);
-		if (isset($chicket['accelerate']) && !empty($chicket['accelerate'])) {
-			$eatTime -= (double) ($chicket['accelerate'] / 100 * $eatTime);
+		$chicket['accelerate'];
+
+		if (isset($chicket['accelerate']) && !(empty($chicket['accelerate']))) {
+			$eatTime -= (double) ($chicket['accelerate'] / 100) * $eatTime;
 		}
+
 
 		$eatTime = sprintf('%.2f', $eatTime);
 		return $eatTime;
@@ -286,7 +296,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	{
 		global $_W;
 		$tableName = tablename($this->table);
-		$sql = ' UPDATE ' . $tableName . ' SET ' . ('`last_egg_stock` = ' . $number . ' ') . (' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ; ');
+		$sql = ' UPDATE ' . $tableName . ' SET ' . '`last_egg_stock` = ' . $number . ' ' . ' WHERE `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ; ';
 		$query = pdo_query($sql);
 		return $query;
 	}
@@ -309,6 +319,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	public function feeding()
 	{
 		$chicken = $this->getInfo(true);
+		$chicken['feeding_sum'];
 		$egg = 0;
 		$bowl = 0;
 		$surprised = array();
@@ -317,6 +328,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		if ($chicken['feeding_sum']) {
 			$now = time();
 			$lately = strtotime($chicken['feeding_time']);
+			$chicken['feeding_sum'];
 			$finish = $this->calFeeding($chicken['feeding_sum']);
 			$reach = $lately + $finish;
 
@@ -331,7 +343,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				$time = $data['time'];
 				$bowl = $data['bowl'];
 			}
-			else {
+			 else {
 				$time = $reach - $now;
 				$bowl = $this->calFeed($time);
 				$chicken = array('bowl_stock' => $bowl);
@@ -339,15 +351,15 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				pdo_update($this->table, $chicken, $where);
 			}
 		}
-		else {
+		 else {
 			$this->feedingEnd();
 			$data = $this->runFeeding($chicken);
 			$time = $data['time'];
 			$bowl = $data['bowl'];
 		}
 
-		if (0 < $egg && 0 < count($eggs)) {
-			foreach ($eggs as $value) {
+		if ((0 < $egg) && (0 < count($eggs))) {
+			foreach ($eggs as $value ) {
 				$this->eggLog($value);
 				$presentation = new Presentation_EweiShopV2Page();
 				$content = '主人主人,我吃完饲料下了 ' . $value . ' 颗蛋,一定要记得领取哦~';
@@ -355,17 +367,19 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			}
 		}
 
+
 		$surprisedSum = count($surprised);
 
 		if (0 < $surprisedSum) {
-			foreach ($surprised as $value) {
+			foreach ($surprised as $value ) {
 				$presentation = new Presentation_EweiShopV2Page();
 				$content = '主人主人,恭喜你成功获得了 1 颗彩蛋,快打开看看吧~';
 				$presentation->addInfo($content);
 			}
 		}
 
-		$response = array('time' => $time < 0 ? 0 : $time, 'bowl' => $bowl < 0 ? 0 : $bowl, 'egg' => $egg < 0 ? 0 : $egg, 'eggs' => $eggs, 'surprised' => $surprised);
+
+		$response = array('time' => ($time < 0 ? 0 : $time), 'bowl' => ($bowl < 0 ? 0 : $bowl), 'egg' => ($egg < 0 ? 0 : $egg), 'eggs' => $eggs, 'surprised' => $surprised);
 		$this->model->returnJson($response);
 	}
 
@@ -375,6 +389,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	public function checkFeedingEnd()
 	{
 		$chicken = $this->getInfo(true);
+		$chicken['feeding_sum'];
 		$egg = 0;
 		$surprised = array();
 		$eggs = array();
@@ -382,6 +397,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		if ($chicken['feeding_sum']) {
 			$now = time();
 			$lately = strtotime($chicken['feeding_time']);
+			$chicken['feeding_sum'];
 			$finish = $this->calFeeding($chicken['feeding_sum']);
 			$reach = $lately + $finish;
 
@@ -395,7 +411,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				$time = 0;
 				$bowl = 0;
 			}
-			else {
+			 else {
 				$time = $reach - $now;
 				$bowl = $this->calFeed($time);
 				$chicken = array('bowl_stock' => $bowl);
@@ -403,13 +419,13 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				pdo_update($this->table, $chicken, $where);
 			}
 		}
-		else {
+		 else {
 			$time = 0;
 			$bowl = 0;
 		}
 
-		if (0 < $egg && 0 < count($eggs)) {
-			foreach ($eggs as $value) {
+		if ((0 < $egg) && (0 < count($eggs))) {
+			foreach ($eggs as $value ) {
 				$this->eggLog($value);
 				$presentation = new Presentation_EweiShopV2Page();
 				$content = '主人主人,我吃完饲料下了 ' . $value . ' 颗蛋,一定要记得领取哦~';
@@ -417,17 +433,19 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			}
 		}
 
+
 		$surprisedSum = count($surprised);
 
 		if (0 < $surprisedSum) {
-			foreach ($surprised as $value) {
+			foreach ($surprised as $value ) {
 				$presentation = new Presentation_EweiShopV2Page();
 				$content = '主人主人,恭喜你成功获得了 1 颗彩蛋,快打开看看吧~';
 				$presentation->addInfo($content);
 			}
 		}
 
-		$response = array('time' => $time < 0 ? 0 : $time, 'bowl' => $bowl < 0 ? 0 : $bowl, 'egg' => $egg < 0 ? 0 : $egg, 'eggs' => $eggs, 'surprised' => $surprised);
+
+		$response = array('time' => ($time < 0 ? 0 : $time), 'bowl' => ($bowl < 0 ? 0 : $bowl), 'egg' => ($egg < 0 ? 0 : $egg), 'eggs' => $eggs, 'surprised' => $surprised);
 		$this->model->returnJson($response);
 	}
 
@@ -450,12 +468,14 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
+		$seting['surprised_invalid_time'];
 		$chicken = $this->getInfo(true);
+		$chicken['surprised_guard'];
 		$invalid = $seting['surprised_invalid_time'] + $chicken['surprised_guard'];
 		$limit = date('Y-m-d H:i:s', strtotime(' - ' . $invalid . ' hours '));
 		$table = 'ewei_open_farm_user_surprised';
 		$tableName = tablename($table);
-		$sql = ' DELETE FROM ' . $tableName . ' ' . (' WHERE `create_time` < \'' . $limit . '\' ') . (' AND `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ') . ' AND `receive` = \'否\' ';
+		$sql = ' DELETE FROM ' . $tableName . ' ' . ' WHERE `create_time` < \'' . $limit . '\' ' . ' AND `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ' . ' AND `receive` = \'否\' ';
 		pdo_query($sql);
 		$table = 'ewei_open_farm_user_surprised';
 		$where = array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'status' => '否');
@@ -464,17 +484,19 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		$data = array('status' => '是');
 		pdo_update($table, $data, $where);
 
-		foreach ($infoList as $key => $val) {
+		foreach ($infoList as $key => $val ) {
 			if (empty($val)) {
 				unset($infoList[$key]);
 			}
+
 		}
 
 		$infoList = array_values($infoList);
 
-		if (!count($infoList)) {
+		if (!(count($infoList))) {
 			$infoList = array();
 		}
+
 
 		return $infoList;
 	}
@@ -487,8 +509,8 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	public function getSurprisedDetails($data)
 	{
 		global $_W;
-		if ($data && 0 < count($data)) {
-			foreach ($data as $key => $value) {
+		if ($data && (0 < count($data))) {
+			foreach ($data as $key => $value ) {
 				$surprised = $this->surprisedInfo($value['surprised_id']);
 
 				switch ($surprised['category']) {
@@ -500,10 +522,11 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 					$gettotal = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_coupon_data') . ' where couponid=:couponid and uniacid=:uniacid limit 1', array(':couponid' => $surprised['value'], ':uniacid' => $_W['uniacid']));
 					$left_count = $info['total'] - $gettotal;
 					$left_count = intval($left_count);
-					if ($info['total'] != -1 && $left_count <= 0) {
+
+					if (($info['total'] != -1) && ($left_count <= 0)) {
 						unset($data[$key]);
 					}
-					else {
+					 else {
 						$data[$key] = array_merge($data[$key], $surprised, $info);
 					}
 
@@ -518,6 +541,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 				}
 			}
 		}
+
 
 		return array_values($data);
 	}
@@ -546,7 +570,8 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
-		$bowl = $seting['bowl'] < $chicken['feed_stock'] ? $seting['bowl'] : $chicken['feed_stock'];
+		$chicken['feed_stock'];
+		$bowl = (($seting['bowl'] < $chicken['feed_stock'] ? $seting['bowl'] : $chicken['feed_stock']));
 		$data = array();
 		$time = $this->calFeeding($bowl);
 		$data['feeding_time'] = date('Y-m-d H:i:s');
@@ -570,14 +595,16 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
+		$seting['surprised_invalid_time'];
 		$chicken = $this->getInfo(true);
+		$chicken['surprised_guard'];
 		$invalid = $seting['surprised_invalid_time'] + $chicken['surprised_guard'];
 		$limit = date('Y-m-d H:i:s', strtotime(' - ' . $invalid . ' hours '));
 		$table = 'ewei_open_farm_user_surprised';
 		$tableName = tablename($table);
-		$sql = ' DELETE FROM ' . $tableName . ' ' . (' WHERE `create_time` < \'' . $limit . '\' ') . (' AND `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ') . ' AND `receive` = \'否\' ';
+		$sql = ' DELETE FROM ' . $tableName . ' ' . ' WHERE `create_time` < \'' . $limit . '\' ' . ' AND `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ' . ' AND `receive` = \'否\' ';
 		pdo_query($sql);
-		$sql = ' SELECT * FROM ' . $tableName . ' ' . (' WHERE `uniacid` = ' . $_W['uniacid'] . ' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ') . ' AND `receive` = \'否\' ' . ' ORDER BY `id` ASC ';
+		$sql = ' SELECT * FROM ' . $tableName . ' ' . ' WHERE `uniacid` = ' . $_W['uniacid'] . ' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ' . ' AND `receive` = \'否\' ' . ' ORDER BY `id` ASC ';
 		$query = pdo_fetch($sql);
 		$surprisedInfo = $this->surprisedInfo($query['surprised_id']);
 		$query = array_merge($query, $surprisedInfo);
@@ -590,17 +617,18 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			$gettotal = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_coupon_data') . ' where couponid=:couponid and uniacid=:uniacid limit 1', array(':couponid' => $surprisedInfo['value'], ':uniacid' => $_W['uniacid']));
 			$left_count = $info['total'] - $gettotal;
 			$left_count = intval($left_count);
-			if ($info['total'] != -1 && $left_count <= 0) {
+
+			if (($info['total'] != -1) && ($left_count <= 0)) {
 				$query = array();
 			}
-			else {
+			 else {
 				$query = array_merge($query, $info);
 			}
 		}
-
 		if ($method) {
 			return $query;
 		}
+
 
 		$this->model->returnJson($query);
 	}
@@ -628,7 +656,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		if ($category === '积分') {
 			m('member')->setCredit($_W['openid'], 'credit1', $surprised['value'], array(0, '农场积分彩蛋'));
 		}
-		else {
+		 else {
 			$data = array('id' => $dataid);
 			$url = mobileUrl('sale/coupon/my/detail', $data, true);
 		}
@@ -636,6 +664,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		if ($query !== false) {
 			$this->model->returnJson(true, false, false, $url);
 		}
+
 
 		$this->model->returnJson($query, false, false, $url);
 	}
@@ -650,20 +679,22 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
+		$seting['egg_invalid_time'];
 		$limit = date('Y-m-d H:i:s', strtotime(' - ' . $seting['egg_invalid_time'] . ' hours '));
 		$table = 'ewei_open_farm_egg';
 		$tableName = tablename($table);
-		$sql = ' SELECT * FROM ' . $tableName . (' WHERE `create_time` >= \'' . $limit . '\' ') . (' AND `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ') . ' AND `receive` = \'否\' ' . ' AND `status` = \'否\' ';
+		$sql = ' SELECT * FROM ' . $tableName . ' WHERE `create_time` >= \'' . $limit . '\' ' . ' AND `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ' . ' AND `receive` = \'否\' ' . ' AND `status` = \'否\' ';
 		$eggArr = pdo_fetchall($sql);
 		$eggSum = 0;
 
-		foreach ($eggArr as $key => $value) {
+		foreach ($eggArr as $key => $value ) {
 			$eggSum += $value['sum'];
 		}
 
 		if ($method) {
 			return $eggSum;
 		}
+
 
 		$this->model->returnJson($eggSum);
 	}
@@ -676,15 +707,16 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		$seting = new Seting_EweiShopV2Page();
 		$seting = $seting->getInfo(true);
+		$seting['egg_invalid_time'];
 		$limit = date('Y-m-d H:i:s', strtotime(' - ' . $seting['egg_invalid_time'] . ' hours '));
 		$table = 'ewei_open_farm_egg';
 		$tableName = tablename($table);
-		$sql = ' SELECT * FROM ' . $tableName . (' WHERE `create_time` >= \'' . $limit . '\' ') . (' AND `uniacid` = \'' . $_W['uniacid'] . '\' ') . (' AND `openid` = \'' . $_W['openid'] . '\' ') . ' AND `receive` = \'否\' ' . ' AND `status` = \'否\' ';
+		$sql = ' SELECT * FROM ' . $tableName . ' WHERE `create_time` >= \'' . $limit . '\' ' . ' AND `uniacid` = \'' . $_W['uniacid'] . '\' ' . ' AND `openid` = \'' . $_W['openid'] . '\' ' . ' AND `receive` = \'否\' ' . ' AND `status` = \'否\' ';
 		$eggArr = pdo_fetchall($sql);
 		$eggSum = 0;
 		$eggIdArr = array();
 
-		foreach ($eggArr as $key => $value) {
+		foreach ($eggArr as $key => $value ) {
 			$eggSum += $value['sum'];
 			$eggIdArr[] = $value['id'];
 		}
@@ -704,7 +736,7 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
      */
 	public function receiveEggLog($idStr)
 	{
-		$sql = ' UPDATE `ims_ewei_open_farm_egg` ' . ' SET `receive` = \'是\' ' . (' WHERE `id` IN (' . $idStr . '); ');
+		$sql = ' UPDATE `ims_ewei_open_farm_egg` ' . ' SET `receive` = \'是\' ' . ' WHERE `id` IN (' . $idStr . '); ';
 		pdo_query($sql);
 	}
 
@@ -714,15 +746,17 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 	public function downloadPortrait()
 	{
 		$chicken = $this->getInfo(true);
+		$chicken['portrait'];
 		$saveFolder = __DIR__ . '/../../static/mobile/portrait/';
 
-		if (!file_exists($saveFolder)) {
+		if (!(file_exists($saveFolder))) {
 			mkdir($saveFolder);
 		}
 
+
 		$filePath = $saveFolder . $chicken['uniacid'] . '-' . $chicken['openid'] . '.jpg';
 
-		if (!is_file($filePath)) {
+		if (!(is_file($filePath))) {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $chicken['portrait']);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -733,7 +767,9 @@ class Chicken_EweiShopV2Page extends PluginMobilePage
 			fwrite($resource, $file);
 			fclose($resource);
 		}
+
 	}
 }
+
 
 ?>

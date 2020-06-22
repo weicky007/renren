@@ -6,21 +6,36 @@ if (!defined('IN_IA')) {
 
 class Reply_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_reply';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'brief_introduce', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array('brief_introduce' => '请填写回复内容');
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
 		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 回复列表     * Reply_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 回复列表
+     * Reply_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -55,7 +70,9 @@ class Reply_EweiShopV2Page extends PluginWebPage
 		}
 	}
 
-	/**     * 添加一条，编辑一条     */
+	/**
+     * 添加一条，编辑一条
+     */
 	public function addInfo()
 	{
 		global $_W;
@@ -76,7 +93,9 @@ class Reply_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($replyInfo);
 	}
 
-	/**     * 获取回复信息     */
+	/**
+     * 获取回复信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -86,7 +105,9 @@ class Reply_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($replyInfo);
 	}
 
-	/**     * 删除回复     */
+	/**
+     * 删除回复
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -96,7 +117,9 @@ class Reply_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 删除多条彩蛋     */
+	/**
+     * 删除多条彩蛋
+     */
 	public function deleteAll()
 	{
 		global $_W;
@@ -106,7 +129,10 @@ class Reply_EweiShopV2Page extends PluginWebPage
 		show_json(1, '删除成功');
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

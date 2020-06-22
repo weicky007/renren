@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -27,9 +26,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and name like \'' . $keyword . '\' ';
 		}
 
-		$this->fix_commission_img();
 		$condition .= ' and (merch=' . intval($_W['merchid']) . ' or uniacid=0)';
-		$list = pdo_fetchall('select id, name, type, preview, uniacid from ' . tablename('ewei_shop_diypage_template') . ' where (uniacid=:uniacid or uniacid=0) and deleted=0 ' . $condition . ' order by uniacid asc, type desc, id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select id, name, type, preview, uniacid from ' . tablename('ewei_shop_diypage_template') . ' where (uniacid=:uniacid or uniacid=0) and deleted=0 ' . $condition . ' order by uniacid asc, type desc, id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diypage_template') . ' where deleted=0 and (uniacid=:uniacid or uniacid=0) ' . $condition, array(':uniacid' => $_W['uniacid']));
 		$pager = pagination2($total, $pindex, $psize);
 		$allpagetype = $this->model->getPageType();
@@ -73,22 +71,6 @@ class Index_EweiShopV2Page extends PluginWebPage
 			}
 
 			show_json(0);
-		}
-	}
-
-	/**
-     * 修复 新分销中心预览图不存在的问题
-     * author 洋葱
-     */
-	private function fix_commission_img()
-	{
-		$img_url = '../addons/ewei_shopv2/plugin/diypage/static/template/commission/preview.png';
-		$condition = 'uniacid=:uniacid AND type=:type AND tplid=:tplid';
-		$params = array(':uniacid' => 0, ':type' => 4, ':tplid' => 15);
-		$sql = 'select id,preview from ' . tablename('ewei_shop_diypage_template') . (' where ' . $condition . ' limit 1');
-		$data = pdo_fetch($sql, $params);
-		if ($data && empty($data['preview'])) {
-			pdo_update('ewei_shop_diypage_template', array('preview' => $img_url), array('id' => $data['id']));
 		}
 	}
 }

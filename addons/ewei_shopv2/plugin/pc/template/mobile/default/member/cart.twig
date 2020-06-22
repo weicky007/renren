@@ -14,8 +14,8 @@
             <div class="cart">
                 <div class="hd">
                     <div class="tab-title flex">
-                        <a href="{{ pcUrl('pc.member.cart') }}"><span {% if not type %}class="current"{% endif %}>全部商品（{{ canbuycount }}）</span></a>
-                        <a href="{{ pcUrl('pc.member.cart',{'type':1}) }}"><span {% if type %}class="current"{% endif %}>失效产品({{ notbuycount }})</span></a>
+                        <a href="{{ pcUrl('member.cart') }}"><span {% if not type %}class="current"{% endif %}>全部商品（{{ canbuycount }}）</span></a>
+                        <a href="{{ pcUrl('member.cart',{'type':1}) }}"><span {% if type %}class="current"{% endif %}>失效产品({{ notbuycount }})</span></a>
                     </div>
                 </div>
                 <div class="cart-main">
@@ -37,9 +37,9 @@
                         </thead>
                         <tbody>
                         <!-- 一行购物车商品 -->
-                        <input type="hidden" id="carturl" value="{{ pcUrl('pc.member.cartSelect')}}">
-                        <input type="hidden" id="updateurl" value="{{ pcUrl('pc.member.cartUpdate')}}">
-                        <input type="hidden" id="deleteurl" value="{{ pcUrl('pc.member.cartDelete')}}">
+                        <input type="hidden" id="carturl" value="{{ pcUrl('member.cartSelect')}}">
+                        <input type="hidden" id="updateurl" value="{{ pcUrl('member.cartUpdate')}}">
+                        <input type="hidden" id="deleteurl" value="{{ pcUrl('member.cartDelete')}}">
                         {% for item in list %}
                         <tr  class="goods-cart {% if item.selected ==1 %}choose-current{% endif %}" >
                             <td class="empty"></td>
@@ -134,7 +134,7 @@
                 <div class="love flex">
                     {% for item in favorite %}
                     <div class="goods-item">
-                        <a href="{{ pcUrl('pc.goods.detail',{'id':item.id}) }}">
+                        <a href="{{ pcUrl('goods.detail',{'id':item.id}) }}">
                         <img src="{{ item.thumb }}"/>
                         <h6>{{ item.title }}</h6>
                         </a>

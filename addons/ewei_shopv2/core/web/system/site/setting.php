@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,7 +12,7 @@ class Setting_EweiShopV2Page extends SystemPage
 		$uniacid = $_W['uniacid'];
 
 		if ($_W['ispost']) {
-			$data = array('uniacid' => $uniacid, 'casebanner' => save_media($_GPC['casebanner']), 'background' => trim($_GPC['background']), 'contact' => m('common')->html_to_images($_GPC['contact']));
+			$data = array('uniacid' => $uniacid, 'casebanner' => trim($_GPC['casebanner']), 'background' => trim($_GPC['background']), 'contact' => trim($_GPC['contact']));
 			$set = pdo_fetch('select * from ' . tablename('ewei_shop_system_setting') . ' where uniacid = :uniacid ', array(':uniacid' => $uniacid));
 
 			if ($set) {

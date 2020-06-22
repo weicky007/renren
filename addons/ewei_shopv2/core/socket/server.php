@@ -1,5 +1,4 @@
 <?php
-
 class Socket
 {
 	public $server;
@@ -180,16 +179,14 @@ class Socket
      */
 	public function error($msg, $type = 0)
 	{
-		echo $msg . '
-';
+		echo $msg . "\n";
 	}
 
 	public function log($name, $text)
 	{
 		$filename = dirname(__FILE__) . '/log_' . $name . '.log';
 		$text = '[' . date('Y-m-d H:i:s', time()) . '] ' . $text;
-		file_put_contents($filename, $text . '
-', FILE_APPEND);
+		file_put_contents($filename, $text . "\r\n", FILE_APPEND);
 	}
 
 	public function special($obj)

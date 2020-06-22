@@ -23,7 +23,7 @@
     <div class="header">
         <div class="inner flex">
             <h1 class="logo">
-                <a href="{{ pcUrl('pc') }}">
+                <a href="{{ pcUrl('') }}">
                     {% if global.shopSetting.logo %}
                         <img src="{{ tomedia(global.shopSetting.logo) }}">
                     {% else %}
@@ -32,12 +32,16 @@
                 </a>
             </h1>
             <div class="searchBox">
-                <form action="./index.php" method="get">
-                    <input type="hidden" name="c" value="entry"/>
-                    <input type="hidden" name="i" value="{{ global.params.__uniacid }}"/>
-                    <input type="hidden" name="m" value="ewei_shopv2"/>
-                    <input type="hidden" name="do" value="mobile"/>
-                    <input type="hidden" name="r" value="pc.list"/>
+                <form action="" method="get">
+                    {% if ispc() == false %}
+                        <input type="hidden" name="c" value="entry"/>
+                        <input type="hidden" name="m" value="ewei_shopv2"/>
+                        <input type="hidden" name="do" value="mobile"/>
+                        <input type="hidden" name="r" value="pc.list"/>
+                        <input type="hidden" name="i" value="{{ global.params.__uniacid }}"/>
+                    {% else %}
+                        <input type="hidden" name="r" value="list"/>
+                    {% endif %}
                     <div class="search flex">
                         <input class="search-input" type="text" name="keywords" value="{{ GPC.keywords }}"
                                placeholder="请输入关键字"
@@ -47,7 +51,7 @@
                     <ul class="flex">
                         {% if global.setting.search %}
                             {% for key, item in global.setting.search %}
-                                <li><a href="{{ pcUrl('pc.list',{'keywords':item}) }}">{{ item }}</a>
+                                <li><a href="{{ pcUrl('list',{'keywords':item}) }}">{{ item }}</a>
                                     {% if key < count(global.setting.search) - 1 %}
                                         <span>|</span>
                                     {% endif %}

@@ -1,1 +1,585 @@
-define(["jquery"],function($){var biz={url:function(t,e,a){if(a)var i="./merchant.php?c=site&a=entry&m=ewei_shopv2&do=web&r="+t.replace(/\//gi,".");else i="./index.php?c=site&a=entry&m=ewei_shopv2&do=web&r="+t.replace(/\//gi,".");return e&&("object"==typeof e?i+="&"+$.toQueryString(e):"string"==typeof e&&(i+="&"+e)),i}};return biz.selector={select:function(t){var e=void 0===(t=$.extend({},t||{})).name?"default":t.name,a=e+"-selector-modal";if(modalObj=$("#"+a),modalObj.length<=0){var i='<div id="'+a+'"  class="modal fade" tabindex="-1" style="z-index: 2080">';i+='<div class="modal-dialog" style="width: 920px;">',i+='<div class="modal-content">',i+='<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>',i+='<div class="modal-body" >',i+='<div class="row">',i+='<div class="input-group">',i+='<input type="text" class="form-control" name="keyword" id="'+e+'_input" placeholder="'+(void 0===t.placeholder?"":t.placeholder)+'" />',i+='<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector.search(this, \''+e+"');\">搜索</button></span>",i+="</div>",i+="</div>",i+='<div class="content" style="padding-top:5px;" data-name="'+e+'"></div>',i+="</div>",i+='<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>',i+="</div>",i+="</div>",modalObj=$(i+="</div>"),modalObj.on("show.bs.modal",function(){"1"==t.autosearch&&$.get(t.url,{keyword:""},function(t){$(".content",modalObj).html(t)})})}modalObj.modal("show")},search:function(t,e){var a=$(t).closest(".modal").find("#"+e+"_input"),i=$("#"+e+"_selector"),l=!0;"1"==i.data("nokeywords")&&(l=!1);var d=$.trim(a.val());if(""==d&&l)a.focus();else{var o=$("#"+e+"-selector-modal");$(".content",o).html("正在搜索...."),$.get(i.data("url"),{keyword:d},function(t){$(".content",o).html(t)})}},remove:function(t,e){var a=$("#"+e+"_selector"),i="image"==a.data("type")?".multi-item":".multi-audio-item";i="image"==a.data("type")?".multi-item":"coupon"==a.data("type")?".multi-product-item":"coupon_cp"==a.data("type")?".multi-product-item":"coupon_share"==a.data("type")?".multi-product-item":"coupon_shares"==a.data("type")?".multi-product-item":".multi-audio-item",$(t).closest(i).remove(),biz.selector.refresh(e)},set:function(obj,data){var name=$(obj).closest(".content").data("name"),modalObj=$("#"+name+"-selector-modal"),selector=$("#"+name+"_selector"),container=$(".container",selector),key=selector.data("key")||"id",text=selector.data("text")||"title",thumb=selector.data("thumb")||"thumb",multi=selector.data("multi")||0,type=selector.data("type")||"image",callback=selector.data("callback")||"",css="image"==type?".multi-item":".multi-audio-item";if(0<$(css+"[data-"+key+'="'+data[key]+'"]',container).length)0===multi&&modalObj.modal("hide");else if("coupon_cp"==type&&3<=$(".setticket").length)tip.msgbox.err("您已经选择了三张优惠券，若要更换请删除其他优惠券！");else if("coupon_share"==type&&3<=$(".shareticket").length)tip.msgbox.err("您已经选择了三张优惠券，若要更换请删除其他优惠券！");else if("coupon_shares"==type&&3<=$(".sharesticket").length)tip.msgbox.err("您已经选择了三张优惠券，若要更换请删除其他优惠券！");else{var id=0===multi?name:name+"[]",html="";if("image"==type?(html+='<div class="multi-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+='<img class="img-responsive img-thumbnail" src="'+data[thumb]+'" onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'" style="width:100px;height:100px;">',html+='<div class="img-nickname">'+data[text]+"</div>",html+='<input type="hidden" value="'+data[key]+'" name="'+id+'">',html+="<em onclick=\"biz.selector.remove(this,'"+name+'\')"  class="close">×</em>',html+="</div>"):"coupon"==type?(html+="<tr class='multi-product-item' data-"+key+"='"+data[key]+"'>",html+="<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<input type='hidden' value='"+data[key]+"' name='couponid[]'>",html+="<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>",html+="<td style='width:220px;'>"+data[text]+"</td>",html+="<td><input class='form-control valid' type='text' value='' name='coupontotal"+data[key]+"'></td>",html+="<td><input class='form-control valid' type='text' value='' name='couponlimit"+data[key]+"'></td>",html+="<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>"):"coupon_cp"==type?(html+="<tr class='multi-product-item setticket' data-"+key+"='"+data[key]+"'>",html+="<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<input type='hidden' value='"+data[key]+"' name='couponid[]'>",html+="<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>",html+="<td style='width:220px;'>"+data[text]+"</td>",html+="<td></td>",html+="<td></td>",html+="<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>"):"coupon_share"==type?(html+="<tr class='multi-product-item shareticket' data-"+key+"='"+data[key]+"'>",html+="<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<input type='hidden' value='"+data[key]+"' name='couponid[]'>",html+="<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>",html+="<td style='width:220px;'>"+data[text]+"</td>",html+="<td></td>",html+="<td><input class='form-control valid' type='text' value='1' name='couponnum"+data[key]+"'></td>",html+="<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>"):"coupon_shares"==type?(html+="<tr class='multi-product-item sharesticket' data-"+key+"='"+data[key]+"'>",html+="<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<input type='hidden' value='"+data[key]+"' name='couponids[]'>",html+="<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px' class='img_share'></td>",html+="<td style='width:220px;'>"+data[text]+"</td>",html+="<td></td>",html+="<td><input class='form-control valid' type='text' value='1' name='couponsnum"+data[key]+"'></td>",html+="<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>"):(html+="<div class='multi-audio-item' data-"+key+"='"+data[key]+"' data-name='"+name+"'>",html+="<div class='input-group'><input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='text' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></div></div></div>"),0===multi?(container.html(html),modalObj.modal("hide")):container.append(html),biz.selector.refresh(name),""!==callback){var callfunc=eval(callback);void 0!==callfunc&&callfunc(data,obj)}}},refresh:function(t){var e="",a=$("#"+t+"_selector"),i=a.data("type")||"image";"image"==i?$(".multi-item",a).each(function(){e+=" "+$(this).find(".img-nickname").html(),1<$(".multi-item",a).length&&(e+="; ")}):"coupon"==i?$(".multi-product-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-product-item",a).length&&(e+="; ")}):"coupon_cp"==i?$(".multi-product-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-product-item",a).length&&(e+="; ")}):"coupon_share"==i?$(".multi-product-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-product-item",a).length&&(e+="; ")}):"coupon_shares"==i?$(".multi-product-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-product-item",a).length&&(e+="; ")}):$(".multi-audio-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-audio-item",a).length&&(e+="; ")}),$("#"+t+"_text",a).val(e)}},biz.selector_new={select:function(t){var e=void 0===(t=$.extend({},t||{})).name?"default":t.name,a=e+"-selector-modal";if(modalObj=$("#"+a),typeof window._url&&(window._url=""),window._url=t.url,modalObj.length<=0){var i='<div id="'+a+'"  class="modal fade" tabindex="-1">';i+='<div class="modal-dialog" style="width: 920px;">',i+='<div class="modal-content">',i+='<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>',i+='<div class="modal-body" >',i+='<div class="row">',i+='<div class="input-group">',i+='<input type="text" class="form-control" name="keyword" id="'+e+'_input" placeholder="'+(void 0===t.placeholder?"":t.placeholder)+'" />',i+='<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector_new.search(this, \''+e+"');\">搜索</button></span>",i+="</div>",i+="</div>",i+='<div class="content" style="padding-top:5px;" data-name="'+e+'"></div>',i+="</div>",i+='<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>',i+="</div>",i+="</div>",modalObj=$(i+="</div>"),modalObj.on("show.bs.modal",function(){"1"==t.autosearch&&$.get(_url,{keyword:""},function(t){$(".content",modalObj).html(t)})})}modalObj.modal("show")},search:function(t,e){var a=$(t).closest(".modal").find("#"+e+"_input"),i=$("#"+e+"_selector"),l=!0;"1"==i.data("nokeywords")&&(l=!1);var d=$.trim(a.val());if(""==d&&l)a.focus();else{var o=$("#"+e+"-selector-modal");$(".content",o).html("正在搜索...."),$.get(i.data("url"),{keyword:d},function(t){$(".content",o).html(t)})}},remove:function(t,e){var a="image"==$("#"+e+"_selector").data("type")?".multi-item":".multi-product-item";$(t).closest(a).remove(),biz.selector_new.refresh(e)},set:function(obj,data){var name=$(obj).closest(".content").data("name"),modalObj=$("#"+name+"-selector-modal"),selector=$("#"+name+"_selector"),key=selector.data("key")||"id",text=selector.data("text")||"title",thumb=selector.data("thumb")||"thumb",multi=selector.data("multi")||0,type=selector.data("type")||"image",callback=selector.data("callback")||"",css="image"==type?".multi-item":".multi-product-item",optionurl=selector.data("optionurl")||"",selectorid=selector.data("selectorid")||"",container=$(".container",selector);if(0<$(css+"[data-"+key+'="'+data[key]+'"]',container).length)0===multi&&modalObj.modal("hide");else{var id=0===multi?name:name+"[]",html="";if("image"==type)html+='<div class="multi-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+='<img class="img-responsive img-thumbnail" src="'+data[thumb]+'" >',html+='<div class="img-nickname">'+data[text]+"</div>",html+='<input type="hidden" value="'+data[key]+'" name="'+id+'">',html+="<em onclick=\"biz.selector_new.remove(this,'"+name+'\')"  class="close">×</em>',html+="</div>";else if("product"==type){var optionurl=""==optionurl?"sale.package.hasoption":optionurl,url="index.php?c=site&a=entry&m=ewei_shopv2&do=web&r="+optionurl+"&goodsid="+data[key]+"&selectorid="+selectorid;html+='<tr class="multi-product-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+="<input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='hidden' class='form-control img-textname' value='"+data[text]+"'>",html+='<td style="width:80px;"><img src="'+data[thumb]+'" style="width:70px;border:1px solid #ccc;padding:1px" /></td>',html+='<td style="width:220px;">'+data[text]+"</td>",html+="<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='"+url+"' id='"+selectorid+"optiontitle"+data[key]+"'>设置</a><input type='hidden' id='"+selectorid+"packagegoods"+data[key]+"' value='' name='"+selectorid+"packagegoods["+data[key]+"]'></td>",html+='<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\''+name+'\')" title="删除">',html+='<i class="fa fa-times"></i></a></td></tr>'}else if("fullback"==type){var optionurl=""==optionurl?"sale.fullback.hasoption":optionurl,url="index.php?c=site&a=entry&m=ewei_shopv2&do=web&r="+optionurl+"&goodsid="+data[key]+"&selectorid="+selectorid;html+='<tr class="multi-product-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+="<input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='hidden' class='form-control img-textname' value='"+data[text]+"'>",html+='<td style="width:80px;"><img src="'+data[thumb]+'" style="width:70px;border:1px solid #ccc;padding:1px" /></td>',html+='<td style="width:220px;">'+data[text]+"</td>",html+="<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='"+url+"' id='"+selectorid+"optiontitle"+data[key]+"'>设置</a><input type='hidden' id='"+selectorid+"fullbackgoods"+data[key]+"' value='' name='"+selectorid+"fullbackgoods["+data[key]+"]'></td>",html+='<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\''+name+'\')" title="删除">',html+='<i class="fa fa-times"></i></a></td></tr>'}else if("live"==type){var optionurl=""==optionurl?"live.room.hasoption":optionurl,url="index.php?c=site&a=entry&m=ewei_shopv2&do=web&r="+optionurl+"&goodsid="+data[key]+"&selectorid="+selectorid;html+='<tr class="multi-product-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+="<input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='hidden' class='form-control img-textname' value='"+data[text]+"'>",html+='<td style="width:80px;"><img src="'+data[thumb]+'" style="width:70px;border:1px solid #ccc;padding:1px" /></td>',html+='<td style="width:220px;">'+data[text]+"</td>",html+="<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='"+url+"' id='"+selectorid+"optiontitle"+data[key]+"'>设置</a><input type='hidden' id='"+selectorid+"livegoods"+data[key]+"' value='' name='"+selectorid+"livegoods["+data[key]+"]'></td>",html+='<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\''+name+'\')" title="删除">',html+='<i class="fa fa-times"></i></a></td></tr>'}else"card"==type?(html+='<tr class="multi-product-item" data-'+key+'="'+data[key]+'" data-name="'+name+'">',html+="<input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='hidden' class='form-control img-textname' value='"+data[text]+"'>",html+='<td style="width:80px;"><img src="'+data[thumb]+'" style="width:70px;border:1px solid #ccc;padding:1px" /></td>',html+='<td style="width:220px;">'+data[text]+"<input type='hidden' id='"+selectorid+"packagegoods"+data[key]+"' value='' name='"+selectorid+"packagegoods["+data[key]+"]'></td>",html+='<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\''+name+'\')" title="删除">',html+='<i class="fa fa-times"></i></a></td></tr>'):(html+="<div class='111 multi-audio-item' data-"+key+"='"+data[key]+"' data-name='"+name+"'>",html+="<div class='input-group'><input type='hidden' name='"+id+"' value='"+data[key]+"'> ",html+="<input type='text' class='form-control img-textname' readonly='' value='"+data[text]+"'>",html+="<div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector_new.remove(this,\""+name+"\")' type='button'><i class='fa fa-remove'></i></button></div></div></div>");if(0===multi?(container.html(html),modalObj.modal("hide")):$("#param-items"+selectorid).append(html),biz.selector_new.refresh(name),""!==callback){var callfunc=eval(callback);void 0!==callfunc&&callfunc(data,obj)}}},refresh:function(t){var e="",a=$("#"+t+"_selector");"image"==(a.data("type")||"image")?$(".multi-item",a).each(function(){e+=" "+$(this).find(".img-nickname").html(),1<$(".multi-item",a).length&&(e+="; ")}):$(".multi-product-item",a).each(function(){e+=" "+$(this).find(".img-textname").val(),1<$(".multi-product-item",a).length&&(e+="; ")}),$("#"+t+"_text",a).val(e)}},biz.selector_open={callback:function(){},select:function(t){t=$.extend({},t||{}),biz.selector_open.callback=void 0!==t.callback&&t.callback;var e=void 0===(biz.selector_open.params=t).name?"default":t.name,a=e+"-selector-modal";if(modalObj=$("#"+a),modalObj.length<=0){var i='<div id="'+a+'"  class="modal fade" tabindex="-1">';i+='<div class="modal-dialog" style="width: 920px;">',i+='<div class="modal-content">',i+='<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>',i+='<div class="modal-body" >',i+='<div class="row">',i+='<div class="input-group">',i+='<input type="text" class="form-control" name="keyword" id="'+e+'_input" placeholder="'+(void 0===t.placeholder?"":t.placeholder)+'" />',i+='<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector_open.search(this, \''+e+"');\">搜索</button></span>",i+="</div>",i+="</div>",i+='<div class="content" style="padding-top:5px;" data-name="'+e+'"></div>',i+="</div>",i+='<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>',i+="</div>",i+="</div>",modalObj=$(i+="</div>"),modalObj.on("show.bs.modal",function(){"1"==t.autosearch&&$.get(t.url,{keyword:""},function(t){$(".content",modalObj).html(t)})})}modalObj.modal("show")},search:function(t,e){var a=$(t).closest(".modal").find("#"+e+"_input"),i=($("#"+e+"_selector"),!0),l=biz.selector_open.params;"1"==l.nokeywords&&(i=!1);var d=$.trim(a.val());if(""==d&&i)a.focus();else{var o=$("#"+e+"-selector-modal");$(".content",o).html("正在搜索...."),$.get(l.url,{keyword:d},function(t){$(".content",o).html(t)})}},remove:function(t,e){var a="image"==biz.selector_open.params.type?".multi-item":".multi-audio-item";$(t).closest(a).remove(),biz.selector_open.refresh(e)},set:function(t,e){var a=$(t).closest(".content").data("name"),i=$("#"+a+"-selector-modal");$("#"+a+"_selector");0===(biz.selector_open.params.multi||0)&&i.modal("hide"),"function"==typeof biz.selector_open.callback&&biz.selector_open.callback(e,t)}},biz.map=function(t,l,e){var d=$("#map-dialog");if(0===d.length){var a='<div class="embed-responsive embed-responsive-16by9"><iframe  class="embed-responsive-item" src="'+e+'" scrolling="no"></iframe></div>';(d=util.dialog("请选择地点",a,'<button type="button" class="btn btn-default" data-dismiss="modal">取消</button><button type="button" class="btn btn-primary">确认</button>',{containerName:"map-dialog"})).find(".modal-dialog").css("width","80%"),d.modal({keyboard:!1}),d.find(".input-group :text").keydown(function(t){if(13==t.keyCode){var e=$(this).val();searchAddress(e)}}),d.find(".input-group button").click(function(){var t=$(this).parent().prev().val();searchAddress(t)})}d.find("button.btn-primary").off("click"),d.find("button.btn-primary").on("click",function(){if($.isFunction(l)){var t=d.find("iframe").contents().find("#poi_json").val();if($.isEmpty(t))return void tip.msgbox.err("尚未选择坐标!");var e=JSON.parse(d.find("iframe").contents().find("#poi_json").val()),a=d.find("iframe").contents().find("#addr_cur").val(),i={lng:e.lng,lat:e.lat,label:a};l(i)}d.modal("hide")}),d.modal("show")},biz.TxMapToBdMap=function(t,e){var a=new Object,i=52.35987755982988,l=new Number(e),d=new Number(t),o=Math.sqrt(l*l+d*d)+2e-5*Math.sin(d*i),n=Math.atan2(d,l)+3e-6*Math.cos(l*i),s=o*Math.cos(n)+.0065,m=o*Math.sin(n)+.006;return a.lng=s,a.lat=m,a},biz.BdMapToTxMap=function(t,e){var a=new Object,i=52.35987755982988,l=new Number(e-.0065),d=new Number(t-.006),o=Math.sqrt(l*l+d*d)-2e-5*Math.sin(d*i),n=Math.atan2(d,l)-3e-6*Math.cos(l*i),s=o*Math.cos(n),m=o*Math.sin(n);return a.lng=s,a.lat=m,a},window.biz=biz,biz});
+define(['jquery'], function ($) {
+    var biz = {};
+    biz.url = function (routes, params, merch) {
+        if (merch) {
+            var url = './merchant.php?c=site&a=entry&m=ewei_shopv2&do=web&r=' + routes.replace(/\//ig, '.')
+        } else {
+            var url = './index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=' + routes.replace(/\//ig, '.')
+        }
+        if (params) {
+            if (typeof(params) == 'object') {
+                url += "&" + $.toQueryString(params)
+            } else if (typeof(params) == 'string') {
+                url += "&" + params
+            }
+        }
+        return url
+    };
+	biz.selector =  {
+		select: function (params) {
+
+			params = $.extend({}, params || {});
+			var name = params.name===undefined?'default':params.name;
+			var modalid = name +"-selector-modal";
+			modalObj =$('#' +modalid);
+			if( modalObj.length <=0 ){
+				var modal = '<div id="' +modalid +'"  class="modal fade" tabindex="-1" style="z-index: 2080">';
+				modal += '<div class="modal-dialog" style="width: 920px;">';
+				modal += '<div class="modal-content">';
+				modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
+				modal += '<div class="modal-body" >';
+				modal += '<div class="row">';
+				modal += '<div class="input-group">';
+				modal += '<input type="text" class="form-control" name="keyword" id="' + name +'_input" placeholder="' + ( params.placeholder===undefined?'':params.placeholder) + '" />';
+				modal += '<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector.search(this, \'' + name + '\');">搜索</button></span>';
+				modal += '</div>';
+				modal += '</div>';
+				modal += '<div class="content" style="padding-top:5px;" data-name="' + name +'"></div>';
+				modal += '</div>';
+				modal += '<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>';
+				modal += '</div>';
+				modal += '</div>';
+				modal += '</div>';
+
+				modalObj = $(modal);
+				modalObj.on('show.bs.modal',function(){
+					if(params.autosearch=='1') {
+						$.get(params.url, {
+							keyword: ''
+						}, function (dat) {
+							$('.content', modalObj).html(dat);
+						});
+					};
+				});
+			};
+			modalObj.modal('show');
+		}
+		, search:function(searchbtn, name){
+			var input = $(searchbtn).closest('.modal').find('#' + name + '_input');
+			var selector = $("#" + name + '_selector');
+			var needkeywords = true;
+			if( selector.data('nokeywords')=='1') {
+				needkeywords = false;
+			};
+
+			var keyword = $.trim( input.val() );
+			if(keyword=='' && needkeywords ){
+				input.focus();
+				return;
+			}
+
+			var modalObj =  $('#' +name +"-selector-modal");
+			$('.content' ,modalObj).html("正在搜索....");
+
+			$.get( selector.data('url'), {
+				keyword: keyword
+			}, function(dat){
+				$('.content' ,modalObj).html(dat);
+			});
+		}
+		, remove: function (obj,name ) {
+			var selector = $("#" + name + '_selector');
+			var css = selector.data('type') =='image'?'.multi-item':'.multi-audio-item';
+			if(selector.data('type') =='image'){
+				css = ".multi-item";
+			}else if(selector.data('type') =='coupon'){
+				css = ".multi-product-item";
+			}else if(selector.data('type') =='coupon_cp'){
+				css = ".multi-product-item";
+			}else if(selector.data('type') =='coupon_share'){
+				css = ".multi-product-item";
+			}else if(selector.data('type') =='coupon_shares'){
+				css = ".multi-product-item";
+			}else{
+				css = ".multi-audio-item";
+			}
+			$(obj).closest(css).remove();
+			biz.selector.refresh(name);
+		}
+		, set: function (obj, data) {
+
+
+
+
+			var name = $(obj).closest('.content').data('name');
+			var modalObj =  $('#' +name +"-selector-modal");
+			var selector  =  $('#' +name +"_selector");
+
+			var container = $('.container',selector);
+			var key = selector.data('key') || 'id',
+					text = selector.data('text') || 'title',
+					thumb = selector.data('thumb') || 'thumb',
+					multi = selector.data('multi') || 0,
+					type = selector.data('type') || 'image',
+					callback = selector.data('callback') || '',
+					css = type=='image'?'.multi-item':'.multi-audio-item';
+
+			if ($( css + '[data-' +key +'="' + data[key] + '"]',container).length > 0) {
+				if( multi  === 0){
+					modalObj.modal('hide');
+				}
+				return;
+			}
+
+            if(type=='coupon_cp'){
+                if($(".setticket").length >= 3){
+                    tip.msgbox.err('您已经选择了三张优惠券，若要更换请删除其他优惠券！');
+                    return;
+                }
+            }
+
+            if(type=='coupon_share'){
+                if($(".shareticket").length >= 3){
+                    tip.msgbox.err('您已经选择了三张优惠券，若要更换请删除其他优惠券！');
+                    return;
+                }
+            }
+
+            if(type=='coupon_shares'){
+                if($(".sharesticket").length >= 3){
+                    tip.msgbox.err('您已经选择了三张优惠券，若要更换请删除其他优惠券！');
+                    return;
+                }
+            }
+
+			var id  = multi===0? name: name+"[]";
+			var html ="";
+			if(type=='image'){
+				html +='<div class="multi-item" data-' + key+'="' + data[key] + '" data-name="' +name + '">';
+				html += '<img class="img-responsive img-thumbnail" src="' + data[thumb] + '" onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'" style="width:100px;height:100px;">';
+				html += '<div class="img-nickname">' + data[text] + '</div>';
+				html += '<input type="hidden" value="' + data[key] + '" name="' + id +'">';
+				html += '<em onclick="biz.selector.remove(this,\'' + name +'\')"  class="close">×</em>';
+				html += '</div>';
+			} else if(type=='coupon'){
+				html += "<tr class='multi-product-item' data-"+ key+"='"+ data[key] + "'>";
+				html += "<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>";
+				html += "<input type='hidden' value='"+ data[key]+"' name='couponid[]'>";
+				html += "<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>";
+				html += "<td style='width:220px;'>"+data[text]+"</td>";
+				html += "<td><input class='form-control valid' type='text' value='' name='coupontotal"+data[key]+"'></td>";
+				html += "<td><input class='form-control valid' type='text' value='' name='couponlimit"+data[key]+"'></td>";
+				html += "<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name +"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>";
+			}else if(type=='coupon_cp'){
+				html += "<tr class='multi-product-item setticket' data-"+ key+"='"+ data[key] + "'>";
+				html += "<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>";
+				html += "<input type='hidden' value='"+ data[key]+"' name='couponid[]'>";
+				html += "<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>";
+				html += "<td style='width:220px;'>"+data[text]+"</td>";
+				html += "<td></td>";
+				html += "<td></td>";
+				html += "<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name +"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>";
+			}else if(type=='coupon_share'){
+				html += "<tr class='multi-product-item shareticket' data-"+ key+"='"+ data[key] + "'>";
+				html += "<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>";
+				html += "<input type='hidden' value='"+ data[key]+"' name='couponid[]'>";
+				html += "<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px'></td>";
+				html += "<td style='width:220px;'>"+data[text]+"</td>";
+				html += "<td></td>";
+				html += "<td><input class='form-control valid' type='text' value='1' name='couponnum"+data[key]+"'></td>";
+				html += "<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name +"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>";
+			}else if(type=='coupon_shares'){
+				html += "<tr class='multi-product-item sharesticket' data-"+ key+"='"+ data[key] + "'>";
+				html += "<input type='hidden' class='form-control img-textname' readonly='' value='"+data[text]+"'>";
+				html += "<input type='hidden' value='"+ data[key]+"' name='couponids[]'>";
+				html += "<td style='width:80px;'><img src='"+data[thumb]+"' style='width:70px;border:1px solid #ccc;padding:1px' class='img_share'></td>";
+				html += "<td style='width:220px;'>"+data[text]+"</td>";
+				html += "<td></td>";
+				html += "<td><input class='form-control valid' type='text' value='1' name='couponsnum"+data[key]+"'></td>";
+				html += "<td style='width:80px;'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name +"\")' type='button'><i class='fa fa-remove'></i></button></td></tr>";
+			}else{
+				html+="<div class='multi-audio-item' data-" + key+"='" + data[key] + "' data-name='" + name + "'>";
+				html+="<div class='input-group'><input type='hidden' name='" + id  +"' value='" + data[key] +"'> ";
+				html+="<input type='text' class='form-control img-textname' readonly='' value='" +  data[text] +"'>";
+				html+="<div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector.remove(this,\"" + name +"\")' type='button'><i class='fa fa-remove'></i></button></div></div></div>";
+			}
+			if(multi===0){
+				container.html(html);
+				modalObj.modal('hide');
+			} else{
+				container.append(html);
+			}
+			biz.selector.refresh(name);
+
+			if( callback!==''){
+				var callfunc = eval(callback);
+				if(callfunc!==undefined){
+					callfunc(data, obj);
+				}
+			}
+
+		},refresh:function(name){
+
+			var titles = '';
+			var selector = $('#' + name + '_selector');
+
+			var type = selector.data('type') || 'image';
+
+			if(type=='image'){
+				$('.multi-item',selector).each(function () {
+					titles += " " + $(this).find('.img-nickname').html() ;
+					if( $('.multi-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			} else if(type=='coupon'){
+				$('.multi-product-item',selector).each(function () {
+					titles += " " + $(this).find('.img-textname').val();
+					if( $('.multi-product-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			}else if(type=='coupon_cp'){
+				$('.multi-product-item',selector).each(function () {
+					titles += " " + $(this).find('.img-textname').val();
+					if( $('.multi-product-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			}else if(type=='coupon_share'){
+				$('.multi-product-item',selector).each(function () {
+					titles += " " + $(this).find('.img-textname').val();
+					if( $('.multi-product-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			}else if(type=='coupon_shares'){
+				$('.multi-product-item',selector).each(function () {
+					titles += " " + $(this).find('.img-textname').val();
+					if( $('.multi-product-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			} else{
+				$('.multi-audio-item',selector).each(function () {
+					titles += " " + $(this).find('.img-textname').val();
+					if( $('.multi-audio-item',selector).length>1){
+						titles+="; ";
+					}
+				});
+			}
+
+
+
+
+			$('#' + name + "_text",selector).val(titles);
+		}
+
+	};
+
+    biz.selector_new = {
+        select: function (params) {
+            params = $.extend({}, params || {});
+            var name = params.name === undefined ? 'default' : params.name;
+            var modalid = name + "-selector-modal";
+            modalObj = $('#' + modalid);
+
+
+            if (typeof window._url !== '') {
+                window._url = '';
+            }
+
+            window._url = params.url;
+
+            if (modalObj.length <= 0) {
+                var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
+                modal += '<div class="modal-dialog" style="width: 920px;">';
+                modal += '<div class="modal-content">';
+                modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
+                modal += '<div class="modal-body" >';
+                modal += '<div class="row">';
+                modal += '<div class="input-group">';
+                modal += '<input type="text" class="form-control" name="keyword" id="' + name + '_input" placeholder="' + (params.placeholder === undefined ? '' : params.placeholder) + '" />';
+                modal += '<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector_new.search(this, \'' + name + '\');">搜索</button></span>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '<div class="content" style="padding-top:5px;" data-name="' + name + '"></div>';
+                modal += '</div>';
+                modal += '<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '</div>';
+                modalObj = $(modal);
+                modalObj.on('show.bs.modal', function () {
+                    if (params.autosearch == '1') {
+                        $.get(_url, {keyword: ''}, function (dat) {
+                            $('.content', modalObj).html(dat)
+                        })
+                    }
+                })
+            }
+            ;
+            modalObj.modal('show')
+        },
+        search: function (searchbtn, name) {
+            var input = $(searchbtn).closest('.modal').find('#' + name + '_input');
+            var selector = $("#" + name + '_selector');
+            var needkeywords = true;
+            if (selector.data('nokeywords') == '1') {
+                needkeywords = false
+            }
+            ;
+            var keyword = $.trim(input.val());
+            if (keyword == '' && needkeywords) {
+                input.focus();
+                return
+            }
+            var modalObj = $('#' + name + "-selector-modal");
+            $('.content', modalObj).html("正在搜索....");
+            $.get(selector.data('url'), {keyword: keyword}, function (dat) {
+                $('.content', modalObj).html(dat)
+            })
+        }, remove: function (obj, name) {
+            var selector = $("#" + name + '_selector');
+            var css = selector.data('type') == 'image' ? '.multi-item' : '.multi-product-item';
+            $(obj).closest(css).remove();
+            biz.selector_new.refresh(name)
+        }, set: function (obj, data) {
+            var name = $(obj).closest('.content').data('name');
+            var modalObj = $('#' + name + "-selector-modal");
+            var selector = $('#' + name + "_selector");
+            var key = selector.data('key') || 'id', text = selector.data('text') || 'title',
+                thumb = selector.data('thumb') || 'thumb', multi = selector.data('multi') || 0,
+                type = selector.data('type') || 'image', callback = selector.data('callback') || '',
+                css = type == 'image' ? '.multi-item' : '.multi-product-item',
+                optionurl = selector.data('optionurl') || '', selectorid = selector.data('selectorid') || '';
+            var container = $('.container', selector);
+            if ($(css + '[data-' + key + '="' + data[key] + '"]', container).length > 0) {
+                if (multi === 0) {
+                    modalObj.modal('hide')
+                }
+                return
+            }
+            var id = multi === 0 ? name : name + "[]";
+            var html = "";
+            if (type == 'image') {
+                html += '<div class="multi-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
+                html += '<img class="img-responsive img-thumbnail" src="' + data[thumb] + '" >';
+                html += '<div class="img-nickname">' + data[text] + '</div>';
+                html += '<input type="hidden" value="' + data[key] + '" name="' + id + '">';
+                html += '<em onclick="biz.selector_new.remove(this,\'' + name + '\')"  class="close">×</em>';
+                html += '</div>'
+            } else if (type == 'product') {
+                var optionurl = optionurl == '' ? 'sale.package.hasoption' : optionurl;
+                var url = "index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=" + optionurl + "&goodsid=" + data[key] + "&selectorid=" + selectorid;
+                html += '<tr class="multi-product-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
+                html += "<input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
+                html += "<input type='hidden' class='form-control img-textname' value='" + data[text] + "'>";
+                html += '<td style="width:80px;"><img src="' + data[thumb] + '" style="width:70px;border:1px solid #ccc;padding:1px" /></td>';
+                html += '<td style="width:220px;">' + data[text] + '</td>';
+                html += "<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" + url + "' id='" + selectorid + "optiontitle" + data[key] + "'>设置</a>" + "<input type='hidden' id='" + selectorid + "packagegoods" + data[key] + "' value='' name='" + selectorid + "packagegoods[" + data[key] + "]'></td>";
+                html += '<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\'' + name + '\')" title="删除">';
+                html += '<i class="fa fa-times"></i></a></td></tr>'
+            } else if (type == 'fullback') {
+                var optionurl = optionurl == '' ? 'sale.fullback.hasoption' : optionurl;
+                var url = "index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=" + optionurl + "&goodsid=" + data[key] + "&selectorid=" + selectorid;
+                html += '<tr class="multi-product-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
+                html += "<input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
+                html += "<input type='hidden' class='form-control img-textname' value='" + data[text] + "'>";
+                html += '<td style="width:80px;"><img src="' + data[thumb] + '" style="width:70px;border:1px solid #ccc;padding:1px" /></td>';
+                html += '<td style="width:220px;">' + data[text] + '</td>';
+                html += "<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" + url + "' id='" + selectorid + "optiontitle" + data[key] + "'>设置</a>" + "<input type='hidden' id='" + selectorid + "fullbackgoods" + data[key] + "' value='' name='" + selectorid + "fullbackgoods[" + data[key] + "]'></td>";
+                html += '<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\'' + name + '\')" title="删除">';
+                html += '<i class="fa fa-times"></i></a></td></tr>'
+            } else if (type == 'live') {
+                var optionurl = optionurl == '' ? 'live.room.hasoption' : optionurl;
+                var url = "index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=" + optionurl + "&goodsid=" + data[key] + "&selectorid=" + selectorid;
+                html += '<tr class="multi-product-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
+                html += "<input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
+                html += "<input type='hidden' class='form-control img-textname' value='" + data[text] + "'>";
+                html += '<td style="width:80px;"><img src="' + data[thumb] + '" style="width:70px;border:1px solid #ccc;padding:1px" /></td>';
+                html += '<td style="width:220px;">' + data[text] + '</td>';
+                html += "<td><a class='btn btn-default btn-sm' data-toggle='ajaxModal' href='" + url + "' id='" + selectorid + "optiontitle" + data[key] + "'>设置</a>" + "<input type='hidden' id='" + selectorid + "livegoods" + data[key] + "' value='' name='" + selectorid + "livegoods[" + data[key] + "]'></td>";
+                html += '<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\'' + name + '\')" title="删除">';
+                html += '<i class="fa fa-times"></i></a></td></tr>'
+            } else if (type == 'card') {
+
+                html += '<tr class="multi-product-item" data-' + key + '="' + data[key] + '" data-name="' + name + '">';
+                html += "<input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
+                html += "<input type='hidden' class='form-control img-textname' value='" + data[text] + "'>";
+                html += '<td style="width:80px;"><img src="' + data[thumb] + '" style="width:70px;border:1px solid #ccc;padding:1px" /></td>';
+                html += '<td style="width:220px;">' + data[text] + "<input type='hidden' id='" + selectorid + "packagegoods" + data[key] + "' value='' name='" + selectorid + "packagegoods[" + data[key] + "]'></td>";
+                html += '<td><a href="javascript:void(0);" class="btn btn-default btn-sm" onclick="biz.selector_new.remove(this,\'' + name + '\')" title="删除">';
+                html += '<i class="fa fa-times"></i></a></td></tr>';
+            } else {
+                html += "<div class='111 multi-audio-item' data-" + key + "='" + data[key] + "' data-name='" + name + "'>";
+                html += "<div class='input-group'><input type='hidden' name='" + id + "' value='" + data[key] + "'> ";
+                html += "<input type='text' class='form-control img-textname' readonly='' value='" + data[text] + "'>";
+                html += "<div class='input-group-btn'><button class='btn btn-default' onclick='biz.selector_new.remove(this,\"" + name + "\")' type='button'>" + "<i class='fa fa-remove'></i></button></div></div></div>"
+            }
+            if (multi === 0) {
+                container.html(html);
+                modalObj.modal('hide')
+            } else {
+                $("#param-items" + selectorid).append(html)
+            }
+            biz.selector_new.refresh(name);
+            if (callback !== '') {
+                var callfunc = eval(callback);
+                if (callfunc !== undefined) {
+                    callfunc(data, obj)
+                }
+            }
+        }, refresh: function (name) {
+            var titles = '';
+            var selector = $('#' + name + '_selector');
+            var type = selector.data('type') || 'image';
+            if (type == 'image') {
+                $('.multi-item', selector).each(function () {
+                    titles += " " + $(this).find('.img-nickname').html();
+                    if ($('.multi-item', selector).length > 1) {
+                        titles += "; "
+                    }
+                })
+            } else {
+                $('.multi-product-item', selector).each(function () {
+                    titles += " " + $(this).find('.img-textname').val();
+                    if ($('.multi-product-item', selector).length > 1) {
+                        titles += "; "
+                    }
+                })
+            }
+            $('#' + name + "_text", selector).val(titles)
+        }
+    };
+    biz.selector_open = {
+        callback: function () {
+        }, select: function (params) {
+            params = $.extend({}, params || {});
+            biz.selector_open.callback = typeof(params.callback) === 'undefined' ? false : params.callback;
+            biz.selector_open.params = params;
+            var name = params.name === undefined ? 'default' : params.name;
+            var modalid = name + "-selector-modal";
+            modalObj = $('#' + modalid);
+            if (modalObj.length <= 0) {
+                var modal = '<div id="' + modalid + '"  class="modal fade" tabindex="-1">';
+                modal += '<div class="modal-dialog" style="width: 920px;">';
+                modal += '<div class="modal-content">';
+                modal += '<div class="modal-header"><button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button><h3>数据选择器</h3></div>';
+                modal += '<div class="modal-body" >';
+                modal += '<div class="row">';
+                modal += '<div class="input-group">';
+                modal += '<input type="text" class="form-control" name="keyword" id="' + name + '_input" placeholder="' + (params.placeholder === undefined ? '' : params.placeholder) + '" />';
+                modal += '<span class="input-group-btn"><button type="button" class="btn btn-default" onclick="biz.selector_open.search(this, \'' + name + '\');">搜索</button></span>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '<div class="content" style="padding-top:5px;" data-name="' + name + '"></div>';
+                modal += '</div>';
+                modal += '<div class="modal-footer"><a href="#" class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</a></div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '</div>';
+                modalObj = $(modal);
+                modalObj.on('show.bs.modal', function () {
+                    if (params.autosearch == '1') {
+                        $.get(params.url, {keyword: ''}, function (dat) {
+                            $('.content', modalObj).html(dat)
+                        })
+                    }
+                })
+            }
+            ;
+            modalObj.modal('show')
+        }, search: function (searchbtn, name) {
+            var input = $(searchbtn).closest('.modal').find('#' + name + '_input');
+            var selector = $("#" + name + '_selector');
+            var needkeywords = true;
+            var params = biz.selector_open.params;
+            if (params.nokeywords == '1') {
+                needkeywords = false
+            }
+            ;
+            var keyword = $.trim(input.val());
+            if (keyword == '' && needkeywords) {
+                input.focus();
+                return
+            }
+            var modalObj = $('#' + name + "-selector-modal");
+            $('.content', modalObj).html("正在搜索....");
+            $.get(params.url, {keyword: keyword}, function (dat) {
+                $('.content', modalObj).html(dat)
+            })
+        }, remove: function (obj, name) {
+            var params = biz.selector_open.params;
+            var css = params.type == 'image' ? '.multi-item' : '.multi-audio-item';
+            $(obj).closest(css).remove();
+            biz.selector_open.refresh(name)
+        }, set: function (obj, data) {
+            var name = $(obj).closest('.content').data('name');
+            var modalObj = $('#' + name + "-selector-modal");
+            var selector = $('#' + name + "_selector");
+            var params = biz.selector_open.params;
+            var multi = params.multi || 0;
+            if (multi === 0) {
+                modalObj.modal('hide')
+            }
+            if (typeof(biz.selector_open.callback) === 'function') {
+                biz.selector_open.callback(data, obj)
+            }
+        }
+    };
+    biz.map = function (val, callback, tpl) {
+        var modalobj = $('#map-dialog');
+        if (modalobj.length === 0) {
+            var content = '<div class="embed-responsive embed-responsive-16by9">' + '<iframe  class="embed-responsive-item" src="' + tpl + '" scrolling="no"></iframe>' + '</div>';
+            var footer = '<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>' + '<button type="button" class="btn btn-primary">确认</button>';
+            modalobj = util.dialog('请选择地点', content, footer, {containerName: 'map-dialog'});
+            modalobj.find('.modal-dialog').css('width', '80%');
+            modalobj.modal({'keyboard': false});
+            modalobj.find('.input-group :text').keydown(function (e) {
+                if (e.keyCode == 13) {
+                    var kw = $(this).val();
+                    searchAddress(kw)
+                }
+            });
+            modalobj.find('.input-group button').click(function () {
+                var kw = $(this).parent().prev().val();
+                searchAddress(kw)
+            })
+        }
+        modalobj.find('button.btn-primary').off('click');
+        modalobj.find('button.btn-primary').on('click', function () {
+            if ($.isFunction(callback)) {
+                var $point = modalobj.find("iframe").contents().find("#poi_json").val();
+                if ($.isEmpty($point)) {
+                    tip.msgbox.err('尚未选择坐标!');
+                    return
+                }
+                var point = JSON.parse(modalobj.find("iframe").contents().find("#poi_json").val());
+                var address = modalobj.find("iframe").contents().find("#addr_cur").val();
+                var val = {lng: point.lng, lat: point.lat, label: address};
+                callback(val)
+            }
+            modalobj.modal('hide')
+        });
+        modalobj.modal('show')
+    };
+    biz.TxMapToBdMap = function (gg_lat, gg_lon) {
+        var point = new Object();
+        var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+        var x = new Number(gg_lon);
+        var y = new Number(gg_lat);
+        var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+        var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+        var bd_lon = z * Math.cos(theta) + 0.0065;
+        var bd_lat = z * Math.sin(theta) + 0.006;
+        point.lng = bd_lon;
+        point.lat = bd_lat;
+        return point
+    };
+    biz.BdMapToTxMap = function (bd_lat, bd_lon) {
+        var point = new Object();
+        var x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+        var x = new Number(bd_lon - 0.0065);
+        var y = new Number(bd_lat - 0.006);
+        var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi);
+        var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi);
+        var Mars_lon = z * Math.cos(theta);
+        var Mars_lat = z * Math.sin(theta);
+        point.lng = Mars_lon;
+        point.lat = Mars_lat;
+        return point
+    };
+    window.biz = biz;
+    return biz
+});

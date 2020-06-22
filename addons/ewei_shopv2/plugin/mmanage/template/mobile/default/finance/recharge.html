@@ -14,7 +14,7 @@
         <input type="hidden" id="changetype" value="0" />
         <input type="hidden" id="type" value="{$type}" />
 
-        {ifp 'finance.recharge.credit1||finance.recharge.credit2'}
+        {ifp 'finance.recharge.credit1&finance.recharge.credit2'}
             <div class="fui-tab-o fui-tab-success" id="tab">
                 <a {if empty($type)}class="active"{/if} data-type="0">余额</a>
                 <a {if !empty($type)}class="active"{/if} data-type="1">积分</a>
@@ -48,7 +48,7 @@
                 </div>
             </div>
             <div class="fui-cell fui-cell-textarea">
-                <div class="fui-cell-label " style="margin-top: 0;">备注说明</div>
+                <div class="fui-cell-label ">备注说明</div>
                 <div class="fui-cell-info">
                     <textarea rows="3" placeholder="请输入备注说明" id="remark"></textarea>
                 </div>

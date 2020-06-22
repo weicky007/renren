@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -37,8 +36,7 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 			if (!empty($merch_category)) {
 				foreach ($merch_category as $index => $row) {
 					if (0 < $row) {
-						$category[$index] = pdo_fetchall('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . '
-						where id = ".$index." and uniacid=:uniacid and  enabled=1 order by displayorder desc', array(':uniacid' => $uniacid));
+						$category[$index] = pdo_fetchall('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . "\r\n\t\t\t\t\t\twhere id = \".\$index.\" and uniacid=:uniacid and  enabled=1 order by displayorder desc", array(':uniacid' => $uniacid));
 						$category[$index] = set_medias($category, 'thumb');
 					}
 				}
@@ -57,7 +55,7 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 			$cset = $com->getSet();
 
 			if (!empty($cset)) {
-				if ($member['isagent'] == 1 && $member['status'] == 1) {
+				if (($member['isagent'] == 1) && ($member['status'] == 1)) {
 					$_W['shopshare']['link'] = mobileUrl('creditshop', array('mid' => $member['id']), true);
 					if (empty($cset['become_reg']) && (empty($member['realname']) || empty($member['mobile']))) {
 						$trigger = true;
@@ -105,48 +103,17 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 			$condition .= ' AND title like \'%' . $keywords . '%\' ';
 		}
 
-		$member = m('member')->getMember($openid);
-
-		if (!empty($member)) {
-			$levelid = intval($member['level']);
-			$groupid = trim($member['groupid']);
-			$condition .= ' and ( ifnull(showlevels,\'\')=\'\' or FIND_IN_SET( ' . $levelid . ',showlevels)<>0 ) ';
-
-			if (strpos($groupid, ',') !== false) {
-				$groupidArr = explode(',', $groupid);
-				$groupidStr = '';
-
-				foreach ($groupidArr as $grk => $grv) {
-					$groupidStr .= 'INSTR( showgroups,\'' . $grv . '\')<>0 or ';
-
-					if ($grk == count($groupidArr) - 1) {
-						$groupidStr .= 'INSTR( showgroups,\'' . $grv . '\')<>0 ';
-					}
-				}
-
-				$condition .= 'and ( ifnull(showgroups,\'\')=\'\' or  ' . $groupidStr . ' )';
-			}
-			else {
-				$condition .= ' and ( ifnull(showgroups,\'\')=\'\' or FIND_IN_SET( \'' . $groupid . '\',showgroups)<>0 ) ';
-			}
-		}
-		else {
-			$condition .= ' and ifnull(showlevels,\'\')=\'\' ';
-			$condition .= ' and   ifnull(showgroups,\'\')=\'\' ';
-		}
-
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_goods') . (' where 1 ' . $condition);
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_goods') . ' where 1 ' . $condition;
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT id,title,thumb,subtitle,`type`,price,credit,money,goodstype,hasoption,mincredit,minmoney FROM ' . tablename('ewei_shop_creditshop_goods') . '
-            		where 1 ' . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql = 'SELECT id,title,thumb,subtitle,`type`,price,credit,money,goodstype FROM ' . tablename('ewei_shop_creditshop_goods') . "\r\n            \t\twhere 1 " . $condition . ' ORDER BY displayorder desc,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
 
 			foreach ($list as &$row) {
-				if (0 < $row['credit'] && 0 < $row['money']) {
+				if ((0 < $row['credit']) & (0 < $row['money'])) {
 					$row['acttype'] = 0;
 				}
 				else if (0 < $row['credit']) {
@@ -158,11 +125,8 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 					}
 				}
 
-				$row['money'] = price_format($row['money'], 2);
-
-				if (0 < $row['hasoption']) {
-					$row['credit'] = intval($row['mincredit']);
-					$row['money'] = price_format($row['minmoney'], 2);
+				if ((intval($row['money']) - $row['money']) == 0) {
+					$row['money'] = intval($row['money']);
 				}
 			}
 

@@ -6,9 +6,6 @@
     .modal-dialog .fa{
         margin-right: 0;
     }
-    .content .table{border-collapse:collapse;border:none;}
-    .content .table tr{border-collapse: collapse;border-left:1px solid #ededed;border-right:1px solid #ededed;}
-    .content .table > tbody > tr > td{border-top:1px solid #ededed;border-left:0;border-right:0;}
 </style>
 <div class="content_hasoption">
     <!--<form class="form-horizontal form-validate" action="{php echo webUrl('sale/package/hasoption')}" method="post" enctype="multipart/form-data">-->
@@ -21,9 +18,9 @@
                     <button data-dismiss="modal" class="close hasoption-close" type="button">×</button>
                     <h4 class="modal-title">设置</h4>
                 </div>
-                <div class="modal-body content">
-                    <table class="table" border="1" cellspacing="0" width="100%" cellpadding="0">
-                        <thead style="background: #f7f7f7;">
+                <div class="modal-body">
+                    <table class="table" style="width:100%;">
+                        <thead>
                         <tr>
                             <th style="">{if $option}规格{else}商品{/if}名称</th>
                             <th style="width:80px;">原价</th>
@@ -250,6 +247,7 @@
     }
 
 </script>
+
 
 
 

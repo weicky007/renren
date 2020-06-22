@@ -58,7 +58,8 @@
                     {if !empty($com_set['level']) && $merch_user['commissionchecked'] == 1}
                     <li {if $_GPC['tab']=='sell'}class="active"{/if}><a href="#tab_sell">分销</a></li>
                     {/if}
-        <li {if $_GPC['tab']=='verify'}class="active"{/if}><a href="#tab_verify" id="tab_mer_verify" {if $item['type']==3||$item['type']==5||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if} >线下核销</a></li>
+
+                    <li {if $_GPC['tab']=='verify'}class="active"{/if}><a href="#tab_verify">线下核销</a></li>
 
                     {if p('diyform')}
                     <li {if $_GPC['tab']=='diyform'}class="active"{/if}><a href="#tab_diyform">自定义表单</a></li>
@@ -80,7 +81,7 @@
                    <div class="tab-pane {if $_GPC['tab']=='sell'}active{/if}" id="tab_sell"> <div class="panel-body">{template 'commission/goods_merch'}</div></div>
                    {/if}
 
-                    <div class="tab-pane {if $_GPC['tab']=='verify'}active{/if}" id="tab_verify" > <div class="panel-body">{template 'goods/tab/verify'}</div></div>
+                    <div class="tab-pane {if $_GPC['tab']=='verify'}active{/if}" id="tab_verify"> <div class="panel-body">{template 'goods/tab/verify'}</div></div>
                     {if p('diyform')}
                     <div class="tab-pane {if $_GPC['tab']=='diyform'}active{/if}" id="tab_diyform"> <div class="panel-body">{template 'diyform/goods_merch'}</div></div>
                     {/if}
@@ -421,23 +422,7 @@
         }
         return full;
 	}
-    function type_change(type) {
-        if(type == 1) {
-            $('#product').show();
-            $('#type_virtual').hide();
-        }else if(type == 2) {
-            if($("input[name='virtualsend']:checked").val()==1) {
-                $("#tab_mer_verify").hide();
-            }else{
-                $("#tab_mer_verify").show();
-            }
-            $('#product').hide();
-            $('#type_virtual').hide();
-        }else if(type == 3) {
-            $("#tab_mer_verify").hide();
-            $('#type_virtual').show();
-        }
-    }
 </script>
 
 {template '_footer'}
+

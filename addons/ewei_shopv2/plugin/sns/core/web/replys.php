@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -67,9 +66,9 @@ class Replys_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$sql = 'select id,bid,pid, rpid,title,createtime,content,images ,openid, nickname,avatar,checked,deleted from ' . tablename('ewei_shop_sns_post') . ('  where 1 ' . $condition . ' ORDER BY createtime asc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
+		$sql = 'select id,bid,pid, rpid,title,createtime,content,images ,openid, nickname,avatar,checked,deleted from ' . tablename('ewei_shop_sns_post') . '  where 1 ' . $condition . ' ORDER BY createtime asc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . (' where 1 ' . $condition), $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where 1 ' . $condition, $params);
 
 		foreach ($list as $key => &$row) {
 			$row['goodcount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_like') . ' where pid=:pid limit 1', array(':pid' => $row['id']));
@@ -118,7 +117,7 @@ class Replys_EweiShopV2Page extends PluginWebPage
 
 			$row['member'] = array('id' => $rmember['id'], 'sns_credit' => $rmember['sns_credit'], 'postcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and openid=:openid and pid=0 and deleted=0 limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $rmember['openid'])), 'replycount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and openid=:openid and pid>0 and deleted=0 limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $rmember['openid'])));
 			$row['level'] = $rlevel;
-			$row['floor'] = ($pindex - 1) * $psize + $key + 2;
+			$row['floor'] = (($pindex - 1) * $psize) + $key + 2;
 			$row['isAuthor'] = $row['openid'] == $post['openid'];
 			$row['isManager'] = $this->model->isManager($row['bid']);
 		}
@@ -135,14 +134,14 @@ class Replys_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
 		$deleted = intval($_GPC['deleted']);
-		$items = pdo_fetchall('SELECT id,title,pid,openid, content FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,pid,openid, content FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = empty($item['pid']) ? '话题' : '评论';
+			$msg = (empty($item['pid']) ? '话题' : '评论');
 			$content = $this->model->replaceContent($item['content']);
 
 			if ($deleted) {
@@ -179,13 +178,13 @@ class Replys_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title,pid,openid, content,deleted FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,pid,openid, content,deleted FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = empty($item['pid']) ? '话题' : '评论';
+			$msg = (empty($item['pid']) ? '话题' : '评论');
 			$content = $this->model->replaceContent($item['content']);
 			plog('sns.posts.delete', '彻底删除' . $msg . ' ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 内容: ' . $content);
 			pdo_delete('ewei_shop_sns_post', array('id' => $item['id']));
@@ -210,14 +209,14 @@ class Replys_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
 		$checked = intval($_GPC['checked']);
-		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title,content,openid, pid FROM ' . tablename('ewei_shop_sns_post') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
-			$msg = empty($item['pid']) ? '话题' : '评论';
+			$msg = (empty($item['pid']) ? '话题' : '评论');
 			$content = $this->model->replaceContent($item['content']);
 
 			if ($checked) {

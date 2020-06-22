@@ -22,7 +22,7 @@
         <div class="logo">
             <div class="inner">
                 <div class="left fl flex">
-                    <a href="{{ pcUrl('pc') }}">
+                    <a href="{{ pcUrl() }}">
                         {% if global.shopSetting.logo %}
                             <img src="{{ tomedia(global.shopSetting.logo) }}" style="width: 100px">
                         {% else %}
@@ -33,7 +33,7 @@
                 </div>
                 <div class="right fr go-regist">
                     <span>没有账号？</span>
-                    <a href="{{ pcUrl('pc/member/register') }}" class="goRegist"><span>立即注册</span></a>
+                    <a href="{{ pcUrl('member/register') }}" class="goRegist"><span>立即注册</span></a>
                 </div>
             </div>
         </div>
@@ -42,13 +42,13 @@
             <h3>账号登录</h3>
             <div class="inp"><input type="tel" placeholder="手机号码" name="mobile" value="{{ mobile }}" maxlength="11"></div>
             <div class="inp"><input type="password" name="pwd" placeholder="密码"></div>
-            <div class="inp"><input name="loginurl" type="hidden" value="{{ pcUrl('pc/member/loginin') }}"></div>
-            <div class="inp"><input name="index" type="hidden" value="{{ pcUrl('pc') }}"></div>
-            <div class="forgot-pas"><a href="{{ pcUrl('pc/member/forget') }}"><span>忘记密码</span></a></div>
+            <div class="inp"><input name="loginurl" type="hidden" value="{{ pcUrl('member/loginin') }}"></div>
+            <div class="inp"><input name="index" type="hidden" value="{{ pcUrl('') }}"></div>
+            <div class="forgot-pas"><a href="{{ pcUrl('member/forget') }}"><span>忘记密码</span></a></div>
             <div class="submit"><button>登录</button></div>
             <div class="go-regist">
                 <span>没有账号？</span>
-                <a href="{{ pcUrl('pc/member/register') }}" class="goRegist"><span>立即注册</span></a>
+                <a href="{{ pcUrl('member/register') }}" class="goRegist"><span>立即注册</span></a>
             </div>
         </div>
             <div class="copyright">{{ global.setting.copyright ?:'无'}}</div>

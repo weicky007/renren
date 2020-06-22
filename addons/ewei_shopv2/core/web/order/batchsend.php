@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -86,12 +85,12 @@ class Batchsend_EweiShopV2Page extends WebPage
 
 				if (!empty($err_array)) {
 					$j = 1;
-					$tip .= '<br>' . ($num - $i - 1) . '个订单发货失败,失败的订单编号: <br>';
+					$tip .= '<br>' . count($err_array) . '个订单发货失败,失败的订单编号: <br>';
 
 					foreach ($err_array as $k => $v) {
 						$tip .= $v . ' ';
 
-						if ($j % 2 == 0) {
+						if (($j % 2) == 0) {
 							$tip .= '<br>';
 						}
 

@@ -161,7 +161,6 @@
                             {/if}
                        <span style="display: flex;flex-direction: column;justify-content: center;align-items: flex-start;padding-left: 5px">
                            <span class="nickname">
-                               {if strexists($row['openid'],'sns_wa')}<i class="icow icow-xiaochengxu" style="color: #7586db;vertical-align: middle;" data-toggle="tooltip" data-placement="top" title="" data-original-title="来源: 小程序"></i>{/if}
                                 {if $row['aagenttype']==1}
                                 <span class="label label-primary">省级</span>
                                 {elseif $row['aagenttype']==2}
@@ -234,7 +233,7 @@
 
                     <div class="btn-group ">
                             {ifp 'order.list'}
-                            <a class="btn  btn-op btn-operation" href="{php echo webUrl('order/list',array('searchfield' => 'location','keyword' => $row['agent_district']));}"  target='_blank'>
+                            <a class="btn  btn-op btn-operation" href="{php echo webUrl('order/list',array('agentid' => $row['id']));}"  target='_blank'>
                                         <span data-toggle="tooltip" data-placement="top" title="" data-original-title="推广订单">
                                             <i class='icow icow-tuiguang'></i>
                                         </span>

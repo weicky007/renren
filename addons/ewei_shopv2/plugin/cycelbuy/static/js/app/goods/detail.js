@@ -561,8 +561,8 @@ define(['core', 'tpl', './picker.js', 'biz/member/favorite', 'biz/member/cart', 
         var container = $('.seckill-container'), starttime = container.data('starttime'), endtime = container.data('endtime'), status = container.data('status') || 0;
         $.ajax({
             url: '../addons/ewei_shopv2/map.json', complete: function (x) {
-                currenttime = +new Date(x.getResponseHeader("Date")) / 1000;
-                /*currenttime = +parseInt(new Date() / 1000);*/
+                /*currenttime = +new Date(x.getResponseHeader("Date")) / 1000;*/
+                currenttime = +parseInt(new Date() / 1000);
                 if (status == 0) {
                     modal.lasttime = endtime-currenttime;
                 } else {

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,7 +12,6 @@ define('SNS_CREDIT_TOP_BOARD_CANCEL', 5);
 define('SNS_CREDIT_BEST', 6);
 define('SNS_CREDIT_BEST_CANCEL', 7);
 define('SNS_CREDIT_BEST_BOARD_CANCEL', 8);
-define('SNS_CREDIT_BEST_BOARD', 11);
 define('SNS_CREDIT_DELETE_POST', 9);
 define('SNS_CREDIT_DELETE_REPLY', 10);
 define('SNS_MESSAGE_REPLY', 20);
@@ -72,8 +70,8 @@ if (!class_exists('SnsModel')) {
 		public function getCategory($all = true)
 		{
 			global $_W;
-			$condition = $all ? '' : ' and `status` = 1';
-			return pdo_fetchall('select * from ' . tablename('ewei_shop_sns_category') . (' where uniacid=:uniacid ' . $condition . ' and enabled = 1 order by displayorder desc'), array(':uniacid' => $_W['uniacid']), 'id');
+			$condition = ($all ? '' : ' and `status` = 1');
+			return pdo_fetchall('select * from ' . tablename('ewei_shop_sns_category') . ' where uniacid=:uniacid ' . $condition . ' and enabled = 1 order by displayorder desc', array(':uniacid' => $_W['uniacid']), 'id');
 		}
 
 		/**
@@ -141,8 +139,7 @@ if (!class_exists('SnsModel')) {
 		public function getPostCount($bid)
 		{
 			global $_W;
-			return pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . '
-            where uniacid=:uniacid and bid=:bid and pid=0 and deleted = 0 limit 1', array(':uniacid' => $_W['uniacid'], ':bid' => $bid));
+			return pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . "\r\n            where uniacid=:uniacid and bid=:bid and pid=0 and deleted = 0 limit 1", array(':uniacid' => $_W['uniacid'], ':bid' => $bid));
 		}
 
 		/**
@@ -153,8 +150,7 @@ if (!class_exists('SnsModel')) {
 		public function getFollowCount($bid)
 		{
 			global $_W;
-			return pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_board_follow') . '
-            where uniacid=:uniacid and bid=:bid limit 1', array(':uniacid' => $_W['uniacid'], ':bid' => $bid));
+			return pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_board_follow') . "\r\n            where uniacid=:uniacid and bid=:bid limit 1", array(':uniacid' => $_W['uniacid'], ':bid' => $bid));
 		}
 
 		/**
@@ -183,7 +179,7 @@ if (!class_exists('SnsModel')) {
 			}
 
 			$condition .= ')';
-			return pdo_fetchall('select id,title,istop,isboardtop from ' . tablename('ewei_shop_sns_post') . (' where uniacid=:uniacid ' . $condition . ' and pid=0 and deleted=0  order by istop desc,replytime desc'), array(':uniacid' => $_W['uniacid']));
+			return pdo_fetchall('select id,title,istop,isboardtop from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid ' . $condition . ' and pid=0 and deleted=0  order by istop desc,replytime desc', array(':uniacid' => $_W['uniacid']));
 		}
 
 		/**
@@ -202,7 +198,7 @@ if (!class_exists('SnsModel')) {
 
 			$credit = 0;
 			$log = '';
-			if ($type == SNS_CREDIT_POST || $type == SNS_CREDIT_DELETE_POST) {
+			if (($type == SNS_CREDIT_POST) || ($type == SNS_CREDIT_DELETE_POST)) {
 				$credit = $board['postcredit'];
 				$log = '人人社区发表话题奖励积分: +' . $credit;
 
@@ -212,7 +208,7 @@ if (!class_exists('SnsModel')) {
 				}
 			}
 			else {
-				if ($type == SNS_CREDIT_REPLY || $type == SNS_CREDIT_DELETE_REPLY) {
+				if (($type == SNS_CREDIT_REPLY) || ($type == SNS_CREDIT_DELETE_REPLY)) {
 					$credit = $board['replycredit'];
 					$log = '人人社区发表评论奖励积分: +' . $credit;
 
@@ -222,7 +218,7 @@ if (!class_exists('SnsModel')) {
 					}
 				}
 				else {
-					if ($type == SNS_CREDIT_TOP || $type == SNS_CREDIT_TOP_CANCEL) {
+					if (($type == SNS_CREDIT_TOP) || ($type == SNS_CREDIT_TOP_CANCEL)) {
 						$credit = $board['topcredit'];
 						$log = '人人社区话题被全站置顶奖励积分: +' . $credit;
 
@@ -232,7 +228,7 @@ if (!class_exists('SnsModel')) {
 						}
 					}
 					else {
-						if ($type == SNS_CREDIT_TOP_BOARD || $type == SNS_CREDIT_TOP_BOARD_CANCEL) {
+						if (($type == SNS_CREDIT_TOP_BOARD) || ($type == SNS_CREDIT_TOP_BOARD_CANCEL)) {
 							$credit = $board['topboardcredit'];
 							$log = '人人社区话题被版块置顶奖励积分: +' . $credit;
 
@@ -242,17 +238,17 @@ if (!class_exists('SnsModel')) {
 							}
 						}
 						else {
-							if ($type == SNS_CREDIT_BEST || $type == SNS_CREDIT_BEST_CANCEL) {
+							if (($type == SNS_CREDIT_BEST) || ($type == SNS_CREDIT_BEST_CANCEL)) {
 								$credit = $board['bestcredit'];
 								$log = '人人社区话题被全站精华奖励积分: +' . $credit;
 
-								if ($type == SNS_CREDIT_BEST_CANCEL) {
+								if ($type == SNS_CREDIT_TOP_BOARD_CANCEL) {
 									$credit = 0 - $credit;
 									$log = '人人社区话题被全站精华奖励积分: -' . abs($credit);
 								}
 							}
 							else {
-								if ($type == SNS_CREDIT_BEST_BOARD || $type == SNS_CREDIT_BEST_BOARD_CANCEL) {
+								if (($type == SNS_CREDIT_BEST_BOARD) || ($type == SNS_CREDIT_BEST_BOARD_CANCEL)) {
 									$credit = $board['bestboardcredit'];
 									$log = '人人社区话题被版块精华奖励积分: +' . $credit;
 
@@ -317,12 +313,12 @@ if (!class_exists('SnsModel')) {
 			$level = false;
 
 			if (empty($leveltype)) {
-				$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . (' where uniacid=:uniacid  and enabled=1 and ' . $credit . ' >= credit and credit>0  order by credit desc limit 1'), array(':uniacid' => $_W['uniacid']));
+				$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . ' where uniacid=:uniacid  and enabled=1 and ' . $credit . ' >= credit and credit>0  order by credit desc limit 1', array(':uniacid' => $_W['uniacid']));
 			}
 			else {
 				if ($leveltype == 1) {
 					$post = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where uniacid=:uniacid and openid=:openid and pid=0 and checked=1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
-					$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . (' where uniacid=:uniacid and enabled=1 and ' . $post . ' >= `post` and `post`>0  order by `post` desc limit 1'), array(':uniacid' => $_W['uniacid']));
+					$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . ' where uniacid=:uniacid and enabled=1 and ' . $post . ' >= `post` and `post`>0  order by `post` desc limit 1', array(':uniacid' => $_W['uniacid']));
 				}
 			}
 
@@ -352,38 +348,9 @@ if (!class_exists('SnsModel')) {
 			}
 
 			if ($canupgrade) {
-				$res = pdo_update('ewei_shop_sns_member', array('level' => $level['id']), array('id' => $member['sns_id']));
-				$this->sendMemberSnsUpgradeMessage($openid, $member['nickname'], $oldlevel, $level);
+				pdo_update('ewei_shop_sns_member', array('level' => $level['id']), array('id' => $member['sns_id']));
+				$this->sendMemberUpgradeMessage($openid, $member['nickname'], $oldlevel, $level);
 			}
-		}
-
-		/**
-         * 新版升级消息
-         * @param $openid
-         * @param $oldlevel
-         * @param $level
-         */
-		public function sendMemberSnsUpgradeMessage($openid, $nickname, $oldlevel, $level)
-		{
-			$set = $this->getSet();
-			$tm = $set['tm'];
-			$datas[] = array('name' => '昵称', 'value' => $nickname);
-			$datas[] = array('name' => '新等级', 'value' => $oldlevel['levelname']);
-			$datas[] = array('name' => '旧等级', 'value' => $level['levelname']);
-			$datas[] = array('name' => '时间', 'value' => date('Y-m-d H:i:s', time()));
-			$remark = '
-[昵称]感谢您的支持，如有疑问请联系在线客服。';
-			$text = '亲爱的' . $nickname . '您的社区等级已升级，详情请登录社区查看。';
-			$title = '社区等级升级';
-			$message = array(
-				'first'    => array('value' => '亲爱的' . $nickname . '，您的社区等级已升级', 'color' => '#ff0000'),
-				'keyword2' => array('title' => '处理进度', 'value' => $title, 'color' => '#000000'),
-				'keyword3' => array('title' => '处理内容', 'value' => '您的人人社区等级已升级成功', 'color' => '#000000'),
-				'keyword1' => array('title' => '业务类型', 'value' => '会员通知', 'color' => '#000000'),
-				'remark'   => array('value' => '
-感谢您的支持', 'color' => '#000000')
-			);
-			m('notice')->sendNotice(array('openid' => $openid, 'tag' => 'sns', 'default' => $message, 'cusdefault' => $text, 'datas' => $datas, 'plugin' => 'sns'));
 		}
 
 		/**
@@ -409,7 +376,7 @@ if (!class_exists('SnsModel')) {
 			$msg = array(
 				'keyword1' => array('value' => !empty($tm['upgrade_title']) ? $tm['upgrade_title'] : '社区等级升级', 'color' => '#73a68d'),
 				'keyword2' => array('value' => $message, 'color' => '#73a68d')
-			);
+				);
 
 			if (!empty($tm['templateid'])) {
 				m('message')->sendTplNotice($openid, $tm['templateid'], $msg);
@@ -428,33 +395,31 @@ if (!class_exists('SnsModel')) {
 		{
 			$set = $this->getSet();
 			$tm = $set['tm'];
+
+			if (empty($tm['reply_content'])) {
+				return NULL;
+			}
+
+			$message = $tm['reply_content'];
+			$message = str_replace('[评论者]', $data['nickname'], $message);
+			$message = str_replace('[版块]', $data['boardtitle'], $message);
+			$message = str_replace('[话题]', $data['posttitle'], $message);
+			$message = str_replace('[内容]', $data['content'], $message);
+			$message = str_replace('[时间]', date('Y-m-d H:i:s', $data['createtime']), $message);
+			$msg = array(
+				'keyword1' => array('value' => !empty($tm['reply_title']) ? $tm['reply_title'] : '您的话题有新的评论', 'color' => '#73a68d'),
+				'keyword2' => array('value' => $message, 'color' => '#73a68d')
+				);
 			$url = mobileUrl('sns/post', array('id' => $data['id']), true);
-			$datas = array(
-				array('name' => '评论者', 'value' => $data['nickname']),
-				array('name' => '版块', 'value' => $data['boardtitle']),
-				array('name' => '话题', 'value' => $data['posttitle']),
-				array('name' => '内容', 'value' => $data['content']),
-				array('name' => '时间', 'value' => date('Y-m-d H:i:s', $data['createtime']))
-			);
-			$remark = '
-<a href=\'' . $url . '\'>点击进入查看评论详情</a>';
-			$text = '您的话题有新的评论，' . $data['nickname'] . '评论了' . $data['posttitle'] . $remark;
-			$title = '您的话题有新的评论';
-			$message = array(
-				'first'    => array('value' => '您的话题有新的评论', 'color' => '#ff0000'),
-				'keyword2' => array('title' => '处理进度', 'value' => $title, 'color' => '#000000'),
-				'keyword3' => array('title' => '处理内容', 'value' => '您的话题有新的评论', 'color' => '#000000'),
-				'keyword1' => array('title' => '业务类型', 'value' => '会员通知', 'color' => '#000000'),
-				'remark'   => array('value' => $remark, 'color' => '#000000')
-			);
-			m('notice')->sendNotice(array('openid' => $openid, 'tag' => 'reply', 'default' => $message, 'cusdefault' => $text, 'url' => $url, 'datas' => $datas, 'piugin' => 'sns'));
+
+			if (!empty($tm['templateid'])) {
+				m('message')->sendTplNotice($openid, $tm['templateid'], $msg, $url);
+			}
+			else {
+				m('message')->sendCustomNotice($openid, $msg, $url);
+			}
 		}
 
-		/**
-         * 评论消息
-         * @param $openid
-         * @param $data
-         */
 		public function timeBefore($the_time)
 		{
 			$now_time = time();
@@ -502,8 +467,7 @@ if (!class_exists('SnsModel')) {
 
 		public function replaceContent($content)
 		{
-			return str_replace('
-', '<br/>', preg_replace('/\\[EM(\\w+)\\]/', '<img src="../addons/ewei_shopv2/plugin/sns/static/images/face/${1}.gif" class="emoji" />', $content));
+			return str_replace("\n", '<br/>', preg_replace('/\\[EM(\\w+)\\]/', '<img src="../addons/ewei_shopv2/plugin/sns/static/images/face/${1}.gif" class="emoji" />', $content));
 		}
 
 		public function check($member, $board, $isPost = false)
@@ -512,7 +476,7 @@ if (!class_exists('SnsModel')) {
 			global $_GPC;
 			$levelid = $member['level'];
 			$groupid = $member['groupid'];
-			$levels = $isPost ? $board['postlevels'] : $board['showlevels'];
+			$levels = ($isPost ? $board['postlevels'] : $board['showlevels']);
 
 			if ($levels != '') {
 				$arr = explode(',', $levels);
@@ -526,7 +490,7 @@ if (!class_exists('SnsModel')) {
 				}
 			}
 
-			$levels = $isPost ? $board['postgroups'] : $board['showgroups'];
+			$levels = ($isPost ? $board['postgroups'] : $board['showgroups']);
 
 			if ($levels != '') {
 				$arr = explode(',', $levels);
@@ -540,7 +504,7 @@ if (!class_exists('SnsModel')) {
 				}
 			}
 
-			$levels = $isPost ? $board['postsnslevels'] : $board['showsnslevels'];
+			$levels = ($isPost ? $board['postsnslevels'] : $board['showsnslevels']);
 
 			if ($levels) {
 				$arr = explode(',', $levels);
@@ -569,7 +533,7 @@ if (!class_exists('SnsModel')) {
 					}
 				}
 
-				$levels = $isPost ? $board['postagentlevels'] : $board['showagentlevels'];
+				$levels = ($isPost ? $board['postagentlevels'] : $board['showagentlevels']);
 
 				if ($levels) {
 					$arr = explode(',', $levels);
@@ -599,20 +563,18 @@ if (!class_exists('SnsModel')) {
 					}
 				}
 
-				$levels = $isPost ? $board['postpartnerlevels'] : $board['showpartnerlevels'];
+				$levels = ($isPost ? $board['postpartnerlevels'] : $board['showaagentlevels']);
 
 				if ($levels) {
 					$arr = explode(',', $levels);
 
-					if (!in_array($member['partnerlevel'], $arr)) {
+					if (!in_array($member['aagentlevel'], $arr)) {
 						if ($_W['isajax']) {
 							return error(-1, $set['texts']['partner'] . '等级限制');
 						}
 
 						return error(-1, '您的' . $set['texts']['partner'] . '等级没有权限浏览此版块');
 					}
-
-					return true;
 				}
 			}
 
@@ -623,7 +585,7 @@ if (!class_exists('SnsModel')) {
 		{
 			if (empty($avatar)) {
 				$set = $this->getSet();
-				$avatar = empty($set['head']) ? '../addons/ewei_shopv2/plugin/sns/static/images/head.jpg' : tomedia($set['head']);
+				$avatar = (empty($set['head']) ? '../addons/ewei_shopv2/plugin/sns/static/images/head.jpg' : tomedia($set['head']));
 			}
 
 			return $avatar;

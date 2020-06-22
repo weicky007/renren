@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -183,15 +182,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			}
 
 			if (!empty($item['hasoption'])) {
-				$sql = 'update ' . tablename('ewei_shop_goods') . ' g set
-            g.minprice = (select min(marketprice) from ' . tablename('ewei_shop_goods_option') . (' where goodsid = ' . $id . '),
-            g.maxprice = (select max(marketprice) from ') . tablename('ewei_shop_goods_option') . (' where goodsid = ' . $id . ')
-            where g.id = ' . $id . ' and g.hasoption=1');
+				$sql = 'update ' . tablename('ewei_shop_goods') . " g set\r\n            g.minprice = (select min(marketprice) from " . tablename('ewei_shop_goods_option') . ' where goodsid = ' . $id . "),\r\n            g.maxprice = (select max(marketprice) from " . tablename('ewei_shop_goods_option') . ' where goodsid = ' . $id . ")\r\n            where g.id = " . $id . ' and g.hasoption=1';
 				pdo_query($sql);
 			}
 			else {
-				pdo_query('delete from ' . tablename('ewei_shop_goods_option') . (' where goodsid=' . $id));
-				$sql = 'update ' . tablename('ewei_shop_goods') . (' set minprice = marketprice,maxprice = marketprice where id = ' . $id . ' and hasoption=0;');
+				pdo_query('delete from ' . tablename('ewei_shop_goods_option') . ' where goodsid=' . $id);
+				$sql = 'update ' . tablename('ewei_shop_goods') . ' set minprice = marketprice,maxprice = marketprice where id = ' . $id . ' and hasoption=0;';
 				pdo_query($sql);
 			}
 
@@ -209,7 +205,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$totalcnf_title = '拍下减库存';
 			$dispatch_title = '模板: 默认模板';
 			$viewlevel_title = $viewgroup_title = $buylevel_title = $buygroup_title = '不限制';
-			if (0 < $item['merchid'] && !empty($item)) {
+			if ((0 < $item['merchid']) && !empty($item)) {
 				$merchid = intval($item['merchid']);
 
 				if ($merch_plugin) {
@@ -220,12 +216,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$dispatch_data = pdo_fetchall('select * from ' . tablename('ewei_shop_dispatch') . ' where uniacid=:uniacid and merchid=:merchid and enabled=1 order by displayorder desc', array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
 			$levels = m('member')->getLevels();
 			$levels = array_merge(array(
-				array('id' => 0, 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
-			), $levels);
+	array('id' => 0, 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
+	), $levels);
 			$groups = m('member')->getGroups();
 			$groups = array_merge(array(
-				array('id' => 0, 'groupname' => '未分组')
-			), $groups);
+	array('id' => 0, 'groupname' => '未分组')
+	), $groups);
 			$catlevel = intval($_W['shopset']['category']['level']);
 			$category = m('shop')->getFullCategory(true, true);
 			$allcategory = m('shop')->getCategory();
@@ -296,7 +292,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					$piclist = array_merge(array($item['thumb']), iunserializer($item['thumb_url']));
 				}
 
-				if ($item['showlevels'] != '' && !empty($levels)) {
+				if (($item['showlevels'] != '') && !empty($levels)) {
 					$showlevels = explode(',', $item['showlevels']);
 					$viewlevels = array();
 
@@ -321,7 +317,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					}
 				}
 
-				if ($item['showgroups'] != '' && !empty($groups)) {
+				if (($item['showgroups'] != '') && !empty($groups)) {
 					$showgroups = explode(',', $item['showgroups']);
 					$viewgroups = array();
 
@@ -346,7 +342,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					}
 				}
 
-				if ($item['buylevels'] != '' && !empty($levels)) {
+				if (($item['buylevels'] != '') && !empty($levels)) {
 					$buylevels2 = explode(',', $item['buylevels']);
 					$buylevels = array();
 
@@ -371,7 +367,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					}
 				}
 
-				if ($item['buygroups'] != '' && !empty($groups)) {
+				if (($item['buygroups'] != '') && !empty($groups)) {
 					$buygroups2 = explode(',', $item['buygroups']);
 					$buygroups = array();
 
@@ -421,7 +417,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 					unset($diypage_item);
 				}
 
-				if ($item['diyformtype'] == 1 && !empty($item['diyformid']) && !empty($diyform)) {
+				if (($item['diyformtype'] == 1) && !empty($item['diyformid']) && !empty($diyform)) {
 					foreach ($diyform as $diyform_item) {
 						if ($diyform_item['id'] == $item['diyformid']) {
 							$diyform_title = $diyform_item['title'];
@@ -490,9 +486,8 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$total = pdo_fetchcolumn($sql, $params);
 
 		if (0 < $total) {
-			$presize = ($pindex - 1) * $psize - $offset;
-			$sql = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $condition . ' ORDER BY g.`status` DESC, g.`displayorder` DESC,
-                g.`id` DESC LIMIT ' . $presize . ',' . $psize;
+			$presize = (($pindex - 1) * $psize) - $offset;
+			$sql = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $condition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . $presize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 		}
 
@@ -514,7 +509,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goods', array('deleted' => 1), array('id' => $item['id']));
@@ -538,11 +533,11 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goods', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('goods.edit', '修改商品状态<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '上架' : '下架');
+			plog('goods.edit', ('修改商品状态<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '上架' : '下架');
 		}
 
 		show_json(1);
@@ -562,7 +557,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goods', array('deleted' => 0, 'status' => 0), array('id' => $item['id']));

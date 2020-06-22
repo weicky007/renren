@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,7 +19,7 @@ class DiypageProcessor extends PluginProcessor
 		$content = $obj->message['content'];
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-		if ($msgtype == 'text' || $event == 'click') {
+		if (($msgtype == 'text') || ($event == 'click')) {
 			$page = pdo_fetch('select * from ' . tablename('ewei_shop_diypage') . ' where keyword=:keyword and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':keyword' => $content));
 			if (empty($page) || empty($page['data'])) {
 				return $this->responseEmpty();

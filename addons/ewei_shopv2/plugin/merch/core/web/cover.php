@@ -1,58 +1,55 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-class Cover_EweiShopV2Page extends PluginWebPage
+class Cover_EweiShopV2Page extends PluginWebPage 
 {
-	public function main()
+	public function main() 
 	{
-		if (cv('merch.cover.register')) {
+		if (cv('merch.cover.register')) 
+		{
 			header('location: ' . webUrl('merch/cover/register'));
 		}
-		else {
-			if (cv('merch.cover.merchlist')) {
-				header('location: ' . webUrl('merch/cover/merchlist'));
-			}
+		else if (cv('merch.cover.merchlist')) 
+		{
+			header('location: ' . webUrl('merch/cover/merchlist'));
 		}
 	}
-
-	protected function _cover($key, $name, $url)
+	protected function _cover($key, $name, $url) 
 	{
 		global $_W;
 		global $_GPC;
 		$rule = pdo_fetch('select * from ' . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'cover', ':name' => 'ewei_shopv2' . $name . '入口设置'));
 		$keyword = false;
 		$cover = false;
-
-		if (!empty($rule)) {
+		if (!(empty($rule))) 
+		{
 			$keyword = pdo_fetch('select * from ' . tablename('rule_keyword') . ' where uniacid=:uniacid and rid=:rid limit 1', array(':uniacid' => $_W['uniacid'], ':rid' => $rule['id']));
 			$cover = pdo_fetch('select * from ' . tablename('cover_reply') . ' where uniacid=:uniacid and rid=:rid limit 1', array(':uniacid' => $_W['uniacid'], ':rid' => $rule['id']));
 		}
-
-		if ($_W['ispost']) {
+		if ($_W['ispost']) 
+		{
 			ca('merch.cover.edit');
-			$data = is_array($_GPC['cover']) ? $_GPC['cover'] : array();
-
-			if (empty($data['keyword'])) {
+			$data = ((is_array($_GPC['cover']) ? $_GPC['cover'] : array()));
+			if (empty($data['keyword'])) 
+			{
 				show_json(0, '请输入关键词!');
 			}
-
 			$keyword1 = m('common')->keyExist($data['keyword']);
-
-			if (!empty($keyword1)) {
-				if ($keyword1['name'] != 'ewei_shopv2' . $name . '入口设置') {
+			if (!(empty($keyword1))) 
+			{
+				if ($keyword1['name'] != 'ewei_shopv2' . $name . '入口设置') 
+				{
 					show_json(0, '关键字已存在!');
 				}
 			}
-
-			if (!empty($rule)) {
+			if (!(empty($rule))) 
+			{
 				pdo_delete('rule', array('id' => $rule['id'], 'uniacid' => $_W['uniacid']));
 				pdo_delete('rule_keyword', array('rid' => $rule['id'], 'uniacid' => $_W['uniacid']));
 				pdo_delete('cover_reply', array('rid' => $rule['id'], 'uniacid' => $_W['uniacid']));
 			}
-
 			$rule_data = array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2' . $name . '入口设置', 'module' => 'cover', 'displayorder' => 0, 'status' => intval($data['status']));
 			pdo_insert('rule', $rule_data);
 			$rid = pdo_insertid();
@@ -63,11 +60,9 @@ class Cover_EweiShopV2Page extends PluginWebPage
 			plog('merch.cover.' . $key . '.edit', '修改入口设置');
 			show_json(1);
 		}
-
 		return array('rule' => $rule, 'cover' => $cover, 'keyword' => $keyword, 'url' => $_W['siteroot'] . 'app/' . substr($url, 2), 'name' => $name, 'key' => $key);
 	}
-
-	public function register()
+	public function register() 
 	{
 		global $_W;
 		global $_GPC;
@@ -76,16 +71,14 @@ class Cover_EweiShopV2Page extends PluginWebPage
 		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template('merch/cover');
 	}
-
-	public function app()
+	public function app() 
 	{
 		global $_W;
 		global $_GPC;
 		$cover = $this->_cover('app', '商家微信管理端', mobileUrl('merch', array(), false));
 		include $this->template('merch/cover');
 	}
-
-	public function merchlist()
+	public function merchlist() 
 	{
 		global $_W;
 		global $_GPC;
@@ -94,8 +87,7 @@ class Cover_EweiShopV2Page extends PluginWebPage
 		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template('merch/cover');
 	}
-
-	public function merchuser()
+	public function merchuser() 
 	{
 		global $_W;
 		global $_GPC;
@@ -105,5 +97,4 @@ class Cover_EweiShopV2Page extends PluginWebPage
 		include $this->template('merch/cover');
 	}
 }
-
 ?>

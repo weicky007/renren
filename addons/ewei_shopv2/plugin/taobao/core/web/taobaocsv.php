@@ -28,10 +28,6 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 					$colsIndex['title'] = $i;
 				}
 
-				if ($col == 'sku_barcode') {
-					$colsIndex['sku_barcode'] = $i;
-				}
-
 				if ($col == 'price') {
 					$colsIndex['price'] = $i;
 				}
@@ -72,7 +68,6 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 				$item['marketprice'] = $col[$colsIndex[price]];
 				$item['total'] = $col[$colsIndex[num]];
 				$item['content'] = $col[$colsIndex[description]];
-				$item['goodssn'] = $col[$colsIndex[sku_barcode]];
 				$picContents = $col[$colsIndex[picture]];
 				$allpics = explode(';', $picContents);
 				$pics = array();
@@ -105,7 +100,6 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 
 			session_start();
 			$_SESSION['taobaoCSV'] = $items;
-			m('cache')->set('taobaoCSV', $items, $_W['uniacid']);
 			$uploadStart = '1';
 			$uploadnum = $num;
 		}
@@ -116,17 +110,11 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 	public function fetch()
 	{
 		global $_GPC;
-		global $_W;
 		set_time_limit(0);
 		$num = intval($_GPC['num']);
 		$totalnum = intval($_GPC['totalnum']);
 		session_start();
 		$items = $_SESSION['taobaoCSV'];
-
-		if (empty($items)) {
-			$items = m('cache')->get('taobaoCSV', $_W['uniacid']);
-		}
-
 		$ret = $this->model->save_taobaocsv_goods($items[$num]);
 		plog('taobaoCSV.main', '淘宝CSV宝贝批量导入' . $ret[goodsid]);
 
@@ -183,5 +171,4 @@ class Taobaocsv_EweiShopV2Page extends PluginWebPage
 		zip_close($resource);
 	}
 }
-
 ?>

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -35,21 +34,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		global $_W;
 		$goods = m('goods')->getTotals();
 		$goodscount = $goods['sale'] + $goods['out'] + $goods['stock'] + $goods['cycle'];
-		$open_redis = function_exists('redis') && !is_error(redis());
-
-		if ($open_redis) {
-			$redis_key = 'ewei_' . $_W['uniacid'] . '_member_mmanage_index1';
-			$member_count = m('member')->memberRadisCount($redis_key, false);
-
-			if (!$member_count) {
-				$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
-				m('member')->memberRadisCount($redis_key, $member_count);
-			}
-		}
-		else {
-			$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
-		}
-
+		$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
 		show_json(1, array('goods_count' => $goodscount, 'member_count' => $member_count));
 	}
 
@@ -72,12 +57,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
+			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
+			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
 		}
 
 		$sql = 'select id,price,createtime from ' . tablename('ewei_shop_order') . ' where uniacid = :uniacid and ismr=0 and isparent=0 and (status > 0 or ( status=0 and paytype=3)) and deleted=0 and createtime between :createtime1 and :createtime2';
@@ -104,21 +89,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		}
 
 		$param = array(':uniacid' => $_W['uniacid']);
-		$open_redis = function_exists('redis') && !is_error(redis());
-
-		if ($open_redis) {
-			$redis_key = 'ewei_' . $_W['uniacid'] . '_member_mmanage_index2';
-			$member_count = m('member')->memberRadisCount($redis_key, false);
-
-			if (!$member_count) {
-				$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
-				m('member')->memberRadisCount($redis_key, $member_count);
-			}
-		}
-		else {
-			$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
-		}
-
+		$member_count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid', $param);
 		$newmember = $this->selectMemberCreate($day);
 		return array('count' => (int) $newmember, 'rate' => empty($member_count) ? 0 : (int) number_format(round($newmember / $member_count, 3) * 100));
 	}
@@ -129,17 +100,16 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		$day = (int) $day;
 
 		if ($day != 0) {
-			$createtime1 = strtotime(date('Y-m-d', time() - $day * 3600 * 24));
+			$createtime1 = strtotime(date('Y-m-d', time() - ($day * 3600 * 24)));
 			$createtime2 = strtotime(date('Y-m-d', time()));
 		}
 		else {
 			$createtime1 = strtotime(date('Y-m-d', time()));
-			$createtime2 = strtotime(date('Y-m-d', time() + 3600 * 24));
+			$createtime2 = strtotime(date('Y-m-d', time() + (3600 * 24)));
 		}
 
 		$sql = 'select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid = :uniacid and createtime between :createtime1 and :createtime2';
 		$param = array(':uniacid' => $_W['uniacid'], ':createtime1' => $createtime1, ':createtime2' => $createtime2);
-		$open_redis = function_exists('redis') && !is_error(redis());
 		return pdo_fetchcolumn($sql, $param);
 	}
 }

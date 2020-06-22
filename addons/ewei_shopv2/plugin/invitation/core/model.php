@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -34,7 +33,7 @@ class InvitationModel extends PluginModel
 			$create = true;
 		}
 		else {
-			if ($qr['createtime'] + $qr['expire'] <= time()) {
+			if (($qr['createtime'] + $qr['expire']) <= time()) {
 				$result = $this->getSceneTicket($expire, $qr['sceneid']);
 
 				if (is_error($result)) {

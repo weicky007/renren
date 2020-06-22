@@ -6,14 +6,25 @@ if (!defined('IN_IA')) {
 
 class Presentation_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_presentation';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'openid', 'content', 'create_time');
-	/**     * 默认openid     * @var string     */
+	/**
+     * 默认openid
+     * @var string
+     */
 	private $openid = '';
 
-	/**     * 初始化接口     */
+	/**
+     * 初始化接口
+     */
 	public function __construct()
 	{
 		parent::__construct();
@@ -21,7 +32,12 @@ class Presentation_EweiShopV2Page extends PluginMobilePage
 		$_W['openid'] = $_W['openid'];
 	}
 
-	/**     * 插入报告     * presentation_EweiShopV2Page constructor.     * @param     * @return bool     */
+	/**
+     * 插入报告
+     * presentation_EweiShopV2Page constructor.
+     * @param
+     * @return bool
+     */
 	public function addInfo($content)
 	{
 		global $_W;
@@ -34,7 +50,11 @@ class Presentation_EweiShopV2Page extends PluginMobilePage
 		return $presentationInfo;
 	}
 
-	/**     * 获取报告列表     * presentation_EweiShopV2Page constructor.     * @return void     */
+	/**
+     * 获取报告列表
+     * presentation_EweiShopV2Page constructor.
+     * @return void
+     */
 	public function getList()
 	{
 		global $_W;

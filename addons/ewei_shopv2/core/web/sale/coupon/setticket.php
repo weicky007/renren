@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,10 +17,6 @@ class Setticket_EweiShopV2Page extends WebPage
 				if (is_array($_GPC['couponid'])) {
 					$count = count($_GPC['couponid']);
 
-					if ($count < 1) {
-						show_json(0, '请选择优惠券！');
-					}
-
 					if ($count == 2) {
 						if ($_GPC['couponid'][0] == $_GPC['couponid'][1]) {
 							show_json(0, '同一张优惠券不能重复选择！');
@@ -29,7 +24,7 @@ class Setticket_EweiShopV2Page extends WebPage
 					}
 
 					if ($count == 3) {
-						if ($_GPC['couponid'][0] == $_GPC['couponid'][1] || $_GPC['couponid'][0] == $_GPC['couponid'][2] || $_GPC['couponid'][1] == $_GPC['couponid'][2]) {
+						if (($_GPC['couponid'][0] == $_GPC['couponid'][1]) || ($_GPC['couponid'][0] == $_GPC['couponid'][2]) || ($_GPC['couponid'][1] == $_GPC['couponid'][2])) {
 							show_json(0, '同一张优惠券不能重复选择！');
 						}
 					}
@@ -70,10 +65,6 @@ class Setticket_EweiShopV2Page extends WebPage
 					if (is_array($_GPC['couponid'])) {
 						$count = count($_GPC['couponid']);
 
-						if ($count < 1) {
-							show_json(0, '请选择优惠券！');
-						}
-
 						if ($count == 2) {
 							if ($_GPC['couponid'][0] == $_GPC['couponid'][1]) {
 								show_json(0, '不能选择相同优惠券！');
@@ -81,7 +72,7 @@ class Setticket_EweiShopV2Page extends WebPage
 						}
 
 						if ($count == 3) {
-							if ($_GPC['couponid'][0] == $_GPC['couponid'][1] || $_GPC['couponid'][0] == $_GPC['couponid'][2] || $_GPC['couponid'][1] == $_GPC['couponid'][2]) {
+							if (($_GPC['couponid'][0] == $_GPC['couponid'][1]) || ($_GPC['couponid'][0] == $_GPC['couponid'][2]) || ($_GPC['couponid'][1] == $_GPC['couponid'][2])) {
 								show_json(0, '不能选择相同优惠券！');
 							}
 						}
@@ -119,22 +110,18 @@ class Setticket_EweiShopV2Page extends WebPage
 			}
 
 			$data = array('uniacid' => intval($_W['uniacid']), 'cpid' => trim($cpids), 'expiration' => intval($_GPC['expiration']), 'status' => intval($_GPC['status']), 'createtime' => TIMESTAMP);
-			if (!empty($_GPC['expiration']) && intval($_GPC['expiration']) == 1) {
+			if (!empty($_GPC['expiration']) && (intval($_GPC['expiration']) == 1)) {
 				$data['starttime'] = strtotime($_GPC['starttime']);
 				$data['endtime'] = strtotime($_GPC['endtime']);
 			}
 
 			if (empty($id)) {
-				$result = pdo_insert('ewei_shop_sendticket', $data);
+				pdo_insert('ewei_shop_sendticket', $data);
 				plog('sendticket.set', '设置发券内容');
 			}
 			else {
 				$params = array('id' => $id);
-				$result = pdo_update('ewei_shop_sendticket', $data, $params);
-			}
-
-			if (!$result) {
-				show_json(0, '保存失败,请重试！');
+				pdo_update('ewei_shop_sendticket', $data, $params);
 			}
 
 			show_json(1);

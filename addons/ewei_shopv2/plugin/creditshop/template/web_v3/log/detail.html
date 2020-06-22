@@ -147,7 +147,7 @@
             <label class="col-lg control-label">运费支付状态</label>
             <div class="col-sm-9 col-xs-12">
                 <div class='form-control-static'>
-                    {if $log['dispatchstatus']==-1}
+                    {if $log['dispatchstatus']==-1 || $log['dispatch']==0}
                         <span class='label label-default'>无需支付</span>
                     {elseif $log['dispatchstatus']==0}
                         <span class='label label-default'>未支付</span>
@@ -183,11 +183,6 @@
                             </div>
                             {/loop}
                             {/if}
-                            {if !empty($item['verifytime'])}
-                            <div class='form-control-static'>
-                                <label class="col-lg label-weight">核销时间：</label>{php echo date('Y-m-d H:i:s',$item['verifytime'])}
-                            </div>
-                            {/if}
                         </div>
                     </div>
 
@@ -202,7 +197,7 @@
                                 <label class="col-lg label-weight">收件人：</label>{$address['realname']} / {$address['mobile']}
                             </div>
                             <div class='form-control-static'>
-                                <label class="col-lg label-weight">收货地址：</label>{$address['province']}-{$address['city']}-{$address['area']}-{$address['street']} -{$address['address']}
+                                <label class="col-lg label-weight">收货地址：</label>{$address['province']}{$address['city']}{$address['area']} {$address['address']}
                             </div>
                         </div>
                     </div>

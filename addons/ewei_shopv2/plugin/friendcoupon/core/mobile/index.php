@@ -263,16 +263,16 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 		if ($tm['friendcoupon_launch_close_advanced']) {
 			$noticeModel->sendNotice(array(
-				'openid' => $user['openid'],
-				'tag'    => 'friendcoupon_launch',
-				'datas'  => array(
-					array('name' => '活动名称', 'value' => $activity['title']),
-					array('name' => '活动开始时间', 'value' => $this->model->dateFormat($currentActivityInfo['receive_time'])),
-					array('name' => '活动结束时间', 'value' => $this->model->dateFormat($currentActivityInfo['deadline'])),
-					array('name' => '瓜分券领取时间', 'value' => $this->model->dateFormat(time())),
-					array('name' => '瓜分券名称', 'value' => $couponName)
-				)
-			));
+	'openid' => $user['openid'],
+	'tag'    => 'friendcoupon_launch',
+	'datas'  => array(
+		array('name' => '活动名称', 'value' => $activity['title']),
+		array('name' => '活动开始时间', 'value' => $this->model->dateFormat($currentActivityInfo['receive_time'])),
+		array('name' => '活动结束时间', 'value' => $this->model->dateFormat($currentActivityInfo['deadline'])),
+		array('name' => '瓜分券领取时间', 'value' => $this->model->dateFormat(time())),
+		array('name' => '瓜分券名称', 'value' => $couponName)
+		)
+	));
 		}
 		else {
 			$params = array('activity_title' => $activity['title'], 'activity_start_time' => $this->model->dateFormat($currentActivityInfo['receive_time']), 'activity_end_time' => $this->model->dateFormat($currentActivityInfo['deadline']), 'receiveTime' => $this->model->dateFormat(time()), 'couponName' => $couponName, 'url' => mobileUrl('friendcoupon', array('id' => $currentActivityInfo['activity_id'], 'mid' => $currentActivityInfo['headerid']), true));
@@ -348,17 +348,17 @@ class Index_EweiShopV2Page extends PluginMobilePage
 
 				if ($tm['friendcoupon_launch_close_advanced']) {
 					$noticeModel->sendNotice(array(
-						'openid' => $coupon['openid'],
-						'tag'    => 'friendcoupon_complete',
-						'datas'  => array(
-							array('name' => '活动名称', 'value' => $activity['title']),
-							array('name' => '活动开始时间', 'value' => $this->model->dateFormat($coupon['receive_time'])),
-							array('name' => '活动结束时间', 'value' => $this->model->dateFormat($coupon['deadline'])),
-							array('name' => '瓜分券领取时间', 'value' => $this->model->dateFormat(time())),
-							array('name' => '瓜分券名称', 'value' => $couponName)
-						),
-						'url'    => $url
-					));
+	'openid' => $coupon['openid'],
+	'tag'    => 'friendcoupon_complete',
+	'datas'  => array(
+		array('name' => '活动名称', 'value' => $activity['title']),
+		array('name' => '活动开始时间', 'value' => $this->model->dateFormat($coupon['receive_time'])),
+		array('name' => '活动结束时间', 'value' => $this->model->dateFormat($coupon['deadline'])),
+		array('name' => '瓜分券领取时间', 'value' => $this->model->dateFormat(time())),
+		array('name' => '瓜分券名称', 'value' => $couponName)
+		),
+	'url'    => $url
+	));
 				}
 				else {
 					$params = array('activity_title' => $activity['title'], 'activity_start_time' => $this->model->dateFormat($currentActivityInfo['receive_time']), 'activity_end_time' => $this->model->dateFormat($currentActivityInfo['deadline']), 'receiveTime' => $this->model->dateFormat(time()), 'couponName' => $couponName, 'url' => $url);

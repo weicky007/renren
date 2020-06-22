@@ -45,7 +45,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-lg control-label must">门店LOGO</label>
+        <label class="col-lg control-label">门店LOGO</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'store' $item}
                 {php echo tpl_form_field_image2('logo',$item['logo'])}
@@ -62,7 +62,7 @@
 
 
     <div class="form-group">
-        <label class="col-lg control-label must">省市区 :</label>
+        <label class="col-lg control-label">省市区 :</label>
         <div class="col-sm-9 col-xs-12">
             <p>
                 <select id="sel-provance" name="province" onChange="selectCity();" class="select form-control select-group" style="width:123px;display:inline;">
@@ -89,10 +89,10 @@
     </div>
 
     <div class="form-group">
-        <label class="col-lg control-label must">门店电话</label>
+        <label class="col-lg control-label">门店电话</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'store' $item}
-            <input type="text" name="tel" class="form-control" value="{$item['tel']}" data-rule-required="true"/>
+            <input type="text" name="tel" class="form-control" value="{$item['tel']}"/>
             {else}
             <div class='form-control-static'>{$item['tel']}</div>
             {/if}
@@ -109,7 +109,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-lg control-label must">门店位置</label>
+        <label class="col-lg control-label">门店位置</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'store' $item}
                 {php echo tpl_form_field_position('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
@@ -120,10 +120,10 @@
     </div>
 
     <div class="form-group">
-        <label class="col-lg control-label must">门店地址</label>
+        <label class="col-lg control-label">门店地址</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'store' $item}
-            <input type="text" name="address" class="form-control" value="{$item['address']}" data-rule-required="true"/>
+            <input type="text" name="address" class="form-control" value="{$item['address']}"/>
             {else}
             <div class='form-control-static'>{$item['address']}</div>
             {/if}
@@ -157,16 +157,16 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-lg control-label">联系人信息</label>
+    <div class="form-group" id="pick_info" {if empty($item['type']) || $item['type']==2}style="display:none;"{/if}>
+        <label class="col-lg control-label">自提信息</label>
         <div class="col-sm-10 col-xs-12">
             {ife 'store' $item}
-                <label class="radio-inline" style="float: left;padding-left:0px;">姓名</label>
+                <label class="radio-inline" style="float: left;padding-left:0px;">联系人</label>
                 <div class="col-sm-9 col-xs-12" style="width: 120px; float: left; margin: 0px 20px 0px -5px;">
                     <input type="text" value="{$item['realname']}" class="form-control" name="realname"
                            style="width:120px;padding:5px;">
                 </div>
-                <label class="radio-inline" style="float: left;">电话</label>
+                <label class="radio-inline" style="float: left;">联系电话</label>
                 <div class="col-sm-9 col-xs-12" style="width: 120px; float: left; margin: 0px 20px 0px -5px;">
                     <input type="text" value="{$item['mobile']}" class="form-control" name="mobile"
                            style="width:120px;padding:5px;">
@@ -420,7 +420,7 @@
             <label class="checkbox-inline">
                 <input type="checkbox" value="3" name='ordertype[]' {if in_array('3',$ordertype)}checked{/if} /> 确认收货打印
             </label>
-            <div class="help-block">通知商家方式（订单选择了核销门店或者选择了自提门店时才能打印）</div>
+            <div class="help-block">通知商家方式</div>
             {else}
             <input type="hidden" name="data[ordertype]" value="{$data['ordertype']}"/>
                 <div class='form-control-static'>{if in_array('1',$ordertype)}下单打印;{/if}

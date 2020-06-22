@@ -45,6 +45,20 @@
 .fui-swipe-bullet {
     margin: 0 4px;
 }
+.optSearch {
+    height: 30px;
+    border-radius: 4px;
+    text-align: left;
+    font-size: 12px;
+    color: #ccc;
+    width: 100%;
+    line-height: 30px;
+    background: #fff;
+}
+.optSearch .icon {
+    margin: 7px;
+    font-size: 12px;
+}
 </style>
 
 {if !empty($data['style'])}
@@ -124,7 +138,12 @@
         </div>
     </div>
     <div class="fui-content navbar quick">
-
+        <div style="height: 50px;padding:10px;background: #f1f1f1;">
+            <div class="optSearch">
+                <i class="icon icon-search"></i>
+                <a href="{php echo mobileUrl('quick/search', array('id'=>$_GPC['id']))}" style="width: 90%;display: inline-block;">请输入关键字进行搜索</a>
+            </div>
+        </div>
         {if $data['template']==1}
             <div style="position: relative">
                 <div class="fui-shop style{$data['style']['shopstyle']}">
@@ -245,7 +264,7 @@
             </div>
             {template 'goods/picker'}
         {else}
-            <div class="fui-fullHigh-group">
+            <div class="fui-fullHigh-group" style="top: 2.5rem;">
                 <div class="fui-fullHigh-item menu" id="tab"></div>
                 <div class="fui-fullHigh-item container" style="position: relative">
                     {if !empty($data['advs'])}

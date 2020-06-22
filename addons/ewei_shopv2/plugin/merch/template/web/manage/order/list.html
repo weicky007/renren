@@ -47,7 +47,7 @@
                     <option value='finish' {if $_GPC['searchtime']=='finish'}selected{/if}>完成时间</option>
                 </select>
 
-                {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
 
             </div>
         </div>
@@ -307,3 +307,4 @@
 {/if}
 
 {template '_footer'}
+

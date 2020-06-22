@@ -31,7 +31,7 @@
             </div>
             <div class="right fr go-regist">
                 <span>已有账号？</span>
-                <a href="{{ pcUrl('pc/member/login') }}" class="goRegist"><span>立即登录</span></a>
+                <a href="{{ pcUrl('member/login') }}" class="goRegist"><span>立即登录</span></a>
             </div>
         </div>
     </div>
@@ -45,9 +45,9 @@
         </div>
         <div class="inp"><input type="password"   id="pwd" name="pwd"  placeholder="请输入密码"></div>
         <div class="inp"><input type="password"   id="bakpwd" name="bakpwd" placeholder="请再次输入密码"></div>
-        <div class="inp"><input type="hidden"  name="sendurl" value="{{ pcUrl('pc/member/verifycode') }}"></div>
-        <div class="inp"><input type="hidden"  name="forget" value="{{ pcUrl('pc/member/forgetinfo') }}"></div>
-        <div class="inp"><input type="hidden"  name="loginurl" value="{{ pcUrl('pc/member/login') }}"></div>
+        <div class="inp"><input type="hidden"  name="sendurl" value="{{ pcUrl('member/verifycode') }}"></div>
+        <div class="inp"><input type="hidden"  name="forget" value="{{ pcUrl('member/forgetinfo') }}"></div>
+        <div class="inp"><input type="hidden"  name="loginurl" value="{{ pcUrl('member/login') }}"></div>
         <div class="submit"><button type="submit">立即找回</button></div>
     </div>
         <div class="copyright">{{ global.setting.copyright ?:'无'}}</div>

@@ -1,1 +1,203 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('$(7(){1C([\'D\'],7(D){5 t=I;5 1B=\'<i 1f="P"><i 1f="m">编辑</i> <i 1f="1q">删除</i></i>\';5 1g=D.19.1P(\'4\');8(1g&&1g>0){$(".4").M("n")}$(".4-1R").z(\'c\').c(7(){$(".4").1S(\'n\');8($(\'.4\').1T(\'n\')){D.19.1A(\'4\',1)}o{D.19.1A(\'4\',0)}});$(".4 .m-17").z(\'c\').c(7(){$(".h-N .1v").R();$(".h-N .1L").J();$(".4").q(\'m\',1).M(\'m\');$(".1k-1x.E").M(\'m\');t=18;1C([\'22.1U\'],7(){$("#4-A").1t({21:\'1Z\'})})});$(G).K(\'1V\',\'.4 .h-p 9\',7(){8(t){8($(b).a(\'.P\').10<=0){$(b).1n(1B)}o{$(b).a(\'.P\').J()}}});$(G).K(\'1W\',\'.4 .h-p 9\',7(){$(b).a(\'.P\').R()});$(".4 .1X-17").z(\'c\').c(7(){$(".h-N .1L").R();$(".h-N .1v").J();$(".4").q(\'m\',0).L(\'m\');$(".1k-1x.E").L(\'m\');t=I;$("#4-A").1t(\'1Y\');1u()});$(G).K(\'c\',\'.4 .h-p 9 .m\',7(){8(t){5 9=$(b).1e(\'9\');5 g=9.a(\'i\').S(0).g();5 e=15(9.B(\'e\'));8(e==\'#20\'){e=\'#C\'}5 f=9.B(\'v-u\');8(f==\'f\'){$("#6-4").a(\'#1o\').1r(\'F\',18);$("#6-4").a(\'#1w\').1p(\'F\')}o{$("#6-4").a(\'#1w\').1r(\'F\',18);$("#6-4").a(\'#1o\').1p(\'F\')}5 l=9.q(\'k\');8($.1d(l)==\'\'){l=T()}$("#6-4").a(\'#Q\').j(g);$("#6-4").a(\'#1c\').j(e);$("#6-4").a(\'#1a\').j(l);9.M(\'n\');$("#6-4 .6-1j 1i").g("编辑快捷导航");$("#6-4").6({1F:\'1J\',1y:I})}});$(G).K(\'c\',\'.4 .h-p 9 .1q\',7(){8(t){5 1I=$(b);X.1Q("确定删除吗? 删除后点击保存才生效哦~",7(){1I.1e("9").27()})}});$("#6-4 .1s-6").z(\'c\').c(7(){5 6=$(b).1e(\'#6-4\');5 g=6.a(\'#Q\').j();5 e=6.a(\'#1c\').j();5 l=6.a(\'#1a\').j();5 f=6.a("2q[2o=\'f\']:F").j();8($.1d(g)==\'\'){6.a(\'#Q\').2m();X.12.1l("请填写导航名称！");V I}8($.1d(l)==\'\'){l=T()}8(f&&f>0){5 H={\'v-u\':\'f\'}}o{5 H={\'v-u\':\'1m\'}}8(e!=\'#C\'){H.e=e}8($(".4 .h-p 9.n").10>0){$(".4 .h-p 9.n").B(H).q(\'k\',l).a("i").S(0).g(g);$(".4 .h-p 9").L(\'n\')}o{5 y=\'<9 q-k="\'+l+\'" H="\';8(e!=\'#C\'){y+=\'e: \'+e+"; "}8(f&&f>0){y+=\'v-u: f; \'}o{y+=\'v-u: 1m; \'}y+=\'"><i>\'+g+\'</i></9>\';$("#4-A").1n(y)}});$("#6-4 .1s-2u").z(\'c\').c(7(){$(".4 .h-p 9.n").L(\'n\')});$(G).K(\'c\',\'.4 .h-p 9\',7(){8(!t){5 k=$(b).q(\'k\');8(k){U.k=k}}});$(".2r-17").z(\'c\').c(7(){$("#6-4 .6-1j 1i").g("添加快捷导航");$("#6-4").a(\'#Q\').j(\'\');$("#6-4").a(\'#1c\').j(\'#C\');$("#6-4").a(\'#1a\').j(T());$("#6-4").6({1F:\'1J\',1y:I})});$("#29").2j(7(){5 11=$(b).j();8(11){$("#4-A 9").1K(7(){5 1M=$(b).a(\'i\').S(0).g();8(1M.24(11)>=0){$(b).J()}o{$(b).R()}})}o{$("#4-A 9").J()}});8($(".4.E").10>0){5 1E=$(".4.E").B(\'w\').1O(\'1H\',\'\');$(1b).25(\'2a 2b 2g\',7(){5 w=$(1b).2h();5 w=w+1D(1E);$(".4.E").2f({\'w\':w+\'1H\'},13)})}});7 15(r){r=r.2e(/^r\\((\\d+),\\s*(\\d+),\\s*(\\d+)\\)$/);7 O(x){V("0"+1D(x).2c(16)).2d(-2)}V"#"+O(r[1])+O(r[2])+O(r[3])}7 1u(){5 Y=[];$("#4-A 9").1K(7(){5 1N=$(b).q(\'k\');5 1z=$(b).a(\'i\').S(0).g();5 W=15($(b).B(\'e\'));8(W==\'#C\'){W=\'\'}5 14=0;8($(b).B(\'v-u\')==\'f\'){14=1}Y.2v({\'k\':1N,\'g\':1z,\'e\':W,\'f\':14,})});$.26(28.Z(\'2i/4\'),{2k:Y},7(1h){8(1h.2s==1){X.12.2t("保存成功！")}o{X.12.1l("保存失败请重试！")}},\'23\')}7 T(){5 1G=U.2p+"//"+U.2l+"/2n/";5 Z=1b.U+\'\';V Z.1O(1G,"./")}});',62,156,'||||funbar|var|modal|function|if|nav|find|this|click||color|bold|text|fb|span|val|href|link|edit|active|else|inner|data|rgb||funbaredit|weight|font|top||_html|unbind|btns|css|666666|util|style2|checked|document|style|false|show|on|removeClass|addClass|footer|hex|editdel|menuname|hide|eq|thisUrl|location|return|_color|tip|fundata|url|length|kw|msgbox||_bold|rgb2hex||btn|true|cookie|menulink|window|menucolor|trim|closest|class|funbarstatus|ret|h3|header|page|err|normal|append|menubold1|removeAttr|del|prop|close|sortable|saveFun|default|menubold0|gotop|keyboard|_text|set|edithtml|require|parseInt|funbarTop|backdrop|str|px|_this|static|each|complete|_kw|_href|replace|get|confirm|toggle|toggleClass|hasClass|ui|mouseover|mouseleave|save|destroy|parent|ffffff|containment|jquery|json|indexOf|bind|post|remove|biz|funsearch|scroll|resize|toString|slice|match|animate|load|scrollTop|sysset|keyup|funbardata|hostname|focus|web|name|protocol|input|add|status|suc|modal2|push'.split('|'),0,{}))
+$(function () {
+    require(['util'], function (util) {
+        var funbaredit = false;
+        var edithtml = '<span class="editdel"><span class="edit">编辑</span> <span class="del">删除</span></span>';
+        var funbarstatus = util.cookie.get('funbar');
+        if (funbarstatus && funbarstatus > 0) {
+            $(".funbar").addClass("active")
+        }
+        $(".funbar-toggle").unbind('click').click(function () {
+            $(".funbar").toggleClass('active');
+            if ($('.funbar').hasClass('active')) {
+                util.cookie.set('funbar', 1)
+            } else {
+                util.cookie.set('funbar', 0)
+            }
+        });
+        $(".funbar .edit-btn").unbind('click').click(function () {
+            $(".fb-footer .default").hide();
+            $(".fb-footer .complete").show();
+            $(".funbar").data('edit', 1).addClass('edit');
+            $(".page-gotop.style2").addClass('edit');
+            funbaredit = true;
+            require(['jquery.ui'], function () {
+                $("#funbar-btns").sortable({containment: 'parent'})
+            })
+        });
+        $(document).on('mouseover', '.funbar .fb-inner nav', function () {
+            if (funbaredit) {
+                if ($(this).find('.editdel').length <= 0) {
+                    $(this).append(edithtml)
+                } else {
+                    $(this).find('.editdel').show()
+                }
+            }
+        });
+        $(document).on('mouseleave', '.funbar .fb-inner nav', function () {
+            $(this).find('.editdel').hide()
+        });
+        $(".funbar .save-btn").unbind('click').click(function () {
+            $(".fb-footer .complete").hide();
+            $(".fb-footer .default").show();
+            $(".funbar").data('edit', 0).removeClass('edit');
+            $(".page-gotop.style2").removeClass('edit');
+            funbaredit = false;
+            $("#funbar-btns").sortable('destroy');
+            saveFun()
+        });
+        $(document).on('click', '.funbar .fb-inner nav .edit', function () {
+            if (funbaredit) {
+                var nav = $(this).closest('nav');
+                var text = nav.find('span').eq(0).text();
+                var color = rgb2hex(nav.css('color'));
+                if (color == '#ffffff') {
+                    color = '#666666'
+                }
+                var bold = nav.css('font-weight');
+                if (bold == 'bold') {
+                    $("#modal-funbar").find('#menubold1').prop('checked', true);
+                    $("#modal-funbar").find('#menubold0').removeAttr('checked')
+                } else {
+                    $("#modal-funbar").find('#menubold0').prop('checked', true);
+                    $("#modal-funbar").find('#menubold1').removeAttr('checked')
+                }
+                var link = nav.data('href');
+                if ($.trim(link) == '') {
+                    link = thisUrl()
+                }
+                $("#modal-funbar").find('#menuname').val(text);
+                $("#modal-funbar").find('#menucolor').val(color);
+                $("#modal-funbar").find('#menulink').val(link);
+                nav.addClass('active');
+                $("#modal-funbar .modal-header h3").text("编辑快捷导航");
+                $("#modal-funbar").modal({backdrop: 'static', keyboard: false})
+            }
+        });
+        $(document).on('click', '.funbar .fb-inner nav .del', function () {
+            if (funbaredit) {
+                var _this = $(this);
+                tip.confirm("确定删除吗? 删除后点击保存才生效哦~", function () {
+                    _this.closest("nav").remove()
+                })
+            }
+        });
+        $("#modal-funbar .close-modal").unbind('click').click(function () {
+            var modal = $(this).closest('#modal-funbar');
+            var text = modal.find('#menuname').val();
+            var color = modal.find('#menucolor').val();
+            var link = modal.find('#menulink').val();
+            var bold = modal.find("input[name='bold']:checked").val();
+            if ($.trim(text) == '') {
+                modal.find('#menuname').focus();
+                tip.msgbox.err("请填写导航名称！");
+                return false
+            }
+            if ($.trim(link) == '') {
+                link = thisUrl()
+            }
+            if (bold && bold > 0) {
+                var style = {'font-weight': 'bold'}
+            } else {
+                var style = {'font-weight': 'normal'}
+            }
+            if (color != '#666666') {
+                style.color = color
+            }
+            if ($(".funbar .fb-inner nav.active").length > 0) {
+                $(".funbar .fb-inner nav.active").css(style).data('href', link).find("span").eq(0).text(text);
+                $(".funbar .fb-inner nav").removeClass('active')
+            } else {
+                var _html = '<nav data-href="' + link + '" style="';
+                if (color != '#666666') {
+                    _html += 'color: ' + color + "; "
+                }
+                if (bold && bold > 0) {
+                    _html += 'font-weight: bold; '
+                } else {
+                    _html += 'font-weight: normal; '
+                }
+                _html += '"><span>' + text + '</span></nav>';
+                $("#funbar-btns").append(_html)
+            }
+        });
+        $("#modal-funbar .close-modal2").unbind('click').click(function () {
+            $(".funbar .fb-inner nav.active").removeClass('active')
+        });
+        $(document).on('click', '.funbar .fb-inner nav', function () {
+            if (!funbaredit) {
+                var href = $(this).data('href');
+                if (href) {
+                    location.href = href
+                }
+            }
+        });
+        $(".add-btn").unbind('click').click(function () {
+            $("#modal-funbar .modal-header h3").text("添加快捷导航");
+            $("#modal-funbar").find('#menuname').val('');
+            $("#modal-funbar").find('#menucolor').val('#666666');
+            $("#modal-funbar").find('#menulink').val(thisUrl());
+            $("#modal-funbar").modal({backdrop: 'static', keyboard: false})
+        });
+        $("#funsearch").keyup(function () {
+            var kw = $(this).val();
+            if (kw) {
+                $("#funbar-btns nav").each(function () {
+                    var _kw = $(this).find('span').eq(0).text();
+                    if (_kw.indexOf(kw) >= 0) {
+                        $(this).show()
+                    } else {
+                        $(this).hide()
+                    }
+                })
+            } else {
+                $("#funbar-btns nav").show()
+            }
+        });
+        if ($(".funbar.style2").length > 0) {
+            var funbarTop = $(".funbar.style2").css('top').replace('px', '');
+            $(window).bind('scroll resize load', function () {
+                var top = $(window).scrollTop();
+                var top = top + parseInt(funbarTop);
+                $(".funbar.style2").animate({'top': top + 'px'}, 13)
+            })
+        }
+    });
+    function rgb2hex(rgb) {
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        function hex(x) {
+            return ("0" + parseInt(x).toString(16)).slice(-2)
+        }
+
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3])
+    }
+
+    function saveFun() {
+        var fundata = [];
+        $("#funbar-btns nav").each(function () {
+            var _href = $(this).data('href');
+            var _text = $(this).find('span').eq(0).text();
+            var _color = rgb2hex($(this).css('color'));
+            if (_color == '#666666') {
+                _color = ''
+            }
+            var _bold = 0;
+            if ($(this).css('font-weight') == 'bold') {
+                _bold = 1
+            }
+            fundata.push({'href': _href, 'text': _text, 'color': _color, 'bold': _bold,})
+        });
+        $.post(biz.url('sysset/funbar'), {funbardata: fundata}, function (ret) {
+            if (ret.status == 1) {
+                tip.msgbox.suc("保存成功！")
+            } else {
+                tip.msgbox.err("保存失败请重试！")
+            }
+        }, 'json');
+    }
+
+    function thisUrl() {
+        var str = location.protocol + "//" + location.hostname + "/web/";
+        var url = window.location + '';
+        return url.replace(str, "./")
+    }
+});

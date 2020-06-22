@@ -26,7 +26,7 @@
                     <option value=''>不按时间</option>
                     <option value='create' {if $_GPC['searchtime']=='create'}selected{/if}>创建时间</option>
                 </select>
-                {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
             </div>
         </div>
         <div class="col-sm-5 pull-right">
@@ -128,3 +128,4 @@
 {/if}
 
 {template '_footer'}
+

@@ -8,8 +8,11 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 查询所有用户等级
+
      * @return array|boolean
+
      */
 	public function getAllMemberLevel()
 	{
@@ -22,8 +25,11 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 查询所有任务
+
      * @return array|boolean
+
      */
 	public function getAllTask()
 	{
@@ -37,8 +43,11 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 查询所有商品
+
      * @return array|boolean
+
      */
 	public function getAllGoods()
 	{
@@ -51,14 +60,19 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 查询 enum 字段的默认值
+
      * @param $table
+
      * @param $field
+
      * @return array
+
      */
 	static public function getEnumList($table, $field)
 	{
-		$sql = 'SHOW COLUMNS FROM ' . $table . ' LIKE \'' . $field . '\';';
+		$sql = 'SHOW COLUMNS FROM `' . $table . '` LIKE \'' . $field . '\';';
 		$query = pdo_fetchall($sql);
 		$brackets[] = strpos($query[0]['Type'], '(');
 		$brackets[] = strpos($query[0]['Type'], ')');
@@ -69,8 +83,11 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 打印参数
+
      * @param bool $isDie 是否结束当前运行代码
+
      */
 	static public function dd($isDie)
 	{
@@ -122,7 +139,9 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 隐藏打印
+
      */
 	static public function hdd()
 	{
@@ -147,9 +166,13 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 判断请求抛出异常界面显示
+
      * @param bool $isAjax 是否是AJAX请求
+
      * @param Exception $exception 异常类
+
      */
 	static public function errorMessage($isAjax = false, $exception)
 	{
@@ -162,11 +185,17 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 返回数据
+
      * @param bool $data object 输出数据
+
      * @param bool $pages 数据分页
+
      * @param bool $message 返回提示
+
      * @param bool $url 下一步跳转链接
+
      */
 	static public function returnJson($data = false, $pages = false, $message = false, $url = false)
 	{
@@ -194,11 +223,17 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * @param $url 请求网址
+
      * @param bool $params 请求参数
+
      * @param int $ispost 请求方式
+
      * @param int $https https协议
+
      * @return bool|mixed
+
      */
 	static public function curl($url, $params = false, $ispost = 0, $https = 0)
 	{
@@ -244,9 +279,13 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 验证数据是否是空
+
      * @param $parameter
+
      * @param $message
+
      */
 	static public function checkDataRequired($parameter, $message)
 	{
@@ -258,19 +297,28 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 验证图片是否存在
+
      * @param $parameter
+
      * @param $imageArr
+
      */
 	static public function checkImageExists($parameter, $imageArr)
 	{
 	}
 
 	/**
+
      * 验证分类下层是否是空
+
      * @param $parameter
+
      * @param $field
+
      * @param $message
+
      */
 	static public function checkCarefulRequired($parameter, $field, $message)
 	{
@@ -286,10 +334,15 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 存入数据库中时去除无用字段
+
      * @param $parameter
+
      * @param $config
+
      * @return array
+
      */
 	static public function removeUselessField($parameter, $config)
 	{
@@ -309,11 +362,17 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 循环获取图片访问链接
+
      * @param $data 需要修改的原数组
+
      * @param $origin 原始字段
+
      * @param $new 新字段
+
      * @return mixed
+
      */
 	public function forTomedia($data, $origin, $new)
 	{
@@ -325,9 +384,13 @@ class Open_FarmModel extends PluginModel
 	}
 
 	/**
+
      * 随机概率
+
      * @param $data
+
      * @return int|string
+
      */
 	public function getRand($data)
 	{

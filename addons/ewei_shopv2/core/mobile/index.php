@@ -73,12 +73,9 @@ class Index_EweiShopV2Page extends MobilePage
 		}
 
 		$shop_data = m('common')->getSysset('shop');
-		$sale_sql = 'SELECT * FROM ' . tablename('ewei_shop_sendticket') . ' WHERE uniacid = ' . intval($_W['uniacid']);
-		$sale_set = pdo_fetch($sale_sql);
-		if (!empty($sale_set) && $sale_set['status'] == 1) {
-			if (com('coupon')) {
-				$cpinfos = com('coupon')->getInfo();
-			}
+
+		if (com('coupon')) {
+			$cpinfos = com('coupon')->getInfo();
 		}
 
 		include $this->template();

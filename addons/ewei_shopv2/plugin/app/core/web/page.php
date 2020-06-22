@@ -112,12 +112,15 @@ class Page_EweiShopV2Page extends PluginWebPage
 
 		$diyadvs = pdo_fetchall('select id, `name` from ' . tablename('ewei_shop_wxapp_startadv') . ' where status=1 and uniacid=:uniacid  order by id desc', array(':uniacid' => $_W['uniacid']));
 		$json = json_encode(array('attachurl' => $_W['attachurl'], 'id' => $id, 'type' => empty($page) ? 2 : $page['type'], 'data' => empty($page) ? NULL : $page['data'], 'diyadvs' => $diyadvs));
+
+		/*不检测版本
 		$auth = $this->model->getAuth();
 		$is_auth = !is_error($auth) && is_array($auth) ? $auth['is_auth'] : false;
 
 		if ($is_auth) {
 			$release = $this->model->getRelease($auth['id']);
 		}
+		*/
 
 		include $this->template();
 	}

@@ -10,7 +10,6 @@ class Sys_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		empty($_GPC['page']) && $_GPC['page'] = 1;
 		$pagetype = 'sys';
 		$condition = '';
 
@@ -71,9 +70,19 @@ class Sys_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			$data = $_GPC['data'];
-			$data['page']['desc'] = str_replace(array('
-', '', '
-'), '', trim($data['page']['desc']));
+
+			if (!empty($data)) {
+				foreach ($data['items'] as $k => $v) {
+					if ($v['id'] == 'topmenu' || $v['id'] == 'tabbar') {
+						foreach ($v['data'] as $vk => $vv) {
+							if (empty($vv['linkurl'])) {
+								show_json(0, '请把顶部菜单或选项卡的数据填写完整');
+							}
+						}
+					}
+				}
+			}
+
 			$this->model->savePage($id, $data);
 		}
 

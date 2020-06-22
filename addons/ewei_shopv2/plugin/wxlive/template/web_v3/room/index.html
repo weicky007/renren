@@ -27,6 +27,14 @@
             <div class="col-sm-6 pull-right">
                 <div class="input-group">
                     <div class="input-group-select">
+                        <select name="status" class="form-control" style="width:112px;">
+                            <option value="">状态</option>
+                            <option value="1">直播未开始</option>
+                            <option value="2">直播已结束</option>
+                            <option value="3">直播中</option>
+                        </select>
+                    </div>
+                    <div class="input-group-select">
                         <select name="is_top" class="form-control" style="width:80px;">
                             <option value="">置顶</option>
                             <option value="1">是</option>
@@ -68,7 +76,8 @@
             <th style="width: 50px; text-align: center;">置顶</th>
             <th style="width: 50px; text-align: center;">推荐</th>
             <th style="width: 70px; text-align: center;">显示</th>
-            <th style="width: 100px;">操作</th>
+            <th >操作</th>
+            <th >回放</th>
         </tr>
         </thead>
         <tbody id="sort">
@@ -116,13 +125,21 @@
                            <i class='icow icow-lianjie2'></i>
                        </span>
                 </a>
+
+            </td>
+            <td style="display: {if $row['local_live_status'] == -1}block{else}none{/if}">
+                <a class="btn btn-default  btn-sm btn-op btn-operation" href="{php echo  webUrl('wxlive.back',array('id'=>$row['id'],'room_id'=>$row['room_id']))}">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="回放">
+                                     <i class="icow icow-goods"></i>
+                                </span>
+                </a>
             </td>
         </tr>
         {/loop}
         </tbody>
         <tfoot>
-        <tr>
-            <td class="text-right" colspan="11">{$pager}</td>
+        <tr style="text-align:left;">
+            <td class="text-right" colspan="12">{$pager}</td>
         </tr>
         </tfoot>
     </table>

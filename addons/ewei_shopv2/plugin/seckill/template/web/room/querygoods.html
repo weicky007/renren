@@ -58,11 +58,12 @@
         if(pindex==''||pindex==0){
             return;
         }
-        var keyword = $.trim($(obj).parents('.modal-body').find("[name=keyword]").val());
+        var keyword = $.trim($(".modal").find(':input').val());
+
         $.ajax({
             url:"{php echo webUrl('seckill/room/querygoods')}",
             type:'get',
-            data:{keyword:keyword,page:pindex,psize:10},
+            data:{title:keyword,page:pindex,psize:10},
             async : false, //默认为true 异步
             success:function(data){
                 $(".content").html(data);

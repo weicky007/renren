@@ -200,7 +200,12 @@
                 {if $isonlyverifygoods}
                     {if 3<=$item['status']}{php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}
                 {else}
-                    {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}{php echo date('Y-m-d',$item['sendtime'])}<br/>{php echo date('H:i:s',$item['sendtime'])}{/if}
+                    {if 2<=$item['status'] && !empty($item['sendtime'])|| ($item['status']==1 && $item['sendtype'] > 0)}
+                    {php echo date('Y-m-d',$item['sendtime'])}<br/>{php echo date('H:i:s',$item['sendtime'])}
+                    {else}
+                    {if 2<=$item['status'] && !empty($item['finishtime'])}
+                    {php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}
+                    {/if}
                 {/if}
             </div>
 
@@ -724,6 +729,10 @@
                     交易成功，如买家有售后申请，请与买家进行协商，妥善处理
                     {/if}
                 </div>
+                {/if}
+                <!-- 3.20优化维权商品明显提示 -->
+                {if !empty($item['single_refundid']) || !empty($item['refundid']) || $item['refundstate'] != 0}
+                <div class="col-md-12" style="color:#f55;padding: 0;margin-top: 15px;">该订单有维权商品，请核对发货信息</div>
                 {/if}
             </div>
             {if p('commission') && count($agents)>0}

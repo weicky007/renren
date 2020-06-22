@@ -1,0 +1,106 @@
+{template '_header'}
+
+<div class="page-header">
+    当前位置：<span class="text-primary">直播间管理</span>
+</div>
+
+<div class="alert alert-primary">
+    <p>小程序直播运营操作说明：</p>
+    <p>1、登录微信小程序后台，在左侧功能栏“直播”<a href="https://mp.weixin.qq.com/" target="_blank">点击创建直播间</a>。</p>
+    <p>2、在小程序后台成功创建直播间后，点击列表中的 同步直播间 按钮。同步直播间后商城页面中会显示小程序列表中的直播间。</p>
+</div>
+
+<div class="page-content">
+
+    <div class="page-toolbar">
+        <div class="col-sm-6">
+                   <span class="">
+                        <a href="javascript:;" class="btn btn-success btn-sm" id="get_back" data-roomid="{$_GPC['room_id']}" data-id="{$_GPC['id']}"><i
+                                class="fa fa-refresh"></i> 获取所有回放</a>
+                    </span>
+        </div>
+    </div>
+
+
+    {if empty($list)}
+    <div class="panel panel-default">
+        <div class="panel-body" style="text-align: center;padding:30px;">
+            未找到相关回放
+        </div>
+    </div>
+    {else}
+    <table class="table table-hover table-responsive">
+        <thead class="navbar-inner">
+        <tr>
+            <th style="width: 70px;">回放id</th>
+            <th style="width: 200px;">回放创建时间</th>
+            <th style="width: 200px;">回放过期时间</th>
+<!--            <th style="width: 100px;">直播间封面</th>-->
+            <th style="width: 100px;">回放url</th>
+            <th>复制链接</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="sort">
+        {loop $list $row}
+        <tr>
+            <td>{$row['id']}</td>
+            <td>{$row['create_time']}</td>
+            <td>{$row['expire_time']}</td>
+            <td><a href="{$row['media_url']}" target="_blank" style="color: #0baefd">点击查看</a> </td>
+            <td style="text-align:left;">
+                <a class="btn btn-op btn-operation js-clip"
+                   data-href="{$row['media_url']}">
+                         <span data-toggle="tooltip" data-placement="top" data-original-title="复制回放链接">
+                           <i class='icow icow-lianjie2'></i>
+                       </span>
+                </a>
+
+            </td>
+            <td>
+                <a class="btn  btn-op btn-operation" data-toggle="ajaxRemove" href="{php echo  webUrl('wxlive.back.delete',array('id'=>$row['id'],'live_id'=>$row['live_id'],'room_id'=>$row['room_id']))}" data-confirm="确认删除？">
+                                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
+                                     <i class="icow icow-shanchu1"></i>
+                                </span>
+                </a>
+            </td>
+        </tr>
+        {/loop}
+        </tbody>
+        <tfoot>
+        <tr style="text-align:left;">
+            <td class="text-right" colspan="12">{$pager}</td>
+        </tr>
+        </tfoot>
+    </table>
+    {/if}
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        //领取直播间回放
+        $(document).on('click','#get_back',function () {
+            var _that = $(this);
+            _that.attr('disabled',true);
+            var id = _that.data('id');
+            var room_id = _that.data('roomid');
+            console.log([id,room_id]);
+            $.post(biz.url('wxlive/back/getBack'),{id:id,room_id:room_id},function (ret) {
+                ret = JSON.parse(ret);
+                if (ret.status == 0)
+                {
+                    tip.alert(ret.result.message);
+                }else{
+                    location.reload();
+                }
+                _that.removeAttr('disabled')
+
+            })
+        })
+        $('#del').on('click',function(){
+            tip.alert('确定删除此直播间');
+        })
+    })
+</script>
+
+{template '_footer'}

@@ -51,13 +51,7 @@
                                     <option value='1' {if $_GPC['orderby']=='1'}selected{/if}>按销售量</option>
                                 </select>
                             </span>
-                            <!-- <span class="input-group-select">
-                                <select name='searchby'  class='form-control '   style="width:110px;">
-                                    <option value='1' {if $_GPC['searchby']=='1'}selected{/if}>商品名称</option>
-                                    <option value='2' {if $_GPC['searchby']=='2'}selected{/if}>商品分类</option>
-                                    <option value='3' {if $_GPC['searchby']=='3'}selected{/if}>商品分组</option>
-                                </select>
-                            </span> -->
+
                             <span class="input-group-select" id="goods_cate">
                                 <select name="cate" class='form-control select2' style="width:200px;" data-placeholder="商品分类">
                                     <option value="" {if empty($_GPC['cate'])}selected{/if} >商品分类</option>
@@ -102,7 +96,6 @@
                     <th style="width: 150px;">销售量</th>
                     <th style="width: 150px;">维权订单量</th>
                     <th style="width: 150px;">销售额</th>
-<!--                    <th style="width: 150px;">维权金额</th>-->
                     <th style="width: 150px;">操作</th>
                 </tr>
                 </thead>
@@ -123,7 +116,6 @@
                     <td>{$row['ordercount']}</td>
                     <td>{$row['refundcount']}</td>
                     <td>{$row['money']}</td>
-<!--                    <td>{$row['refundprice']}</td>-->
                     <td><a href="{php echo webUrl('statistics/goods_rank_detail', ['id'=>$row['id']])}">查看</a></td>
                 </tr>
                 {/loop}

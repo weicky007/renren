@@ -6,20 +6,34 @@ if (!defined('IN_IA')) {
 
 class Order_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_order';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'openid', 'username', 'market_id', 'market_title', 'receive', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array();
 
-	/**     * 订单统计首页     */
+	/**
+     * 订单统计首页
+     */
 	public function main()
 	{
+		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 查询当前所有订单     */
+	/**
+     * 查询当前所有订单
+     */
 	public function getList()
 	{
 		global $_W;

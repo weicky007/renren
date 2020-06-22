@@ -3,13 +3,13 @@
                   <div class="col-sm-9 col-xs-12">
                           {ife 'postera' $item}
                           {php echo tpl_selector('goodsid', array('url'=>webUrl('shop/query'), 'items'=>$goods,'placeholder'=>'请输入商品标题','buttontext'=>'选择商品'))}
-
+                         
                       {else}
                              <div class='form-control-static'>[{$goods['id']}]{$goods['title']}</div>
                              {/if}
-
+                             
                     </div>
-</div>
+</div>	
 
 <div class="form-group">
 
@@ -25,9 +25,9 @@
                              {loop $data $key $d}
 
                              <div class="drag" type="{$d['type']}" index="{php echo $key+1}" style="zindex:{php echo $key+1};left:{$d['left']};top:{$d['top']};
-                             width:{$d['width']};height:{$d['height']}"
+                             width:{$d['width']};height:{$d['height']}" 
                              src="{$d['src']}" size="{$d['size']}" color="{$d['color']}"
-                             >
+                             > 
                             {if $d['type']=='qr'}
                             <img src="../addons/ewei_shopv2/plugin/poster/static/images/qr.jpg" />
                             {elseif $d['type']=='head'}
@@ -35,17 +35,17 @@
                             {elseif $d['type']=='img' || $d['type']=='thumb'}
                             <img src="{php echo empty($d['src'])?'../addons/ewei_shopv2/plugin/poster/static/images/img.jpg':tomedia($d['src'])}" />
                             {elseif $d['type']=='nickname'}
-                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">昵称</div>
+                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">昵称</div> 
                             {elseif $d['type']=='title'}
-                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品名称</div>
+                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品名称</div> 
                             {elseif $d['type']=='marketprice'}
-                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品现价</div>
+                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品现价</div> 
                             {elseif $d['type']=='productprice'}
-                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品原价</div>
+                            <div class=text style="font-size:{$d['size']};color:{$d['color']}">商品原价</div> 
                             {/if}
                             <div class="rRightDown"> </div><div class="rLeftDown"> </div><div class="rRightUp"> </div><div class="rLeftUp"> </div><div class="rRight"> </div><div class="rLeft"> </div><div class="rUp"> </div><div class="rDown"></div>
                         </div>
-                        {/loop}
+                        {/loop} 
                         {/if}
                     </div>
 
@@ -72,10 +72,10 @@
                                     <button class='btn btn-default btn-com' type='button' data-type='img' >图片</button>
                                     <span id="goodsparams" {if $item['type']!=3}style="display:none"{/if}>
                                           <br />
-                                        <button class='btn btn-default btn-com' type='button' data-type='title' >商品名称</button>
-                                        <button class='btn btn-default btn-com' type='button' data-type='thumb' >商品图片</button>
-                                        <button class='btn btn-default btn-com' type='button' data-type='marketprice' >商品现价</button>
-                                        <button class='btn btn-default btn-com' type='button' data-type='productprice' >商品原价</button>
+                                        <button class='btn btn-default btn-com' type='button' data-type='title' >商品名称</button>    
+                                        <button class='btn btn-default btn-com' type='button' data-type='thumb' >商品图片</button>    
+                                        <button class='btn btn-default btn-com' type='button' data-type='marketprice' >商品现价</button>    
+                                        <button class='btn btn-default btn-com' type='button' data-type='productprice' >商品原价</button>    
                                     </span>
                                 </div>
                             </div>

@@ -177,7 +177,7 @@
                 <div class="msg">
                     <div class="msg-cell">
                         <div class="msg-cell-title">版本号</div>
-                        <div class="msg-cell-info special">{php echo empty($log[0]['version'])? '未提交':$log[0]['version']}{php echo !empty($log[0]['version']) && $log[0]['is_goods'] ? '<small style="font-size: 14px;"> (好物圈版)</small>' : ''}</div>
+                        <div class="msg-cell-info special">{php echo empty($log[0]['version'])? '未提交':$log[0]['version']}</div>
                     </div>
                     <div class="msg-cell">
                         <div class="msg-cell-title">提交时间</div>
@@ -189,7 +189,7 @@
                     </div>
                 </div>
                 <div class="img" style="padding: 45px 0">
-                    <div class="lose-code" data-version_time="{$version_time}" data-isexpire="{php echo empty($is_expire)?0:1}" style="display:{php echo empty($is_expire)?'none':'block'}">
+                    <div class="lose-code" data-version_time="{php echo empty($log[0]['version_time'])?'0':$log[0]['version_time']}" data-isexpire="{php echo empty($is_expire)?0:1}" style="display:{php echo empty($is_expire)?'none':'block'}">
                         <i class="icow icow-39"></i>
                         <div class="lose">二维码已失效</div>
                         <div class="refresh">点击刷新</div>

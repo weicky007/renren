@@ -88,7 +88,7 @@
 			<span class='input-group-addon'>
 				<label class="radio-inline" style='margin-top:-5px;' ><input type="radio" name="timelimit" value="1" {if $item['timelimit']==1}checked{/if}>在日期</label>
 			</span>
-			{php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
+			{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
 			<span class='input-group-addon'>内有效</span>
 		</div>
 	</div>

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,9 +16,9 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		global $_GPC;
 		$couponid = intval($_GPC['couponid']);
 		$coupon = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_coupon') . ' WHERE id=:id and uniacid=:uniacid and merchid=0', array(':id' => $couponid, ':uniacid' => $_W['uniacid']));
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc'));
-		$list2 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_group') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc'));
-		$coupons = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=0 and isfriendcoupon = 0  ORDER BY id asc'));
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc');
+		$list2 = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_group') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc');
+		$coupons = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY id asc');
 		$hascommission = false;
 		$plugin_com = p('commission');
 
@@ -92,7 +91,7 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 				$where .= ' and level =' . intval($_GPC['send_level']);
 			}
 
-			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\'') . $where, array(), 'openid');
+			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'' . $where, array(), 'openid');
 
 			if (!empty($_GPC['send_level'])) {
 				$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_member_level') . ' where id=:id limit 1', array(':id' => $_GPC['send_level']));
@@ -111,7 +110,7 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 				$where .= ' and groupid =' . intval($_GPC['send_group']);
 			}
 
-			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\'') . $where, array(), 'openid');
+			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'' . $where, array(), 'openid');
 
 			if (!empty($_GPC['send_group'])) {
 				$groupname = pdo_fetchcolumn('select groupname from ' . tablename('ewei_shop_member_group') . ' where id=:id limit 1', array(':id' => $_GPC['send_group']));
@@ -125,17 +124,17 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		}
 		else if ($class1 == 4) {
 			$where = '';
-			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\'') . $where, array(), 'openid');
+			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'' . $where, array(), 'openid');
 			$openids = array_keys($members);
 			$plog = '发放优惠券 ID: ' . $couponid . '  方式: 全部会员 人数: ' . count($members);
 		}
 		else if ($class1 == 5) {
 			$where = '';
-			if (!empty($_GPC['send_agentlevel']) || $_GPC['send_partnerlevels'] === '0') {
+			if (!empty($_GPC['send_agentlevel']) || ($_GPC['send_partnerlevels'] === '0')) {
 				$where .= ' and agentlevel =' . intval($_GPC['send_agentlevel']);
 			}
 
-			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and isagent=1 and status=1 ') . $where, array(), 'openid');
+			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and isagent=1 and status=1 ' . $where, array(), 'openid');
 
 			if ($_GPC['send_agentlevel'] != '') {
 				$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_commission_level') . ' where id=:id limit 1', array(':id' => $_GPC['send_agentlevel']));
@@ -149,11 +148,11 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		}
 		else if ($class1 == 6) {
 			$where = '';
-			if (!empty($_GPC['send_partnerlevels']) || $_GPC['send_partnerlevels'] === '0') {
+			if (!empty($_GPC['send_partnerlevels']) || ($_GPC['send_partnerlevels'] === '0')) {
 				$where .= ' and partnerlevel =' . intval($_GPC['send_partnerlevels']);
 			}
 
-			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and ispartner=1 and partnerstatus=1 ') . $where, array(), 'openid');
+			$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and ispartner=1 and partnerstatus=1 ' . $where, array(), 'openid');
 
 			if ($_GPC['send_partnerlevels'] != '') {
 				$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_globonus_level') . ' where id=:id limit 1', array(':id' => $_GPC['send_partnerlevels']));
@@ -168,11 +167,11 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		else {
 			if ($class1 == 7) {
 				$where = '';
-				if (!empty($_GPC['send_aagentlevels']) || $_GPC['send_aagentlevels'] === '0') {
+				if (!empty($_GPC['send_aagentlevels']) || ($_GPC['send_aagentlevels'] === '0')) {
 					$where .= ' and aagentlevel =' . intval($_GPC['send_aagentlevels']);
 				}
 
-				$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and isaagent=1 and aagentstatus=1 ') . $where, array(), 'openid');
+				$members = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and isaagent=1 and aagentstatus=1 ' . $where, array(), 'openid');
 
 				if ($_GPC['send_aagentlevels'] != '') {
 					$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_abonus_level') . ' where id=:id limit 1', array(':id' => $_GPC['send_aagentlevels']));
@@ -196,7 +195,7 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 			show_json(0, '未找到发送的会员!');
 		}
 
-		$members = pdo_fetchall('select id,openid,nickname from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $mopenids) . (') and uniacid=' . $_W['uniacid']));
+		$members = pdo_fetchall('select id,openid,nickname from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $mopenids) . ') and uniacid=' . $_W['uniacid']);
 
 		if (empty($members)) {
 			show_json(0, '未找到发送的会员!');
@@ -260,10 +259,9 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 			$msg = array(
 				'first'  => array('value' => $data['frist'], 'color' => $data['fristcolor']),
 				'remark' => array('value' => $data['remark'], 'color' => $data['remarkcolor'])
-			);
-			$msg['keyword1'] = array('value' => '会员通知', 'color' => $data['keyword1color']);
-			$msg['keyword2'] = array('value' => $data['keyword1'], 'color' => $data['keyword1color']);
-			$msg['keyword3'] = array('value' => $data['keyword2'], 'color' => $data['keyword2color']);
+				);
+			$msg['keyword1'] = array('value' => $data['keyword1'], 'color' => $data['keyword1color']);
+			$msg['keyword2'] = array('value' => $data['keyword2'], 'color' => $data['keyword2color']);
 
 			if (empty($data['templateurl'])) {
 				$data['templateurl'] = mobileUrl('sale/coupon/my', NULL, true);

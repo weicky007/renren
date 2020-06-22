@@ -1,25 +1,25 @@
-<!--<div class="form-group">-->
-    <!--<label class="col-lg control-label">代付人的配置</label>-->
-    <!--<div class="col-sm-9">-->
-        <!--<div class='recharge-items'>-->
-            <!--{loop $enough2 $it}-->
-            <!--<div class="input-group recharge-item" style="margin-top:5px">-->
-                <!--<div class="input-group-addon">姓名</div>-->
-                <!--<input type="text" class="form-control" name='enough2_1[]' value='{$it['enough2_1']}' />-->
-                <!--<div class="input-group-addon">留言</div>-->
-                <!--<input type="text" class="form-control" name='enough2_2[]' value='{$it['enough2_2']}' />-->
-                <!--<div class='input-group-btn'>-->
-                    <!--<button class='btn btn-danger' type='button' onclick="$(this).parents('.recharge-item').remove()"><i class='fa fa-remove'></i></button>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--{/loop}-->
-        <!--</div>-->
-        <!--<div style="margin-top:5px">-->
-            <!--<button type='button' class="btn btn-default" onclick='addConsumeItem1(this,"enough2_1","enough2_2")' style="margin-bottom:5px"><i class='fa fa-plus'></i> 增加代付人</button>-->
-        <!--</div>-->
-        <!--<span class="help-block">商家根据产品、活动特点，配置10条随机显示的代付人随机昵称、留言，与发起人形成互动。代付人也可在代付页面自行修改昵称、留言。</span>-->
-    <!--</div>-->
-<!--</div>-->
+<div class="form-group">
+    <label class="col-lg control-label">代付人的配置</label>
+    <div class="col-sm-9">
+        <div class='recharge-items'>
+            {loop $enough2 $it}
+            <div class="input-group recharge-item" style="margin-top:5px">
+                <div class="input-group-addon">姓名</div>
+                <input type="text" class="form-control" name='enough2_1[]' value='{$it['enough2_1']}' />
+                <div class="input-group-addon">留言</div>
+                <input type="text" class="form-control" name='enough2_2[]' value='{$it['enough2_2']}' />
+                <div class='input-group-btn'>
+                    <button class='btn btn-danger' type='button' onclick="$(this).parents('.recharge-item').remove()"><i class='fa fa-remove'></i></button>
+                </div>
+            </div>
+            {/loop}
+        </div>
+        <div style="margin-top:5px">
+            <button type='button' class="btn btn-default" onclick='addConsumeItem1(this,"enough2_1","enough2_2")' style="margin-bottom:5px"><i class='fa fa-plus'></i> 增加优惠项</button>
+        </div>
+        <span class="help-block">商家根据产品、活动特点，配置10条随机显示的代付人随机昵称、留言，与发起人形成互动。代付人也可在代付页面自行修改昵称、留言。</span>
+    </div>
+</div>
 
 <div class="form-group">
     <label class="col-lg control-label">代付限制</label>

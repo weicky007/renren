@@ -60,7 +60,7 @@
                 {else}
                     {if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
                 {/if}
-			{if $goods['isdiscount'] && $goods['isdiscount_time']>=time() && $goods['isdiscount_time_start'] < time()}
+			{if $goods['isdiscount'] && $goods['isdiscount_time']>=time()}
 			     <span class="original">￥{$goods['productprice']}</span>
 			{else}
 			{if $goods['productprice']>0}<span  class="original">￥{$goods['productprice']}</span>{/if}

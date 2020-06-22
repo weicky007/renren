@@ -1,5 +1,4 @@
 <?php
-
 class Express_EweiShopV2Model
 {
 	/**

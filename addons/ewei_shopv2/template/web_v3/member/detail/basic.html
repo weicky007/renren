@@ -38,7 +38,7 @@
     <label class="col-lg control-label">标签组</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'member.list.edit'}
-        <select name='data[groupid][]' class='form-control select2' multiple data-placeholder="无标签组">
+        <select name='data[groupid][]' class='form-control select2' multiple placeholder="无分组">
             {loop $groups $group}
             <option value='{$group['id']}' {if in_array($group['id'],explode(',',$member['groupid']))}selected{/if}>{$group['groupname']}</option>
             {/loop}
@@ -53,7 +53,6 @@
         </div>
         {/if}
     </div>
-
 </div>
 
 
@@ -117,9 +116,7 @@
     <label class="col-lg control-label">积分</label>
     <div class="col-sm-3">
         <div class='form-control-static'>{$member['credit1']}
-            {ifp 'finance.recharge.credit1'}
             <a class="text-primary " data-toggle='ajaxModal' href="{php echo webUrl('finance/recharge', array('type'=>'credit1','id'=>$member['id']))}" style="padding-left: 5px;">充值</a>
-            {/if}
         </div>
     </div>
 </div>

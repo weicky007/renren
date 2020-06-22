@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -52,8 +51,8 @@ class Comment_EweiShopV2Page extends WebPage
 			}
 		}
 
-		$list = pdo_fetchall('SELECT  c.*, o.ordersn,g.title,g.thumb FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . (' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . (' WHERE 1 ' . $condition . ' '), $params);
+		$list = pdo_fetchall('SELECT  c.*, o.ordersn,g.title,g.thumb FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . ' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -65,10 +64,10 @@ class Comment_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_order_comment') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_order_comment') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_order_comment', array('deleted' => 1), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -109,7 +108,7 @@ class Comment_EweiShopV2Page extends WebPage
 			}
 
 			$createtime = strtotime($_GPC['createtime']);
-			if (empty($createtime) || time() < $createtime) {
+			if (empty($createtime) || (time() < $createtime)) {
 				$createtime = time();
 			}
 

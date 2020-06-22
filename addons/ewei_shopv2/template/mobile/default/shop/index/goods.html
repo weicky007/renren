@@ -12,11 +12,6 @@
 						{else}
 						{if $item['total']<=0}<div class="salez" style="background-image: url('{php echo tomedia('../addons/ewei_shopv2/static/images/shouqin.png')}'); "></div>{/if}
 						{/if}
-						{if $item['cansee']>0  &&  $item['seecommission']>0 }
-						<div class="goods-Commission">
-							{php echo empty($item['seetitle'])?'预计最高佣金':$item['seetitle']}￥{$item['seecommission']}
-						</div>
-						{/if}
 					</div>
 				</a>
 				<div class="detail">

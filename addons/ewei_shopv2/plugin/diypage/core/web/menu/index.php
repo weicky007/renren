@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,7 +18,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 15;
-		$list = pdo_fetchall('select id, name, createtime, lastedittime from ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid ' . $condition . ' order by id desc limit ' . ($pindex - 1) * $psize . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$list = pdo_fetchall('select id, name, createtime, lastedittime from ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid ' . $condition . ' order by id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid ' . $condition, array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
@@ -52,23 +51,6 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			$data = $_GPC['menu'];
-			$menu_data = $data['data'];
-			if (!empty($menu_data) && is_array($menu_data)) {
-				$menu_arr = array();
-
-				foreach ($menu_data as $key => $val) {
-					if ($val['linkurl'] && (strexists($val['linkurl'], 'http://') || strexists($val['linkurl'], 'https://')) && !strexists($val['linkurl'], '?')) {
-						$val['linkurl'] = $val['linkurl'] . '?';
-					}
-
-					$menu_arr[$key] = $val;
-				}
-			}
-
-			if (!empty($menu_arr)) {
-				$data['data'] = $menu_arr;
-			}
-
 			$menudata = array('name' => $data['name'], 'data' => base64_encode(json_encode($data)), 'lastedittime' => time(), 'merch' => intval($_W['merchid']));
 
 			if (!empty($id)) {
@@ -96,10 +78,10 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_diypage_menu') . (' WHERE id in( ' . $id . ' ) and merch=:merch and uniacid=:uniacid '), array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_diypage_menu') . ' WHERE id in( ' . $id . ' ) and merch=:merch and uniacid=:uniacid ', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_diypage_menu', array('id' => $item['id'], 'uniacid' => $_W['uniacid'], 'merch' => intval($_W['merchid'])));

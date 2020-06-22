@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -31,9 +30,9 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$data['close'] = $shopclose;
 			$data['logo'] = $shoplogo;
 			m('common')->updateSysset(array(
-				'shop'  => $data,
-				'close' => array('flag' => $shopclose)
-			));
+	'shop'  => $data,
+	'close' => array('flag' => $shopclose)
+	));
 			plog('sysset.shop.edit', '修改系统设置-商城设置');
 			show_json(1);
 		}

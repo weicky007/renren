@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -18,7 +17,7 @@ class Data_EweiShopV2Page extends PluginWebPage
 		}
 
 		$kw = trim($_GPC['keyword']);
-		$page = empty($_GPC['page']) ? '' : $_GPC['page'];
+		$page = (empty($_GPC['page']) ? '' : $_GPC['page']);
 		$pindex = max(1, intval($page));
 		$psize = 100;
 		$type = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_diyform_type') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $typeid, ':uniacid' => $_W['uniacid']));
@@ -31,8 +30,8 @@ class Data_EweiShopV2Page extends PluginWebPage
 			$params[':fields'] = '%' . $kw . '%';
 		}
 
-		$items = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_diyform_data') . ' d ' . (' where 1 ' . $condition . ' order by id desc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diyform_data') . ' d ' . (' where 1 ' . $condition . ' '), $params);
+		$items = pdo_fetchall('SELECT *  FROM ' . tablename('ewei_shop_diyform_data') . ' d ' . ' where 1 ' . $condition . ' order by id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_diyform_data') . ' d ' . ' where 1 ' . $condition . ' ', $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}

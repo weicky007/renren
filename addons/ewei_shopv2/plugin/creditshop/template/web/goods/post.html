@@ -94,21 +94,21 @@
                  o.allspecs.forEach(function (e) {
                      $specs += "<div class='spec_item' id='spec_"+e.id+"' >";
                      $specs += "<div style='border:1px solid #e7eaec;padding:10px;margin-bottom: 10px;' >";
-                     $specs += "<input name='spec_id[]' type='hidden' class='form-control spec_id' value='foxteam"+e.id+"'/>";
+                     $specs += "<input name='spec_id[]' type='hidden' class='form-control spec_id' value='"+e.id+"'/>";
                      $specs += "<div class='form-group'>";
                      $specs += "<div class='col-sm-12'>";
                      $specs += "<div class='input-group'>";
-                     $specs += "<input name='spec_title[foxteam"+e.id+"]' type='text' class='form-control  spec_title' value='foxteam"+e.title+"' placeholder='规格名称 (比如: 颜色)'/>";
+                     $specs += "<input name='spec_title["+e.id+"]' type='text' class='form-control  spec_title' value='"+e.title+"' placeholder='规格名称 (比如: 颜色)'/>";
                      $specs += "<div class='input-group-btn'>";
-                     $specs += "<a href='javascript:;' id='add-specitem-foxteam"+e.id+"' specid='foxteam"+e.id+"' class='btn btn-info add-specitem' onclick='addSpecItem(foxteam"+e.id+")'><i class='fa fa-plus'></i> 添加规格项</a>";
-                     $specs += "<a href='javascript:void(0);' class='btn btn-danger' onclick='removeSpec('foxteam"+e.id+"')'><i class='fa fa-remove'></i></a>";
+                     $specs += "<a href='javascript:;' id='add-specitem-"+e.id+"' specid='"+e.id+"' class='btn btn-info add-specitem' onclick='addSpecItem("+e.id+")'><i class='fa fa-plus'></i> 添加规格项</a>";
+                     $specs += "<a href='javascript:void(0);' class='btn btn-danger' onclick='removeSpec('"+e.id+"')'><i class='fa fa-remove'></i></a>";
                      $specs += "</div>";
                      $specs += "</div>";
                      $specs += "</div>";
                      $specs += "</div>";
                      $specs += "<div class='form-group'>";
                      $specs += "<div class='col-md-12'>";
-                     $specs += "<div id='spec_item_foxteam"+e.id+"' class='spec_item_items'>";
+                     $specs += "<div id='spec_item_"+e.id+"' class='spec_item_items'>";
                     if (e.items){
                         e.items.forEach(function (event) {
                             var cheacked_str = '',has_thumb = '',disnone = '';
@@ -121,15 +121,15 @@
                                 disnone = 'style="display:none"';
                             }
                             $specs += '<div class="spec_item_item" style="float:left;margin:5px;width:250px; position: relative">';
-                            $specs += '<input type="hidden" class="form-control spec_item_show" name="spec_item_show_foxteam'+e.id+'[]" value="'+event.show+'" />';
-                            $specs += '<input type="hidden" class="form-control spec_item_id" name="spec_item_id_foxteam'+e.id+'[]" value="fox'+event.id+'" />';
+                            $specs += '<input type="hidden" class="form-control spec_item_show" name="spec_item_show_'+e.id+'[]" value="'+event.show+'" />';
+                            $specs += '<input type="hidden" class="form-control spec_item_id" name="spec_item_id_'+e.id+'[]" value="'+event.id+'" />';
                             $specs += '<div class="input-group">';
                             $specs += '<span class="input-group-addon">';
                             $specs += '<input type="checkbox" '+cheacked_str+' value="1" onclick="showItem(this)">';
                             $specs += "</span>";
-                            $specs += '<input type="text" class="form-control spec_item_title" name="spec_item_title_foxteam'+e.id+'[]" VALUE="'+event.title+'" />';
+                            $specs += '<input type="text" class="form-control spec_item_title" name="spec_item_title_'+e.id+'[]" VALUE="'+event.title+'" />';
                             $specs += '<span class="input-group-addon spec_item_thumb '+has_thumb+' ">';
-                            $specs += '<input type="hidden"  name="spec_item_thumb_foxteam'+e.id+'[]" value="'+event.thumb+'"/>';
+                            $specs += '<input type="hidden"  name="spec_item_thumb_'+e.id+'[]" value="'+event.thumb+'"/>';
                             $specs += '<img onclick="selectSpecItemImage(this)" onerror="this.src=\'{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg\'"';
                             if(event.thumb!=''){
                                 $specs += 'src="{php echo tomedia('+event.thumb+')}"';
@@ -854,4 +854,3 @@
  
 {template '_footer'}
  
-<!--4000097827-->

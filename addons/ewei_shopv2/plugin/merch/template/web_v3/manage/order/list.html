@@ -10,12 +10,6 @@
     .trbody td {  text-align: center; vertical-align:top;border-left:1px solid #f2f2f2;overflow: hidden; font-size:12px;}
     .trorder { background:#f8f8f8;border:1px solid #f2f2f2;text-align:left;}
     .ops { border-right:1px solid #f2f2f2; text-align: center;}
-    .goodsRefund{
-        border-bottom: 1px solid #efefef;
-        flex-direction: initial;
-        margin: 0 !important;
-    }
-
 </style>
 
 <div class="page-header">
@@ -55,7 +49,7 @@
                         </select>
                     </div>
                     <span class="input-group-btn">
-                        {php echo tpl_form_field_eweishop_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
+                        {php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
                     </span>
                     <div class="input-group-select">
                         <select name='searchfield'  class='form-control'   style="width:95px;padding:0 5px;"  >
@@ -105,8 +99,8 @@
             <td colspan='4' >
                <span style="font-weight: bold;">{php echo date('Y-m-d',$item['createtime'])} {php echo date('H:i:s',$item['createtime'])}</span>
                 订单编号:  {$item['ordersn']}
-                {if !empty($item['refundstate']) && $item['refundstate'] !=3}<label class='label label-danger'>{$r_type[$item['rtype']]}申请</label>{/if}
-                {if !empty($item['refundstate']) && $item['refundstate'] !=3 && $item['rstatus'] == 4}<label class='label label-default'>客户退回物品</label>{/if}
+                {if !empty($item['refundstate'])}<label class='label label-danger'>{$r_type[$item['rtype']]}申请</label>{/if}
+                {if !empty($item['refundstate']) && $item['rstatus'] == 4}<label class='label label-default'>客户退回物品</label>{/if}
             </td>
             <td colspan='4' style='text-align:right;font-size:12px;' class='aops'>
                 {if $item['statusvalue'] == 2 && !empty($item['addressid'])}
@@ -151,74 +145,61 @@
                 <!--<a class='op'   href="{php echo merchUrl('order', array('op' => 'detail', 'id' => $item['id']))}" >标记</a>-->
             </td>
         </tr>
-        {php $display_none=0}
         {loop $item['goods'] $k $g}
-        <tr class='trbody {if $g['single_refundstate']>0}goodsRefund{/if}'>
+        <tr class='trbody'>
             <td style='overflow:hidden;'><img src="{php echo tomedia($g['thumb'])}" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;'></td>
             <td style='text-align: left;overflow:hidden;border-left:none;'  >{$g['title']}{if !empty($g['optiontitle'])}<br/>{$g['optiontitle']}{/if}<br/>{$g['goodssn']}</td>
-            <td style='text-align:right;border-left:none;'>
-                {php echo number_format($g['realprice']/$g['total'],2)}<br/>
-                x{$g['total']}<br/>
-                {if $g['single_refundstate']==8}
-                <span class="text-danger">已拒绝</span>
-                {elseif $g['single_refundstate']==9}
-                    <span class="text-danger">维权成功</span>
-                {elseif $g['single_refundstate']==1}
-                    <span class="text-danger">退款中</span>
-                {elseif $g['single_refundstate']==2}
-                    <span class="text-danger">退货中</span>
-                {/if}
-            </td>
+            <td style='text-align:right;border-left:none;'>{php echo number_format($g['realprice']/$g['total'],2)}<br/>x{$g['total']}</td>
 
             {if $k==0}
-                <td rowspan="{php echo count($item['goods'])}"  style='text-align: center;' >
-                    {ifp 'member.member.edit'}
-                    <a href="{php echo merchUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['nickname']}</a>
-                    {else}
-                    {$item['nickname']}
-                    {/if}
+            <td rowspan="{php echo count($item['goods'])}"  style='text-align: center;' >
+                {ifp 'member.member.edit'}
+                <a href="{php echo merchUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['nickname']}</a>
+                {else}
+                {$item['nickname']}
+                {/if}
 
-                    <br/>
-                    {$item['addressdata']['realname']}<br/>{$item['addressdata']['mobile']}</td>
-                <td rowspan="{php echo count($item['goods'])}" style='text-align:center;' >
+                <br/>
+                {$item['addressdata']['realname']}<br/>{$item['addressdata']['mobile']}</td>
+            <td rowspan="{php echo count($item['goods'])}" style='text-align:center;' >
 
-                    <!-- 已支付 -->
-                    {if $item['statusvalue'] > 0}
-                    {if $item['paytypevalue']==1}
-                    <span> <i class="icow icow-yue text-warning" style="font-size: 17px;"></i><span>余额支付</span></span>
-                    {elseif $item['paytypevalue']==11}
-                    <span> <i class="icow icow-kuajingzhifuiconfukuan text-danger" style="font-size: 17px"></i>后台付款</span>
-                    {elseif $item['paytypevalue']==21}
-                    <span> <i class="icow icow-weixinzhifu text-success" style="font-size: 17px"></i>微信支付</span>
-                    {elseif $item['paytypevalue']==22}
-                    <span><i class="icow icow-zhifubaozhifu text-primary" style="font-size: 17px"></i>支付宝支付</span>
-                    {/if}
-                    {else if $item['statusvalue'] == 0}
-                    <!-- 未支付 -->
-                    {if $item['paytypevalue']!=3}
-                    <span> <i class="icow icow-shibai text-danger" style="font-size: 17px"></i>未支付</span>
-                    {else}
-                    <span> <i class="text-primary icow icow-icon" style="font-size: 17px"></i>货到付款</span>
-                    {/if}
-                    {else if $item['statusvalue'] == -1}
-                    {if $item['paytypevalue']==1}
-                    <span> <i class="icow icow-yue text-warning" style="font-size: 17px;display:inline-block;height: 17px;width: 17px;padding-top: 3px"></i><span>余额支付</span></span>
-                    {elseif $item['paytypevalue']==11}
-                    <span> <i class="icow icow-kuajingzhifuiconfukuan text-danger" style="font-size: 17px"></i>后台付款</span>
-                    {elseif $item['paytypevalue']==21}
-                    <span> <i class="icow icow-weixin text-success" style="font-size: 17px"></i>微信支付</span>
-                    {elseif $item['paytypevalue']==22}
-                    <span><i class="icow icow-zhifubao text-primary" style="font-size: 17px"></i>支付宝支付</span>
-                    {/if}
-                    {/if}
-                    {if $item['paytypevalue'] == 3 && $item['is_cashier'] == 1}
-                    <span style='margin-top:5px;display:block;'>收银台现金收款</span>
-                    {else}
-                    <span style='margin-top:5px;display:block;'>{$item['dispatchname']}</span>
-                    {/if}
+                <!-- 已支付 -->
+                {if $item['statusvalue'] > 0}
+                {if $item['paytypevalue']==1}
+                <span> <i class="icow icow-yue text-warning" style="font-size: 17px;"></i><span>余额支付</span></span>
+                {elseif $item['paytypevalue']==11}
+                <span> <i class="icow icow-kuajingzhifuiconfukuan text-danger" style="font-size: 17px"></i>后台付款</span>
+                {elseif $item['paytypevalue']==21}
+                <span> <i class="icow icow-weixinzhifu text-success" style="font-size: 17px"></i>微信支付</span>
+                {elseif $item['paytypevalue']==22}
+                <span><i class="icow icow-zhifubaozhifu text-primary" style="font-size: 17px"></i>支付宝支付</span>
+                {/if}
+                {else if $item['statusvalue'] == 0}
+                <!-- 未支付 -->
+                {if $item['paytypevalue']!=3}
+                <span> <i class="icow icow-shibai text-danger" style="font-size: 17px"></i>未支付</span>
+                {else}
+                <span> <i class="text-primary icow icow-icon" style="font-size: 17px"></i>货到付款</span>
+                {/if}
+                {else if $item['statusvalue'] == -1}
+                {if $item['paytypevalue']==1}
+                <span> <i class="icow icow-yue text-warning" style="font-size: 17px;display:inline-block;height: 17px;width: 17px;padding-top: 3px"></i><span>余额支付</span></span>
+                {elseif $item['paytypevalue']==11}
+                <span> <i class="icow icow-kuajingzhifuiconfukuan text-danger" style="font-size: 17px"></i>后台付款</span>
+                {elseif $item['paytypevalue']==21}
+                <span> <i class="icow icow-weixin text-success" style="font-size: 17px"></i>微信支付</span>
+                {elseif $item['paytypevalue']==22}
+                <span><i class="icow icow-zhifubao text-primary" style="font-size: 17px"></i>支付宝支付</span>
+                {/if}
+                {/if}
+                {if $item['paytypevalue'] == 3 && $item['is_cashier'] == 1}
+                <span style='margin-top:5px;display:block;'>收银台现金收款</span>
+                {else}
+                <span style='margin-top:5px;display:block;'>{$item['dispatchname']}</span>
+                {/if}
 
-                </td>
-                <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
+            </td>
+            <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
                 ￥{php echo number_format($item['price'],2)} <a data-toggle='popover' data-html='true' data-placement='right' data-trigger="hover"
                                                                data-content="<table style='width:100%;'>
                     <tr>
@@ -297,32 +278,19 @@
 
 
             </td>
-            {/if}
+            <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
+                {if !empty($item['refundid'])}
+                <a class='op text-primary'  href="{php echo merchUrl('order/op/refund', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a><br/>
+                {/if}
+                <a class='op text-primary'  href="{php echo merchUrl('order/detail', array('id' => $item['id']))}" >查看详情</a><br/>
+                {if $item['addressid']!=0 && $item['statusvalue']>=2}
+                <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo merchUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}"   >物流信息</a>
+                {/if}
+            </td>
 
-            {if empty($display_none)}
-                <td style='text-align:center' {if empty($g['single_refundid'])}rowspan="{php echo count($item['goods'])-$k}"{/if}>
-                    {if !empty($g['single_refundstate'])}
-                        <a class='op  text-primary' style="line-height: 30px;" href="{php echo merchUrl('order/op/single_refund', array('id' => $g['ogid']))}" >维权{if $item['refundstate']!=9}处理{else}详情{/if}</a><br/>
-                        <a class='op text-primary'  href="{php echo merchUrl('order/detail', array('id' => $item['id']))}" >查看详情</a><br/>
-                        {if $item['addressid']!=0 && $item['statusvalue']>=2}
-                            <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo merchUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'], 'mobile'=>$item['addressdata']['mobile']))}"   >物流信息</a>
-                        {/if}
-                    {else}
-                        {if !empty($item['refundid'])}
-                            <a class='op text-primary'  href="{php echo merchUrl('order/op/refund', array('id' => $item['id']))}" >维权{if $item['refundstate']>0}处理{else}详情{/if}</a><br/>
-                        {/if}
-                        <a class='op text-primary'  href="{php echo merchUrl('order/detail', array('id' => $item['id']))}" >查看详情</a><br/>
-                        {if $item['addressid']!=0 && $item['statusvalue']>=2}
-                            <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo merchUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'], 'mobile'=>$item['addressdata']['mobile']))}"   >物流信息</a>
-                        {/if}
-                        {php $display_none=1}
-                    {/if}
-                </td>
-            {/if}
+            <td   rowspan="{php echo count($item['goods'])}" class='ops' style='line-height:20px;text-align:center' ><span class='text-{$item['statuscss']}'>{$item['status']}</span><br />{template 'order/ops'}
+            </td>
 
-            {if $k==0}
-                <td   rowspan="{php echo count($item['goods'])}" class='ops' style='line-height:20px;text-align:center' ><span class="text-{$item['statuscss']}">{$item['status']}</span><br />{template 'order/ops'}
-                </td>
             {/if}
         </tr>
         {/loop}

@@ -137,7 +137,7 @@
     <div class="inner">
         <div class="logo">
             {if !empty($set['reglogo'])}
-                <img src="{php echo tomedia($set['reglogo'])}"/>
+                <img src="{php echo $set['reglogo']}"/>
             {/if}
         </div>
     </div>
@@ -145,7 +145,7 @@
 
 <div class="page-content">
     <div class="signup-adv">
-        <img src="{if empty($set['regpic'])}../addons/ewei_shopv2/plugin/merch/template/mobile/default/static/images/regbg.png{else}{php echo tomedia($set['regpic'])}{/if}" />
+        <img src="{if empty($set['regpic'])}../addons/ewei_shopv2/plugin/merch/template/mobile/default/static/images/regbg.png{else}{php echo $set['regpic']}{/if}" />
     </div>
     <div class="signup-main">
         <div class="title">商家登录 <span>登录到商家管理后台</span></div>

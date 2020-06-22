@@ -122,8 +122,7 @@
             success:function(result2){
                 if(result2.status==0)
                 {
-                    tip.msgbox.err(result2.result.message);
-                    $("#status").html(result2.result.message);
+                    tip.msgbox.err(result2.onmessag);
                     return;
                 }
 
@@ -162,3 +161,4 @@
 
 
 {template '_footer'}
+

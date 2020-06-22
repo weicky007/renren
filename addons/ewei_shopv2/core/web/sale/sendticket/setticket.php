@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -87,7 +86,7 @@ class Index_EweiShopV2Page extends WebPage
 			}
 
 			$data = array('uniacid' => intval($_W['uniacid']), 'cpid' => trim($cpids), 'expiration' => intval($_GPC['expiration']), 'status' => intval($_GPC['status']), 'createtime' => TIMESTAMP);
-			if (!empty($_GPC['expiration']) && intval($_GPC['expiration']) == 1) {
+			if (!empty($_GPC['expiration']) && (intval($_GPC['expiration']) == 1)) {
 				$data['starttime'] = strtotime($_GPC['time']['start']);
 				$data['endtime'] = strtotime($_GPC['time']['end']);
 			}
@@ -134,7 +133,7 @@ class Index_EweiShopV2Page extends WebPage
 			$endtime = $item['endtime'];
 		}
 		else {
-			$endtime = TIMESTAMP + 60 * 60 * 24 * 30;
+			$endtime = TIMESTAMP + (60 * 60 * 24 * 30);
 		}
 
 		include $this->template();

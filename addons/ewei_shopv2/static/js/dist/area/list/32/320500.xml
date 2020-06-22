@@ -146,5 +146,13 @@
     <street name="经济开发区" code="320585400" />
     <street name="科教新城" code="320585403" />
 </county>
+<county name="苏州工业园区" code="320586">
+    <street name="娄葑街道" code="320586100" />
+	<street name="斜塘街道" code="320586101" />
+    <street name="唯亭街道" code="320586102" />
+    <street name="胜浦街道" code="320586103" />
+    <street name="苏州市工业园区直属镇" code="320586104" />
+
+</county>
 </city>
 </address>

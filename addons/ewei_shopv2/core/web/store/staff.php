@@ -1,11 +1,15 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-class Staff_EweiShopV2Page extends WebPage
+class Staff_EweiShopV2Page extends ComWebPage
 {
+	public function __construct($_com = 'verify')
+	{
+		parent::__construct($_com);
+	}
+
 	public function main()
 	{
 		global $_W;
@@ -22,10 +26,8 @@ class Staff_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $keyword . '%';
 		}
 
-		$sql = 'SELECT np.*,st.storename FROM ' . tablename('ewei_shop_newstore_people') . ' np
-            inner join ' . tablename('ewei_shop_store') . ' st on np.storeid=st.id
-            WHERE 1 and' . $condition . 'ORDER BY np.id DESC';
-		$sql .= ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+		$sql = 'SELECT np.*,st.storename FROM ' . tablename('ewei_shop_newstore_people') . " np\r\n            inner join " . tablename('ewei_shop_store') . " st on np.storeid=st.id\r\n            WHERE 1 and" . $condition . 'ORDER BY np.id DESC';
+		$sql .= ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 		$pager = pagination2(count($list), $pindex, $psize);
 		include $this->template();
@@ -95,13 +97,13 @@ class Staff_EweiShopV2Page extends WebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$status = empty($_GPC['status']) ? 1 : 0;
+		$status = (empty($_GPC['status']) ? 1 : 0);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_newstore_people') . (' WHERE id in( ' . $id . ' )  AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_newstore_people') . ' WHERE id in( ' . $id . ' )  AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_newstore_people', array('status' => $status), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -117,10 +119,10 @@ class Staff_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_newstore_people') . (' WHERE id in( ' . $id . ' )  AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_newstore_people') . ' WHERE id in( ' . $id . ' )  AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_newstore_people', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));

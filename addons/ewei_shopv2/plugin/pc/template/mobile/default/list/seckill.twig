@@ -11,9 +11,9 @@
     {% include 'common/nav.twig' %}
 
         <div class="tab-label inner">
-            <span id="getcodeurl" style="display: none">{{ pcUrl('pc/getCode')}}</span>
+            <span id="getcodeurl" style="display: none">{{ pcUrl('getCode')}}</span>
             {% for roomitem in data.info.rooms %}
-                <a href="{{ pcUrl('pc.list.seckill',{'roomid':roomitem.id}) }}">
+                <a href="{{ pcUrl('list.seckill',{'roomid':roomitem.id}) }}">
                     <span  class="{% if roomitem.id == data.info.roomid %}current{% endif %}" style="text-align: center;">{{ roomitem.title }}</span>
                 </a>
 
@@ -22,7 +22,7 @@
         <!--秒杀时间组-->
         <div class="seckill-time inner flex">
             {% for timestiem in data.info.times %}
-                <a href="{{ pcUrl('pc.list.seckill',{'timeid':timestiem.id,'roomid':data.info.roomid}) }}">
+                <a href="{{ pcUrl('list.seckill',{'timeid':timestiem.id,'roomid':data.info.roomid}) }}">
                     <div class="item {% if timestiem.id == data.info.timeid %}current{% endif %}">
                         <p><span class="time" >{{ timestiem.time }}:00</span><span>
                         {% if timestiem.status ==0 %}

@@ -1,8 +1,8 @@
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/plu.min.css?v=20170609" rel="stylesheet" type="text/css"/>
 <style type="text/css">
-.fui-danmu:before {background: {$danmu['style']['background']}!important;}
+.fui-danmu:before {background: {$danmu['style']['background']}!important;
 
-opacity: {{$danmu[ 'style' ][ 'opacity' ]}}
+opacity: {php echo $danmu['style']['opacity']}
 </style>
 <a class="fui-danmu external {php echo $danmu['params']['style']==1?'style2':''}" href="{php echo $danmu['params']['linkurl']?$danmu['params']['linkurl']:'javascript:;'}"><img class="thumb" src="../addons/ewei_shopv2/static/images/nopic100.jpg"/>
     <div class="text">---</div>

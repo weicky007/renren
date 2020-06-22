@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -73,13 +72,13 @@ class Category_EweiShopV2Page extends MobilePage
 				$value['thumb'] = tomedia($value['thumb']);
 				$value['advimg'] = tomedia($value['advimg']);
 				$category_parent[$value['parentid']][] = $value;
-				if (!empty($category['children'][$value['id']]) && 2 <= $level) {
+				if (!empty($category['children'][$value['id']]) && (2 <= $level)) {
 					foreach ($category['children'][$value['id']] as $val) {
 						if ($val['enabled'] == 1) {
 							$val['thumb'] = tomedia($val['thumb']);
 							$val['advimg'] = tomedia($val['advimg']);
 							$category_children[$val['parentid']][] = $val;
-							if (!empty($category['children'][$val['id']]) && 3 <= $level) {
+							if (!empty($category['children'][$val['id']]) && (3 <= $level)) {
 								foreach ($category['children'][$val['id']] as $v) {
 									if ($v['enabled'] == 1) {
 										$v['thumb'] = tomedia($v['thumb']);

@@ -68,8 +68,8 @@
                 </div>
                 {/if}
                 <div class="fui-cell">
+                    <div class="fui-cell-text store">请选择兑换门店</div>
                     <a class="fui-cell-info" href="{php echo mobileUrl('store/selector', array('ids'=>$goods['storeids'],'merchid'=>$goods['merchid']))}">
-                        <span class="fui-cell-text store" style="float: left">请选择兑换门店</span>
                         <div class="fui-cell-remark" id="storename"></div>
                     </a>
                 </div>
@@ -100,7 +100,7 @@
             <div class="numarea" style="height: 2rem">
                 <div class="fui-number" style="position: absolute;right: 0.5rem;margin-top: 0.25rem">
                     <div class="minus">-</div>
-                    <input class="num" id="num" type="tel" name="num" value="1"/>
+                    <input class="num" id="num" type="tel" name="num" value="1" readonly="readonly"/>
                     <div class="plus">+</div>
                 </div>
             </div>
@@ -193,9 +193,8 @@
     {template 'order/pay/wechat_jie'}
     <script language='javascript'>
         require(['../addons/ewei_shopv2/plugin/creditshop/static/js/create.js'], function (modal) {
-            modal.init({goods: {php echo json_encode($goods)},optionid:{$optionid},chance:{$chance},payinfo:{$payinfo}});
+            modal.init({goods: {php echo json_encode($goods)},optionid:{$optionid},chance:{$chance}});
         });
     </script>
-
 </div>
 {template '_footer'}

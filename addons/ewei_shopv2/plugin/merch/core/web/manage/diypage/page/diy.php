@@ -1,60 +1,55 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
 require EWEI_SHOPV2_PLUGIN . 'merch/core/inc/page_merch.php';
-class Diy_EweiShopV2Page extends MerchWebPage
+class Diy_EweiShopV2Page extends MerchWebPage 
 {
-	public function main()
+	public function main() 
 	{
 		global $_W;
 		global $_GPC;
 		$pagetype = 'diy';
-
-		if (!empty($_GPC['keyword'])) {
+		if (!(empty($_GPC['keyword']))) 
+		{
 			$keyword = '%' . trim($_GPC['keyword']) . '%';
 			$condition = ' and name like \'' . $keyword . '\' ';
 		}
-
 		$diypage_plugin = p('diypage');
 		$result = $diypage_plugin->getPageList('diy', $condition, intval($_GPC['page']));
 		extract($result);
-
-		if (!empty($list)) {
-			foreach ($list as $key => &$value) {
+		if (!(empty($list))) 
+		{
+			foreach ($list as $key => &$value ) 
+			{
 				$url = mobileUrl('diypage', array('id' => $value['id'], 'merchid' => $_W['merchid']), true);
 				$value['qrcode'] = m('qrcode')->createQrcode($url);
 			}
 		}
-
 		include $this->template('diypage/page/list');
 	}
-
-	public function edit()
+	public function edit() 
 	{
 		$this->post('edit');
 	}
-
-	public function add()
+	public function add() 
 	{
 		$this->post('add');
 	}
-
-	protected function post($do)
+	protected function post($do) 
 	{
 		global $_W;
 		global $_GPC;
 		$diypage_plugin = p('diypage');
 		$result = $diypage_plugin->verify($do, 'diy');
 		extract($result);
-		if ($template && $do == 'add') {
+		if ($template && ($do == 'add')) 
+		{
 			$template['data'] = base64_decode($template['data']);
 			$template['data'] = json_decode($template['data'], true);
 			$page = $template;
 		}
-
 		$allpagetype = $diypage_plugin->getPageType();
 		$typename = $allpagetype[$type]['name'];
 		$diymenu = pdo_fetchall('select id, name from ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid  order by id desc', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
@@ -63,35 +58,31 @@ class Diy_EweiShopV2Page extends MerchWebPage
 		$levels = array();
 		$levels['member'] = m('member')->getLevels(false);
 		array_unshift($levels['member'], array('id' => 'default', 'levelname' => '默认等级'));
-
-		if (p('commission')) {
+		if (p('commission')) 
+		{
 			$levels['commission'] = p('commission')->getLevels(true, true);
 		}
-
-		if ($_W['ispost']) {
+		if ($_W['ispost']) 
+		{
 			$data = $_GPC['data'];
 			$diypage_plugin->savePage($id, $data);
 		}
-
 		$hasplugins = json_encode(array());
 		include $this->template('diypage/page/post');
 	}
-
-	public function delete()
+	public function delete() 
 	{
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-
-		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+		if (empty($id)) 
+		{
+			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
 		}
-
 		$diypage_plugin = p('diypage');
 		$diypage_plugin->delPage($id);
 	}
-
-	public function savetemp()
+	public function savetemp() 
 	{
 		global $_W;
 		global $_GPC;
@@ -100,5 +91,4 @@ class Diy_EweiShopV2Page extends MerchWebPage
 		$diypage_plugin->saveTemp($temp);
 	}
 }
-
 ?>

@@ -67,7 +67,7 @@ foreach ($levels as &$l) {
 unset($l);
 $levels = array_merge(array(
 	array('id' => 0, 'key' => 'default', 'levelname' => empty($_W['shopset']['shop']['levelname']) ? '默认会员' : $_W['shopset']['shop']['levelname'])
-), $levels);
+	), $levels);
 $groups = m('member')->getGroups();
 $commission_level = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY commission1 asc'));
 
@@ -78,7 +78,7 @@ foreach ($commission_level as &$l) {
 unset($l);
 $commission_level = array_merge(array(
 	array('key' => 'default', 'levelname' => empty($_W['shopset']['commission']['levelname']) ? '默认等级' : $_W['shopset']['commission']['levelname'])
-), $commission_level);
+	), $commission_level);
 $com_virtual = com('virtual');
 
 if ($_W['ispost']) {

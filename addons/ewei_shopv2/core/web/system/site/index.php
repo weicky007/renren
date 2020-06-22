@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,7 +16,6 @@ class Index_EweiShopV2Page extends SystemPage
 			$data = array();
 			$data['type'] = $this->type;
 			$_GPC['data']['logo'] = save_media($_GPC['data']['logo']);
-			$_GPC['data']['qrcode'] = save_media($_GPC['data']['qrcode']);
 			$data['content'] = iserializer($_GPC['data']);
 			$res = pdo_fetch('select id from ' . tablename('ewei_shop_system_site') . ' where `type`=:type', array(':type' => $this->type));
 
@@ -36,7 +34,7 @@ class Index_EweiShopV2Page extends SystemPage
 
 		if ($handle = @opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if ($file != '..' && $file != '.') {
+				if (($file != '..') && ($file != '.')) {
 					if (is_dir($dir . '/' . $file)) {
 						$styles[] = $file;
 					}

@@ -30,7 +30,7 @@ class Comment_EweiShopV2Page extends MobileLoginPage
 			exit();
 		}
 
-		if ($order['status'] != 3 && $order['status'] != 4) {
+		if (($order['status'] != 3) && ($order['status'] != 4)) {
 			$this->message('订单未收货，不能评价!', mobileUrl('order/detail', array('id' => $orderid)));
 		}
 

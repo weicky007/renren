@@ -124,23 +124,21 @@
                         {/if}
                     </div>
                 </div>
-                <div class="form-group dispatch_info" >
-                <label class="col-lg control-label">运费设置</label>
-                <div class="col-sm-5 col-xs-5">
-                    {ife 'sale.package' $item}
-                    <div class="input-group">
-                        <span class='input-group-addon' style='border:none'><label class="radio-inline" style='margin-top:-7px;' ><input type="radio" name="dispatchtype" value="1" {if !empty($item['dispatchtype'])}checked="true"{/if}   /> 运费模板模式</label></span>
-                        <span class='input-group-addon' style='border:none'><label class="radio-inline" style='margin-top:-7px;' ><input type="radio" name="dispatchtype" value="0" {if empty($item['dispatchtype'])}checked="true"{/if}   /> 统一运费模式</label></span>
-                        <input type="text" class="form-control" name="freight" value="{$item['freight']}"/>
-                        <span class="input-group-addon">元</span>
+
+                <div class="form-group cgt cgt-0">
+                    <label class="col-lg control-label ">运费设置</label>
+                    <div class="col-sm-9 col-xs-12">
+                        {ife 'sale.package' $item}
+                        <div class="input-group fixsingle-input-group">
+                            <input type='text' class='form-control' name='freight' value="{$item['freight']}"/>
+                            <span class="input-group-addon">元</span>
+                        </div>
+                        <span class="help-block image-block" style="display: block;">运费为固定邮费统一设置，设置为0，则免邮费。</span>
+                        {else}
+                        <div class='form-control-static'>{$item['freight']}</div>
+                        {/if}
                     </div>
-                    <span class="help-block text-danger">如果所选商品中包含多商户商品，那么必须选择运费模板模式（多商户商品运费按照商品本身设置的运费计费）</span>
-                    <span class="help-block image-block" style="display: block;">运费为固定邮费统一设置，设置为0，则免邮费。</span>
-                    {else}
-                    <div class='form-control-static'>{if empty($item['dispatchtype'])}运费模板 {if $item['dispatchid'] == 0}默认模板{else}{loop $dispatch_data $dispatch_item}{if $item['dispatchid'] == $dispatch_item['id']}{$dispatch_item['dispatchname']}{/if}{/loop}{/if}{else}统一邮费{/if}</div>
-                    {/if}
                 </div>
-            </div>
 
                 <div class="form-group">
                     <label class=" col-lg control-label">货到付款</label>

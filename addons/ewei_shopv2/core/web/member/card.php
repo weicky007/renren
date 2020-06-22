@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -50,10 +49,10 @@ class Card_EweiShopV2Page extends WebPage
 			$coupon = pdo_fetch('SELECT id,couponname as title , thumb  FROM ' . tablename('ewei_shop_coupon') . ' WHERE uniacid = ' . $_W['uniacid'] . ' and id =' . $item['couponid']);
 		}
 
-		$levels = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_level') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc'));
+		$levels = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY level asc');
 
 		if ($_W['ispost']) {
-			$data = array('centerget' => intval($_GPC['centerget']), 'openactive' => intval($_GPC['openactive']), 'realname' => intval($_GPC['realname']), 'mobile' => intval($_GPC['mobile']), 'birthday' => intval($_GPC['birthday']), 'idnumber' => intval($_GPC['idnumber']), 'sms_active' => intval($_GPC['sms_active']), 'sms_id' => intval($_GPC['sms_id']), 'credit1' => intval($_GPC['credit1']), 'credit2' => floatval($_GPC['credit2']), 'couponid' => intval($_GPC['couponid']), 'levelid' => intval($_GPC['levelid']));
+			$data = array('centerget' => intval($_GPC['centerget']), 'openactive' => intval($_GPC['openactive']), 'realname' => intval($_GPC['realname']), 'mobile' => intval($_GPC['mobile']), 'sms_active' => intval($_GPC['sms_active']), 'sms_id' => intval($_GPC['sms_id']), 'credit1' => intval($_GPC['credit1']), 'credit2' => floatval($_GPC['credit2']), 'couponid' => intval($_GPC['couponid']), 'levelid' => intval($_GPC['levelid']));
 			m('common')->updateSysset(array('memberCardActivation' => $data));
 			show_json(1, array('url' => webUrl('member/card/activationset')));
 		}
@@ -94,7 +93,7 @@ class Card_EweiShopV2Page extends WebPage
 			}
 
 			$carddata = array('card_backgroundtype' => $_GPC['card_backgroundtype'], 'color' => $_GPC['color'], 'color2' => $_GPC['color2'], 'prerogative' => $prerogative, 'card_description' => $card_description, 'custom_cell1' => $_GPC['custom_cell1'], 'custom_cell1_name' => $_GPC['custom_cell1_name'], 'custom_cell1_tips' => $_GPC['custom_cell1_tips'], 'custom_cell1_url' => $_GPC['custom_cell1_url']);
-			if (empty($card) || $card['card_logoimg'] != $_GPC['card_logoimg']) {
+			if (empty($card) || ($card['card_logoimg'] != $_GPC['card_logoimg'])) {
 				if (empty($card)) {
 					if (empty($_GPC['card_logoimg'])) {
 						show_json(0, 'logo图片不能为空');
@@ -124,8 +123,7 @@ class Card_EweiShopV2Page extends WebPage
 				$result = com('wxcard')->wxCardUpdateImg($imgurl);
 
 				if (is_wxerror($result)) {
-					$error_msg = empty($result['errmsg']) ? '上传的logo图片失败。' : $result['errmsg'];
-					show_json(0, $error_msg);
+					show_json(0, '上传的logo图片限制文件大小限制1MB，像素为300*300，仅支持JPG、PNG格式。');
 				}
 
 				$carddata['card_logoimg'] = $_GPC['card_logoimg'];
@@ -133,7 +131,7 @@ class Card_EweiShopV2Page extends WebPage
 			}
 
 			if (!empty($_GPC['card_backgroundtype'])) {
-				if (empty($card) || $card['card_backgroundimg'] != $_GPC['card_backgroundimg']) {
+				if (empty($card) || ($card['card_backgroundimg'] != $_GPC['card_backgroundimg'])) {
 					if (empty($card)) {
 						if (empty($_GPC['card_backgroundimg'])) {
 							show_json(0, '设置使用背景图片时图片不能为空');
@@ -170,7 +168,7 @@ class Card_EweiShopV2Page extends WebPage
 					$carddata['card_backgroundwxurl'] = $result['url'];
 				}
 				else {
-					if (!empty($card) && $card['card_backgroundimg'] == $_GPC['card_backgroundimg']) {
+					if (!empty($card) && ($card['card_backgroundimg'] == $_GPC['card_backgroundimg'])) {
 						$carddata['card_backgroundimg'] = $card['card_backgroundimg'];
 						$carddata['card_backgroundwxurl'] = $card['card_backgroundwxurl'];
 					}
@@ -217,7 +215,7 @@ class Card_EweiShopV2Page extends WebPage
 					show_json(0, '商户名称不能超过30个字符');
 				}
 
-				if (9999999 < intval($_GPC['card_totalquantity']) || intval($_GPC['card_totalquantity']) < 1) {
+				if ((9999999 < intval($_GPC['card_totalquantity'])) || (intval($_GPC['card_totalquantity']) < 1)) {
 					show_json(0, '会员卡库存需设置再1与9999999之间');
 				}
 
@@ -269,52 +267,48 @@ class Card_EweiShopV2Page extends WebPage
 				$card['card_backgroundtype'] = $carddata['card_backgroundtype'];
 			}
 
-			if (!empty($carddata['color']) && $carddata['color'] != $card['color']) {
+			if (!empty($carddata['color']) && ($carddata['color'] != $card['color'])) {
 				$card['color'] = $carddata['color'];
 			}
 
-			if (!empty($carddata['color2']) && $carddata['color2'] != $card['color']) {
+			if (!empty($carddata['color2']) && ($carddata['color2'] != $card['color'])) {
 				$card['color2'] = $carddata['color2'];
 			}
 
-			if (!empty($carddata['prerogative']) && $carddata['prerogative'] != $card['prerogative']) {
+			if (!empty($carddata['prerogative']) && ($carddata['prerogative'] != $card['prerogative'])) {
 				$card['prerogative'] = $carddata['prerogative'];
 			}
 
-			if (!empty($carddata['card_description']) && $carddata['card_description'] != $card['card_description']) {
+			if (!empty($carddata['card_description']) && ($carddata['card_description'] != $card['card_description'])) {
 				$card['card_description'] = $carddata['card_description'];
 			}
 
-			if ($carddata['custom_cell1'] != $card['custom_cell1']) {
-				if (empty($carddata['custom_cell1'])) {
-					$carddata['custom_cell1'] = 0;
-				}
-
+			if (!empty($carddata['custom_cell1']) && ($carddata['custom_cell1'] != $card['custom_cell1'])) {
 				$card['custom_cell1'] = $carddata['custom_cell1'];
 			}
 
-			if (!empty($carddata['custom_cell1_name']) && $carddata['custom_cell1_name'] != $card['custom_cell1_name']) {
+			if (!empty($carddata['custom_cell1_name']) && ($carddata['custom_cell1_name'] != $card['custom_cell1_name'])) {
 				$card['custom_cell1_name'] = $carddata['custom_cell1_name'];
 			}
 
-			if (!empty($carddata['custom_cell1_tips']) && $carddata['custom_cell1_tips'] != $card['custom_cell1_tips']) {
+			if (!empty($carddata['custom_cell1_tips']) && ($carddata['custom_cell1_tips'] != $card['custom_cell1_tips'])) {
 				$card['custom_cell1_tips'] = $carddata['custom_cell1_tips'];
 			}
 
-			if (!empty($carddata['custom_cell1_url']) && $carddata['custom_cell1_url'] != $card['custom_cell1_url']) {
+			if (!empty($carddata['custom_cell1_url']) && ($carddata['custom_cell1_url'] != $card['custom_cell1_url'])) {
 				$card['custom_cell1_url'] = $carddata['custom_cell1_url'];
 			}
 
-			if (!empty($carddata['card_logoimg']) && $carddata['card_logoimg'] != $card['card_logoimg']) {
+			if (!empty($carddata['card_logoimg']) && ($carddata['card_logoimg'] != $card['card_logoimg'])) {
 				$card['card_logoimg'] = $carddata['card_logoimg'];
 			}
 
-			if (!empty($carddata['card_logowxurl']) && $carddata['card_logowxurl'] != $card['card_logowxurl']) {
+			if (!empty($carddata['card_logowxurl']) && ($carddata['card_logowxurl'] != $card['card_logowxurl'])) {
 				$card['card_logowxurl'] = $carddata['card_logowxurl'];
 			}
 
 			$card['card_backgroundimg'] = $carddata['card_backgroundimg'];
-			if (!empty($carddata['card_backgroundwxurl']) && $carddata['card_backgroundwxurl'] != $card['card_backgroundwxurl']) {
+			if (!empty($carddata['card_backgroundwxurl']) && ($carddata['card_backgroundwxurl'] != $card['card_backgroundwxurl'])) {
 				$card['card_backgroundwxurl'] = $carddata['card_backgroundwxurl'];
 			}
 

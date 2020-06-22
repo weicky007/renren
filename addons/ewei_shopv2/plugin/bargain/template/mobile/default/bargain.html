@@ -182,7 +182,7 @@
             </div>
             {if $swi === 111}
             <div class="fui-navbar flex">
-                {if $trade_swi==0}<a href="{php echo mobileUrl('goods/detail',array('id'=>$res['goods_id'],))}" class="left" data-nocache="">立即购买</a>{/if}
+                {if $trade_swi==0}<a href="{php echo mobileUrl('order/create',array('bargainid'=>$res['id'],))}" class="left" data-nocache="">立即购买</a>{/if}
                 {if $trade_swi==1}<a href="#" class="left " style="background-color:#ccc;" data-nocache="true">已经下单</a>{/if}
                 {if $trade_swi==2}<a href="#" class="left " style="background-color:#ccc;" data-nocache="true">已经结束</a>{/if}
                 {if $trade_swi==3}<a href="#" class="left " style="background-color:#ccc;" data-nocache="true">库存不足</a></span>{/if}

@@ -1,9 +1,9 @@
 <div class="form-group">
-    <label class="col-sm-2 control-label">通知模板消息ID（业务处理通知）</label>
+    <label class="col-sm-2 control-label">通知模板消息ID（任务处理通知）</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'poster' $item}
         <input type="text" name="templateid" class="form-control" value="{$item['templateid']}" />
-        <span class="help-block">公众平台模板消息ID:  OPENTM415477060，如果不填写，则使用客服消息发送通知</span>
+        <span class="help-block">公众平台模板消息ID:  OPENTM200605630，如果不填写，则使用客服消息发送通知</span>
         {else}
         <div class='form-control-static'>{$item['templateid']}</div>
         {/if}

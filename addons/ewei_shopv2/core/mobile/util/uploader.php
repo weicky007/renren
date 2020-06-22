@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,30 +22,6 @@ class Uploader_EweiShopV2Page extends MobilePage
 					}
 
 					$file = array('name' => $name, 'type' => $_FILES[$field]['type'][$key], 'tmp_name' => $_FILES[$field]['tmp_name'][$key], 'error' => $_FILES[$field]['error'][$key], 'size' => $_FILES[$field]['size'][$key]);
-
-					if (function_exists('exif_read_data')) {
-						$image = imagecreatefromstring(file_get_contents($file['tmp_name']));
-						$exif = exif_read_data($file['tmp_name']);
-
-						if (!empty($exif['Orientation'])) {
-							switch ($exif['Orientation']) {
-							case 8:
-								$image = imagerotate($image, 90, 0);
-								break;
-
-							case 3:
-								$image = imagerotate($image, 180, 0);
-								break;
-
-							case 6:
-								$image = imagerotate($image, -90, 0);
-								break;
-							}
-						}
-
-						imagejpeg($image, $file['tmp_name']);
-					}
-
 					$files[] = $this->upload($file);
 				}
 
@@ -97,10 +72,6 @@ class Uploader_EweiShopV2Page extends MobilePage
 			return $result;
 		}
 
-		if (!empty($_W['setting']['remote'][$_W['uniacid']]['type'])) {
-			$_W['setting']['remote'] = $_W['setting']['remote'][$_W['uniacid']];
-		}
-
 		if (function_exists('file_remote_upload')) {
 			$remote = file_remote_upload($file['path']);
 
@@ -114,7 +85,8 @@ class Uploader_EweiShopV2Page extends MobilePage
 		$result['url'] = $file['url'];
 		$result['error'] = 0;
 		$result['filename'] = $file['path'];
-		$result['url'] = tomedia(trim($result['filename']));
+		$result['url'] = trim($_W['attachurl'] . $result['filename']);
+		pdo_insert('core_attachment', array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid'], 'filename' => $uploadfile['name'], 'attachment' => $result['filename'], 'type' => 1, 'createtime' => TIMESTAMP));
 		return $result;
 	}
 

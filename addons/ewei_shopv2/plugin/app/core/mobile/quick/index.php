@@ -19,7 +19,7 @@ class Index_EweiShopV2Page extends AppMobilePage
         $datas = htmlspecialchars_decode(base64_decode($item['datas']));
 
         $merchid = empty($item['merchid']) ? 0 : intval($item['merchid']);
-        $data = $this->mobile($datas, $merchid);        
+        $data = $this->mobile($datas, $merchid);       
 
         if (empty($data['template'])) {
             $data['cartList'] = $this->getAllCart(!empty($data['cartdata']) ? $item['id'] : 0, false);       
@@ -43,6 +43,9 @@ class Index_EweiShopV2Page extends AppMobilePage
        }
         return app_json($data);
     }
+
+
+
     public function mobile($data, $merchid = 0)
     {
         global $_W;
@@ -195,6 +198,9 @@ class Index_EweiShopV2Page extends AppMobilePage
 
         return $returnData;
     }
+
+
+
     public function getList($args)
     {
         global $_W;
@@ -229,6 +235,7 @@ class Index_EweiShopV2Page extends AppMobilePage
         if (!empty($ids)) {
             $condition .= " and id in ( " . $ids . ")";
         }
+
         if (!empty($args['cate'])) {
             $category = m('shop')->getAllCategory();
             $catearr = array($args['cate']);
@@ -319,10 +326,12 @@ class Index_EweiShopV2Page extends AppMobilePage
                 $g['cannotbuy'] = empty($totalmaxbuy) ? "超出最高购买数量" : "";
                 $g['unit'] = empty($g['unit']) ? '件' : $g['unit'];
                 $g['num'] = 0;
+
                 if ($g['ispresell'] > 0 && (($g['presellend'] > 0 && $g['preselltimeend'] > time()) || ($g['preselltimeend'] == 0))) {
                     $g['gotodetail'] = 1;
                     $g['presell'] = 1;
                 }
+
                 if (p('bargain') && !empty($g['bargain']) && empty($g['gotodetail'])) {
                     $bargain = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_bargain_goods') . " WHERE id = :id AND unix_timestamp(start_time)<" . time() . " AND unix_timestamp(end_time)>" . time() . " AND status = 0", array(':id' => $g['bargain']));
                     if ($bargain) {
@@ -341,6 +350,9 @@ class Index_EweiShopV2Page extends AppMobilePage
 
         return array('list' => $list, 'total' => $total);
     }
+
+
+
     public function sort($ids, $list)
     {
         if (empty($ids) || empty($list)) {
@@ -363,6 +375,8 @@ class Index_EweiShopV2Page extends AppMobilePage
         }
         return $newArr;
     }
+
+  
     public function get_list()
     {
         global $_W, $_GPC;
@@ -409,6 +423,7 @@ class Index_EweiShopV2Page extends AppMobilePage
             if (!empty($groupid)) {
                 $group = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_goods_group') . " WHERE id=:id and uniacid=:uniacid and merchid=:merchid and enabled=1 limit 1 ", array(':id' => $groupid, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
                 $goodsids = $group['goodsids'];
+             
                 if (!empty($goodsids)) {
                     $ids = $this->page($goodsids, $pagesize, $page);
                     if (!empty($ids)) {
@@ -423,6 +438,8 @@ class Index_EweiShopV2Page extends AppMobilePage
 
         return app_json(1, $result);
     }
+
+
     public function getAllCart($pageid, $json = true)
     {
         global $_W;
@@ -437,6 +454,8 @@ class Index_EweiShopV2Page extends AppMobilePage
         $total = 0;
         $totalprice = 0;
         $ischeckall = true;
+ 
+
         $tablename = empty($pageid) ? "ewei_shop_member_cart" : "ewei_shop_quick_cart";
 
         if (!empty($pageid)) {
@@ -571,6 +590,7 @@ class Index_EweiShopV2Page extends AppMobilePage
 
         return $result;
     }
+
     protected function page($goodsids, $pagesize, $page)
     {
         $goodsids = explode(",", $goodsids);
@@ -586,13 +606,16 @@ class Index_EweiShopV2Page extends AppMobilePage
         $arr = array_slice($goodsids, $pindex, $pagesize);
         return implode(",", $arr);
     }
+
     public function getCart()
     {
         global $_W, $_GPC;
         $quickid = intval($_GPC['quickid']);
-        $carts = $this->getAllCart($quickid, false);       
+        $carts = $this->getAllCart($quickid, false);      
         return app_json($carts);
     }
+
+
     public function clearCart()
     {
         global $_W, $_GPC;
@@ -610,6 +633,8 @@ class Index_EweiShopV2Page extends AppMobilePage
         pdo_update($tablename, array("deleted" => 1), $arr);
         return app_json(0);
     }
+
+ 
     public function update()
     {
         global $_W, $_GPC;
@@ -638,12 +663,14 @@ class Index_EweiShopV2Page extends AppMobilePage
             if (!empty($diyformdata) && is_array($diyformdata)) {
                 $diyformfields = false;
                 if ($goods['diyformtype'] == 1) {
+                 
                     $diyformid = intval($goods['diyformid']);
                     $formInfo = $diyform_plugin->getDiyformInfo($diyformid);
                     if (!empty($formInfo)) {
                         $diyformfields = $formInfo['fields'];
                     }
                 } else if ($goods['diyformtype'] == 2) {
+            
                     $diyformfields = iunserializer($goods['diyfields']);
                 }
                 if (!empty($diyformfields)) {
@@ -724,7 +751,7 @@ class Index_EweiShopV2Page extends AppMobilePage
             $cartArray = array();
             $newsCartArray = array();
             if (!empty($quickid)) {
-                $cartArray['cartList'] = $this->getAllCart(!empty($quickid) ? $quickid : 0, false);   
+                $cartArray['cartList'] = $this->getAllCart(!empty($quickid) ? $quickid : 0, false);      
             } else {
                 $cartArray['cartList'] = $this->getAllCart(0, false);
             }
@@ -733,21 +760,28 @@ class Index_EweiShopV2Page extends AppMobilePage
             $newsCartArray['totalprice'] = $cartArray['cartList']['totalprice'];
             return app_json($newsCartArray);
         } else {
+       
             if ($type == 'add') {
+
                 $data['total'] = $data['total'] + 1;
             }
+
+     
             elseif ($type == 'reduce') {
                 $data['total'] = $data['total'] - 1;
             }
 
+      
             elseif ($type == 'value') {
                 if ($typeValue <= 0) {
                     return app_error(AppError::$ParamsError);
                 }
                 else {
                     $data['total'] = $data['total'] + intval($typeValue);
+
                 }
             }
+
             elseif($type == 'delete') {
                 $data['total'] = 0;
             }
@@ -786,7 +820,7 @@ class Index_EweiShopV2Page extends AppMobilePage
             $cartArray = array();
             $newsCartArray = array();
             if (!empty($quickid)) {
-                $cartArray['cartList'] = $this->getAllCart(!empty($quickid) ? $quickid : 0, false);       
+                $cartArray['cartList'] = $this->getAllCart(!empty($quickid) ? $quickid : 0, false);      
             } else {
                 $cartArray['cartList'] = $this->getAllCart(0, false);
             }
@@ -799,6 +833,7 @@ class Index_EweiShopV2Page extends AppMobilePage
             return app_json($newsCartArray);
         }
     }
+
 
     public function getGoodsTotal($cartArr, $goodsId, $optionid = 0)
     {
@@ -817,5 +852,50 @@ class Index_EweiShopV2Page extends AppMobilePage
             }
         }
         return $total;
+    }
+
+
+
+    public function searchgoods()
+    {
+        global $_W, $_GPC;
+
+        $pagesize = 10;
+
+        $pagenum = max(1, intval($_GPC['page']));
+
+
+        $id = intval($_GPC['id']);
+
+
+        $item = pdo_fetch("SELECT * FROM". tablename("ewei_shop_quick")." WHERE id=:id AND uniacid=:uniacid", array(':id'=>$id, ':uniacid'=>$_W['uniacid']));
+
+        $datas = htmlspecialchars_decode(base64_decode($item['datas']));
+
+
+
+        $page=json_decode($datas,true);
+
+        $list = $page['datas'];
+
+        $gid = '';
+
+        foreach ($list as $v){
+
+            foreach ($v['goodsids'] as $vv){
+                $gid .= $vv.',';
+            }
+        }
+
+        $gid = substr($gid,0,strlen($str)-1);
+
+        $list = array('pagesize'=>$pagesize,'page'=>$pagenum,'ids' => $gid,'keywords' => empty($_GPC['keywords']) ? '':$_GPC['keywords']);
+
+        $goods = m('goods')->getList($list);
+
+
+        return app_json($goods);
+
+
     }
 }

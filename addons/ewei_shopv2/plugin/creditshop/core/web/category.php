@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,7 +9,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_creditshop_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder DESC'));
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_creditshop_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder DESC');
 		include $this->template();
 	}
 
@@ -20,7 +19,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_creditshop_category', array('displayorder' => $displayorder), array('id' => $id));
@@ -77,7 +76,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . (' WHERE id = \'' . $id . '\' AND uniacid=') . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . '');
 
 		if (empty($item)) {
 			message('抱歉，分类不存在或是已经被删除！', webUrl('creditshop/category', array('op' => 'display')), 'error');
@@ -95,14 +94,14 @@ class Category_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_creditshop_category') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_creditshop_category', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('creditshop.category.edit', '修改商品分类<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '显示' : '隐藏');
+			plog('creditshop.category.edit', ('修改商品分类<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -122,7 +121,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $keyword . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_creditshop_category') . (' WHERE 1 ' . $condition . ' order by displayorder desc,id desc'), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_creditshop_category') . ' WHERE 1 ' . $condition . ' order by displayorder desc,id desc', $params);
 
 		if (!empty($list)) {
 			$list = set_medias($list, array('thumb', 'advimg'));

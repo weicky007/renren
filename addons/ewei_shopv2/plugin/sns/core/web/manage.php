@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +24,8 @@ class Manage_EweiShopV2Page extends PluginWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT s.*,b.title,m.avatar,m.nickname,m.realname,m.mobile  FROM ' . tablename('ewei_shop_sns_manage') . ' s ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on s.bid= b.id and s.uniacid = b.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on s.openid = m.openid and s.uniacid = m.uniacid ' . (' WHERE 1 ' . $condition . '  ORDER BY s.id  DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_manage') . ' s ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on s.bid= b.id and s.uniacid = b.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on s.openid = m.openid and s.uniacid = m.uniacid ' . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT s.*,b.title,m.avatar,m.nickname,m.realname,m.mobile  FROM ' . tablename('ewei_shop_sns_manage') . ' s ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on s.bid= b.id and s.uniacid = b.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on s.openid = m.openid and s.uniacid = m.uniacid ' . ' WHERE 1 ' . $condition . '  ORDER BY s.id  DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_sns_manage') . ' s ' . ' left join ' . tablename('ewei_shop_sns_board') . ' b on s.bid= b.id and s.uniacid = b.uniacid ' . ' left join ' . tablename('ewei_shop_member') . ' m on s.openid = m.openid and s.uniacid = m.uniacid ' . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		$boards = pdo_fetchall('select id, title from ' . tablename('ewei_shop_sns_board') . ' where uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
 		include $this->template();
@@ -83,10 +82,10 @@ class Manage_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT* FROM ' . tablename('ewei_shop_sns_manage') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT* FROM ' . tablename('ewei_shop_sns_manage') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_sns_manage', array('id' => $item['id']));

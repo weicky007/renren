@@ -415,17 +415,7 @@
 			</div>
 		</div>
 	</div>
-    {if $order['remark']}
-    <div class="fui-cell-group noborder order-info">
-        <div class="fui-cell">
-            <div class="fui-cell-info">
-                <span style="margin-right: 0.7rem;">买家备注</span>{$order['remark']}
-            </div>
-            <div class="fui-cell-remark noremark">
-            </div>
-        </div>
-    </div>
-    {/if}
+
 	<div class="fui-cell-group noborder order-info">
 		<div class="fui-cell">
 			<div class="fui-cell-info">
@@ -477,53 +467,8 @@
 		</div>
 		{/if}
 	</div>
-
-
-	{if $order['invoicename']}
-	{php $invoice_info = m('sale')->parseInvoiceInfo($order['invoicename'])}
-	<div class="fui-cell-group noborder order-info">
-		{if $invoice_info['title']}
-		<div class="fui-cell">
-			<div class="fui-cell-info">
-				<span style="margin-right: 0.7rem;">发票类型</span>{php echo $invoice_info['entity']?'纸质发票':'电子发票'}
-			</div>
-			<div class="fui-cell-remark noremark">
-			</div>
-		</div>
-		{/if}
-		{if $invoice_info['title']}
-		<div class="fui-cell">
-			<div class="fui-cell-info">
-				<span style="margin-right: 0.7rem;">抬头类型</span>{php echo $invoice_info['company']?'单位':'企业'}
-			</div>
-			<div class="fui-cell-remark noremark">
-			</div>
-		</div>
-		{/if}
-		<div class="fui-cell">
-			<div class="fui-cell-info">
-				<span style="margin-right: 0.7rem;">发票抬头</span>
-				{if $invoice_info['title']}{$invoice_info['title']}{else}{$order['invoicename']}{/if}
-			</div>
-			<div class="fui-cell-remark noremark">
-			</div>
-		</div>
-		{if $invoice_info['number']}
-		<div class="fui-cell">
-			<div class="fui-cell-info">
-				<span style="margin-right: 0.7rem;">纳税人识别号</span>{$invoice_info['number']}
-			</div>
-			<div class="fui-cell-remark noremark">
-			</div>
-		</div>
-		{/if}
-	</div>
-	{/if}
 </div>
 <div class="fui-footer" style="text-align: right;">
-	{if $order['invoice_img']}
-	<a class="btn btn-sm btn-default-o" href="{php echo tomedia($order['invoice_img'])}">查看发票</a>
-	{/if}
 	{if $order['userdeleted']==0}
 	{if $order['status']==0}
 	<div class="btn btn-sm btn-default-o order-cancel">取消订单
@@ -565,7 +510,7 @@
 	{/if}
 	{/if}
 
-	{if $order['canrefund'] && $norStart == 1 && $order['status'] ==1}
+	{if $order['canrefund'] && $norStart == 1}
 
 	<a data-nocache="true" class="btn btn-sm btn-default-o" href="{php echo mobileUrl('order/refund',array('id'=>$order['id']))}">{if !empty($order['refundstate'])}查看{/if}{if $order['status'] ==1}申请退款{else}申请售后{/if}{if !empty($order['refundstate'])}进度{/if}</a>
 	{/if}

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -13,16 +12,18 @@ class Release_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		$error = NULL;
 		$auth = $this->model->getAuth();
-
+		
 		if (is_error($auth)) {
 			$error = $auth['message'];
 		}
 		else {
-			$is_auth = is_array($auth) ? $auth['is_auth'] : false;
-			$authUrl = EWEI_SHOPV2_AUTH_WXAPP . 'auth/auth?id=' . $auth['id'];
-
+          	
+			$is_auth = (is_array($auth) ? $auth['is_auth'] : false);
+			$authUrl = EWEI_SHOPV2_AUTH_WXAPP . 'index/index/xcxAuth.html?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid'];
 			if ($is_auth) {
+              	
 				$release = $this->model->getRelease($auth['id']);
+			
 			}
 		}
 
@@ -45,7 +46,7 @@ class Release_EweiShopV2Page extends PluginWebPage
 		}
 
 		$action = trim($_GPC['action']);
-		if ($action != 'upload' && $action != 'audit') {
+		if (($action != 'upload') && ($action != 'audit')) {
 			show_json(0, '请求参数错误');
 		}
 
@@ -78,10 +79,10 @@ class Release_EweiShopV2Page extends PluginWebPage
 				$tabBar = json_encode($tabBar);
 			}
 
-			$request = ihttp_post(EWEI_SHOPV2_AUTH_WXAPP . 'code-manage/submit-only?id=' . $auth['id'], array('tabBar' => $tabBar));
+			$request = ihttp_post(EWEI_SHOPV2_AUTH_WXAPP . 'index/index/submitCode2.html?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid'], array('tabBar' => $tabBar));
 		}
 		else {
-			$request = ihttp_post(EWEI_SHOPV2_AUTH_WXAPP . 'code-manage/audit-only?id=' . $auth['id'], array());
+			$request = ihttp_post(EWEI_SHOPV2_AUTH_WXAPP . 'index/index/auditCode.html?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid'], array());
 		}
 
 		if ($request['code'] != 200) {
@@ -98,7 +99,7 @@ class Release_EweiShopV2Page extends PluginWebPage
 			show_json(0, '信息查询失败！稍后重试(dataerror)');
 		}
 
-		if ($content['status'] != 1) {
+		if ($content['errcode'] != 0) {
 			show_json(0, $content['errmsg']);
 		}
 
@@ -107,6 +108,7 @@ class Release_EweiShopV2Page extends PluginWebPage
 
 	public function auth()
 	{
+		global $_W;
 		$auth = $this->model->getAuth();
 
 		if (is_error($auth)) {
@@ -114,7 +116,8 @@ class Release_EweiShopV2Page extends PluginWebPage
 		}
 
 		$authid = $this->encrypt($auth['id'] . $this->key, $this->key);
-		header('Location:' . EWEI_SHOPV2_AUTH_WXAPP . 'auth/auth?id=' . $authid);
+  	
+		header('Location:' . EWEI_SHOPV2_AUTH_WXAPP . 'index/index/xcxAuth?site_id=' . SITE_ID . '&uniacid=' . $_W['uniacid']);
 	}
 
 	protected function encrypt($data, $key)
@@ -140,18 +143,11 @@ class Release_EweiShopV2Page extends PluginWebPage
 		$i = 0;
 
 		while ($i < $len) {
-			$str .= chr(ord($data[$i]) + ord($char[$i]) % 256);
+			$str .= chr(ord($data[$i]) + (ord($char[$i]) % 256));
 			++$i;
 		}
 
 		return base64_encode($str);
-	}
-
-	public function all()
-	{
-		global $_W;
-		global $_GPC;
-		include $this->template('app/releaseall');
 	}
 }
 

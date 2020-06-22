@@ -93,26 +93,15 @@
                 <div class="fui-cell-info"></div>
                 <div class="fui-cell-remark noremark black">
                     {if $item['isverify'] == 1}线下核销
-                    {elseif !empty($item['addressid']) && $item['city_express_state']==0}
+                    {elseif !empty($item['addressid'])}
                         快递{if !empty($dispatch['dispatchname'])}({$dispatch['dispatchname']}){/if}
                     {elseif !empty($item['isvirtualsend']) || !empty($item['virtual'])}
                         自动发货{if !empty($item['isvirtualsend'])}(虚拟物品){else}(虚拟卡密){/if}
                     {elseif $item['dispatchtype']}自提
-                    {elseif $item['city_express_state']==1}同城配送
                     {else}其他
                     {/if}
                 </div>
             </div>
-
-            {if $item['isverify']==1 || !empty($item['virtual']) ||!empty($item['isvirtual'])}
-                <div class="fui-cell">
-                    <div class="fui-cell-label">联系人:</div>
-                    <div class="fui-cell-info"></div>
-                    <div class="fui-cell-remark noremark black">
-                        {$user['carrier_realname']}, {$user['carrier_mobile']}
-                    </div>
-                </div>
-            {/if}
             {if $item['isverify']==1}
                 <div class="fui-cell">
                     <div class="fui-cell-label">核销方式:</div>
@@ -374,7 +363,7 @@
                         </a>
                         <div class="fui-list-inner">
                             <div class="title">
-                                {if !empty($og['diyformdata']) && $og['diyformdata'] != 'false'}<span class="fui-label fui-label-warning round"> </span>{/if}
+                                {if !empty($og['diyformdata']) && $og['diyformdata'] != 'false'}<span class="fui-label fui-label-warning round">表单</span>{/if}
                                 {if $goods['seckill_task']}<span class="fui-label fui-label-danger round">{$goods['seckill_task']['tag']}</span>{if $goods['seckill_room']}<span class="fui-label fui-label-primary">{php echo $goods['seckill_room']['tag']?:$goods['seckill_room']['title']}</span>{/if}{/if}
                                 {if !empty($goods['invoice'])}<label class='fui-label fui-label-success round'>支持开票</label>{/if}
                                 {$og['title']}</div>

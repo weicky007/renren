@@ -6,12 +6,22 @@ if (!defined('IN_IA')) {
 
 class Reply_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_reply';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'brief_introduce', 'create_time');
 
-	/**     * 获取回复列表     * presentation_EweiShopV2Page constructor.     * @return void     */
+	/**
+     * 获取回复列表
+     * presentation_EweiShopV2Page constructor.
+     * @return void
+     */
 	public function getList()
 	{
 		global $_W;

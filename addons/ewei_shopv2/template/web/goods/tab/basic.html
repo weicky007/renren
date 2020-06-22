@@ -69,7 +69,7 @@
 
         <label class="radio-inline"><input type="radio" name="type" value="1" {if !empty($item['id'])}disabled{/if} {if empty($item['type']) || $item['type'] == 1}checked="true"{/if} onclick="type_change(1);" /> 实体商品</label>
 
-        {if com('virtual')}
+        {if com('virtual') && com('perm')->check_com('virtual')}
         <label class="radio-inline"><input type="radio" name="type" value="2" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 2}checked="true"{/if}  onclick="type_change(2);" /> 虚拟商品</label>
 
         <label class="radio-inline"><input type="radio" name="type" value="3" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 3}checked="true"{/if}  onclick="type_change(3);" /> 虚拟物品(卡密)</label>
@@ -170,7 +170,7 @@
         {/if}
     </div>
 </div>
-<div class="form-group presell_info" {if empty($item['ispresell']) || $item['ispresell'] > 1}style="display: none;"{/if}>
+<div class="form-group presell_info" {if empty($item['type']) || $item['type'] > 1}style="display: none;"{/if}>
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-6 col-xs-6" style='padding-left:0'>
         {ife 'goods' $item}
@@ -397,23 +397,7 @@
 </div>
 
 
-{if p('offic')}
-<div class="form-group">
-    <label class="col-sm-2 control-label">文案营销长图</label>
-    <div class="col-sm-9 col-xs-12">
-        {ife 'goods' $item}
-        {php echo tpl_form_field_image2('officthumb', $item['officthumb'])}
-        <span class='help-block'>营销专用商品长缩略图</span>
-        {else}
-        {if !empty($item['officthumb'])}
-        <a href="{php echo tomedia($item['officthumb'])}" target="_blank">
-            <img src="{php echo tomedia($item['officthumb'])}" style="width:100px;border:1px solid #ccc;padding:1px" />
-        </a>
-        {/if}
-        {/if}
-    </div>
-</div>
-{/if}
+
 
 <div class="form-group">
     <label class="col-sm-2 control-label must">商品图片</label>
@@ -452,6 +436,7 @@
             <input type="text" name="sales" id="sales" class="form-control" value="{$item['sales']}" />
             <span class="input-group-addon">件</span>
         </div>
+        <span class="help-block">物品虚拟出售数，会员下单此数据就增加, 无论是否支付</span>
         {else}
         <div class='form-control-static'>{$item['sales']} 件</div>
         {/if}
@@ -639,7 +624,7 @@
     </label>
     {ife 'goods' $item}
     <div class="col-sm-4 col-xs-6">
-        {php echo tpl_form_field_eweishop_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $item['statustimestart']),'endtime'=>date('Y-m-d H:i', $item['statustimeend'])),true);}
+        {php echo tpl_form_field_daterange('statustime', array('starttime'=>date('Y-m-d H:i', $item['statustimestart']),'endtime'=>date('Y-m-d H:i', $item['statustimeend'])),true);}
     </div>
     {else}
     <div class="col-sm-6 col-xs-6">

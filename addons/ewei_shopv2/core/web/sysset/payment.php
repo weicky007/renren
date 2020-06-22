@@ -31,7 +31,7 @@ class Payment_EweiShopV2Page extends WebPage
 		$paytypeali = $this->paytypeali;
 
 		if (p('qpay')) {
-			$payment[4] = '威富通(兼容全付通)';
+			$payment[4] = '中信银行全付通';
 		}
 
 		$count = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_payment') . ' WHERE  uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
@@ -55,7 +55,7 @@ class Payment_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if ($_W['ispost']) {
-			$data = array('uniacid' => $_W['uniacid'], 'paytype' => intval($_GPC['paytype']), 'type' => intval($_GPC['type']), 'alitype' => intval($_GPC['alitype']), 'title' => trim($_GPC['title']), 'appid' => trim($_GPC['appid']), 'mch_id' => trim($_GPC['mch_id']), 'apikey' => trim($_GPC['apikey']), 'sub_appid' => trim($_GPC['sub_appid']), 'sub_appsecret' => trim($_GPC['sub_appsecret']), 'sub_mch_id' => trim($_GPC['sub_mch_id']), 'qpay_signtype' => intval($_GPC['qpay_signtype']), 'app_qpay_public_key' => trim($_GPC['app_qpay_public_key']), 'app_qpay_private_key' => trim($_GPC['app_qpay_private_key']), 'is_raw' => intval($_GPC['is_raw']));
+			$data = array('uniacid' => $_W['uniacid'], 'paytype' => intval($_GPC['paytype']), 'type' => intval($_GPC['type']), 'alitype' => intval($_GPC['alitype']), 'title' => trim($_GPC['title']), 'appid' => trim($_GPC['appid']), 'mch_id' => trim($_GPC['mch_id']), 'apikey' => trim($_GPC['apikey']), 'sub_appid' => trim($_GPC['sub_appid']), 'sub_appsecret' => trim($_GPC['sub_appsecret']), 'sub_mch_id' => trim($_GPC['sub_mch_id']), 'is_raw' => intval($_GPC['is_raw']));
 			$data['alipay_sec']['public_key'] = trim($_GPC['data']['app_alipay_public_key']);
 			$data['alipay_sec']['private_key'] = trim($_GPC['data']['app_alipay_private_key']);
 			$data['alipay_sec']['appid'] = trim($_GPC['data']['app_alipay_appid']);
@@ -82,7 +82,7 @@ class Payment_EweiShopV2Page extends WebPage
 			}
 			else {
 				pdo_update('ewei_shop_payment', $data, array('id' => $id));
-				plog('sysset.payment.edit', '编辑支付信息 ID: ' . $id . ' 标题: ' . $data['title'] . ' ');
+				plog('sysset.payment.edit', '编辑打印机模板 ID: ' . $id . ' 标题: ' . $data['title'] . ' ');
 			}
 
 			show_json(1);
@@ -93,16 +93,11 @@ class Payment_EweiShopV2Page extends WebPage
 		}
 
 		$sec['alipay_sec'] = iunserializer($data['alipay_sec']);
-
-		if (empty($sec['alipay_sec']['private_key'])) {
-			$sec['alipay_sec']['private_key'] = '';
-		}
-
 		$payment = $this->paytype;
 		$paytypeali = $this->paytypeali;
 
 		if (p('qpay')) {
-			$payment[4] = '威富通(兼容全付通)';
+			$payment[4] = '中信银行全付通';
 		}
 
 		include $this->template();
@@ -166,7 +161,7 @@ class Payment_EweiShopV2Page extends WebPage
 		return '';
 	}
 
-	public function query()
+	public function query()   
 	{
 		global $_W;
 		global $_GPC;

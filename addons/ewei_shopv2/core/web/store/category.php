@@ -1,10 +1,9 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-class Category_EweiShopV2Page extends WebPage
+class Category_EweiShopV2Page extends ComWebPage
 {
 	public function main()
 	{

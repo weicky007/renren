@@ -1,14 +1,6 @@
 {template '_header'}
 
 <div class="page-header">当前位置：<span class="text-primary">销售统计</span></div>
-<div class="alert alert-primary">
-    <p><b>数据说明</b></p>
-    <p>本模块计算的数值是只有平台或本商户的数据。如果是总平台，那么会显示本平台的+本平台所有商户的数据。如果是商户的，那么只会展示本商户的。<br>
-        销售统计-成交额：
-        成交额=主商城成交额+多商户成交额之和。
-        本模块计算的数值是只有平台或本商户的数据。如果是总平台，那么会显示本平台的+本平台所有商户的数据。如果是商户的，那么只会展示本商户的。
-    </p>
-</div>
 <div class="page-content">
     <form action="./index.php" method="get" class="form-horizontal table-search">
             <input type="hidden" name="c" value="site" />
@@ -42,7 +34,7 @@
                 </span>
                 <span class="input-group-select">
                     <select name="type" class='form-control'>
-                        <option value='0' {if $_GPC['type']==0}selected="selected"{/if}>成交额</option>
+                        <option value='0' {if $_GPC['type']==0}selected="selected"{/if}>交易额</option>
                         <option value='1' {if $_GPC['type']==1}selected="selected"{/if}>交易量</option>
 
                     </select>
@@ -63,8 +55,8 @@
 <div class="panel panel-default">
     <div class='panel-heading'>
 
-        {if empty($type)}成交额{else}交易量{/if}：<span style="color:red; ">{$totalcount}</span>，
-        最高{if empty($type)}成交额{else}交易量{/if}：<span style="color:red; ">{$maxcount}</span> {if !empty($maxcount_date)}<span>({$maxcount_date}</span>){/if}
+        {if empty($type)}交易额{else}交易量{/if}：<span style="color:red; ">{$totalcount}</span>，
+        最高{if empty($type)}交易额{else}交易量{/if}：<span style="color:red; ">{$maxcount}</span> {if !empty($maxcount_date)}<span>({$maxcount_date}</span>){/if}
 
     </div>
     <div class="panel-body">
@@ -74,7 +66,7 @@
                     <th style='width:100px;'>
                         {if empty($_GPC['month'])}月份{else}日期{/if}
                     </th>
-                    <th style='width:200px;'>{if empty($type)}成交额{else}交易量{/if}</th>
+                    <th style='width:200px;'>{if empty($type)}交易额{else}交易量{/if}</th>
                     <th style="width: 65px;">所占比例</th>
                     <th></th>
                 </tr>
@@ -132,3 +124,4 @@
     get_days();
  </script>
 {template '_footer'}
+

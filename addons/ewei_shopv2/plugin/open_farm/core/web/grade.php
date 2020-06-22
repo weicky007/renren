@@ -6,27 +6,44 @@ if (!defined('IN_IA')) {
 
 class Grade_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_grade';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'level', 'experience', 'accelerate', 'surprised_guard', 'create_time');
-	/**     * 验证数据非空     * @var array     */
+	/**
+     * 验证数据非空
+     * @var array
+     */
 	private $message = array('level' => '请填写等级', 'experience' => '请填写当前等级所对应的经验', 'accelerate' => '请填写进食加速百分比', 'surprised_guard' => '请填写彩蛋守护时间');
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
 		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 初始化等级类     * Configure_EweiShopV2Page constructor.     * @param bool $_init     */
+	/**
+     * 初始化等级类
+     * Configure_EweiShopV2Page constructor.
+     * @param bool $_init
+     */
 	public function __construct($_init = true)
 	{
 		parent::__construct($_init);
 	}
 
-	/**     * 添加等级     */
+	/**
+     * 添加等级
+     */
 	public function saveInfo()
 	{
 		global $_W;
@@ -36,7 +53,7 @@ class Grade_EweiShopV2Page extends PluginWebPage
 		$data['create_time'] = date('Y-m-d H:i:s');
 		$this->checkInfo($data);
 		$data = $this->model->removeUselessField($data, $this->field);
-		$where = array('level' => $data['level'], 'uniacid' => $_W['uniacid']);
+		$where = array('level' => $data['level']);
 		$info = pdo_get($this->table, $where);
 
 		if ($info) {
@@ -49,7 +66,11 @@ class Grade_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 等级列表     * Grade_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 等级列表
+     * Grade_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -81,7 +102,9 @@ class Grade_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson(true);
 	}
 
-	/**     * 删除等级     */
+	/**
+     * 删除等级
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -91,7 +114,10 @@ class Grade_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

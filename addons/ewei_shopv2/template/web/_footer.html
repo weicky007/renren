@@ -57,7 +57,7 @@
             }
         })
 
-        {php $task_mode =intval(m('cache')->getString('task_mode', 'global'))}
+        {php $task_mode =m('common')->getSysset('task')['task_mode']}
 
         {if $task_mode==0}
             $.getJSON("{php echo webUrl('util/task')}");
@@ -119,4 +119,3 @@
 
 </body>
 </html>
-

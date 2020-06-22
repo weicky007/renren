@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +11,7 @@ class O2o_orderusers_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$years = array();
 		$current_year = date('Y');
-		$year = empty($_GPC['year']) ? $current_year : $_GPC['year'];
+		$year = (empty($_GPC['year']) ? $current_year : $_GPC['year']);
 		$i = $current_year - 10;
 
 		while ($i <= $current_year) {
@@ -95,22 +94,22 @@ class O2o_orderusers_EweiShopV2Page extends WebPage
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$params2[':uniacid'] = $_W['uniacid'];
-		$total = pdo_fetchcolumn('select  count(1) from ' . tablename('ewei_shop_store') . (' where uniacid=:uniacid  ' . $condition2), $params2);
-		$sql = 'select *  from  ' . tablename('ewei_shop_store') . (' where uniacid=:uniacid ' . $condition2 . ' ');
+		$total = pdo_fetchcolumn('select  count(1) from ' . tablename('ewei_shop_store') . ' where uniacid=:uniacid  ' . $condition2, $params2);
+		$sql = 'select *  from  ' . tablename('ewei_shop_store') . ' where uniacid=:uniacid ' . $condition2 . ' ';
 
 		if (empty($_GPC['export'])) {
-			$sql .= '  LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= '  LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params2);
 
 		foreach ($list as &$item) {
-			$sql = 'select count(a.openid) from (SELECT  openid   from  ' . tablename('ewei_shop_order') . ('    where uniacid=:uniacid and storeid = :storeid  ' . $condition . '  and isnewstore=1 GROUP BY openid) a');
+			$sql = 'select count(a.openid) from (SELECT  openid   from  ' . tablename('ewei_shop_order') . '    where uniacid=:uniacid and storeid = :storeid  ' . $condition . '  and isnewstore=1 GROUP BY openid) a';
 			$params[':storeid'] = $item['id'];
 			$params[':uniacid'] = $_W['uniacid'];
 			$usercount = pdo_fetchcolumn($sql, $params);
 			$item['usercount'] = $usercount;
-			$sql = 'SELECT  SUM(price)   from     ' . tablename('ewei_shop_order') . ('  where   uniacid=:uniacid and storeid = :storeid ' . $condition . '  and isnewstore=1 ');
+			$sql = 'SELECT  SUM(price)   from     ' . tablename('ewei_shop_order') . '  where   uniacid=:uniacid and storeid = :storeid ' . $condition . '  and isnewstore=1 ';
 			$allprice = pdo_fetchcolumn($sql, $params);
 			if (!empty($usercount) && !empty($allprice)) {
 				$item['avguserprice'] = $allprice / $usercount;

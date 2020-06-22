@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,7 +19,7 @@ class ArticleProcessor extends PluginProcessor
 		$content = $obj->message['content'];
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-		if ($msgtype == 'text' || $event == 'click') {
+		if (($msgtype == 'text') || ($event == 'click')) {
 			$page = pdo_fetch('select * from ' . tablename('ewei_shop_article') . ' where article_keyword2=:keyword2 and article_state=1 and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':keyword2' => $content));
 
 			if (empty($page)) {
@@ -33,7 +32,7 @@ class ArticleProcessor extends PluginProcessor
 			$r_img = tomedia($r_img);
 			$news = array(
 				array('title' => $r_title, 'picurl' => $r_img, 'description' => $r_desc, 'url' => $_W['siteroot'] . 'app/index.php?i=' . $_W['uniacid'] . '&c=entry&m=ewei_shopv2&do=mobile&r=article&aid=' . $page['id'])
-			);
+				);
 			return $obj->respNews($news);
 		}
 

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +24,8 @@ class Dispatch_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_dispatch') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_dispatch') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_dispatch') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_dispatch') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -83,7 +82,7 @@ class Dispatch_EweiShopV2Page extends WebPage
 				$_GPC['default_secondnum'] = 1;
 			}
 
-			$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'displayorder' => intval($_GPC['displayorder']), 'dispatchtype' => intval($_GPC['dispatchtype']), 'isdefault' => intval($_GPC['isdefault']), 'dispatchname' => trim($_GPC['dispatchname']), 'express' => trim($_GPC['express']), 'calculatetype' => trim($_GPC['calculatetype']), 'firstprice' => trim($_GPC['default_firstprice']), 'firstweight' => trim(max(0, $_GPC['default_firstweight'])), 'secondprice' => trim($_GPC['default_secondprice']), 'secondweight' => intval($_GPC['default_secondweight']) <= 0 ? 1000 : trim($_GPC['default_secondweight']), 'firstnumprice' => trim($_GPC['default_firstnumprice']), 'firstnum' => $_GPC['default_firstnum'], 'secondnumprice' => trim($_GPC['default_secondnumprice']), 'secondnum' => $_GPC['default_secondnum'], 'freeprice' => $_GPC['default_freeprice'], 'areas' => iserializer($areas), 'nodispatchareas' => !empty($_GPC['nodispatchareas']) ? iserializer($_GPC['nodispatchareas']) : '', 'nodispatchareas_code' => !empty($_GPC['nodispatchareas_code']) ? iserializer($_GPC['nodispatchareas_code']) : '', 'isdispatcharea' => intval($_GPC['isdispatcharea']), 'enabled' => intval($_GPC['enabled']));
+			$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'displayorder' => intval($_GPC['displayorder']), 'dispatchtype' => intval($_GPC['dispatchtype']), 'isdefault' => intval($_GPC['isdefault']), 'dispatchname' => trim($_GPC['dispatchname']), 'express' => trim($_GPC['express']), 'calculatetype' => trim($_GPC['calculatetype']), 'firstprice' => trim($_GPC['default_firstprice']), 'firstweight' => trim(max(0, $_GPC['default_firstweight'])), 'secondprice' => trim($_GPC['default_secondprice']), 'secondweight' => intval($_GPC['default_secondweight']) <= 0 ? 1000 : trim($_GPC['default_secondweight']), 'firstnumprice' => trim($_GPC['default_firstnumprice']), 'firstnum' => $_GPC['default_firstnum'], 'secondnumprice' => trim($_GPC['default_secondnumprice']), 'secondnum' => $_GPC['default_secondnum'], 'freeprice' => $_GPC['default_freeprice'], 'areas' => iserializer($areas), 'nodispatchareas' => iserializer($_GPC['nodispatchareas']), 'nodispatchareas_code' => iserializer($_GPC['nodispatchareas_code']), 'isdispatcharea' => intval($_GPC['isdispatcharea']), 'enabled' => intval($_GPC['enabled']));
 
 			if ($data['isdefault']) {
 				pdo_update('ewei_shop_dispatch', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'merchid' => 0));
@@ -102,7 +101,7 @@ class Dispatch_EweiShopV2Page extends WebPage
 			show_json(1, array('url' => webUrl('shop/dispatch', array('op' => 'display'))));
 		}
 
-		$dispatch = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id = \'' . $id . '\' and merchid=0 and uniacid = \'' . $_W['uniacid'] . '\''));
+		$dispatch = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id = \'' . $id . '\' and merchid=0 and uniacid = \'' . $_W['uniacid'] . '\'');
 
 		if (!empty($dispatch)) {
 			$dispatch_areas = unserialize($dispatch['areas']);
@@ -125,10 +124,10 @@ class Dispatch_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_dispatch', array('id' => $item['id']));
@@ -145,14 +144,14 @@ class Dispatch_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_dispatch', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('shop.dispatch.edit', '修改配送方式状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['dispatchname'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '显示' : '隐藏');
+			plog('shop.dispatch.edit', ('修改配送方式状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['dispatchname'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -165,18 +164,18 @@ class Dispatch_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
 		if ($_GPC['isdefault'] == 1) {
 			pdo_update('ewei_shop_dispatch', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'merchid' => 0));
 		}
 
-		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_dispatch', array('isdefault' => intval($_GPC['isdefault'])), array('id' => $item['id']));
-			plog('shop.dispatch.edit', '设为默认配送方式<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['dispatchname'] . '<br/>状态: ' . $_GPC['isdefault'] == 1 ? '是' : '否');
+			plog('shop.dispatch.edit', ('设为默认配送方式<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['dispatchname'] . '<br/>状态: ' . $_GPC['isdefault']) == 1 ? '是' : '否');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -188,7 +187,7 @@ class Dispatch_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,dispatchname FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_dispatch', array('displayorder' => $displayorder), array('id' => $id));

@@ -71,18 +71,17 @@
                     <label class="col-lg control-label must">发送数量</label>
                     <div class="col-sm-9 col-xs-12">
                         {ife 'sale.coupon' $item}
-                        <div class="input-group">
-                            <!--<select class='form-control '  id="sendnum" name="sendnum" >
+                        <div class="input-group col-lg">
+                            <select class='form-control '  id="sendnum" name="sendnum" >
                                 <option value="1" {if $item['sendnum']=='1'} selected{/if}>1</option>
                                 <option value="2" {if $item['sendnum']=='2'} selected{/if}>2</option>
                                 <option value="3" {if $item['sendnum']=='3'} selected{/if}>3</option>
                                 <option value="4" {if $item['sendnum']=='4'} selected{/if}>4</option>
                                 <option value="5" {if $item['sendnum']=='5'} selected{/if}>5</option>
-                            </select>-->
-                            <input type='text' class='form-control' id="sendnum" name="sendnum"  value="{$item['sendnum']}" />
+                            </select>
                             <span class="input-group-addon">张</span>
                         </div>
-                        <span class="help-block image-block" style="display: block;">当用户购买此商品时,赠送几张指定的优惠券，最高不能超过50张</span>
+                        <span class="help-block image-block" style="display: block;">当用户购买此商品时,赠送几张指定的优惠券</span>
                         {else}
                         <div class='form-control-static'>{$item['sendnum']}</div>
                         {/if}

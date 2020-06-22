@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,9 +15,9 @@ return array(
 			array('title' => '京东助手', 'route' => 'jingdong'),
 			array('title' => '1688助手', 'route' => 'one688'),
 			array('title' => '淘宝CSV上传', 'route' => 'taobaocsv'),
-			array('title' => '淘宝助手客户端', 'route' => 'set')
+			array('title' => '淘宝助手客户', 'route' => 'set')
+			)
 		)
-	)
-);
+	);
 
 ?>

@@ -281,15 +281,6 @@ class Index_EweiShopV2Page extends MobilePage
 
 		show_json(0, $ret['message']);
 	}
-
-	public function agr()
-	{
-		global $_W;
-		$wapset = $_W['shopset']['wap'];
-		$agr = $wapset['agr'];
-		$agr_content = htmlspecialchars_decode($wapset['content']);
-		include $this->template('agr', NULL, true);
-	}
 }
 
 ?>

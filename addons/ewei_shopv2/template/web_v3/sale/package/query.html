@@ -1,22 +1,19 @@
+<script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
+<script src="{php echo EWEI_SHOPV2_LOCAL}static/js/require.js"></script>
+<script src="./resource/js/app/config.js"></script>
 <style type="text/css">
     .popover{z-index:10000;}
-    .alert{margin:10px 0;padding:10px;}
-    .content .table{border-collapse:collapse;border:none;}
-    .content .table tr{border-collapse: collapse;border-left:1px solid #ededed;border-right:1px solid #ededed;}
-    .content .table > tbody > tr > td{border-top:1px solid #ededed;border-left:0;border-right:0;}
-    .modal .pagination{margin:10px 0;}
-    .table{margin-bottom:0;}
-    .we7-modal-dialog .modal-body, .modal-dialog .modal-body{padding:10px 20px;}
+    .alert{margin-top:10px;}
 </style>
 <div class="alert alert-danger">
-    <p>虚拟商品、限时购商品、促销商品、核销商品、会员权限商品、多商户商品，以及参加积分商城/拼团的商品不能参加优惠套餐活动。</p>
+    <p class="alert-link">以下商品不能参加优惠套餐活动：</p>
+    <p>虚拟商品、限时购商品、促销商品、核销商品、会员权限商品、多商户商品；以及参加积分商城/拼团的商品。</p>
 </div>
-<div class="" style="height:460px;">
-    <table class="table" border="1" cellspacing="0" width="100%" cellpadding="0">
-        <thead style="background: #f7f7f7;">
+<div style='max-height:500px;overflow:auto;min-width:850px;'>
+    <table class="table">
+        <thead>
         <tr>
-            <td style="width:50px;" rowspan="2">商品</td>
-            <td></td>
+            <td>商品</td>
             <td style="width:100px;text-align: center;">商品价格</td>
             <td style="width:100px;text-align: center;">库存</td>
             <th style="width:100px;text-align: center;">操作</th>
@@ -26,10 +23,7 @@
         {loop $ds $row}
         <tr>
             <td>
-                <img src="{php echo tomedia($row['thumb'])}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc;' />
-            </td>
-            <td>
-                {$row['title']}{if !empty($row['merchname'])}<br /><span class="text-info">[{$row['merchname']}]</span>{/if}
+                <img src="{php echo tomedia($row['thumb'])}" style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['title']}
             </td>
             <td style="text-align: right;">&yen;{$row['marketprice']}</td>
             <td style="text-align: right;">{$row['total']}</td>
@@ -56,7 +50,7 @@
         {/loop}
         {if count($ds)<=0}
         <tr>
-            <td colspan='5' style="text-align: center;">未找到商品</td>
+            <td colspan='4' align='center'>未找到商品</td>
         </tr>
         {/if}
         </tbody>
@@ -86,7 +80,7 @@
         $.ajax({
             url:"{php echo webUrl('sale/package/query')}",
             type:'get',
-            data:{keyword:keyword,page:pindex,psize:10},
+            data:{title:keyword,page:pindex,psize:10},
             async : false, //默认为true 异步
             success:function(data){
                 $(".content").html(data);

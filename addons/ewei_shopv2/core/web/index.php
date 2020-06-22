@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -102,16 +101,16 @@ class Index_EweiShopV2Page extends WebPage
 					if (strexists($submenu_item['title'], $keyword) || strexists($submenu_item['desc'], $keyword) || strexists($submenu_item['keywords'], $keyword) || strexists($submenu_item['topsubtitle'], $keyword)) {
 						if (cv($submenu_item['route'])) {
 							if (!is_array($list[$top])) {
-								$title = !empty($submenu_item['topsubtitle']) ? $submenu_item['topsubtitle'] : $submenu_item['title'];
+								$title = (!empty($submenu_item['topsubtitle']) ? $submenu_item['topsubtitle'] : $submenu_item['title']);
 
 								if (strexists($title, $keyword)) {
 									$title = str_replace($keyword, '<b>' . $keyword . '</b>', $title);
 								}
 
 								$list[$top] = array(
-									'title' => $title,
-									'items' => array()
-								);
+	'title' => $title,
+	'items' => array()
+	);
 							}
 
 							if (strexists($submenu_item['title'], $keyword)) {
@@ -127,12 +126,6 @@ class Index_EweiShopV2Page extends WebPage
 					}
 				}
 			}
-
-			array_walk($list['shop']['items'], function(&$v) {
-				if ($v['url'] == 'http://slf.clubmall.cn/web/index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=shop.diypage') {
-					$v['url'] = 'http://slf.clubmall.cn/web/index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=diypage';
-				}
-			});
 
 			if (empty($history)) {
 				$history_new = array($keyword);
@@ -200,6 +193,7 @@ class Index_EweiShopV2Page extends WebPage
 		}
 
 		load()->model('cache');
+		cache_clean();
 		cache_build_template();
 		header('location: ' . webUrl($route, $params));
 		exit();

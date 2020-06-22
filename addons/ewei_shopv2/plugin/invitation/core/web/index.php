@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -26,11 +25,11 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$params[':type'] = intval($_GPC['type']);
 		}
 
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_invitation') . (' where 1 ' . $condition . ' '), $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_invitation') . ' where 1 ' . $condition . ' ', $params);
 		$list = array();
 
 		if (0 < $total) {
-			$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_invitation') . (' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+			$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_invitation') . ' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		}
 
 		$pager = pagination2($total, $pindex, $psize);
@@ -113,10 +112,10 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$invitations = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_invitation') . (' WHERE id in ( ' . $id . ' ) and uniacid=') . $_W['uniacid']);
+		$invitations = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_invitation') . ' WHERE id in ( ' . $id . ' ) and uniacid=' . $_W['uniacid']);
 
 		foreach ($invitations as $invitation) {
 			pdo_delete('ewei_shop_invitation', array('id' => $invitation['id'], 'uniacid' => $_W['uniacid']));
@@ -144,7 +143,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 			if ($type == 'status') {
 				$typestr = '状态';
-				$statusstr = $value == 1 ? '显示' : '关闭';
+				$statusstr = ($value == 1 ? '显示' : '关闭');
 			}
 
 			$property_update = pdo_update('ewei_shop_invitation', array($type => $value), array('id' => $id, 'uniacid' => $_W['uniacid']));

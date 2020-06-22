@@ -37,7 +37,7 @@
             <label class="radio radio-inline"><input type="radio" value="0" name="da" class="change" data-show="" data-hide=".signdate"> 自然月</label>
             <label class="radio radio-inline"><input type="radio" value="1" name="da" class="change" data-show=".signdate" data-hide="" checked=""> 指定日期</label>
             <span class="signdate">
-                {php echo tpl_form_field_eweishop_daterange('saletime', array('starttime'=>date('Y-m-d', $item['timestart']),'endtime'=>date('Y-m-d', $item['timeend'])),false);}
+                {php echo tpl_form_field_daterange('saletime', array('starttime'=>date('Y-m-d', $item['timestart']),'endtime'=>date('Y-m-d', $item['timeend'])),false);}
             </span>
             <div class="help-block">自然月周记为当前月的天数，指定日期则可选择指定日期范围内</div>
         </div>

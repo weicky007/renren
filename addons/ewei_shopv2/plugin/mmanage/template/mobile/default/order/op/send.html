@@ -33,26 +33,23 @@
             <div class="fui-cell">
                 <div class="fui-cell-label">快递公司</div>
                 <div class="fui-cell-info">
-                    <select class="fui-input" id="express" {if $item['city_express_state']==1}disabled="disabled"{/if} >
-                        <option value="">{if $item['city_express_state']==0}其他快递{else}同城配送{/if}</option>
+                    <select class="fui-input" id="express">
+                        <option value="">其他快递</option>
                         {loop $express_list $express_item}
                             <option value="{$express_item['express']}" {if $item['express']==$express_item['express']}selected="selected"{/if}>{$express_item['name']}</option>
                         {/loop}
                     </select>
                 </div>
             </div>
-            {if $item['city_express_state']==0}
             <div class="fui-cell">
                 <div class="fui-cell-label">快递单号</div>
                 <div class="fui-cell-info">
                     <input type="text" placeholder="请输入快递单号" class="fui-input" value="{$item['expresssn']}" id="expresssn">
-                    <!--<input type="text" placeholder="请输入快递单号" class="fui-input" value="{$item['expresssn']}" id="expresssn" {if $item['city_express_state']==1}disabled="disabled"{/if}>-->
                 </div>
                 {if is_weixin()}
                     <div class="fui-cell-remark " id="btn-qrcode">扫描条形码</div>
                 {/if}
             </div>
-            {/if}
         </div>
 
         {if $order_goods}
@@ -60,7 +57,7 @@
                 <div class="fui-cell ">
                     <div class="fui-cell-label ">分包裹发货</div>
                     <div class="fui-cell-info">
-                        <input type="checkbox" class="fui-switch fui-switch-small fui-switch-success pull-right toggle" data-toggle-check="true" data-show="parcel" id="sendtype" {if $item['sendtype']>0}checked="checked" disabled="disabled"{/if} {if $item['city_express_state']==1}disabled="disabled"{/if} />
+                        <input type="checkbox" class="fui-switch fui-switch-small fui-switch-success pull-right toggle" data-toggle-check="true" data-show="parcel" id="sendtype" {if $item['sendtype']>0}checked="checked" disabled="disabled"{/if}  />
                     </div>
                 </div>
             </div>

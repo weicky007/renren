@@ -34,51 +34,46 @@
 		<input type="hidden" name="do" value="web" />
 		<input type="hidden" name="r" value="{$_GPC['r']}" />
 		<input type="hidden" name="type" value="{$type}" />
-		<div class="page-toolbar">
-			<div class="input-group">
-				<span class="input-group-select">
-					<select name='searchtime'  class='form-control'   style="width:100px;padding:0 5px;"  id="searchtime">
-						<option value=''>不按时间</option>
-						<option value='create' {if $_GPC['searchtime']=='create'}selected{/if}>参与时间</option>
-						{if $type == 5 || $type == 6 || $type == 7}
-						<option value='verify' {if $_GPC['searchtime']=='verify'}selected{/if}>核销时间</option>
-						{/if}
-					</select>
-				</span>
-				<span class="input-group-select">
-					{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d H:i', $starttime),'endtime'=>date('Y-m-d H:i', $endtime)),true);}
-				</span>
-				<div class="input-group-select">
-					<select name='status' class="form-control input-sm select-md" style="width:100px;">
-						<option value='' {if $_GPC['status']==''}selected{/if}>状态</option>
-						{if empty($type)}
-						<option value='2' {if $_GPC['status']=='2'}selected{/if}>未兑换</option>
-						<option value='3' {if $_GPC['status']=='3'}selected{/if} >已兑换</option>
-						{else}
-						<option value='1' {if $_GPC['status']=='1'}selected{/if}>未中奖</option>
-						<option value='2' {if $_GPC['status']=='2'}selected{/if} >已中奖</option>
-						<option value='3' {if $_GPC['status']=='3'}selected{/if} >已兑换</option>
-						{/if}
-					</select>
+		<div class="page-toolbar m-b-sm m-t-sm">
+			<div class="col-sm-5">
+				<div class='input-group input-group-sm'>
+					{php echo tpl_daterange('time', array('sm'=>true,'placeholder'=>'参与时间'),true);}
 				</div>
-				<div class="input-group-select">
-					<select name='searchfield' class='form-control  input-sm select-md' style="width:120px;">
-						<option value='member' {if $_GPC['searchfield']=='member'}selected{/if}>会员信息</option>
-						<option value='address' {if $_GPC['searchfield']=='address'}selected{/if}>收件人信息</option>
-						<option value='logno' {if $_GPC['searchfield']=='logno'}selected{/if}>活动编号</option>
-						<option value='eno' {if $_GPC['searchfield']=='eno'}selected{/if}>兑换码</option>
-						<option value='store' {if $_GPC['searchfield']=='store'}selected{/if}>兑换门店</option>
-						<option value='express' {if $_GPC['searchfield']=='express'}selected{/if}>快递单号</option>
-						<option value='goods' {if $_GPC['searchfield']=='goods'}selected{/if}>商品名称</option>
-					</select>
+			</div>
+			<div class="col-sm-6 pull-right">
+				<div class="input-group">
+					<div class="input-group-select">
+						<select name='status' class="form-control input-sm select-md" style="width:100px;">
+							<option value='' {if $_GPC['status']==''}selected{/if}>状态</option>
+							{if empty($type)}
+							<option value='2' {if $_GPC['status']=='2'}selected{/if}>未兑换</option>
+							<option value='3' {if $_GPC['status']=='3'}selected{/if} >已兑换</option>
+							{else}
+							<option value='1' {if $_GPC['status']=='1'}selected{/if}>未中奖</option>
+							<option value='2' {if $_GPC['status']=='2'}selected{/if} >已中奖</option>
+							<option value='3' {if $_GPC['status']=='3'}selected{/if} >已兑换</option>
+							{/if}
+						</select>
+					</div>
+					<div class="input-group-select">
+						<select name='searchfield' class='form-control  input-sm select-md' style="width:120px;">
+							<option value='member' {if $_GPC['searchfield']=='member'}selected{/if}>会员信息</option>
+							<option value='address' {if $_GPC['searchfield']=='address'}selected{/if}>收件人信息</option>
+							<option value='logno' {if $_GPC['searchfield']=='logno'}selected{/if}>活动编号</option>
+							<option value='eno' {if $_GPC['searchfield']=='eno'}selected{/if}>兑换码</option>
+							<option value='store' {if $_GPC['searchfield']=='store'}selected{/if}>兑换门店</option>
+							<option value='express' {if $_GPC['searchfield']=='express'}selected{/if}>快递单号</option>
+							<option value='goods' {if $_GPC['searchfield']=='goods'}selected{/if}>商品名称</option>
+						</select>
+					</div>
+					<input type="text" class="form-control input-sm" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词" />
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="submit"> 搜索</button>
+						{ifp 'creditshop.log.export'}
+							<button type="submit" name="export" value="1" class="btn btn-success">导出</button>
+						{/if}
+					</span>
 				</div>
-				<input type="text" class="form-control input-sm" name="keyword" value="{$_GPC['keyword']}" placeholder="请输入关键词" />
-				<span class="input-group-btn">
-					<button class="btn btn-primary" type="submit"> 搜索</button>
-					{ifp 'creditshop.log.export'}
-						<button type="submit" name="export" value="1" class="btn btn-success">导出</button>
-					{/if}
-				</span>
 			</div>
 		</div>
 	</form>
@@ -102,9 +97,6 @@
 				<th style="text-align: center">会员</th>
 				<th style="text-align: center">支付</th>
 				<th style="text-align: center">消耗</th>
-				{if $type == 5 || $type == 6 || $type == 7}
-				<th style="text-align: center">核销时间</th>
-				{/if}
 				<th style="text-align: center">操作</th>
 				<th style="text-align: center">状态</th>
 			</tr>
@@ -113,7 +105,7 @@
 			{loop $list $row}
 			<tr ><td colspan='8' style='height:20px;padding:0;border:none;'>&nbsp;</td></tr>
 			<tr class='trorder' style='background:#f8f8f8'>
-					<td {if $type == 5 || $type == 6 || $type == 7}colspan="9"{else}colspan="8"{/if}>
+					<td colspan="8">
 						{$row['logno']}
 						{if $item['merchid'] == 0}
 						{ifp 'creditshop.log.remarksaler'}
@@ -187,16 +179,6 @@
 				</td>
 				<td>{if $row['credit']>0}-{php echo $row['credit']*$row['goods_num']}积分<br/>{/if} {if $row['money']>0 || $row['dispatch'] > 0} -{php echo number_format($row['money']*$row['goods_num'] + $row['dispatch'],2)}现金 {/if}
 				</td>
-				{if $type == 5 || $type == 6 || $type == 7}
-				<td>
-					{if !empty($row['verifytime'])}
-					{php echo date('Y-m-d',$row['verifytime'])}<br />
-					{php echo date('H:i:s',$row['verifytime'])}
-					{else}
-					-
-					{/if}
-				</td>
-				{/if}
 				<td>
 					{ifp 'creditshop.log.detail'}
 					<a class='text-primary' href="{php echo webUrl('creditshop/log/detail',array('id' => $row['id']));}">
@@ -205,7 +187,7 @@
 					{/if}
 					{if $row['addressid']!=0 && $row['expresssn']>0}
 					<br/>
-					<a class='text-primary' data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $row['id'],'express'=>$row['express'],'expresssn'=>$row['expresssn'], 'mobile'=>$row['address']['mobile']))}">
+					<a class='text-primary' data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $row['id'],'express'=>$row['express'],'expresssn'=>$row['expresssn']))}">
 						 物流信息
 					</a>
 					{/if}
@@ -276,15 +258,9 @@
 			{/loop}
 		</tbody>
 		<tfoot>
-		{if $type == 5 || $type == 6 || $type == 7}
-		<tr>
-			<td colspan="9" class="text-right">{$pager}</td>
-		</tr>
-		{else}
-		<tr>
-			<td colspan="8" class="text-right">{$pager}</td>
-		</tr>
-		{/if}
+			<tr>
+				<td colspan="8" class="text-right">{$pager}</td>
+			</tr>
 		</tfoot>
 	</table>
 	{else}

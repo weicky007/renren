@@ -83,7 +83,7 @@
                         {loop $option $item}
                         <tr class="multi-product-item option-item" data-id="{$item['id']}">
                             <td>{$item['title']}</td>
-                            <td>&yen;<span class="original_price_{$item['id']}">{$item['marketprice']}</span></td>
+                            <td>&yen;{$item['marketprice']}</td>
                             <td style="" class="fullprice">
                                 <input name="option_allfullbackprice_{$item['id']}" type="text" class="form-control option_allfullbackprice option_allfullbackprice_{$item['id']}" placeholder="0" value="{$item['allfullbackprice']}">
                             </td>
@@ -110,7 +110,7 @@
                         {else}
                             <tr class="multi-product-item goods-item" data-id="{$item['id']}">
                                 <td>{$goods['title']}</td>
-                                <td>&yen;<span class="original_price">{$goods['marketprice']}</span></td>
+                                <td>&yen;{$goods['marketprice']}</td>
                                 <td style="" class="fullprice">
                                     <input name="allfullbackprice{$goodsid}" type="text" class="form-control allfullbackprice allfullbackprice{$goodsid}" placeholder="0" value="{$goods['allfullbackprice']}">
                                     <input type="hidden" name="fullback_goods" data-goodsid="{$goodsid}" data-id="{$goods['id']}">
@@ -163,8 +163,6 @@
             var minratio = parseFloat(Math.abs($(this).parents(".goods-item").find("input.minfullbackratio").val())).toFixed(2);
             var day = 0;
             if(fullType==1){
-                var original_price = $(".original_price").html();
-                allprice = original_price * allratio / 100;
                 day = Math.ceil(allratio/minratio);
             }else{
                 day = Math.ceil(allprice/minprice);
@@ -187,9 +185,7 @@
             var option_minratio = parseFloat(Math.abs($("input.option_minfullbackratio_"+opid+"").val())).toFixed(2);
             var option_day = 0;
             if(fullType==1){
-                var original_prices = $(".original_price_"+opid+"").html();
-                option_allprice = original_prices * option_allratio / 100;
-                option_day = Math.ceil(option_allprice/option_minratio);
+                option_day = Math.ceil(option_allratio/option_minratio);
             }else{
                 option_day = Math.ceil(option_allprice/option_minprice);
             }
@@ -281,12 +277,12 @@
                             $("#optiontitle"+{$goodsid}+"").html("设置");
                         }else{
                             $("#optiontitle"+{$goodsid}+"").html(""+data.result.title+"...");
+                            var $objOption = $("#fullbackgoods"+{$goodsid}+"").nextAll();
+                            if($objOption){
+                                $objOption.remove();
+                            }
+                            $("#fullbackgoods"+{$goodsid}+"").after(optoinhtml)
                         }
-                        var $objOption = $("#fullbackgoods"+{$goodsid}+"").nextAll();
-                        if($objOption){
-                            $objOption.remove();
-                        }
-                        $("#fullbackgoods"+{$goodsid}+"").after(optoinhtml)
 
                     }
                 });
@@ -329,9 +325,7 @@
             var option_day = 0;
             var fullType = $(":radio[name=type]:checked").val();
             if(fullType==1){
-                var original_prices = $(".original_price_"+opid+"").html();
-                option_allprice = original_prices * option_allratio / 100;
-                option_day = Math.ceil(option_allprice/option_minratio);
+                option_day = Math.ceil(option_allratio/option_minratio);
             }else{
                 option_day = Math.ceil(option_allprice/option_minprice);
             }

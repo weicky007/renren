@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,19 +11,19 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		global $_W;
 		global $_GPC;
 		$type = intval($_GPC['type']);
-		if ($type == 0 && !cv('finance.log.recharge')) {
+		if (($type == 0) && !cv('finance.log.recharge')) {
 			$this->message('您没有查看充值记录的权限');
 		}
 		else {
-			if ($type == 1 && !cv('finance.log.withdraw')) {
+			if (($type == 1) && !cv('finance.log.withdraw')) {
 				$this->message('您没有查看提现申请的权限');
 			}
 			else {
-				if ($type == 2 && !cv('finance.credit.credit1')) {
+				if (($type == 2) && !cv('finance.credit.credit1')) {
 					$this->message('您没有查看积分明细的权限');
 				}
 				else {
-					if ($type == 3 && !cv('finance.credit.credit2')) {
+					if (($type == 3) && !cv('finance.credit.credit2')) {
 						$this->message('您没有查看余额明细的权限');
 					}
 				}
@@ -39,12 +38,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 		global $_W;
 		global $_GPC;
 		$type = intval($_GPC['type']);
-		if ($type == 0 || $type == 1) {
-			if ($type == 0 && !cv('finance.log.recharge')) {
+		if (($type == 0) || ($type == 1)) {
+			if (($type == 0) && !cv('finance.log.recharge')) {
 				show_json(0, '您没有查看充值记录的权限');
 			}
 			else {
-				if ($type == 1 && !cv('finance.log.withdraw')) {
+				if (($type == 1) && !cv('finance.log.withdraw')) {
 					show_json(0, '您没有查看提现申请的权限');
 				}
 			}
@@ -52,12 +51,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$this->log($type);
 		}
 		else {
-			if ($type == 2 || $type == 3) {
-				if ($type == 2 && !cv('finance.credit.credit1')) {
+			if (($type == 2) || ($type == 3)) {
+				if (($type == 2) && !cv('finance.credit.credit1')) {
 					show_json(0, '您没有查看积分明细的权限');
 				}
 				else {
-					if ($type == 3 && !cv('finance.credit.credit2')) {
+					if (($type == 3) && !cv('finance.credit.credit2')) {
 						show_json(0, '您没有查看余额明细的权限');
 					}
 				}
@@ -110,10 +109,10 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$condition .= ' and log.status=' . intval($_GPC['status']);
 		}
 
-		$sql = 'select log.id,m.id as mid, m.realname,m.avatar,m.weixin,log.logno,log.type,log.status,log.rechargetype,log.sendmoney,m.nickname,m.mobile,g.groupname,log.money,log.createtime,l.levelname,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype,log.apppay from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' ORDER BY log.createtime DESC ');
+		$sql = 'select log.id,m.id as mid, m.realname,m.avatar,m.weixin,log.logno,log.type,log.status,log.rechargetype,log.sendmoney,m.nickname,m.mobile,g.groupname,log.money,log.createtime,l.levelname,log.realmoney,log.deductionmoney,log.charge,log.remark,log.alipay,log.bankname,log.bankcard,log.realname as applyrealname,log.applytype,log.apppay from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
 
 		if (empty($_GPC['export'])) {
-			$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -132,7 +131,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			}
 		}
 
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid and m.uniacid= log.uniacid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' '), $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member_log') . ' log ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=log.openid and m.uniacid= log.uniacid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ', $params);
 		show_json(1, array('list' => $list, 'total' => $total, 'pagesize' => $psize));
 	}
 
@@ -140,11 +139,11 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 	{
 		global $_W;
 		global $_GPC;
-		$type = $type == 2 ? 'credit1' : 'credit2';
+		$type = ($type == 2 ? 'credit1' : 'credit2');
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$condition = ' and log.uniacid=:uniacid and (log.module=:module1  or log.module=:module2)and m.uniacid=:uniacid  and log.credittype=:credittype';
-		$params = array(':uniacid' => $_W['uniacid'], ':module1' => 'ewei_shopv2', ':module2' => 'ewei_shop', ':credittype' => $type);
+		$condition = ' and log.uniacid=:uniacid and log.module=:module and m.uniacid=:uniacid  and log.credittype=:credittype';
+		$params = array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':credittype' => $type);
 
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
@@ -164,11 +163,10 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			$condition .= ' and m.groupid=' . intval($_GPC['groupid']);
 		}
 
-		$condition .= ' and log.uid<>0';
-		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' ORDER BY log.createtime DESC ');
+		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
 
 		if (empty($_GPC['export'])) {
-			$sql .= 'LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+			$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -182,7 +180,7 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			unset($item);
 		}
 
-		$total = pdo_fetchcolumn('select count(*) from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . (' where 1 ' . $condition . ' '), $params);
+		$total = pdo_fetchcolumn('select count(*) from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ', $params);
 		show_json(1, array('list' => $list, 'total' => $total, 'pagesize' => $psize));
 	}
 
@@ -370,17 +368,12 @@ class Index_EweiShopV2Page extends MmanageMobilePage
 			show_json(0, '未找到记录!');
 		}
 
-		if ($log['status'] == -1) {
-			show_json(0, '退款申请已经处理!');
-		}
-
 		pdo_update('ewei_shop_member_log', array('status' => -1), array('id' => $id, 'uniacid' => $_W['uniacid']));
 
 		if (0 < $log['money']) {
-			m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, '余额提现退回'));
+			m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, $set['name'] . '余额提现退回'));
 		}
 
-		$member = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid =:uniacid AND openid=:openid', array(':uniacid' => $_W['uniacid'], ':openid' => $log['openid']));
 		m('notice')->sendMemberLogMessage($log['id']);
 		plog('finance.log.refuse', '拒绝余额提现 ID: ' . $log['id'] . ' 金额: ' . $log['money'] . ' <br/>会员信息:  ID: ' . $member['id'] . ' / ' . $member['openid'] . '/' . $member['nickname'] . '/' . $member['realname'] . '/' . $member['mobile']);
 		show_json(1);

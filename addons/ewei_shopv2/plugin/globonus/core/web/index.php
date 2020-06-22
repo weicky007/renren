@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -44,32 +43,16 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 
 		if ($_W['ispost']) {
-			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
 			m('common')->updatePluginset(array(
-				'globonus' => array('tm' => $data)
-			));
+	'globonus' => array('tm' => $data)
+	));
 			plog('globonus.notice.edit', '修改通知设置');
 			show_json(1);
 		}
 
 		$data = m('common')->getPluginset('globonus');
-		$template_lists = pdo_fetchall('SELECT id,title,typecode FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
-		$templatetype_list = pdo_fetchall('SELECT * FROM  ' . tablename('ewei_shop_member_message_template_type'));
-		$template_group = array();
-
-		foreach ($templatetype_list as $type) {
-			$templates = array();
-
-			foreach ($template_lists as $template) {
-				if ($template['typecode'] == $type['typecode']) {
-					$templates[] = $template;
-				}
-			}
-
-			$template_group[$type['typecode']] = $templates;
-		}
-
-		$template_list = $template_group;
+		$template_list = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
 		include $this->template();
 	}
 
@@ -79,7 +62,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 
 		if ($_W['ispost']) {
-			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
+			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
 
 			if (!empty($data['withdrawcharge'])) {
 				$data['withdrawcharge'] = trim($data['withdrawcharge']);
@@ -95,7 +78,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$data['texts'] = is_array($_GPC['texts']) ? $_GPC['texts'] : array();
 			m('common')->updatePluginset(array('globonus' => $data));
 			m('cache')->set('template_' . $this->pluginname, $data['style']);
-			$selfbuy = $data['selfbuy'] ? '开启' : '关闭';
+			$selfbuy = ($data['selfbuy'] ? '开启' : '关闭');
 
 			switch ($data['become']) {
 			case '0':
@@ -125,7 +108,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($handle = opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if ($file != '..' && $file != '.') {
+				if (($file != '..') && ($file != '.')) {
 					if (is_dir($dir . '/' . $file)) {
 						$styles[] = $file;
 					}

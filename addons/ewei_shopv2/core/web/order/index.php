@@ -63,14 +63,12 @@ class Index_EweiShopV2Page extends WebPage
 		if ($day != 0) {
 			if ($day == 30) {
 				$yest = date('Y-m-d');
-				$nowday = substr(date('Y-m-d', time()), -2);
-				$nowday = (int) $nowday;
-				$createtime1 = strtotime(date('Y-m-d', strtotime('-' . $nowday . 'day')));
+				$createtime1 = strtotime(date('Y-m-d', strtotime('-30 day')));
 				$createtime2 = strtotime($yest . ' 23:59:59');
 			}
 			else if ($day == 7) {
 				$yest = date('Y-m-d');
-				$createtime1 = strtotime(date('Y-m-d', strtotime('-7 day')));
+				$createtime1 = strtotime(date('Y-m-d', strtotime('-6 day')));
 				$createtime2 = strtotime($yest . ' 23:59:59');
 			}
 			else {
@@ -170,10 +168,6 @@ class Index_EweiShopV2Page extends WebPage
 	{
 		global $_GPC;
 		$day = (int) $_GPC['day'];
-
-		if ($day == 30) {
-		}
-
 		$order = $this->selectOrderPrice($day);
 		unset($order['fetchall']);
 		$allorder = $this->selectOrderPrice($day, true);

@@ -13,17 +13,17 @@ define('SOCKET_SERVER_IP', 'localhost');
 // 设置服务端端口
 define('SOCKET_SERVER_PORT', '9501');
 
-// 设置是否启用SSL，如果站点用了https的话，false改成true，并配置下面的key文件和pem文件路径
-define('SOCKET_SERVER_SSL', false);
+// 设置是否启用SSL
+define('SOCKET_SERVER_SSL', true);
 
 // 设置SSL KEY文件路径
-define('SOCKET_SERVER_SSL_KEY_FILE', '');
+define('SOCKET_SERVER_SSL_KEY_FILE', '/www/server/panel/vhost/cert/mb.sstjkkj.com/privkey.pem');
 
 // 设置SSL CERT文件路径
-define('SOCKET_SERVER_SSL_CERT_FILE', '');
+define('SOCKET_SERVER_SSL_CERT_FILE', '/www/server/panel/vhost/cert/mb.sstjkkj.com/fullchain.pem');
 
 // 设置启动的worker进程数
 define('SOCKET_SERVER_WORKNUM', 8);
 
-// 设置你的域名，如果用了https，请填写配置了https的那个域名
-define('SOCKET_CLIENT_IP', '域名');
+// 设置客户端请求IP
+define('SOCKET_CLIENT_IP', 'mb.sstjkkj.com');

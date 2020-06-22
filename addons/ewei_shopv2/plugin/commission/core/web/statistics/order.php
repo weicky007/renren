@@ -639,7 +639,7 @@ class Order_EweiShopV2Page extends WebPage
 				array('title' => '商品数量', 'field' => 'goods_total', 'width' => 12),
 				array('title' => '商品单价(折扣前)', 'field' => 'goods_price1', 'width' => 12),
 				array('title' => '商品单价(折扣后)', 'field' => 'goods_price2', 'width' => 12),
-				array('title' => '商品价格(折扣前)', 'field' => 'goods_rprice1', 'width' => 12),
+				array('title' => '商品价格(折扣后)', 'field' => 'goods_rprice1', 'width' => 12),
 				array('title' => '商品价格(折扣后)', 'field' => 'goods_rprice2', 'width' => 12),
 				array('title' => '支付方式', 'field' => 'paytype', 'width' => 12),
 				array('title' => '配送方式', 'field' => 'dispatchname', 'width' => 12),
@@ -661,10 +661,7 @@ class Order_EweiShopV2Page extends WebPage
 				array('title' => '快递单号', 'field' => 'expresssn', 'width' => 24),
 				array('title' => '订单备注', 'field' => 'remark', 'width' => 36),
 				array('title' => '核销员', 'field' => 'salerinfo', 'width' => 24),
-				array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36),
-				array('title' => '一级佣金', 'field' => 'commission1', 'width' => 24),
-				array('title' => '二级佣金', 'field' => 'commission2', 'width' => 24),
-				array('title' => '三级佣金', 'field' => 'commission3', 'width' => 24)
+				array('title' => '核销门店', 'field' => 'storeinfo', 'width' => 36)
 			);
 
 			if (p('diyform')) {
@@ -672,6 +669,11 @@ class Order_EweiShopV2Page extends WebPage
 				$columns[] = array('title' => '商品自定义信息', 'field' => 'goods_diyformdata', 'width' => 36);
 				$columns[] = array('title' => '分销商会员自定义信息', 'field' => 'member_diyformdata', 'width' => 36);
 				$columns[] = array('title' => '分销商申请自定义信息', 'field' => 'agent_diyformdata', 'width' => 36);
+			}
+
+			if (!empty($agentid) && 0 < $level) {
+				$columns[] = array('title' => '分销级别', 'field' => 'level', 'width' => 24);
+				$columns[] = array('title' => '分销佣金', 'field' => 'commission', 'width' => 24);
 			}
 
 			foreach ($list as &$row) {
@@ -741,9 +743,6 @@ class Order_EweiShopV2Page extends WebPage
 				}
 
 				$row['agent_id'] = $row['m1']['id'];
-				$row['realname'] = str_replace('=', '', $row['realname']);
-				$row['nickname'] = str_replace('=', '', $row['nickname']);
-				$row['nickname'] = str_replace('"', '""', $row['nickname']);
 				$row['agent_nickname'] = str_replace('=', '', $row['m1']['nickname']);
 				$row['agent_realname'] = str_replace('=', '', $row['m1']['realname']);
 				$row['agent_mobile'] = $row['m1']['mobile'];
@@ -823,19 +822,6 @@ class Order_EweiShopV2Page extends WebPage
 					$r['goods_rprice1'] = $g['price'];
 					$r['goods_rprice2'] = $g['realprice'];
 					$r['goods_diyformdata'] = $g['goods_diyformdata'];
-
-					if ($r['commission3'] == '-1') {
-						$r['commission3'] = '';
-					}
-
-					if ($r['commission2'] == '-1') {
-						$r['commission2'] = '';
-					}
-
-					if ($r['commission1'] == '-1') {
-						$r['commission1'] = '';
-					}
-
 					$exportlist[] = $r;
 				}
 			}

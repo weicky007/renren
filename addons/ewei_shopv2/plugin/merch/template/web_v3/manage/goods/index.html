@@ -237,27 +237,28 @@
                 data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'new','data'=>0,'id'=>$item['id']))}'
                 {/if}
                 >新品</a>
-                <!--<a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'-->
-                <!--{ifp 'goods.property'}-->
-                <!--data-toggle='ajaxSwitch'-->
-                <!--data-switch-value='{$item['ishot']}'-->
-                <!--data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'hot', 'data'=>1,'id'=>$item['id']))}'-->
-                <!--data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'hot','data'=>0,'id'=>$item['id']))}'-->
-                <!--{/if}-->
-                <!--&gt;热卖</a>-->
-                <!--<a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'-->
-                <!--{ifp 'goods.property'}-->
-                <!--data-toggle='ajaxSwitch'-->
-                <!--data-switch-value='{$item['isrecommand']}'-->
-                <!--data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'recommand', 'data'=>1,'id'=>$item['id']))}'-->
-                <!--data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'recommand','data'=>0,'id'=>$item['id']))}'-->
-                <!--{/if}-->
-                <!--&gt;推荐</a>-->
+                <a class='{if $item['ishot']==1}text-danger{else}text-default{/if}'
+                {ifp 'goods.property'}
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$item['ishot']}'
+                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'hot', 'data'=>1,'id'=>$item['id']))}'
+                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'hot','data'=>0,'id'=>$item['id']))}'
+                {/if}
+                >热卖</a>
+                <a class='{if $item['isrecommand']==1}text-danger{else}text-default{/if}'
+                {ifp 'goods.property'}
+                data-toggle='ajaxSwitch'
+                data-switch-value='{$item['isrecommand']}'
+                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'recommand', 'data'=>1,'id'=>$item['id']))}'
+                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'recommand','data'=>0,'id'=>$item['id']))}'
+                {/if}
+                >推荐</a>
                 <a class='{if $item['isdiscount']==1}text-danger{else}text-default{/if}'
                 {ifp 'goods.property'}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$item['isdiscount']}'
-
+                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'discount', 'data'=>1,'id'=>$item['id']))}'
+                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'discount','data'=>0,'id'=>$item['id']))}'
                 {/if}
                 >促销</a>
                 <a class='{if $item['issendfree']==1}text-danger{else}text-default{/if}'
@@ -272,7 +273,8 @@
                 {ifp 'goods.property'}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$item['istime']}'
-
+                data-switch-value0='0||text-default|{php echo webUrl('goods/property',array('type'=>'time', 'data'=>1,'id'=>$item['id']))}'
+                data-switch-value1='1||text-danger|{php echo webUrl('goods/property',array('type'=>'time','data'=>0,'id'=>$item['id']))}'
                 {/if}
                 >限时卖</a>
                 <a class='{if $item['isnodiscount']==1}text-danger{else}text-default{/if}'

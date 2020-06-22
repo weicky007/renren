@@ -1,5 +1,5 @@
 <?php
-
+/*珍惜资源 请勿转卖*/
 class System_EweiShopV2Model
 {
 	private $merch = false;
@@ -1070,8 +1070,6 @@ class System_EweiShopV2Model
 					array('title' => '应用信息'),
 					array('title' => '组件信息', 'route' => 'coms'),
 					array('title' => '公众号权限', 'route' => 'perm'),
-					array('title' => '站点小程序', 'route' => 'wxapp', 'route' => 'wxapp', 'isplugin' => 'app'),
-					array('title' => '应用中心', 'route' => 'apps'),
 					array(
 						'title'    => '应用授权管理',
 						'isplugin' => 'grant',
@@ -1171,7 +1169,7 @@ class System_EweiShopV2Model
 				'icon'     => 'iconfont-shouquan',
 				'items'    => array(
 					array('title' => '授权管理'),
-					array('title' => '系统修复', 'route' => 'upgrade'),
+					array('title' => '系统升级', 'route' => 'upgrade'),
 					array('title' => '历史日志', 'route' => 'upgrade.log')
 				)
 			)

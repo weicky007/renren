@@ -1,7 +1,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">随机立减活动时间</label>
                 <div class="col-sm-4 col-xs-6">
-                    {php echo tpl_form_field_eweishop_daterange('randtime', array('starttime'=>date('Y-m-d H:i', !empty($item['randtime']['start'])?$item['randtime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['randtime']['end'])?$item['randtime']['end']:time())),true);}
+                    {php echo tpl_form_field_daterange('randtime', array('starttime'=>date('Y-m-d H:i', !empty($item['randtime']['start'])?$item['randtime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['randtime']['end'])?$item['randtime']['end']:time())),true);}
                 </div>
             </div>
 

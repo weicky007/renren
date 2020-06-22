@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,11 +8,9 @@ class Backup_EweiShopV2Page extends SystemPage
 	protected function table2sql($table)
 	{
 		global $db;
-		$tabledump = 'DROP TABLE IF EXISTS ' . $table . ';
-';
+		$tabledump = 'DROP TABLE IF EXISTS ' . $table . ";\r\n";
 		$createtable = pdo_fetch('SHOW CREATE TABLE ' . $table);
-		$tabledump .= $createtable['Create Table'] . ';
-';
+		$tabledump .= $createtable['Create Table'] . ";\r\n";
 		$rows = pdo_fetchall('SELECT * FROM ' . $table);
 
 		foreach ($rows as $row) {
@@ -25,8 +22,7 @@ class Backup_EweiShopV2Page extends SystemPage
 				$comma = ',';
 			}
 
-			$tabledump .= ');
-';
+			$tabledump .= ");\r\n";
 		}
 
 		return $tabledump;
@@ -45,9 +41,7 @@ class Backup_EweiShopV2Page extends SystemPage
 			foreach ($tables as $k => $t) {
 				$table = array_values($t);
 				$tablename = $table[0];
-				$sqls .= $this->table2sql($tablename) . '
-
-';
+				$sqls .= $this->table2sql($tablename) . "\r\n\r\n";
 			}
 
 			$filename = 'ewei_shop_data_' . date('Y_m_d_H_i_s') . '.sql';

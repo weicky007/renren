@@ -14,11 +14,11 @@
         <div class="ui-step-title" >买家下单</div>
         <div class="ui-step-number" >1</div>
         <div class="ui-step-meta" >{if 0<=$item['status']}{php echo date('Y-m-d',$item['createtime'])}<br/>{php echo date('H:i:s',$item['createtime'])}{/if}</div>
-        </li>
-        <li {if !empty($item['paytime']) || $item['paytype']==3}class="ui-step-done"{/if}>
-        <div class="ui-step-title">{if $item['paytype']==3}货到付款{else}买家付款{/if}</div>
+        </li {if 1<=$item['status']}class="ui-step-done"{/if}>
+        <li {if !empty($item['paytime'])}class="ui-step-done"{/if}>
+        <div class="ui-step-title">买家付款</div>
         <div class="ui-step-number">2</div>
-        <div class="ui-step-meta">{if $item['paytype']==3}{php $item['paytime'] = $item['cashtime']}{/if}{if 1<=$item['status'] || $item['paytype']==3}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
+        <div class="ui-step-meta">{if 1<=$item['status']}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
         </li>
         <li {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}class="ui-step-done"{/if}>
         <div class="ui-step-title">
@@ -450,7 +450,7 @@
                                 </tr>
                                 <tr>
                                     <td style='width:80px'>自提点：</td>
-                                    <td style='word-break: break-all;white-space: normal'>{php echo html_entity_decode($user['address'])},  {$user['realname']}, {$user['mobile']}</td>
+                                    <td style='word-break: break-all;white-space: normal'>{$user['address']},  {$user['realname']}, {$user['mobile']}</td>
                                 </tr>
                             {/if}
                         {/if}
@@ -559,7 +559,7 @@
                             {if $item['status'] == 2 || ($item['status']==1 && $item['sendtype'] > 0)}商家已发货，等待买家收货并交易完成{/if}
                             {if $item['status'] == -1}
                             {if !empty($refund) && $refund['status']==1}
-                            <span class="label label-default">已维权</span> {if !empty($refund['refundtime'])}维权时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
+                            <span class="label label-default">已退款</span> {if !empty($refund['refundtime'])}退款时间: {php echo date('Y-m-d H:i:s',$refund['refundtime'])}{/if}
                             {/if}
                             {/if}
                         </div>
@@ -602,22 +602,22 @@
                     <label class="col-sm-3 control-label"></label>
                     <div class="col-sm-9 col-xs-12">
                         <p class="form-control-static ops">
-                            {if $item['merchid'] == 0}
-                                {php $detial_flag = 1}{template 'order/ops'}
+                            {if $item['merchid'] == 0 && $item['ismerch'] == 0}
+                            {php $detial_flag = 1}{template 'order/ops'}
                             &nbsp;&nbsp;
-                                {if $item['status'] ==0 && $item['ispackage']==0}
-                                    {ifp 'order.op.changeprice'}
-                                    <a class='op'  data-toggle='ajaxModal' href="{php echo webUrl('order/op/changeprice',array('id'=>$item['id']))}">订单改价</a>&nbsp;&nbsp;
-                                    {/if}
-                                {/if}
-                                {if !empty($item['agentid'])}
-                                    {ifp 'commission.changecommission'}
-                                    <a data-toggle="ajaxModal"  href="{php echo webUrl('commission/apply/changecommission', array('id' => $item['id']))}">修改佣金</a>&nbsp;&nbsp;
-                                    {/if}
-                                {/if}
-                                {ifp 'order.op.remarksaler'}
-                                <a  data-toggle="ajaxModal" href="{php echo webUrl('order/op/remarksaler', array('id' => $item['id']))}" {if !empty($item['remarksaler'])}style='color:red'{/if} >备注</a>
-                                {/if}
+                            {if $item['status'] ==0 && $item['ispackage']==0}
+                            {ifp 'order.op.changeprice'}
+                            <a class='op'  data-toggle='ajaxModal' href="{php echo webUrl('order/op/changeprice',array('id'=>$item['id']))}">订单改价</a>&nbsp;&nbsp;
+                            {/if}
+                            {/if}
+                            {if !empty($item['agentid'])}
+                            {ifp 'commission.changecommission'}
+                            <a data-toggle="ajaxModal"  href="{php echo webUrl('commission/apply/changecommission', array('id' => $item['id']))}">修改佣金</a>&nbsp;&nbsp;
+                            {/if}
+                            {/if}
+                            {ifp 'order.op.remarksaler'}
+                            <a  data-toggle="ajaxModal" href="{php echo webUrl('order/op/remarksaler', array('id' => $item['id']))}" {if !empty($item['remarksaler'])}style='color:red'{/if} >备注</a>
+                            {/if}
                             {/if}
                         </p>
                     </div>
@@ -775,11 +775,13 @@
                     </td>
                     <td class='full'>
                         {if !empty($goods['optionname'])}
-                            <span style="white-space:normal;">规格：
-                                <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="right" data-content="{$goods['optionname']}" data-original-title="" title="" style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:90px;padding:0 3px;">
-                                        {$goods['optionname']}
-                                </button>
-                            </span>
+                        <span style="white-space:normal;">规格：
+                            <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="right"
+                                    data-content="{$goods['optionname']}" data-original-title="" title=""
+                                    style="word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:90px;padding:0 3px;">
+                                {$goods['optionname']}
+                            </button>
+                        </span>
                         {/if}
                         {if !empty($goods['goodssn'])}<br/>编码:{$goods['goodssn']}{/if}
                         {if !empty($goods['productsn'])}<br/>条码:{$goods['productsn']}{/if}</td>

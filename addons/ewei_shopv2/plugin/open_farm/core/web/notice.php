@@ -6,21 +6,36 @@ if (!defined('IN_IA')) {
 
 class Notice_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_notice';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'title', 'content', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array('title' => '请填写公告标题', 'content' => '请填写公告内容');
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
 		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 公告列表     * Notice_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 公告列表
+     * Notice_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -55,7 +70,9 @@ class Notice_EweiShopV2Page extends PluginWebPage
 		}
 	}
 
-	/**     * 新增，编辑一条     */
+	/**
+     * 新增，编辑一条
+     */
 	public function addInfo()
 	{
 		global $_W;
@@ -77,7 +94,9 @@ class Notice_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($noticeAdd);
 	}
 
-	/**     * 获取公告信息     */
+	/**
+     * 获取公告信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -87,7 +106,9 @@ class Notice_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($noticeInfo);
 	}
 
-	/**     * 删除公告     */
+	/**
+     * 删除公告
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -97,7 +118,9 @@ class Notice_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 删除多条公告     */
+	/**
+     * 删除多条公告
+     */
 	public function deleteAll()
 	{
 		global $_W;
@@ -107,7 +130,10 @@ class Notice_EweiShopV2Page extends PluginWebPage
 		show_json(1, '删除成功');
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

@@ -1,1 +1,205 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1j([\'t\',\'D\'],3(t,D){9 2={l:1,j:0};2.1g=3(){2.l=1;4($(\'#z a\').i>0){$(\'#z a\').o(\'6\').6(3(e){e.1l();9 Q=y;$(\'#z a\').V(\'1d\');$(Q).U(\'1d\');4($(Q).I(\'z\')==\'1n\'){2.j=0}n 4($(Q).I(\'z\')==\'1p\'){2.j=1};$(\'.E\').B(\'\');2.l=1;2.J();$(\'.k-g\').F({1c:3(){2.J()}});$(\'.f-5\').o(\'6\').6(3(){2.R()});$(\'.N\').o(\'6\').6(3(){9 7=$(y).1b(\':1a\').q(\'7\');$(".5-b").q(\'7\',7);2.L()});$(\'.f-P\').o(\'6\').6(3(){4($(\'.5-b:7\').i<=0){d}2.x()})});$(\'#z a\').1r().6()}n{4(2.l==1){2.J()};$(\'.k-g\').F({1c:3(){2.J()}});$(\'.f-5\').o(\'6\').6(3(){2.R()});$(\'.N\').o(\'6\').6(3(){9 7=$(y).1b(\':1a\').q(\'7\');$(".5-b").q(\'7\',7);2.L()});$(\'.f-P\').o(\'6\').6(3(){4($(\'.5-b:7\').i<=0){d}2.x()})}};2.L=3(){$(\'.N .k-1u\').q(\'7\',$(\'.5-b\').i==$(\'.5-b:7\').i);9 19=$(\'.5-b:7\').i;4(19>0){$(\'.f-P\').V(\'16\')}n{$(\'.f-P\').U(\'16\')}};2.R=3(){4($(\'.C-b\').i<=0){$(\'.E\').v();$(\'.f-5\').B(\'\');$(\'.W\').B(\'\');$(\'.g-S\').m();d}4(2.G==\'s\'){$(\'.k-g\').U(\'14\');$(\'.5-b\').q(\'7\',w);$(\'.N\').q(\'7\',w);$(\'.W\').m();2.G=\'5\';$(\'.f-5\').B(\'完成\');$(\'.13\').m()}n{$(\'.k-g\').V(\'14\');$(\'.W\').v();2.G=\'s\';$(\'.f-5\').B(\'编辑\');$(\'.13\').v()}};2.X=3(){9 8=\'\';4(2.j==0){8=\'A/s/1f\'}n 4(2.j==1){8=\'1e/A/s/1f\'}d 8};2.12=3(){9 8=\'\';4(2.j==0){8=\'A/s/K\'}n 4(2.j==1){8=\'1e/A/s/K\'}d 8};2.1h=3(){9 8=\'\';4(2.j==0){8=\'1G\'}n 4(2.j==1){8=\'1I\'}d 8};2.J=3(){9 8=2.X();t.10(8,{l:2.l},3(h){9 c=h.c;4(c.1w<=0){$(\'.f-5\').v();$(\'.E\').v();$(\'.g-S\').m();$(\'.k-g\').F(\'1i\')}n{$(".k-T-1x").S();$(\'.f-5\').m();$(\'.E\').m();$(\'.g-S\').v();$(\'.k-g\').F(\'1g\');4(c.T.i<=0||c.T.i<c.1D){$(\'.k-g\').F(\'1i\')}}2.l++;9 D=2.1h();t.D(\'.E\',D,c,2.l>1);$(\'.5-b\').o(\'6\').6(3(){2.L()})})};2.K=3(M,O,u){9 8=2.12();t.10(8,{r:M,O:O},3(h){4(h.G==0){4(h.c.18==\'请先登录!\'){9 H=t.X(\'C/1E\',{r:M});H=H.1m("./1o.1s?","");1t([\'1k/A/Y\'],3(Y){Y.1v({1y:\'1z\',H:1C(H),1F:3(){2.K(M,1,u)}})});4(u){u(w)}d w}11.15.m(h.c.18);d w}4(u){u(h.c.O)}},w,Z)};2.x=3(p,u){9 p=[];$(\'.5-b:7\').17(3(){9 r=$(y).1H(\'.C-b\').I(\'r\');p.1B(r)});4(p.i<=0){d}11.1A(\'确认取消关注这些商品吗?\',3(){t.10(\'A/s/x\',{p:p},3(h){4(h.G==0){11.15.m(h.c);d}$.17(p,3(){$(".C-b[I-r=\'"+y+"\']").1q().x();$(".C-b[I-r=\'"+y+"\']").x()});2.R()},Z,Z)})};d 2});',62,107,'||modal|function|if|edit|click|checked|url|var||item|result|return||btn|content|ret|length|type|fui|page|show|else|unbind|ids|prop|id|favorite|core|callback|hide|false|remove|this|tab|member|html|goods|tpl|container|infinite|status|backurl|data|getList|toggle|caculateEdit|goodsid|editcheckall|isfavorite|delete|_this|changeMode|empty|list|addClass|removeClass|editmode|getUrl|account|true|json|FoxUI|getToggleUrl|favoritecover|navbar|toast|disabled|each|message|selects|checkbox|find|onLoading|active|merch|get_list|init|getTpl|stop|define|biz|preventDefault|replace|type0|index|type1|prev|first|php|require|radio|initQuick|total|group|action|login|confirm|push|btoa|pagesize|detail|success|tpl_member_favorite_list|closest|tpl_merch_member_favorite_list'.split('|'),0,{}))
+define(['core', 'tpl'], function (core, tpl) {
+    var modal = {page: 1, type: 0};
+    modal.init = function () {
+        modal.page = 1;
+        if ($('#tab a').length > 0) {
+            $('#tab a').unbind('click').click(function (e) {
+                e.preventDefault();
+                var _this = this;
+                $('#tab a').removeClass('active');
+                $(_this).addClass('active');
+                if ($(_this).data('tab') == 'type0') {
+                    modal.type = 0
+                } else if ($(_this).data('tab') == 'type1') {
+                    modal.type = 1
+                }
+                ;
+                $('.container').html('');
+                modal.page = 1;
+                modal.getList();
+                $('.fui-content').infinite({
+                    onLoading: function () {
+                        modal.getList()
+                    }
+                });
+                $('.btn-edit').unbind('click').click(function () {
+                    modal.changeMode()
+                });
+                $('.editcheckall').unbind('click').click(function () {
+                    var checked = $(this).find(':checkbox').prop('checked');
+                    $(".edit-item").prop('checked', checked);
+                    modal.caculateEdit()
+                });
+                $('.btn-delete').unbind('click').click(function () {
+                    if ($('.edit-item:checked').length <= 0) {
+                        return
+                    }
+                    modal.remove()
+                })
+            });
+            $('#tab a').first().click()
+        } else {
+            if (modal.page == 1) {
+                modal.getList()
+            }
+            ;
+            $('.fui-content').infinite({
+                onLoading: function () {
+                    modal.getList()
+                }
+            });
+            $('.btn-edit').unbind('click').click(function () {
+                modal.changeMode()
+            });
+            $('.editcheckall').unbind('click').click(function () {
+                var checked = $(this).find(':checkbox').prop('checked');
+                $(".edit-item").prop('checked', checked);
+                modal.caculateEdit()
+            });
+            $('.btn-delete').unbind('click').click(function () {
+                if ($('.edit-item:checked').length <= 0) {
+                    return
+                }
+                modal.remove()
+            })
+        }
+    };
+    modal.caculateEdit = function () {
+        $('.editcheckall .fui-radio').prop('checked', $('.edit-item').length == $('.edit-item:checked').length);
+        var selects = $('.edit-item:checked').length;
+        if (selects > 0) {
+            $('.btn-delete').removeClass('disabled')
+        } else {
+            $('.btn-delete').addClass('disabled')
+        }
+    };
+    modal.changeMode = function () {
+        if ($('.goods-item').length <= 0) {
+            $('.container').hide();
+            $('.btn-edit').html('');
+            $('.editmode').html('');
+            $('.content-empty').show();
+            return
+        }
+        if (modal.status == 'favorite') {
+            $('.fui-content').addClass('navbar');
+            $('.edit-item').prop('checked', false);
+            $('.editcheckall').prop('checked', false);
+            $('.editmode').show();
+            modal.status = 'edit';
+            $('.btn-edit').html('完成');
+            $('.favoritecover').show()
+        } else {
+            $('.fui-content').removeClass('navbar');
+            $('.editmode').hide();
+            modal.status = 'favorite';
+            $('.btn-edit').html('编辑');
+            $('.favoritecover').hide()
+        }
+    };
+    modal.getUrl = function () {
+        var url = '';
+        if (modal.type == 0) {
+            url = 'member/favorite/get_list'
+        } else if (modal.type == 1) {
+            url = 'merch/member/favorite/get_list'
+        }
+        return url
+    };
+    modal.getToggleUrl = function () {
+        var url = '';
+        if (modal.type == 0) {
+            url = 'member/favorite/toggle'
+        } else if (modal.type == 1) {
+            url = 'merch/member/favorite/toggle'
+        }
+        return url
+    };
+    modal.getTpl = function () {
+        var url = '';
+        if (modal.type == 0) {
+            url = 'tpl_member_favorite_list'
+        } else if (modal.type == 1) {
+            url = 'tpl_merch_member_favorite_list'
+        }
+        return url
+    };
+    modal.getList = function () {
+        var url = modal.getUrl();
+        core.json(url, {page: modal.page}, function (ret) {
+            var result = ret.result;
+            if (result.total <= 0) {
+                $('.btn-edit').hide();
+                $('.container').hide();
+                $('.content-empty').show();
+                $('.fui-content').infinite('stop')
+            } else {
+                // $(".fui-list-group").empty();
+                $('.btn-edit').show();
+                $('.container').show();
+                $('.content-empty').hide();
+                $('.fui-content').infinite('init');
+                if (result.list.length <= 0 || result.list.length < result.pagesize) {
+                    $('.fui-content').infinite('stop')
+                }
+            }
+            modal.page++;
+            var tpl = modal.getTpl();
+            core.tpl('.container', tpl, result, modal.page > 1);
+            $('.edit-item').unbind('click').click(function () {
+                modal.caculateEdit()
+            })
+        })
+    };
+    modal.toggle = function (goodsid, isfavorite, callback) {
+        var url = modal.getToggleUrl();
+        core.json(url, {id: goodsid, isfavorite: isfavorite}, function (ret) {
+            if (ret.status == 0) {
+                if (ret.result.message == '请先登录!') {
+                    var backurl = core.getUrl('goods/detail', {id: goodsid});
+                    backurl = backurl.replace("./index.php?", "");
+                    require(['biz/member/account'], function (account) {
+                        account.initQuick({
+                            action: 'login', backurl: btoa(backurl), success: function () {
+                                modal.toggle(goodsid, 1, callback)
+                            }
+                        })
+                    });
+                    if (callback) {
+                        callback(false)
+                    }
+                    return false
+                }
+                FoxUI.toast.show(ret.result.message);
+                return false
+            }
+            if (callback) {
+                callback(ret.result.isfavorite)
+            }
+        }, false, true)
+    };
+    modal.remove = function (ids, callback) {
+        var ids = [];
+        $('.edit-item:checked').each(function () {
+            var id = $(this).closest('.goods-item').data('id');
+            ids.push(id)
+        });
+        if (ids.length <= 0) {
+            return
+        }
+        FoxUI.confirm('确认取消关注这些商品吗?', function () {
+            core.json('member/favorite/remove', {ids: ids}, function (ret) {
+                if (ret.status == 0) {
+                    FoxUI.toast.show(ret.result);
+                    return
+                }
+                $.each(ids, function () {
+                    $(".goods-item[data-id='" + this + "']").prev().remove();
+                    $(".goods-item[data-id='" + this + "']").remove()
+                });
+                modal.changeMode()
+            }, true, true)
+        })
+    };
+    return modal
+});

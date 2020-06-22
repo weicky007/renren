@@ -1505,15 +1505,37 @@
             var width = window.screen.width *  window.devicePixelRatio;
             var height = window.screen.height *  window.devicePixelRatio;
             var h = document.body.offsetHeight *  window.devicePixelRatio;
+
+            function isIPhoneX() {
+                var u = navigator.userAgent;
+                var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+                if (isIOS) {
+                    if (screen.height === 812 && screen.width === 375) {
+                        //是iphoneX
+                        return true;
+                    } else {
+                        //不是iphoneX
+                        return false;
+                    }
+                }
+            }
+            if (isIPhoneX()) {
+                if(window.history.length != 1) {
+                    $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
+                }    else {
+                    $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex');
+                }
+            }
+
             //  微信版本6.6.7
-            if(h == 1923){
+            /*if(h == 1923){
                 $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
                 return;
             }
 
             if(height==2436 && width==1125){
                 $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex')
-            }
+            }*/
 
         },600)
     });

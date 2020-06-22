@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,23 +10,17 @@ class Set_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$article_sys = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article_sys') . ' WHERE uniacid=:uniacid limit 1 ', array(':uniacid' => $_W['uniacid']));
-		$set = m('common')->getPluginset('article');
 
 		if ($_W['ispost']) {
 			ca('article.set.edit');
-			$article_message = trim($_GPC['article_advanced']);
+			$article_message = trim($_GPC['article_message']);
 			$article_title = trim($_GPC['article_title']);
 			$article_image = save_media($_GPC['article_image']);
 			$article_shownum = $_GPC['article_shownum'];
 			$article_keyword = trim($_GPC['article_keyword']);
 			$article_temp = intval($_GPC['article_temp']);
 			$article_source = trim($_GPC['article_source']);
-			$article_close_advanced = intval($_GPC['article_close_advanced']);
-			$arr = array('article_message' => $article_message, 'article_title' => $article_title, 'article_image' => $article_image, 'article_shownum' => $article_shownum, 'article_keyword' => $article_keyword, 'article_temp' => $article_temp, 'article_source' => $article_source, 'article_close_advanced' => $article_close_advanced);
-			$data = array('article_advanced' => $article_message, 'article_close_advanced' => $article_close_advanced);
-			m('common')->updatePluginset(array(
-				'article' => array('tm' => $data)
-			));
+			$arr = array('article_message' => $article_message, 'article_title' => $article_title, 'article_image' => $article_image, 'article_shownum' => $article_shownum, 'article_keyword' => $article_keyword, 'article_temp' => $article_temp, 'article_source' => $article_source);
 
 			if (empty($article_keyword)) {
 				show_json(0, '关键词不能为空!');
@@ -89,23 +82,6 @@ class Set_EweiShopV2Page extends PluginWebPage
 			show_json(1);
 		}
 
-		$template_lists = pdo_fetchall('SELECT id,title,typecode FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
-		$templatetype_list = pdo_fetchall('SELECT * FROM  ' . tablename('ewei_shop_member_message_template_type'));
-		$template_group = array();
-
-		foreach ($templatetype_list as $type) {
-			$templates = array();
-
-			foreach ($template_lists as $template) {
-				if ($template['typecode'] == $type['typecode']) {
-					$templates[] = $template;
-				}
-			}
-
-			$template_group[$type['typecode']] = $templates;
-		}
-
-		$template_list = $template_group;
 		$url = mobileUrl('article/list', NULL, true);
 		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template();

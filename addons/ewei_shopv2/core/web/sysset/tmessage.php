@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,8 +20,8 @@ class Tmessage_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition . '  ORDER BY id asc limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition . '  ORDER BY id asc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -55,11 +54,11 @@ class Tmessage_EweiShopV2Page extends WebPage
 		$templatetypes2 = array();
 
 		foreach ($templatetypes as $temp) {
-			if (!empty($types) && $types['typegroup'] == $temp['typegroup']) {
+			if (!empty($types) && ($types['typegroup'] == $temp['typegroup'])) {
 				$templatetypes2[] = $temp;
 			}
 			else {
-				if (empty($types) && $temp['typegroup'] == 'sys') {
+				if (empty($types) && ($temp['typegroup'] == 'sys')) {
 					$templatetypes2[] = $temp;
 				}
 			}
@@ -106,10 +105,10 @@ class Tmessage_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_member_message_template', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -133,7 +132,7 @@ class Tmessage_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . (' WHERE 1 ' . $condition . ' order by id asc'), $params);
+		$ds = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
 
 		if ($_GPC['suggest']) {
 			exit(json_encode(array('value' => $ds)));
@@ -202,10 +201,7 @@ class Tmessage_EweiShopV2Page extends WebPage
 
 			unset($v);
 			$value['contents'] = $matches[0];
-			$result['template_list'][$key]['content'] = str_replace(array('
-
-', '
-'), '<br />', $value['content']);
+			$result['template_list'][$key]['content'] = str_replace(array("\n\n", "\n"), '<br />', $value['content']);
 		}
 
 		unset($value);

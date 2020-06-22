@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,8 +11,8 @@ class Bank_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$condition = ' and uniacid=:uniacid';
 		$params = array(':uniacid' => $_W['uniacid']);
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC'), $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE 1 ' . $condition), $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC', $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE 1 ' . $condition, $params);
 		include $this->template();
 	}
 
@@ -57,7 +56,7 @@ class Bank_EweiShopV2Page extends WebPage
 			show_json(1);
 		}
 
-		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE id = \'' . $id . '\' and uniacid = \'' . $_W['uniacid'] . '\''));
+		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE id = \'' . $id . '\' and uniacid = \'' . $_W['uniacid'] . '\'');
 		include $this->template();
 	}
 
@@ -68,10 +67,10 @@ class Bank_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_commission_bank', array('id' => $item['id']));
@@ -87,10 +86,10 @@ class Bank_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_commission_bank', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
@@ -105,7 +104,7 @@ class Bank_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_commission_bank') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_commission_bank', array('displayorder' => $displayorder), array('id' => $id));

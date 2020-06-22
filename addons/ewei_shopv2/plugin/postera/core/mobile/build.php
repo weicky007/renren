@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -34,7 +33,7 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 		$time = time();
 
 		if ($time < $poster['timestart']) {
-			$starttext = empty($poster['starttext']) ? '活动于 [starttime] 开始，请耐心等待...' : $poster['starttext'];
+			$starttext = (empty($poster['starttext']) ? '活动于 [starttime] 开始，请耐心等待...' : $poster['starttext']);
 			$starttext = str_replace('[starttime]', date('Y年m月d日 H:i', $poster['timestart']), $starttext);
 			$starttext = str_replace('[endtime]', date('Y年m月d日 H:i', $poster['timeend']), $starttext);
 			m('message')->sendCustomNotice($openid, $starttext);
@@ -42,22 +41,22 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 		}
 
 		if ($poster['timeend'] < time()) {
-			$endtext = empty($poster['endtext']) ? '活动已结束，谢谢您的关注！' : $poster['endtext'];
+			$endtext = (empty($poster['endtext']) ? '活动已结束，谢谢您的关注！' : $poster['endtext']);
 			$endtext = str_replace('[starttime]', date('Y-m-d H:i', $poster['timestart']), $endtext);
 			$endtext = str_replace('[endtime]', date('Y-m-d- H:i', $poster['timeend']), $endtext);
 			m('message')->sendCustomNotice($openid, $endtext);
 			exit();
 		}
 
-		if ($member['isagent'] != 1 || $member['status'] != 1) {
+		if (($member['isagent'] != 1) || ($member['status'] != 1)) {
 			if (empty($poster['isopen'])) {
-				$opentext = !empty($poster['opentext']) ? htmlspecialchars_decode($poster['opentext'], ENT_QUOTES) : '您还不是我们分销商，去努力成为分销商，拥有你的专属海报吧!';
+				$opentext = (!empty($poster['opentext']) ? htmlspecialchars_decode($poster['opentext'], ENT_QUOTES) : '您还不是我们分销商，去努力成为分销商，拥有你的专属海报吧!');
 				m('message')->sendCustomNotice($openid, $opentext, trim($poster['openurl']));
 				exit();
 			}
 		}
 
-		$waittext = !empty($poster['waittext']) ? htmlspecialchars_decode($poster['waittext'], ENT_QUOTES) : '您的专属海报正在拼命生成中，请等待片刻...';
+		$waittext = (!empty($poster['waittext']) ? htmlspecialchars_decode($poster['waittext'], ENT_QUOTES) : '您的专属海报正在拼命生成中，请等待片刻...');
 		$waittext = str_replace('[starttime]', date('Y年m月d日 H:i', $poster['timestart']), $waittext);
 		$waittext = str_replace('[endtime]', date('Y年m月d日 H:i', $poster['timeend']), $waittext);
 		m('message')->sendCustomNotice($openid, $waittext);

@@ -10,7 +10,7 @@
                                 <a class="btn btn-link btn-sm pull-right" data-toggle="collapse"  data-parent="#accordion" href="#collapse{$key}"><i class='fa fa-angle-down'></i> 展开</a>
                                 <label class='checkbox-inline'>
 
-                                         <input type='checkbox' id="perm_{$key}" value='{$key}' class='perm-all perms' data-group='{$key}'
+                                         <input type='checkbox' id="perm_{$key}" name='perms[]' value='{$key}' class='perm-all' data-group='{$key}'
                                                 {if in_array($key,$role_perms) || in_array($key,$user_perms) } checked{/if}
                                                 {if in_array($key,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
                                                 /> {$value['text']}
@@ -24,7 +24,7 @@
                                 {loop $perms['parent'][$key] $ke $val}
                                 {if $ke != 'text'}
                                      <label class='checkbox-inline'>
-                                         <input type='checkbox'  value='{$key}.{$ke}' class='perm-item perms'
+                                         <input type='checkbox'  name='perms[]'  value='{$key}.{$ke}' class='perm-item'
                                                 data-group='{$key}' data-parent='text'
                                                 {if in_array($key.".".$ke,$role_perms) || in_array($key.".".$ke,$user_perms)} checked{/if}
                                          {if in_array($key.".".$ke,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -32,7 +32,7 @@
                                      </label>
                                 {else}
                                      <label class='checkbox-inline'>
-                                         <input type='checkbox' value='{$key}' class='perm-all-item perms'
+                                         <input type='checkbox'  name='perms[]'  value='{$key}' class='perm-all-item'
                                                 data-group='{$key}' data-parent='text'
                                                 {if in_array($key,$role_perms) || in_array($key,$user_perms)} checked{/if}
                                          {if in_array($key,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -50,7 +50,7 @@
                                     {loop $val $k $v}
                                     {if $k != 'text'}
                                          <label class='checkbox-inline'>
-                                             <input type='checkbox'  value='{$key}.{$ke}.{$k}' class='perm-item perms'
+                                             <input type='checkbox'  name='perms[]'  value='{$key}.{$ke}.{$k}' class='perm-item'
                                                     data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
                                                     {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
                                              {if in_array($key.".".$ke.".".$k,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -58,7 +58,7 @@
                                          </label>
                                     {else}
                                          <label class='checkbox-inline'>
-                                             <input type='checkbox'  value='{$key}.{$ke}' class='perm-all-item perms'
+                                             <input type='checkbox'  name='perms[]'  value='{$key}.{$ke}' class='perm-all-item'
                                                     data-group='{$key}' data-parent='{$ke}' data-son="{$k}"
                                                     {if in_array($key.".".$ke,$role_perms) || in_array($key.".".$ke,$user_perms)} checked{/if}
                                              {if in_array($key.".".$ke,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -78,7 +78,7 @@
                                 {loop $v $kk $vv}
                                 {if $kk != 'text'}
                                          <label class='checkbox-inline'>
-                                             <input type='checkbox'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item perms'
+                                             <input type='checkbox'  name='perms[]'  value='{$key}.{$ke}.{$k}.{$kk}' class='perm-item'
                                                     data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
                                                     {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) || in_array($key.".".$ke.".".$k.".".$kk,$user_perms)} checked{/if}
                                              {if in_array($key.".".$ke.".".$k.".".$kk,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -86,7 +86,7 @@
                                          </label>
                                 {else}
                                          <label class='checkbox-inline'>
-                                             <input type='checkbox' value='{$key}.{$ke}.{$k}' class='perm-all-item perms'
+                                             <input type='checkbox'  name='perms[]'  value='{$key}.{$ke}.{$k}' class='perm-all-item'
                                                     data-group='{$key}' data-parent='{$ke}' data-son="{$k}" data-grandson="{$kk}"
                                                     {if in_array($key.".".$ke.".".$k,$role_perms) || in_array($key.".".$ke.".".$k,$user_perms)} checked{/if}
                                              {if in_array($key.".".$ke.".".$k,$role_perms) && $_W['action']=='perm.user'} disabled{/if}
@@ -106,7 +106,6 @@
                         </div>
                     </div>
                 </div>
-    <input type="hidden" name="permsarray" value="">
 </div>
 <script language="javascript">
     $(function () {
@@ -157,17 +156,6 @@
             else {
                 $($(this).find("label").get(0)).wrap("<div class='col-sm-12'></div>");
             }
-        });
-        $("form").submit(function () {
-            $(this).attr('stop',1);
-            var perms = [];
-            $(".perms:checked").each(function (index,e) {
-                perms[index]=$(this).val();
-            });
-            perms = perms.join(',')
-            $("input[name=permsarray]").val(perms);
-            $(this).attr('stop',0);
-            return true;
         });
 
     });

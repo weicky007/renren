@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,10 +16,9 @@ class Transfer_EweiShopV2Page extends SystemPage
 		$where = array('uniacid' => $wechatid);
 		$condition1 = ' and uniacid=' . $wechatid1;
 		$where1 = array('uniacid' => $wechatid1);
-		m('cache')->del('allcategory', $wechatid1);
 		function copy_data($table, $wechatid, $wechatid1, $transtype)
 		{
-			pdo_query('delete from  ' . tablename($table) . (' where uniacid=' . $wechatid1));
+			pdo_query('delete from  ' . tablename($table) . ' where uniacid=' . $wechatid1);
 			$datas = pdo_fetchall('select * from ' . tablename($table) . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
 
 			foreach ($datas as $data) {
@@ -30,7 +28,7 @@ class Transfer_EweiShopV2Page extends SystemPage
 			}
 
 			if ($transtype == 1) {
-				pdo_query('delete from  ' . tablename($table) . (' where uniacid=' . $wechatid));
+				pdo_query('delete from  ' . tablename($table) . ' where uniacid=' . $wechatid);
 			}
 		}
 		function copy_plugin_set($identity, $wechatid, $wechatid1, $transtype)
@@ -65,29 +63,18 @@ class Transfer_EweiShopV2Page extends SystemPage
 
 			if (is_array($_GPC['shop'])) {
 				foreach ($_GPC['shop'] as $data) {
-					if (0 < $_GPC['cate']) {
-						$condition2 = ' AND pcate = ' . $_GPC['cate'] . ' ';
-					}
-					else {
-						$condition2 = ' AND 1';
-					}
-
 					if ($data == 'goods') {
-						if ($_GPC['cate'] == 0) {
-							pdo_query('delete from  ' . tablename('ewei_shop_goods') . (' where 1 ' . $condition1));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_option') . (' where 1 ' . $condition1));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_param') . (' where 1 ' . $condition1));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec') . (' where 1 ' . $condition1));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec_item') . (' where 1 ' . $condition1));
-							pdo_query('delete from  ' . tablename('ewei_shop_category') . (' where 1 ' . $condition1));
-						}
-
-						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . (' where uniacid=:uniacid ' . $condition2), array(':uniacid' => $wechatid));
+						pdo_query('delete from  ' . tablename('ewei_shop_goods') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_goods_option') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_goods_param') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_goods_spec') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_goods_spec_item') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_category') . ' where 1 ' . $condition1);
+						$goods = pdo_fetchall('select * from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
 
 						foreach ($goods as $g) {
 							$goodsid = $g['id'];
 							unset($g['id']);
-							unset($g['merchid']);
 							$g['uniacid'] = $wechatid1;
 							pdo_insert('ewei_shop_goods', $g);
 							$newgoodsid = pdo_insertid();
@@ -119,13 +106,6 @@ class Transfer_EweiShopV2Page extends SystemPage
 								unset($o['id']);
 								$o['uniacid'] = $wechatid1;
 								$o['goodsid'] = $newgoodsid;
-								$o['day'] = 0;
-								$o['allfullbackprice'] = 0;
-								$o['fullbackprice'] = 0;
-								$o['allfullbackratio'] = 0;
-								$o['fullbackratio'] = 0;
-								$o['isfullback'] = 0;
-								$o['isfullback'] = 0;
 								pdo_insert('ewei_shop_goods_option', $o);
 								$newoptionid = pdo_insertid();
 								$newspecitemids = array();
@@ -160,13 +140,7 @@ class Transfer_EweiShopV2Page extends SystemPage
 						$pcates1 = array();
 						$ccates1 = array();
 						$tcates1 = array();
-
-						if (empty($_GPC['cate'])) {
-							$pcates = pdo_fetchall('select * from ' . tablename('ewei_shop_category') . ' where uniacid=:uniacid and parentid=0', array(':uniacid' => $wechatid));
-						}
-						else {
-							$pcates = pdo_fetchall('select * from ' . tablename('ewei_shop_category') . ' where uniacid=:uniacid and parentid=0 and id = :cateid', array(':uniacid' => $wechatid, ':cateid' => $_GPC['cate']));
-						}
+						$pcates = pdo_fetchall('select * from ' . tablename('ewei_shop_category') . ' where uniacid=:uniacid and parentid=0', array(':uniacid' => $wechatid));
 
 						foreach ($pcates as $pcate) {
 							$pcateid = $pcate['id'];
@@ -202,7 +176,7 @@ class Transfer_EweiShopV2Page extends SystemPage
 							}
 						}
 
-						$goods = pdo_fetchall('select id,`pcates`,`ccates`,`tcates`,`cates` from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid order by id desc', array(':uniacid' => $wechatid1));
+						$goods = pdo_fetchall('select id,pcates,ccates,tcates,cates from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid1));
 
 						foreach ($goods as $g) {
 							$gpcates = explode(',', $g['pcates']);
@@ -233,7 +207,7 @@ class Transfer_EweiShopV2Page extends SystemPage
 							}
 
 							$gcates = explode(',', $g['cates']);
-							$newcates = $gcates;
+							$newcates = array();
 
 							foreach ($gcates as $oldcate) {
 								if (isset($pcates1[$oldcate])) {
@@ -253,12 +227,12 @@ class Transfer_EweiShopV2Page extends SystemPage
 						}
 
 						if ($transtype == 1) {
-							pdo_query('delete from  ' . tablename('ewei_shop_goods') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_option') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_param') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec_item') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_category') . (' where 1 ' . $condition));
+							pdo_query('delete from  ' . tablename('ewei_shop_goods') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_goods_option') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_goods_param') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_goods_spec_item') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_category') . ' where 1 ' . $condition);
 						}
 					}
 					else if ($data == 'dispatch') {
@@ -323,8 +297,8 @@ class Transfer_EweiShopV2Page extends SystemPage
 			if (is_array($_GPC['creditshop'])) {
 				foreach ($_GPC['creditshop'] as $data) {
 					if ($data == 'goods') {
-						pdo_query('delete from  ' . tablename('ewei_shop_creditshop_goods') . (' where 1 ' . $condition1));
-						pdo_query('delete from  ' . tablename('ewei_shop_creditshop_category') . (' where 1 ' . $condition1));
+						pdo_query('delete from  ' . tablename('ewei_shop_creditshop_goods') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_creditshop_category') . ' where 1 ' . $condition1);
 						$cates = pdo_fetchall('select * from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
 						$categoodsids = array();
 
@@ -340,7 +314,6 @@ class Transfer_EweiShopV2Page extends SystemPage
 								$goodsid = $g['id'];
 								$categoodsids[] = $goodsid;
 								unset($g['id']);
-								unset($g['merchid']);
 								$g['uniacid'] = $wechatid1;
 								$g['cate'] = $newcateid;
 								pdo_insert('ewei_shop_creditshop_goods', $g);
@@ -353,15 +326,14 @@ class Transfer_EweiShopV2Page extends SystemPage
 							foreach ($goods as $g) {
 								$goodsid = $g['id'];
 								unset($g['id']);
-								unset($g['merchid']);
 								$g['uniacid'] = $wechatid1;
 								pdo_insert('ewei_shop_creditshop_goods', $g);
 							}
 						}
 
 						if ($transtype == 1) {
-							pdo_query('delete from  ' . tablename('ewei_shop_creditshop_goods') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_creditshop_category') . (' where 1 ' . $condition));
+							pdo_query('delete from  ' . tablename('ewei_shop_creditshop_goods') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_creditshop_category') . ' where 1 ' . $condition);
 						}
 					}
 					else if ($data == 'adv') {
@@ -378,9 +350,9 @@ class Transfer_EweiShopV2Page extends SystemPage
 			if (is_array($_GPC['virtual'])) {
 				foreach ($_GPC['virtual'] as $data) {
 					if ($data == 'template') {
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_type') . (' where 1 ' . $condition1));
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_category') . (' where 1 ' . $condition1));
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_data') . (' where 1 ' . $condition1));
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_type') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_category') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_data') . ' where 1 ' . $condition1);
 					}
 
 					$cates = pdo_fetchall('select * from ' . tablename('ewei_shop_virtual_category') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
@@ -439,9 +411,9 @@ class Transfer_EweiShopV2Page extends SystemPage
 					}
 
 					if ($transtype == 1) {
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_type') . (' where 1 ' . $condition));
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_category') . (' where 1 ' . $condition));
-						pdo_query('delete from  ' . tablename('ewei_shop_virtual_data') . (' where 1 ' . $condition));
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_type') . ' where 1 ' . $condition);
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_category') . ' where 1 ' . $condition);
+						pdo_query('delete from  ' . tablename('ewei_shop_virtual_data') . ' where 1 ' . $condition);
 					}
 				}
 			}
@@ -449,8 +421,8 @@ class Transfer_EweiShopV2Page extends SystemPage
 			if (is_array($_GPC['article'])) {
 				foreach ($_GPC['article'] as $data) {
 					if ($data == 'article') {
-						pdo_query('delete from  ' . tablename('ewei_shop_article_category') . (' where 1 ' . $condition1));
-						pdo_query('delete from  ' . tablename('ewei_shop_article') . (' where 1 ' . $condition1));
+						pdo_query('delete from  ' . tablename('ewei_shop_article_category') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_article') . ' where 1 ' . $condition1);
 						$cates = pdo_fetchall('select * from ' . tablename('ewei_shop_article_category') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
 						$catearticles = array();
 
@@ -499,11 +471,11 @@ class Transfer_EweiShopV2Page extends SystemPage
 								}
 							}
 
-							pdo_query('delete from  ' . tablename('ewei_shop_article') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_article_log') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_article_category') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_article_share') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_article_report') . (' where 1 ' . $condition));
+							pdo_query('delete from  ' . tablename('ewei_shop_article') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_article_log') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_article_category') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_article_share') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_article_report') . ' where 1 ' . $condition);
 						}
 					}
 				}
@@ -512,8 +484,8 @@ class Transfer_EweiShopV2Page extends SystemPage
 			if (is_array($_GPC['coupon'])) {
 				foreach ($_GPC['coupon'] as $data) {
 					if ($data == 'coupon') {
-						pdo_query('delete from  ' . tablename('ewei_shop_coupon_category') . (' where 1 ' . $condition1));
-						pdo_query('delete from  ' . tablename('ewei_shop_coupon') . (' where 1 ' . $condition1));
+						pdo_query('delete from  ' . tablename('ewei_shop_coupon_category') . ' where 1 ' . $condition1);
+						pdo_query('delete from  ' . tablename('ewei_shop_coupon') . ' where 1 ' . $condition1);
 						$cates = pdo_fetchall('select * from ' . tablename('ewei_shop_coupon_category') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid));
 						$catecoupons = array();
 
@@ -547,8 +519,8 @@ class Transfer_EweiShopV2Page extends SystemPage
 						}
 
 						if ($transtype == 1) {
-							pdo_query('delete from  ' . tablename('ewei_shop_coupon') . (' where 1 ' . $condition));
-							pdo_query('delete from  ' . tablename('ewei_shop_coupon_category') . (' where 1 ' . $condition));
+							pdo_query('delete from  ' . tablename('ewei_shop_coupon') . ' where 1 ' . $condition);
+							pdo_query('delete from  ' . tablename('ewei_shop_coupon_category') . ' where 1 ' . $condition);
 						}
 					}
 					else {
@@ -573,82 +545,6 @@ class Transfer_EweiShopV2Page extends SystemPage
 		$wechats = m('common')->getWechats();
 		load()->func('tpl');
 		include $this->template();
-	}
-
-	public function getFullCategory()
-	{
-		global $_W;
-		global $_GPC;
-		$fullname = true;
-		$enabled = true;
-		$allcategorynames = m('cache')->getArray('allcategorynames');
-		$shopset = m('common')->getSysset('shop');
-		$allcategory = array();
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_category') . ' WHERE uniacid=:uniacid and parentid = 0';
-
-		if ($enabled) {
-			$sql .= ' AND enabled=1';
-		}
-
-		$sql .= ' ORDER BY parentid ASC, displayorder DESC';
-		$category = pdo_fetchall($sql, array(':uniacid' => $_GPC['aid']));
-		$category = set_medias($category, array('thumb', 'advimg'));
-
-		if (empty($category)) {
-			show_json(0, array('category' => $allcategory));
-		}
-
-		foreach ($category as &$c) {
-			if (empty($c['parentid'])) {
-				$allcategory[] = $c;
-
-				foreach ($category as &$c1) {
-					if ($c1['parentid'] != $c['id']) {
-						continue;
-					}
-
-					if ($fullname) {
-						$c1['name'] = $c['name'] . '-' . $c1['name'];
-					}
-
-					$allcategory[] = $c1;
-
-					foreach ($category as &$c2) {
-						if ($c2['parentid'] != $c1['id']) {
-							continue;
-						}
-
-						if ($fullname) {
-							$c2['name'] = $c1['name'] . '-' . $c2['name'];
-						}
-
-						$allcategory[] = $c2;
-
-						foreach ($category as &$c3) {
-							if ($c3['parentid'] != $c2['id']) {
-								continue;
-							}
-
-							if ($fullname) {
-								$c3['name'] = $c2['name'] . '-' . $c3['name'];
-							}
-
-							$allcategory[] = $c3;
-						}
-
-						unset($c3);
-					}
-
-					unset($c2);
-				}
-
-				unset($c1);
-			}
-
-			unset($c);
-		}
-
-		show_json(1, array('category' => $allcategory));
 	}
 }
 

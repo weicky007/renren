@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -35,7 +34,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT r.*, t.title as task_title FROM ' . tablename('ewei_shop_seckill_task_room') . ' r left join ' . tablename('ewei_shop_seckill_task') . (' t  on r.taskid = t.id WHERE 1 ' . $condition . '  ORDER BY r.displayorder DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$list = pdo_fetchall('SELECT r.*, t.title as task_title FROM ' . tablename('ewei_shop_seckill_task_room') . ' r left join ' . tablename('ewei_shop_seckill_task') . ' t  on r.taskid = t.id WHERE 1 ' . $condition . '  ORDER BY r.displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 
 		foreach ($list as &$row) {
 			$times = pdo_fetchall('select id, time from ' . tablename('ewei_shop_seckill_task_time') . ' where taskid=:taskid and uniacid=:uniacid ', array(':taskid' => $row['taskid'], ':uniacid' => $_W['uniacid']));
@@ -49,7 +48,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		}
 
 		unset($row);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_seckill_task_room') . ' r left join ' . tablename('ewei_shop_seckill_task') . (' t  on r.taskid = t.id  WHERE 1 ' . $condition), $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_seckill_task_room') . ' r left join ' . tablename('ewei_shop_seckill_task') . ' t  on r.taskid = t.id  WHERE 1 ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -122,28 +121,6 @@ class Room_EweiShopV2Page extends SeckillWebPage
 
 							if ($count <= 0) {
 								$goodsids[] = $k;
-							}
-
-							if (empty($v)) {
-								$prices = explode(',', trim($_GPC['time-' . $time['time'] . 'packgoods' . $k]));
-
-								if (empty($prices[4])) {
-									$goods = pdo_fetch('select title from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $k, ':uniacid' => $_W['uniacid']));
-									show_json(0, '商品' . $goods['title'] . '库存不能为0！');
-								}
-							}
-							else {
-								$optionids = explode(',', $v);
-								$optionids = array_filter($optionids);
-
-								foreach ($optionids as $option) {
-									$prices = explode(',', trim($_GPC['time-' . $time['time'] . 'packagegoodsoption' . $option]));
-
-									if (empty($prices[4])) {
-										$goods = pdo_fetch('select title from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $k, ':uniacid' => $_W['uniacid']));
-										show_json(0, '商品' . $goods['title'] . '库存不能为0！');
-									}
-								}
 							}
 						}
 
@@ -218,9 +195,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 
 		if (!empty($item)) {
 			foreach ($times as &$t) {
-				$sql = 'select tg.id,tg.goodsid, tg.price as packageprice, tg.maxbuy,tg.totalmaxbuy, g.title,g.thumb,g.hasoption,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . ' tg  
-                  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id 
-                  where tg.taskid=:taskid and tg.roomid=:roomid and  tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ';
+				$sql = 'select tg.id,tg.goodsid, tg.price as packageprice, tg.maxbuy,tg.totalmaxbuy, g.title,g.thumb,g.hasoption,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . " tg  \r\n                  left join " . tablename('ewei_shop_goods') . " g on tg.goodsid = g.id \r\n                  where tg.taskid=:taskid and tg.roomid=:roomid and  tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ";
 				$goods = pdo_fetchall($sql, array(':taskid' => $item['taskid'], ':roomid' => $roomid, ':timeid' => $t['id'], ':uniacid' => $_W['uniacid']), 'time');
 
 				foreach ($goods as &$g) {
@@ -265,10 +240,10 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,taskid, title FROM ' . tablename('ewei_shop_seckill_task_room') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,taskid, title FROM ' . tablename('ewei_shop_seckill_task_room') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_seckill_task_room', array('id' => $item['id']));
@@ -306,15 +281,15 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,taskid, title FROM ' . tablename('ewei_shop_seckill_task_room') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,taskid, title FROM ' . tablename('ewei_shop_seckill_task_room') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_seckill_task_room', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
 			$task = pdo_fetch('select id,title from ' . tablename('ewei_shop_seckill_task') . ' where id=:id limit 1', array(':id' => $item['taskid']));
-			plog('seckill.room.edit', '修改会场状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . ($_GPC['enabled'] == 1 ? '显示' : '隐藏') . ('<br/>专题 ID: ' . $task['id'] . ' 标题: ' . $task['title']));
+			plog('seckill.room.edit', '修改会场状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . ($_GPC['enabled'] == 1 ? '显示' : '隐藏') . '<br/>专题 ID: ' . $task['id'] . ' 标题: ' . $task['title']);
 			$this->model->setTaskCache($task['id']);
 		}
 
@@ -331,16 +306,14 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$psize = 8;
 		$params = array();
 		$params[':uniacid'] = $uniacid;
-		$condition = ' and status=1 and deleted=0 and type<>4 and type <> 9 and uniacid=:uniacid';
+		$condition = ' and status=1 and deleted=0 and uniacid=:uniacid';
 
 		if (!empty($kwd)) {
 			$condition .= ' AND (`title` LIKE :keywords OR `keywords` LIKE :keywords)';
 			$params[':keywords'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title,thumb,bargain,marketprice,total,goodssn,productsn,`type`,isdiscount,istime,isverify,share_title,share_icon,description,hasoption,nocommission,groupstype
-            FROM ' . tablename('ewei_shop_goods') . ('
-            WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$ds = pdo_fetchall("SELECT id,title,thumb,bargain,marketprice,total,goodssn,productsn,`type`,isdiscount,istime,isverify,share_title,share_icon,description,hasoption,nocommission,groupstype\r\n            FROM " . tablename('ewei_shop_goods') . "\r\n            WHERE 1 " . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination2($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
 		$ds = set_medias($ds, array('thumb'));
@@ -367,8 +340,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$goods = pdo_fetch('select id,title,marketprice,hasoption,nocommission from ' . tablename('ewei_shop_goods') . ' where uniacid = :uniacid and id = :goodsid ', $params);
 
 		if (!empty($pid)) {
-			$packgoods = pdo_fetch('select id,title,packageprice,commission1,commission2,commission3,`option`,goodsid from ' . tablename('ewei_shop_package_goods') . '
-                        where pid = ' . $pid . ' and uniacid = :uniacid and goodsid = :goodsid ', $params);
+			$packgoods = pdo_fetch('select id,title,packageprice,commission1,commission2,commission3,`option`,goodsid from ' . tablename('ewei_shop_package_goods') . "\r\n                        where pid = " . $pid . ' and uniacid = :uniacid and goodsid = :goodsid ', $params);
 		}
 		else {
 			$packgoods = array('title' => $goods['title'], 'marketprice' => $goods['marketprice'], 'packageprice' => 0, 'commission1' => 0, 'commission2' => 0, 'commission3' => 0);
@@ -377,10 +349,8 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		if ($goods['hasoption']) {
 			$hasoption = 1;
 			$option = array();
-			$option = pdo_fetchall('SELECT id,title,marketprice,specs,displayorder FROM ' . tablename('ewei_shop_goods_option') . '
-            WHERE uniacid = :uniacid and goodsid = :goodsid  ORDER BY displayorder DESC,id DESC ', $params);
-			$package_option = pdo_fetchall('SELECT id,uniacid,goodsid,optionid,pid,title,marketprice,packageprice,commission1,commission2,commission3 FROM ' . tablename('ewei_shop_package_goods_option') . '
-            WHERE uniacid = :uniacid and goodsid = :goodsid  and pid = ' . $pid . ' ', $params);
+			$option = pdo_fetchall('SELECT id,title,marketprice,specs,displayorder FROM ' . tablename('ewei_shop_goods_option') . "\r\n            WHERE uniacid = :uniacid and goodsid = :goodsid  ORDER BY displayorder DESC,id DESC ", $params);
+			$package_option = pdo_fetchall('SELECT id,uniacid,goodsid,optionid,pid,title,marketprice,packageprice,commission1,commission2,commission3 FROM ' . tablename('ewei_shop_package_goods_option') . "\r\n            WHERE uniacid = :uniacid and goodsid = :goodsid  and pid = " . $pid . ' ', $params);
 
 			foreach ($option as $key => $value) {
 				foreach ($package_option as $k => $val) {
@@ -410,10 +380,9 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		global $_W;
 		global $_GPC;
 		$uniacid = intval($_W['uniacid']);
-		$options = is_array($_GPC['option']) ? implode(',', array_filter($_GPC['option'])) : 0;
+		$options = (is_array($_GPC['option']) ? implode(',', array_filter($_GPC['option'])) : 0);
 		$options = intval($options);
-		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . '
-            WHERE uniacid = ' . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
+		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . "\r\n            WHERE uniacid = " . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
 		show_json(1, $option);
 	}
 }

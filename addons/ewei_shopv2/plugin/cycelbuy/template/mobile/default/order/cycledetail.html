@@ -191,19 +191,15 @@
                 <div class="fui-cell-remark " style="float:right"></div>
                 </a>
             </div>
-            {if $row['status'] == 0 && $oData['refundstate'] == 0}
+            {if $row['status'] == 0}
                 <div class="fui-footer" style="text-align: right;">
                     <a class="btn btn-sm btn-default-o update-date every"  data-id="0" data-cycelbuy_periodic="{$cycelbuy_periodic}"
                        data-status0="{$status0}" data-status2="{$status2}" data-period_index="{php echo $period_index+1}" data-receipttime="{php echo date('Ymd',$receipttime)}" href="javascript:;">修改收货日期</a>
                     <a class="btn btn-sm btn-default-o update-date all"  data-id="1" data-cycelbuy_periodic="{$cycelbuy_periodic}"
-                       data-status0="{$status0}" data-status2="{$status2}" data-period_index="{php echo $period_index}" data-receipttime="{php echo date('Ymd',$receipttime)}" href="javascript:;">顺延收货</a>
-                    {if !empty($applyfor['id'])}
-                    <a class="btn btn-sm btn-default-o"  href="{php echo mobileUrl('cycelbuy/order/list/address',array('id'=>$row['id'],'orderid'=>$row['orderid'],'applyforid'=>$applyfor['id']))}">修改地址</a>
-                    {else}
+                       data-status0="{$status0}" data-status2="{$status2}" data-period_index="{php echo $period_index}" data-receipttime="{php echo date('Ymd',$receipttime)}" href="javascript:;">顺延发货</a>
                     <a class="btn btn-sm btn-default-o"  href="{php echo mobileUrl('cycelbuy/order/list/address',array('id'=>$row['id'],'orderid'=>$row['orderid']))}">修改地址</a>
-                    {/if}
                 </div>
-            {else if $oData['refundstate'] == 0}
+            {else}
                 <div class="fui-footer" style="text-align: right;">
                     <!--<a class="btn btn-sm btn-default-o remove_order" data-id="{$row['id']}" href="javascript:;">删除订单</a>-->
                     <a class="btn btn-sm btn-default-o confirm_receipt"  style="display: {if $row['status'] == 1}inline-block{elseif $row['status'] == 2}none{/if}" data-id="{$row['id']}" data-orderid="{$row['orderid']}" href="javascript:;">确认收货 </a>

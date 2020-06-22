@@ -155,7 +155,7 @@
                 <a class="btn btn-sm btn-danger-o" data-nocache="true" href="{php echo mobileUrl('order/comment')}&id=<%order.id%>">评价</a>
                 <%/if%>
             {/if}
-            <%if order.status>1 && order.addressid>0 && order.iscycelbuy ==0 %>
+            <%if order.status>1 && order.addressid>0 && order.iscycelbuy ==0  && order.city_express_state != 1 %>
             <a class="btn btn-default btn-default-o" href="{php echo mobileUrl('order/express')}&id=<%order.id%>" data-nocache="true">查看物流</a>
             <%/if%>
             <%if order.status==2 && order.iscycelbuy ==0 %>

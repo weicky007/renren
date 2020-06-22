@@ -87,7 +87,8 @@
                 {ife 'shop.adv' $item}
                 <input type="submit" value="提交" class="btn btn-primary"/>
                 {/if}
-                <a class="btn btn-default  btn-sm" href="{php echo webUrl('shop/adv')}">返回列表</a>
+                <input type="button" name="back" onclick='history.back()' {ifp
+                'shop.adv.add|shop.adv.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />
             </div>
         </div>
     </form>

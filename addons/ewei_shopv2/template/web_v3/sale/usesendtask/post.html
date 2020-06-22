@@ -108,7 +108,7 @@
                         <div class="col-sm-9 col-xs-12">
                             {ife 'sale.package' $item}
                             <div class="input-group">
-                                {php echo tpl_form_field_eweishop_daterange('sendtime', array('starttime'=>date('Y-m-d', intval($item['starttime'])),'endtime'=>date('Y-m-d', intval($item['endtime']))));}
+                                {php echo tpl_form_field_daterange('sendtime', array('starttime'=>date('Y-m-d', intval($item['starttime'])),'endtime'=>date('Y-m-d', intval($item['endtime']))));}
 
                             </div>
                             {else}

@@ -16,7 +16,7 @@
         </div>
 
         <div class='content fui-cell-group'>
-            <div class='fui-cell' style='color: #999;font-size: 0.7rem;'>{php echo $this->set['texts']['withdraw']}方式</div>
+            <div class='fui-cell' style='color: #999;font-size: 0.7rem;'>提现方式</div>
 
             {if !empty($type_array[0])}
             <div class='fui-cell applyradio'>
@@ -121,7 +121,7 @@
             <div>详情说明</div>
 
             {if !empty($set_array['charge'])}
-                <div>分红{php echo $this->set['texts']['withdraw']}{php echo $this->set['texts']['dividend_charge']} {$set_array['charge']}%</div>
+                <div>分红提现{php echo $this->set['texts']['dividend_charge']} {$set_array['charge']}%</div>
             {/if}
 
             {if !empty($set_array['end'])}
@@ -129,10 +129,10 @@
             {/if}
 
             {if !empty($deductionmoney)}
-                <div>本次{php echo $this->set['texts']['withdraw']}将{php echo $this->set['texts']['dividend_charge']}金额 ￥ {$deductionmoney}</div>
+                <div>本次提现将{php echo $this->set['texts']['dividend_charge']}金额 ￥ {$deductionmoney}</div>
             {/if}
             {if !empty($set_array['charge'])}
-                <div>本次{php echo $this->set['texts']['withdraw']}实际到账金额 <text style='color: #cfa943;'>￥ {$realmoney}</text></div>
+                <div>本次提现实际到账金额 <text style='color: #cfa943;'>￥ {$realmoney}</text></div>
             {/if}
         </div>
 

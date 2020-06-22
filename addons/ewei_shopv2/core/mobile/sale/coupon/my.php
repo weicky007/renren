@@ -192,7 +192,7 @@ class My_EweiShopV2Page extends MobileLoginPage
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;
 		$time = time();
-		$sql = 'select d.id,d.friendcouponid,d.couponid,d.gettime,d.friendcouponid,c.timelimit,c.coupontype,c.timedays,c.timestart,c.timeend,c.thumb,c.couponname,c.enough,c.backtype,c.deduct,c.discount,c.backmoney,c.backcredit,c.backredpack,c.bgcolor,c.thumb,c.merchid,c.tagtitle,c.settitlecolor,c.titlecolor from ' . tablename('ewei_shop_coupon_data') . ' d';
+		$sql = 'select d.id,d.couponid,d.gettime,c.timelimit,c.coupontype,c.timedays,c.timestart,c.timeend,c.thumb,c.couponname,c.enough,c.backtype,c.deduct,c.discount,c.backmoney,c.backcredit,c.backredpack,c.bgcolor,c.thumb,c.merchid,c.tagtitle,c.settitlecolor,c.titlecolor from ' . tablename('ewei_shop_coupon_data') . ' d';
 		$sql .= ' inner join ' . tablename('ewei_shop_coupon') . ' c on d.couponid = c.id';
 		$sql .= ' where d.openid=:openid and d.uniacid=:uniacid ';
 
@@ -505,17 +505,33 @@ class My_EweiShopV2Page extends MobileLoginPage
 		$sql = 'select  distinct  g.*  from ';
 		$table = '';
 		if ($data['limitgoodcatetype'] == 1 && !empty($data['limitgoodcateids'])) {
-			$table = tablename('ewei_shop_goods') . ' g';
+			$limitcateids = explode(',', $data['limitgoodcateids']);
+
+			if (0 < count($limitcateids)) {
+				$table = '(';
+				$i = 0;
+
+				foreach ($limitcateids as $cateid) {
+					++$i;
+
+					if (1 < $i) {
+						$table .= ' union all ';
+					}
+
+					$table .= 'select * from ' . tablename('ewei_shop_goods') . ' where FIND_IN_SET(' . $cateid . ',cates) and deleted =0';
+				}
+
+				$table .= ') g';
+			}
+			else {
+				$table = tablename('ewei_shop_goods') . ' g';
+			}
 		}
 		else {
 			$table = tablename('ewei_shop_goods') . ' g';
 		}
 
 		$where = ' where  g.uniacid=:uniacid and g.bargain =0 and g.status =1 and g.deleted = 0 ';
-		if ($data['limitgoodcatetype'] == 1 && !empty($data['limitgoodcateids'])) {
-			$where .= ' and g.cates in (' . $data['limitgoodcateids'] . ') ';
-		}
-
 		if ($data['limitgoodtype'] == 1 && !empty($data['limitgoodids'])) {
 			$where .= ' and g.id in (' . $data['limitgoodids'] . ') ';
 		}
@@ -524,7 +540,7 @@ class My_EweiShopV2Page extends MobileLoginPage
 			$where .= ' and g.merchid = ' . $data['merchid'] . ' and g.checked=0';
 		}
 
-		$where .= '  LIMIT 5 ';
+		$where .= ' ORDER BY RAND() LIMIT 5 ';
 		$sql = $sql . $table . $where;
 		$goods = pdo_fetchall($sql, $params);
 
@@ -742,7 +758,9 @@ class My_EweiShopV2Page extends MobileLoginPage
 		if ($plugin_commission && 0 < intval($_W['shopset']['commission']['level']) && empty($_W['shopset']['commission']['closemyshop']) && !empty($_W['shopset']['commission']['select_goods'])) {
 			$mid = intval($_GPC['mid']);
 
-			if (!empty($mid)) {
+			$frommyshop = intval($_GPC['frommyshop']);
+			$mid = intval($_GPC['mid']);
+			if (!empty($mid) && !empty($frommyshop)) {
 				$shop = p('commission')->getShop($mid);
 
 				if (!empty($shop['selectgoods'])) {

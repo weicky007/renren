@@ -1,4 +1,4 @@
-$(document).on('click', '#btn-submit-cycle', function () {
+$(document).on('click', '#btn-submit', function () {
     if ($(this).attr('submit')) {
         return
     }
@@ -29,7 +29,7 @@ $(document).on('click', '#btn-submit-cycle', function () {
         FoxUI.toast.show("请填写详细地址");
         return
     }
-    $('#btn-submit-cycle').html('正在处理...').attr('submit', 1);
+    $('#btn-submit').html('正在处理...').attr('submit', 1);
     window.editAddressData = {
         realname: $('#realname').val(),
         mobile: $('#mobile').val(),
@@ -38,20 +38,20 @@ $(document).on('click', '#btn-submit-cycle', function () {
         street: $('#street').val(),
         streetdatavalue: $('#street').attr('data-value'),
         datavalue: $('#areas').attr('data-value'),
+        isall: $('#isall').is(':checked') ? 1 : 0,
+
     };
     core.json('cycelbuy/order/list/submit', {
         id: $('#addressid').val(),
         orderid:$( '#orderid' ).val(),
         ordersn:$('#ordersn').val(),
         applyid:$('#applyid').val(),
-        addressdata: window.editAddressData,
-        cycleid:$('#cycleid').val(),
-        isall: $('#isall').val(),
+        addressdata: window.editAddressData
     }, function (json) {
-        $('#btn-submit-cycle').html('提交申请').removeAttr('submit');
+        $('#btn-submit').html('提交申请').removeAttr('submit');
         window.editAddressData.id = json.result.addressid;
         if (json.status == 1) {
-            FoxUI.toast.show(json.result.message);
+            FoxUI.toast.show('保存成功!');
             history.back()
         } else {
             FoxUI.toast.show(json.result.message)

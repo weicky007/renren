@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -48,7 +47,7 @@ class Log_EweiShopV2Page extends PluginWebPage
 			$params[':endtime'] = $endtime;
 		}
 
-		$list = pdo_fetchall('SELECT log.*, mc.id as mcid, mc.nickname as nickname_mc, mc.avatar as avatar_mc, ms.id as msid, ms.nickname as nickname_ms, ms.avatar as avatar_ms FROM ' . tablename('ewei_shop_invitation_log') . ' log LEFT JOIN ' . tablename('ewei_shop_member') . ' mc ON mc.openid=log.openid LEFT JOIN' . tablename('ewei_shop_member') . ' ms ON ms.openid=log.invitation_openid WHERE 1' . $condition . ' ORDER BY log.scan_time DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$list = pdo_fetchall('SELECT log.*, mc.id as mcid, mc.nickname as nickname_mc, mc.avatar as avatar_mc, ms.id as msid, ms.nickname as nickname_ms, ms.avatar as avatar_ms FROM ' . tablename('ewei_shop_invitation_log') . ' log LEFT JOIN ' . tablename('ewei_shop_member') . ' mc ON mc.openid=log.openid LEFT JOIN' . tablename('ewei_shop_member') . ' ms ON ms.openid=log.invitation_openid WHERE 1' . $condition . ' ORDER BY log.scan_time DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_invitation_log') . ' log LEFT JOIN ' . tablename('ewei_shop_member') . ' mc ON mc.openid=log.openid LEFT JOIN' . tablename('ewei_shop_member') . ' ms ON ms.openid=log.invitation_openid WHERE 1' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();

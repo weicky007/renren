@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,9 +20,7 @@ class Usesendtask_EweiShopV2Page extends ComWebPage
 		$psize = 10;
 		$condition = ' and cs.uniacid=:uniacid';
 		$params = array(':uniacid' => $uniacid);
-		$usesendtasks = pdo_fetchall('SELECT cs.*, c.couponname as couponname , c.thumb as thumb,uc.couponname as usecouponname, uc.thumb as usethumb  FROM ' . tablename('ewei_shop_coupon_usesendtasks') . '  cs left  join  ' . tablename('ewei_shop_coupon') . '  c on cs.couponid =c.id
-                    left  join  ' . tablename('ewei_shop_coupon') . '  uc on cs.usecouponid =uc.id
-                    WHERE 1 ' . $condition . '   LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$usesendtasks = pdo_fetchall('SELECT cs.*, c.couponname as couponname , c.thumb as thumb,uc.couponname as usecouponname, uc.thumb as usethumb  FROM ' . tablename('ewei_shop_coupon_usesendtasks') . '  cs left  join  ' . tablename('ewei_shop_coupon') . "  c on cs.couponid =c.id\r\n                    left  join  " . tablename('ewei_shop_coupon') . "  uc on cs.usecouponid =uc.id\r\n                    WHERE 1 " . $condition . '   LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_coupon_usesendtasks') . ' cs WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();
@@ -103,7 +100,7 @@ class Usesendtask_EweiShopV2Page extends ComWebPage
 		}
 
 		if (empty($item['endtime'])) {
-			$item['endtime'] = time() + 60 * 60 * 24 * 7;
+			$item['endtime'] = time() + (60 * 60 * 24 * 7);
 		}
 
 		include $this->template();

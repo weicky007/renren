@@ -14,9 +14,9 @@
         <!-- 面包屑 -->
         <div class="inner">
             <div class="crumbs">
-                <a href="{{ pcUrl('pc.list')}}">全部商品</a><i class="iconfont">&#xe65f;</i>
+                <a href="{{ pcUrl('list')}}">全部商品</a><i class="iconfont">&#xe65f;</i>
                 {% for cate in category.upcate %}
-                    <a href="{{ pcUrl('pc.list',{'cate':cate.id})}}">{{ cate.name }}</a><i class="iconfont">&#xe65f;</i>
+                    <a href="{{ pcUrl('list',{'cate':cate.id})}}">{{ cate.name }}</a><i class="iconfont">&#xe65f;</i>
                 {% else %}
 
                 {% endfor %}
@@ -26,19 +26,14 @@
         <div class="inner">
             <div class="goods">
                 <!-- 分类 -->
-                <form action="./index.php" method="get" class="form-horizontal form-search" role="form">
-                    <input type="hidden" name="c" value="entry" />
-                    <input type="hidden" name="i" value="{{ serch.uniacid }}" />
-                    <input type="hidden" name="m" value="ewei_shopv2" />
-                    <input type="hidden" name="do" value="mobile" />
-                    <input type="hidden" name="r"  value="pc.list" />
+                <form action="" method="get" class="form-horizontal form-search" role="form">
                     <input type="hidden" name="cate"  value="{{ cateid }}" />
                     {% if not serch.gpc.group_id>0 %}
                 <div class="goods-cargetory flex">
                     <span>分类：</span>
                     <div class="option">
                         {% for cate in category.downcate %}
-                            <a href="{{ pcUrl('pc.list',{'cate':cate.id})}}" {% if cate.id == cateid %} class = "cuurent" {% endif %}>{{ cate.name }}</a>
+                            <a href="{{ pcUrl('list',{'cate':cate.id})}}" {% if cate.id == cateid %} class = "cuurent" {% endif %}>{{ cate.name }}</a>
                             {% else %}
                             暂无其他分类
                         {% endfor %}
@@ -48,7 +43,7 @@
                 <div class="goods-sort flex">
                     <span class="sort-title">排序：</span>
                     <div class="option">
-                        <a href="{{ pcUrl('pc.list',{'cate':cateid}) }}" {% if serch.show %}style="color: #ff284b" {% endif %}>默认</a>
+                        <a href="{{ pcUrl('list',{'cate':cateid}) }}" {% if serch.show %}style="color: #ff284b" {% endif %}>默认</a>
                         <button  value="{{ serch.sort }}"  class="sales-sort" name="sale"  id="sort" type="submit">
                             <span {% if serch.gpc.sale %} class = "cuurent" {% endif %} >销量</span>
                             <i class="mt {% if serch.gpc.sale == 'desc' %} mt-current {% endif %} "></i>
@@ -76,7 +71,7 @@
                 <!-- 商品列表 -->
                 <div class="goods-list flex">
                     {% for item in data.list %}
-                        <a href="{{ pcUrl('pc.goods.detail',{'id':item.id}) }}">
+                        <a href="{{ pcUrl('goods.detail',{'id':item.id}) }}">
                             <div class="goods-list-item">
                                 <div class="img">
                                     <img src="{{ item.thumb }} " style=" width: 250px;height: 250px;object-fit: cover"/>
@@ -119,7 +114,7 @@
             <div class="love flex">
                 {% for item in maybe %}
                 <div class="goods-item">
-                    <a href="{{ pcUrl('pc.goods.detail',{'id':item.id}) }}">
+                    <a href="{{ pcUrl('goods.detail',{'id':item.id}) }}">
                     <img src="{{ item.thumb }} " style=" width: 230px;height: 250px;object-fit: cover"/>
                     <h6 style="margin-bottom: 0px">{{ item.title }}</h6>
                     </a>

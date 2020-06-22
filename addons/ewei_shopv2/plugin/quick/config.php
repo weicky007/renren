@@ -16,8 +16,8 @@ return array(
 		'items'     => array(
 			array('title' => '购买页面', 'route' => 'pages'),
 			array('title' => '幻灯片设置', 'route' => 'adv')
+			)
 		)
-	)
-);
+	);
 
 ?>

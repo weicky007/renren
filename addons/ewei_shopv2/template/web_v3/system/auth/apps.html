@@ -1,0 +1,22 @@
+{template '_header'}
+<style>
+    .aspect-ratio {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 70%; /* 高度应该是宽度的56% */
+    }
+    .aspect-ratio iframe {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+    }
+</style>
+<div class="aspect-ratio">
+<iframe src="<?php echo $apps ?>" width='100%' height="100%" frameborder="0" allowfullscreen>
+
+</iframe>
+</div>
+

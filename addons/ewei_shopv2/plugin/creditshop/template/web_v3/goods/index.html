@@ -43,7 +43,6 @@
                         </select>
                     </div>
                     <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="请输入关键词"> <span class="input-group-btn">
-                    <input type="hidden" class="input-sm form-control" name='tab' value="{$_GPC['tab']}"> <span class="input-group-btn">
                     <button class="btn btn-primary" type="submit"> 搜索</button> </span>
                 </div>
             </div>
@@ -193,19 +192,20 @@
                                    </span>
                             </a>
                          {/if}
-                         {ifp 'creditshop.goods.delete'}
-                        {if $_GPC['tab']=='recycle'}
+                         {ifp 'creditshop.goods.delete' && $_GPC['tab']=='recycle'}
                          <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove' href="{php echo webUrl('creditshop/goods/deleted',array('id' => $row['id']));}" data-confirm="确定要彻底删除该商品吗？" title="彻底删除">
                              <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
                                  <i class="icow icow-shanchu1"></i>
                                </span>
                              </a>
+                         {/if}
+                         {ifp 'creditshop.goods.delete' && $_GPC['tab']=='recycle'}
                          <a class='btn btn-default btn-sm btn-op btn-operation' data-toggle='ajaxRemove' href="{php echo webUrl('creditshop/goods/recycle',array('id' => $row['id']));}" data-confirm="确定要恢复商品到仓库吗？" title="恢复商品到仓库">
                              <span data-toggle="tooltip" data-placement="top" title="" data-original-title="恢复商品到仓库">
                                      <i class="icow icow-2"></i>
                                    </span>
                          </a>
-                        {/if} {/if}
+                         {/if}
                     </td>
                 </tr>
                 {/loop}
@@ -255,3 +255,4 @@
     </form>
 </div>
 {template '_footer'}
+ 

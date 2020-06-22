@@ -1,10 +1,5 @@
 {template '_header'}
-<style>
-    #xiangqing{
-        color:#44abf7;
-        font-size:14px;
-    }
-</style>
+ 
 <div class="page-header">
     <span>当前位置：<span class="text-primary">{if !empty($item['id'])}编辑{else}添加{/if}操作员 <small>{if !empty($item['id'])}修改【{$item['username']}】{/if}</small></span></span>
 
@@ -32,23 +27,15 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-lg control-label">操作员密码</label>
+                    <label class="col-lg control-label must">操作员密码</label>
                     <div class="col-sm-9 col-xs-12">
                               {ife 'perm.user' $item}
-                                <a id="xiangqing" class="a" style="cursor:pointer" >修改</a>
-                        <input type="hidden"  id = "mima" name="password" class="form-control" value="" autocomplete="off" {if empty($item['password'])}data-rule-required='false' {/if}  />
-                        <p>密码不填写则不修改</p>
+                        <input type="password" name="password" class="form-control" value="" autocomplete="off" {if empty($item['password'])}data-rule-required='true' {/if}/>
                           {else}
                                <div class='form-control-static'>********</div>
                                {/if}
                     </div>
-
-
-                   
                 </div>
-
-
-
 
 
                  <div class="form-group">
@@ -176,10 +163,6 @@
     </form>
 </div>
 <script language='javascript'>
-    $('#xiangqing').click(function(){
-        $('#xiangqing').attr("class","hidden");
-        $('#mima').attr("type","password");
-    })
 
     function search_users() {
         $("#module-menus1").html("正在搜索....")
@@ -205,6 +188,8 @@
             if( _this.data('parent') ){
                 if (_this.data('parent') != 'text') {
                     perm += "." + _this.data('parent');
+                }else if(_this.data('parent') == 'text' && _this.data('group') == 'goods'){
+                    perm = _this.val();
                 }
             }
             if( _this.data('son') ){

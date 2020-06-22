@@ -1,41 +1,26 @@
 <?php
-/*
-The NuSOAP project home is:
-http://sourceforge.net/projects/nusoap/
-
-The primary support for NuSOAP is the mailing list:
-nusoap-general@lists.sourceforge.net
-*/
-
-/**
-* caches instances of the wsdl class
-* 
-* @author   Scott Nichol <snichol@users.sourceforge.net>
-* @author	Ingo Fischer <ingo@apollon.de>
-* @version  $Id: class.wsdlcache.php,v 1.7 2007/04/17 16:34:03 snichol Exp $
-* @access public 
-*/
-class nusoap_wsdlcache {
+class nusoap_wsdlcache
+{
 	/**
 	 *	@var resource
 	 *	@access private
 	 */
-	var $fplock;
+	public $fplock;
 	/**
 	 *	@var integer
 	 *	@access private
 	 */
-	var $cache_lifetime;
+	public $cache_lifetime;
 	/**
 	 *	@var string
 	 *	@access private
 	 */
-	var $cache_dir;
+	public $cache_dir;
 	/**
 	 *	@var string
 	 *	@access public
 	 */
-	var $debug_str = '';
+	public $debug_str = '';
 
 	/**
 	* constructor
@@ -44,9 +29,10 @@ class nusoap_wsdlcache {
 	* @param integer $cache_lifetime lifetime for caching-files in seconds or 0 for unlimited
 	* @access public
 	*/
-	function nusoap_wsdlcache($cache_dir='.', $cache_lifetime=0) {
+	public function nusoap_wsdlcache($cache_dir = '.', $cache_lifetime = 0)
+	{
 		$this->fplock = array();
-		$this->cache_dir = $cache_dir != '' ? $cache_dir : '.';
+		$this->cache_dir = (($cache_dir != '' ? $cache_dir : '.'));
 		$this->cache_lifetime = $cache_lifetime;
 	}
 
@@ -57,8 +43,9 @@ class nusoap_wsdlcache {
 	* @return string The filename used to cache the instance
 	* @access private
 	*/
-	function createFilename($wsdl) {
-		return $this->cache_dir.'/wsdlcache-' . md5($wsdl);
+	public function createFilename($wsdl)
+	{
+		return $this->cache_dir . '/wsdlcache-' . md5($wsdl);
 	}
 
 	/**
@@ -67,8 +54,9 @@ class nusoap_wsdlcache {
 	* @param    string $string debug data
 	* @access   private
 	*/
-	function debug($string){
-		$this->debug_str .= get_class($this).": $string\n";
+	public function debug($string)
+	{
+		$this->debug_str .= get_class($this) . ': ' . $string . "\n";
 	}
 
 	/**
@@ -78,39 +66,47 @@ class nusoap_wsdlcache {
 	* @return object wsdl The cached wsdl instance, null if the instance is not in the cache
 	* @access public
 	*/
-	function get($wsdl) {
+	public function get($wsdl)
+	{
 		$filename = $this->createFilename($wsdl);
-		if ($this->obtainMutex($filename, "r")) {
-			// check for expired WSDL that must be removed from the cache
- 			if ($this->cache_lifetime > 0) {
-				if (file_exists($filename) && (time() - filemtime($filename) > $this->cache_lifetime)) {
+
+		if ($this->obtainMutex($filename, 'r')) {
+			if (0 < $this->cache_lifetime) {
+				if (file_exists($filename) && ($this->cache_lifetime < (time() - filemtime($filename)))) {
 					unlink($filename);
-					$this->debug("Expired $wsdl ($filename) from cache");
+					$this->debug('Expired ' . $wsdl . ' (' . $filename . ') from cache');
 					$this->releaseMutex($filename);
-					return null;
-  				}
+					return;
+				}
+
 			}
-			// see what there is to return
-			if (!file_exists($filename)) {
-				$this->debug("$wsdl ($filename) not in cache (1)");
+
+
+			if (!(file_exists($filename))) {
+				$this->debug($wsdl . ' (' . $filename . ') not in cache (1)');
 				$this->releaseMutex($filename);
-				return null;
+				return;
 			}
-			$fp = @fopen($filename, "r");
+
+
+			$fp = @fopen($filename, 'r');
+
 			if ($fp) {
-				$s = implode("", @file($filename));
+				$s = implode('', @file($filename));
 				fclose($fp);
-				$this->debug("Got $wsdl ($filename) from cache");
-			} else {
-				$s = null;
-				$this->debug("$wsdl ($filename) not in cache (2)");
+				$this->debug('Got ' . $wsdl . ' (' . $filename . ') from cache');
 			}
+			 else {
+				$s = NULL;
+				$this->debug($wsdl . ' (' . $filename . ') not in cache (2)');
+			}
+
 			$this->releaseMutex($filename);
-			return (!is_null($s)) ? unserialize($s) : null;
-		} else {
-			$this->debug("Unable to obtain mutex for $filename in get");
+			return (!(is_null($s)) ? unserialize($s) : NULL);
 		}
-		return null;
+
+
+		$this->debug('Unable to obtain mutex for ' . $filename . ' in get');
 	}
 
 	/**
@@ -121,17 +117,22 @@ class nusoap_wsdlcache {
 	* @return boolean Lock successfully obtained ?!
 	* @access private
 	*/
-	function obtainMutex($filename, $mode) {
+	public function obtainMutex($filename, $mode)
+	{
 		if (isset($this->fplock[md5($filename)])) {
-			$this->debug("Lock for $filename already exists");
+			$this->debug('Lock for ' . $filename . ' already exists');
 			return false;
 		}
-		$this->fplock[md5($filename)] = fopen($filename.".lock", "w");
-		if ($mode == "r") {
+
+
+		$this->fplock[md5($filename)] = fopen($filename . '.lock', 'w');
+
+		if ($mode == 'r') {
 			return flock($this->fplock[md5($filename)], LOCK_SH);
-		} else {
-			return flock($this->fplock[md5($filename)], LOCK_EX);
 		}
+
+
+		return flock($this->fplock[md5($filename)], LOCK_EX);
 	}
 
 	/**
@@ -141,24 +142,30 @@ class nusoap_wsdlcache {
 	* @return boolean WSDL successfully cached
 	* @access public
 	*/
-	function put($wsdl_instance) {
+	public function put($wsdl_instance)
+	{
 		$filename = $this->createFilename($wsdl_instance->wsdl);
 		$s = serialize($wsdl_instance);
-		if ($this->obtainMutex($filename, "w")) {
-			$fp = fopen($filename, "w");
-			if (! $fp) {
-				$this->debug("Cannot write $wsdl_instance->wsdl ($filename) in cache");
+
+		if ($this->obtainMutex($filename, 'w')) {
+			$fp = fopen($filename, 'w');
+
+			if (!($fp)) {
+				$this->debug('Cannot write ' . $wsdl_instance->wsdl . ' (' . $filename . ') in cache');
 				$this->releaseMutex($filename);
 				return false;
 			}
+
+
 			fputs($fp, $s);
 			fclose($fp);
-			$this->debug("Put $wsdl_instance->wsdl ($filename) in cache");
+			$this->debug('Put ' . $wsdl_instance->wsdl . ' (' . $filename . ') in cache');
 			$this->releaseMutex($filename);
 			return true;
-		} else {
-			$this->debug("Unable to obtain mutex for $filename in put");
 		}
+
+
+		$this->debug('Unable to obtain mutex for ' . $filename . ' in put');
 		return false;
 	}
 
@@ -169,13 +176,17 @@ class nusoap_wsdlcache {
 	* @return boolean Lock successfully released
 	* @access private
 	*/
-	function releaseMutex($filename) {
+	public function releaseMutex($filename)
+	{
 		$ret = flock($this->fplock[md5($filename)], LOCK_UN);
 		fclose($this->fplock[md5($filename)]);
 		unset($this->fplock[md5($filename)]);
-		if (! $ret) {
-			$this->debug("Not able to release lock for $filename");
+
+		if (!($ret)) {
+			$this->debug('Not able to release lock for ' . $filename);
 		}
+
+
 		return $ret;
 	}
 
@@ -186,24 +197,139 @@ class nusoap_wsdlcache {
 	* @return boolean Whether there was an instance to remove
 	* @access public
 	*/
-	function remove($wsdl) {
+	public function remove($wsdl)
+	{
 		$filename = $this->createFilename($wsdl);
-		if (!file_exists($filename)) {
-			$this->debug("$wsdl ($filename) not in cache to be removed");
+
+		if (!(file_exists($filename))) {
+			$this->debug($wsdl . ' (' . $filename . ') not in cache to be removed');
 			return false;
 		}
-		// ignore errors obtaining mutex
-		$this->obtainMutex($filename, "w");
+
+
+		$this->obtainMutex($filename, 'w');
 		$ret = unlink($filename);
-		$this->debug("Removed ($ret) $wsdl ($filename) from cache");
+		$this->debug('Removed (' . $ret . ') ' . $wsdl . ' (' . $filename . ') from cache');
 		$this->releaseMutex($filename);
 		return $ret;
 	}
 }
 
-/**
- * For backward compatibility
- */
-class wsdlcache extends nusoap_wsdlcache {
+class wsdlcache extends nusoap_wsdlcache
+{
+	/**
+	 *	@var resource
+	 *	@access private
+	 */
+	/**
+	 *	@var integer
+	 *	@access private
+	 */
+	/**
+	 *	@var string
+	 *	@access private
+	 */
+	/**
+	 *	@var string
+	 *	@access public
+	 */
+
+	public function nusoap_wsdlcache($cache_dir, $cache_lifetime)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function createFilename($wsdl)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function debug($string)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function get($wsdl)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function obtainMutex($filename, $mode)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function put($wsdl_instance)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function releaseMutex($filename)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
+
+	public function remove($wsdl)
+	{
+
+Notice: Undefined offset: -1 in dephp on line 1463
+
+Notice: Undefined offset: -1 in dephp on line 1468
+
+Notice: Undefined offset: -1 in dephp on line 1469
+
+Notice: Undefined offset: -1 in dephp on line 1470
+	}
 }
+
+
 ?>

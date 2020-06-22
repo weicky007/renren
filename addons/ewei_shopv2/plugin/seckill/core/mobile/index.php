@@ -92,11 +92,8 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$end = $alltimes[$key + 1]['time'] - 1;
 				$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 			}
-			else if (empty($task['overtimes'])) {
-				$endtime = strtotime(date('Y-m-d 23:59:59'));
-			}
 			else {
-				$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
+				$endtime = strtotime(date('Y-m-d 23:59:59'));
 			}
 
 			if ($endtime < $currenttime) {
@@ -123,11 +120,8 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$end = $validtimes[$key + 1]['time'] - 1;
 				$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 			}
-			else if (empty($task['overtimes'])) {
-				$endtime = strtotime(date('Y-m-d 23:59:59'));
-			}
 			else {
-				$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
+				$endtime = strtotime(date('Y-m-d 23:59:59'));
 			}
 
 			$time['endtime'] = $endtime;
@@ -206,13 +200,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		}
 
 		$mid = m('member')->getMid();
-		$share_icon = empty($room['share_icon']) ? $task['share_icon'] : $room['share_icon'];
-
-		if (empty($share_icon)) {
-			$share_icon = $_W['shopset']['share']['icon'];
-		}
-
-		$_W['shopshare'] = array('title' => $share_title, 'link' => mobileUrl('seckill', array('roomid' => $roomid, 'mid' => $mid), true), 'imgUrl' => tomedia($share_icon), 'desc' => $share_desc);
+		$_W['shopshare'] = array('title' => $share_title, 'link' => mobileUrl('seckill', array('roomid' => $roomid, 'mid' => $mid), true), 'imgUrl' => tomedia($task['share_icon']), 'desc' => $share_desc);
 		$plugin_diypage = p('diypage');
 
 		if ($plugin_diypage) {
@@ -274,11 +262,8 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$end = $nexttime['time'] - 1;
 			$endtime = strtotime(date('Y-m-d ' . $end . ':59:59'));
 		}
-		else if (empty($task['overtimes'])) {
-			$endtime = strtotime(date('Y-m-d 23:59:59'));
-		}
 		else {
-			$endtime = strtotime(date('Y-m-d ' . $task['overtimes'] . ':00:00'));
+			$endtime = strtotime(date('Y-m-d 23:59:59'));
 		}
 
 		$time['endtime'] = $endtime;
@@ -295,9 +280,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 		}
 
-		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.thumb_url,g.hasoption,g.marketprice,g.productprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . ' tg  
-                  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id 
-                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ';
+		$sql = 'select tg.id,tg.goodsid, tg.price, g.title,g.thumb,g.thumb_url,g.hasoption,g.marketprice,g.productprice,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . " tg  \r\n                  left join " . tablename('ewei_shop_goods') . " g on tg.goodsid = g.id \r\n                  where tg.taskid=:taskid and tg.roomid=:roomid and tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ";
 		$goods = pdo_fetchall($sql, array(':taskid' => $taskid, ':roomid' => $roomid, ':uniacid' => $_W['uniacid'], ':timeid' => $time['id']));
 
 		foreach ($goods as &$g) {

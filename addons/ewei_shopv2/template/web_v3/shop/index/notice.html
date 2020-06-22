@@ -41,7 +41,7 @@
                 <td>{$item['id']}</td>
                 <td>{$item['title']}</td>
                 <td>{php echo date("Y-m-d H:i:s", $item['createtime'])}</td>
-                <td>{php echo !empty($item['author'])? $item['author']: '未填写'}</td>
+                <td>{$item['author']}</td>
                 <td>
                     <a href="#" class="text-primary">查看详情</a>
                 </td>

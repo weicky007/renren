@@ -44,7 +44,9 @@
 				<li class=""><a href="#sut_cate">商品分类</a></li>
 				{/if}
 				{/if}
-
+                {if $platform=='wxapp'}
+				<li class=""><a href="#sut_diyurl">第三方链接</a></li>
+				{/if}
 				{if $platform=='wxapp' && $type != 'topmenu' && $type != 'topmenu_data' && $type != 'levellink'}
 				{if !empty($type)}
 					{if $type == 'menu' || $type == 'listmenu' || $type == 'picture' || $type == 'picturew' || $type='menu2'}

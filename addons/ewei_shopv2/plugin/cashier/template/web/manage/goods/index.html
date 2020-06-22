@@ -179,29 +179,6 @@
         font-size: 20px;
     }
 
-    .warn{
-        position: absolute;
-        right: 0;
-        background: rgba(255, 0, 0, 0.7);
-        color: #fff;
-        max-height: 35px;
-        max-width: 35px;
-        transform: scale(0.8,0.8);
-        -webkit-transform: scale(0.8,0.8);
-        -moz-transform: scale(0.8,0.8);
-        -o-transform: scale(0.8,0.8);
-        -ms-transform: scale(0.8,0.8);
-        transform-origin: top right;
-        -webkit-transform-origin: top right;
-        -o-transform-origin: top right;
-        -ms-transform-origin: top right;
-        -moz-transform-origin: top right;
-        lin: 16px;
-        line-height: 14px;
-        padding: 3px 0;
-    }
-
-
 </style>
 
 
@@ -396,7 +373,7 @@
                     if (selfgoods.length>0){
                         var html = '';
                         $.each(selfgoods,function (key,value) {
-                            html += '<div class="item goods" data-id="'+value.id+'" data-title="'+value.title+'" data-option="0" data-selfgoods="1">'+(value.iswarning==0?'':'<div class="warn">库存预警</div>')+'<img src="'+value.thumb+'" /><div class="title">'+value.title+'</div></div>';
+                            html += '<div class="item goods" data-id="'+value.id+'" data-title="'+value.title+'" data-option="0" data-selfgoods="1"><img src="'+value.thumb+'" /><div class="title">'+value.title+'</div></div>';
                             winselfgoods[value.id] = value;
                         });
                         $goodsdata.html(html)
@@ -413,7 +390,8 @@
                                     break;
                                 }
                             }
-                            html += '<div class="item goods" data-id="'+value.id+'" data-title="'+value.title+'" data-option="'+(option==false?0:option.id)+'" data-selfgoods="0">'+(value.iswarning==0?'':'<div class="warn">库存预警</div>')+'<img src="'+value.thumb+'" /><div class="title">'+value.title+'</div></div>';
+
+                            html += '<div class="item goods" data-id="'+value.id+'" data-title="'+value.title+'" data-option="'+(option==false?0:option.id)+'" data-selfgoods="0"><img src="'+value.thumb+'" /><div class="title">'+value.title+'</div></div>';
                             wingoods[value.id] = value;
                         });
                         $goodsdata.append(html)
@@ -440,24 +418,15 @@
             html += '<td style="text-align: left;">';
             if (data.option!=0){
                 html += '<select class="form-control input-sm select-option">';
-                html += '<option value="0">请选择</option>';
                 $.each(goods.options,function (index,item) {
                     html += '<option value="'+item.id+'">'+item.title+'</option>';
                 });
                 html += '</select>';
-                html += '<td class="col-sm-3">';
-                html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
             }else{
                 html += '无';
-                html += '<td class="col-sm-3">';
-                if(goods.marketprice == undefined){
-                    html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
-                }else{
-                    html += '<input type="number" class="form-control input-sm price" value="'+goods.marketprice+'"  style="text-align: center;"/>';
-                }
-
             }
-
+            html += '<td class="col-sm-3">';
+            html += '<input type="number" class="form-control input-sm price" value="'+goods.price+'"  style="text-align: center;"/>';
             html += '</td>';
             html += '<td class="col-sm-4">';
             html += '<div class="input-group input-group-sm">';
@@ -534,18 +503,6 @@
 
         //表单提交
         $('form').submit(function (e) {
-            var brck=0;
-            $(".select-option").each(function(i){
-                if($(this).val()==0){
-                    brck=1;
-                    return;
-                }
-            },this);
-            if(brck){
-                $('form').attr('stop',1);
-                tip.msgbox.err("请选择规格!");
-                return false;
-            }
             e.preventDefault();
             $('input[type="submit"]').attr('disabled',true);
             var $this = $(this);
@@ -612,12 +569,6 @@
                 } else if (data.status == -101) {
                     ordre_status.hide();
                     tip.msgbox.err(data.result.message);
-                    $('input[type="submit"]').attr('disabled',false);
-                    return false;
-                }else if(data.status == -1){
-                    ordre_status.hide();
-                    tip.msgbox.err(data.result.message);
-                    $('input[type="submit"]').attr('disabled',false);
                     return false;
                 }
             }, 'json')
@@ -685,12 +636,7 @@
                 money += parseFloat($item.find(':input.price').val())*parseInt($item.find(':input.total').val());
             });
         }
-        if(isNaN(money)){
-            $(':input[name="data[money]"]').val('0.00');
-        }else{
-            $(':input[name="data[money]"]').val(money.toFixed(2));
-        }
-
+        $(':input[name="data[money]"]').val(money.toFixed(2));
     }
 
     function log(log) {

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -36,7 +35,7 @@ class Member_increase_EweiShopV2Page extends WebPage
 			++$i;
 		}
 
-		$timefield = empty($isagent) ? 'createtime' : 'agenttime';
+		$timefield = (empty($isagent) ? 'createtime' : 'agenttime');
 		$datas = array();
 		$title = '';
 
@@ -48,7 +47,7 @@ class Member_increase_EweiShopV2Page extends WebPage
 				$time = date('Y-m-d', strtotime('-' . $i . ' day'));
 				$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 				$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($time . ' 00:00:00'), ':endtime' => strtotime($time . ' 23:59:59'));
-				$datas[] = array('date' => $time, 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=0  ' . $condition), $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1  ' . $condition), $params));
+				$datas[] = array('date' => $time, 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=0  ' . $condition, $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1  ' . $condition, $params));
 				--$i;
 			}
 		}
@@ -61,7 +60,7 @@ class Member_increase_EweiShopV2Page extends WebPage
 				while ($d <= $lastday) {
 					$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 					$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($year . '-' . $month . '-' . $d . ' 00:00:00'), ':endtime' => strtotime($year . '-' . $month . '-' . $d . ' 23:59:59'));
-					$datas[] = array('date' => $d . '日', 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=0  ' . $condition), $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1  ' . $condition), $params));
+					$datas[] = array('date' => $d . '日', 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=0  ' . $condition, $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1  ' . $condition, $params));
 					++$d;
 				}
 			}
@@ -73,7 +72,7 @@ class Member_increase_EweiShopV2Page extends WebPage
 						$lastday = get_last_day($year, $m['data']);
 						$condition = ' and uniacid=:uniacid and ' . $timefield . '>=:starttime and ' . $timefield . '<=:endtime';
 						$params = array(':uniacid' => $_W['uniacid'], ':starttime' => strtotime($year . '-' . $m['data'] . '-01 00:00:00'), ':endtime' => strtotime($year . '-' . $m['data'] . '-' . $lastday . ' 23:59:59'));
-						$datas[] = array('date' => $m['data'] . '月', 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=0  ' . $condition), $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . (' where isagent=1  ' . $condition), $params));
+						$datas[] = array('date' => $m['data'] . '月', 'mcount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=0  ' . $condition, $params), 'acount' => pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=1  ' . $condition, $params));
 					}
 				}
 			}

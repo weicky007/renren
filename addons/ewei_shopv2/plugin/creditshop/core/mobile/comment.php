@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -40,15 +39,10 @@ class Comment_EweiShopV2Page extends PluginMobileLoginPage
 			$condition .= ' and g.merchid = ' . $merchid . ' ';
 		}
 
-		$log = pdo_fetch('select log.id,log.status,log.goodsid,g.goodstype,g.type,log.iscomment,log.optionid,g.thumb,o.title as optiontitle,g.title
-                ,g.credit,g.money
-                from ' . tablename('ewei_shop_creditshop_log') . ' as log
-                left join ' . tablename('ewei_shop_creditshop_goods') . ' as g on g.id = log.goodsid
-                left join ' . tablename('ewei_shop_creditshop_option') . ' o on o.id=log.optionid
-                where ' . $condition . ' and log.goodsid = ' . $goodsid . ' and log.id = ' . $logid . ' ');
+		$log = pdo_fetch("select log.id,log.status,log.goodsid,g.goodstype,g.type,log.iscomment,log.optionid,g.thumb,o.title as optiontitle,g.title\r\n                ,g.credit,g.money\r\n                from " . tablename('ewei_shop_creditshop_log') . " as log\r\n                left join " . tablename('ewei_shop_creditshop_goods') . " as g on g.id = log.goodsid\r\n                left join " . tablename('ewei_shop_creditshop_option') . " o on o.id=log.optionid\r\n                where " . $condition . ' and log.goodsid = ' . $goodsid . ' and log.id = ' . $logid . ' ');
 		$log = set_medias($log, 'thumb');
 
-		if ($log['money'] - intval($log['money']) == 0) {
+		if (($log['money'] - intval($log['money'])) == 0) {
 			$log['money'] = intval($log['money']);
 		}
 
@@ -116,7 +110,7 @@ class Comment_EweiShopV2Page extends PluginMobileLoginPage
 
 		$trade = m('common')->getSysset('trade');
 
-		if (empty($trade['commentchecked'])) {
+		if (!empty($trade['commentchecked'])) {
 			$checked = 0;
 		}
 		else {
@@ -124,8 +118,7 @@ class Comment_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		foreach ($comments as $c) {
-			$old_c = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_creditshop_comment') . '
-            where uniacid=:uniacid and logid=:logid and goodsid=:goodsid limit 1', array(':uniacid' => $_W['uniacid'], ':goodsid' => $c['goodsid'], ':logid' => $logid));
+			$old_c = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_creditshop_comment') . "\r\n            where uniacid=:uniacid and logid=:logid and goodsid=:goodsid limit 1", array(':uniacid' => $_W['uniacid'], ':goodsid' => $c['goodsid'], ':logid' => $logid));
 
 			if (empty($old_c)) {
 				$comment = array('uniacid' => $uniacid, 'logid' => $logid, 'logno' => $log['logno'], 'goodsid' => $c['goodsid'], 'level' => $c['level'], 'content' => trim($c['content']), 'images' => is_array($c['images']) ? iserializer($c['images']) : iserializer(array()), 'openid' => $openid, 'nickname' => $member['nickname'], 'headimg' => $member['avatar'], 'time' => time(), 'checked' => $checked);

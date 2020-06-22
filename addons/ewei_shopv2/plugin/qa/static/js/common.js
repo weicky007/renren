@@ -76,8 +76,7 @@ define(['core', 'tpl'], function (core, tpl) {
             }
             modal.page++;
             core.tpl('#container', 'tpl_list', result, modal.page > 1);
-            FoxUI.according.init();
-            $('#container').lazyload();
+            FoxUI.according.init()
         })
     };
     return modal

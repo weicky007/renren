@@ -71,6 +71,13 @@
                 </span>
 
                 <span class="input-group-select">
+                    <select name='iscommission' class='form-control'>
+                        <option value=''>是否分销商</option>
+                        <option value='0' {if $_GPC['iscommission']=='0'}selected{/if}>否</option>
+                        <option value='1' {if $_GPC['iscommission']=='1'}selected{/if}>是</option>
+                    </select>
+                </span>
+                <span class="input-group-select">
             <select name='isblack' class='form-control'>
                 <option value=''>黑名单</option>
                 <option value='0' {if $_GPC['isblack']=='0'}selected{/if}>否</option>
@@ -163,6 +170,7 @@
                         {else}
                             <i>已关注</i>
                         {/if} <br/>
+                        <span>是否分销商:</span>  {if $row['isagent']==1}是{else}否{/if}<br/>
                                <span>状态:</span>  {if $row['isblack']==1}黑名单{else}正常{/if} ">
 
                                    <img class="img-40" src="{php echo tomedia($row['avatar'])}" style='border-radius:50%;border:1px solid #efefef;' onerror="this.src='../addons/ewei_shopv2/static/images/noface.png'" />

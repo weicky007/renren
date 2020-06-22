@@ -231,7 +231,7 @@
                     <span class="stitle" style="white-space:nowrap; overflow:hidden; max-width:2.6rem;">{$seckillinfo['tag']}</span>
                 </div>
             {/if}
-            <div class="text"><span class="oldprice">&yen;{$goods['productprice']}</span></div>
+            <div class="text"><span class="oldprice">&yen;{$goods['minprice']}</span></div>
         </div>
     </div>
     <div class="fui-list seckill-list1" >
@@ -272,21 +272,10 @@
         <span class='text-danger'>{$goods['subtitle']}</span>
     </div>
     {/if}
-    <!--分销佣金-->
-    {if $goods['cansee']>0 &&  $goods['seecommission']>0 }
-    <div style="height: 1.3rem;margin:0.2rem 0.6rem">
-        <div class="detail-Commission flex" style="padding-bottom: 0;display: inline-flex;float: right;">
-            <div class="text"> {php echo empty($goods['seetitle'])?'预计最高佣金':$goods['seetitle']}</div>
-            <div class="num flex1">￥{$goods['seecommission']}</div>
-        </div>
-    </div>
-    {/if}
+
     <!--批发-->
     {if $goods['type']==4}
     <!--批发价格-->
-
-
-
     <div class="fui-cell goods-bulk">
         <div class="fui-cell-text  flex">
             {if $goods['intervalfloor']>0}

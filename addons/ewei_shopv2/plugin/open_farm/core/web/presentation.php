@@ -6,20 +6,36 @@ if (!defined('IN_IA')) {
 
 class Presentation_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_presentation';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'openid', 'content', 'create_time');
-	/**     * 需要验证是否非空的字段以及其报告     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其报告
+     * @var array
+     */
 	private $message = array('content' => '请填写回复内容');
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
+		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 报告列表     * Reply_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 报告列表
+     * Reply_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -54,7 +70,11 @@ class Presentation_EweiShopV2Page extends PluginWebPage
 		}
 	}
 
-	/**     * 添加一条，编辑一条     * @param $data     * @return bool     */
+	/**
+     * 添加一条，编辑一条
+     * @param $data
+     * @return bool
+     */
 	public function addInfo($data)
 	{
 		global $_W;
@@ -67,7 +87,9 @@ class Presentation_EweiShopV2Page extends PluginWebPage
 		return $presentationInfo;
 	}
 
-	/**     * 获取报告信息     */
+	/**
+     * 获取报告信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -77,7 +99,9 @@ class Presentation_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($presentationInfo);
 	}
 
-	/**     * 删除报告     */
+	/**
+     * 删除报告
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -87,7 +111,9 @@ class Presentation_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 删除多条报告     */
+	/**
+     * 删除多条报告
+     */
 	public function deleteAll()
 	{
 		global $_W;
@@ -97,7 +123,10 @@ class Presentation_EweiShopV2Page extends PluginWebPage
 		show_json(1, '删除成功');
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

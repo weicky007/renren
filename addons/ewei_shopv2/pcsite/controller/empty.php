@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('ES_PATH')) {
+if (!(defined('ES_PATH'))) {
 	exit('Access Denied');
 }
 
@@ -12,5 +11,6 @@ class EmptyController extends Controller
 		trigger_error(' Controller <b>' . $controller . '</b> Not Found !');
 	}
 }
+
 
 ?>

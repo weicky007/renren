@@ -6,26 +6,44 @@ if (!defined('IN_IA')) {
 
 class Market_EweiShopV2Page extends PluginWebPage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_market';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'title', 'type', 'value', 'logo', 'egg', 'number', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array('title' => '请填写商品名字', 'type' => '请选择兑换种类', 'value' => '请填写积分数量', 'logo' => '请填写集市商品logo', 'egg' => '请填写所需鸡蛋数量', 'number' => '请填写兑换数量');
 
-	/**     * 初始化配置类     * Configure_EweiShopV2Page constructor.     * @param bool $_init     */
+	/**
+     * 初始化配置类
+     * Configure_EweiShopV2Page constructor.
+     * @param bool $_init
+     */
 	public function __construct($_init = true)
 	{
 		parent::__construct($_init);
 	}
 
-	/**     * 首页主方法     */
+	/**
+     * 首页主方法
+     */
 	public function main()
 	{
+		global $_W;
 		require_once $this->template();
 	}
 
-	/**     * 新增或者更新一条数据     */
+	/**
+     * 新增或者更新一条数据
+     */
 	public function addInfo()
 	{
 		global $_W;
@@ -46,7 +64,9 @@ class Market_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($noticeAdd);
 	}
 
-	/**     * 获取集市商品信息     */
+	/**
+     * 获取集市商品信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -57,7 +77,9 @@ class Market_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($configInfo);
 	}
 
-	/**     * 获取商品种类     */
+	/**
+     * 获取商品种类
+     */
 	public function getType()
 	{
 		$table = 'ims_ewei_open_farm_market';
@@ -66,7 +88,11 @@ class Market_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($typeArr);
 	}
 
-	/**     * 商品列表     * Market_EweiShopV2Page constructor.     * @param     */
+	/**
+     * 商品列表
+     * Market_EweiShopV2Page constructor.
+     * @param
+     */
 	public function getList()
 	{
 		global $_W;
@@ -102,7 +128,9 @@ class Market_EweiShopV2Page extends PluginWebPage
 		}
 	}
 
-	/**     * 删除商品     */
+	/**
+     * 删除商品
+     */
 	public function deleteInfo()
 	{
 		global $_W;
@@ -112,7 +140,10 @@ class Market_EweiShopV2Page extends PluginWebPage
 		$this->model->returnJson($query);
 	}
 
-	/**     * 验证提交数据     * @param $data     */
+	/**
+     * 验证提交数据
+     * @param $data
+     */
 	private function checkInfo($data)
 	{
 		$this->model->checkDataRequired($data, $this->message);

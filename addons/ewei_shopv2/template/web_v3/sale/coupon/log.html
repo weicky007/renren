@@ -1,9 +1,9 @@
 {template '_header'}
 <div class="page-header">
-	
-	<!--<span class='pull-right'>-->
-		<!--<a class="btn btn-default  btn-sm" href="{php echo webUrl('sale/coupon/coupon')}">返回列表</a>-->
-	<!--</span>-->
+
+    <!--<span class='pull-right'>-->
+    <!--<a class="btn btn-default  btn-sm" href="{php echo webUrl('sale/coupon/coupon')}">返回列表</a>-->
+    <!--</span>-->
     当前位置：<span class="text-primary">优惠券记录 <small>{if !empty($coupon)}优惠券: {$coupon['couponname']}{/if}</small></span>
 </div>
 
@@ -162,11 +162,11 @@
         {/loop}
         </tbody>
         <tfoot>
-            <tr>
-                <td colspan="8" style="text-align: right">
-                    {$pager}
-                </td>
-            </tr>
+        <tr>
+            <td colspan="8" style="text-align: right">
+                {$pager}
+            </td>
+        </tr>
         </tfoot>
     </table>
 

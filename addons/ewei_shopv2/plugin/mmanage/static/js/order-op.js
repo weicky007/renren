@@ -1,1 +1,390 @@
-define(["core"],function(r){var d={orderid:0,initRemark:function(e){d.orderid=e.orderid,$(".cancel-params").unbind("click").click(function(){window.history.back()}),$(".submit-params").unbind("click").click(function(){if(!d.stop){var i={id:d.orderid,remarksaler:d.getVal("remarksaler")};FoxUI.confirm("确定保存修改吗？",function(){d.stop=!0,r.json("mmanage/order/op/remarksaler",i,function(e){d.stop=!1,1!=e.status?FoxUI.toast.show(e.result.message):(FoxUI.toast.show("保存成功"),setTimeout(function(){window.remarksaler=""!=i.remarksaler?1:2,window.orderid=i.id,window.history.back()},500))},!0,!0)})}})},initAddress:function(e){d.orderid=e.orderid,$(".toggle").unbind("click").click(function(){var e=$(this),i=e.data("toggle-check"),s=e.data("show"),n=e.data("hide");i?e.is(":checked")?($("."+n).hide(),$("."+s).show()):($("."+s).hide(),$("."+n).show()):($("."+n).hide(),$("."+s).show())}),$(".cancel-params").unbind("click").click(function(){window.history.back()}),$(".submit-params").unbind("click").click(function(){if(!d.stop){var e={id:d.orderid,realname:d.getVal("sel-realname"),mobile:d.getVal("sel-mobile"),changead:d.checkVal("changead")};if(e.changead){if(e.province=d.selectVal("sel-provance"),e.city=d.selectVal("sel-city"),e.area=d.selectVal("sel-area"),e.street=d.selectVal("sel-street"),e.address=d.getVal("sel-address"),""==e.province)return void FoxUI.toast.show("请选择省份");if(""==e.city)return void FoxUI.toast.show("请选择城市");if(""==e.area)return void FoxUI.toast.show("请选择区/县");if(""==e.address)return void FoxUI.toast.show("请填写详细地址")}FoxUI.confirm("确定要修改收货信息吗？",function(){d.stop=!0,r.json("mmanage/order/op/changeaddress",e,function(e){1!=e.status?(FoxUI.toast.show(e.result.message),d.stop=!1):(FoxUI.toast.show("修改成功"),setTimeout(function(){window.history.back()},500))},!0,!0)})}})},initSend:function(c){d.orderid=c.orderid,d.flag=c.flag,d.bundles=c.bundles,$("#btn-qrcode").unbind("click").click(function(){wx.ready(function(){wx.scanQRCode({needResult:1,scanType:["barCode"],success:function(e){if("scanQRCode:ok"==e.errMsg){var i=e.resultStr;$("#expresssn").val(i),FoxUI.toast.show("扫描成功")}else FoxUI.toast.show(e.errMsg)}})})}),$("#myTab a").unbind("click").click(function(){var e=$(this).data("tab");$(this).addClass("active").siblings().removeClass("active"),$(".tab-pane").hide(),$("#"+e).show()}),$(".check-group .fui-list .fui-list-media,.check-group .fui-list .fui-list-inner").unbind("click").click(function(){var e=$(this).closest(".fui-list").find(".fui-list-media").find("input");e.is(":checked")?e.removeAttr("checked"):e.prop("checked","checked")}),$(".toggle").unbind("click").click(function(){var e=$(this),i=e.data("toggle-check"),s=e.data("show"),n=e.data("hide");i?e.is(":checked")?($("."+n).hide(),$("."+s).show()):($("."+s).hide(),$("."+n).show()):($("."+n).hide(),$("."+s).show())}),$(".cancel-params").unbind("click").click(function(){window.history.back()}),$(".submit-params").unbind("click").click(function(){if(!d.stop){var e=d.selectVal("express",!0),i=d.selectVal("express"),s=d.getVal("expresssn"),n=$("#express").find("option:selected").text();if(""!=s||"同城配送"==n){var o={id:d.orderid,express:e,expresssn:s,expresscom:i,sendtype:d.checkVal("sendtype")};if(1!=o.sendtype||(o.sendgoodsids=d.checkVals(".parcel .fui-list input",!0),""!=o.sendgoodsids)){var t="确定要为此订单发货吗？",a="send";if(1==d.flag){if(1==c.bundles){if(o.bundles=d.checkVals(".check-group input",!0),""==o.bundles)return void FoxUI.toast.show("请选择修改物流的包裹");t="确定修改选定包裹物流吗？"}else t="确定修改物流吗？";a="changeexpress"}FoxUI.confirm(t,function(){d.stop=!0,r.json("mmanage/order/op/"+a,o,function(e){1!=e.status?FoxUI.toast.show(e.result.message):(FoxUI.toast.show(1==d.flag?"修改物流成功":"发货成功"),setTimeout(function(){window.backreload=!0,window.history.back()},500)),d.stop=!1},!0,!0)})}else FoxUI.toast.show("请选择发货商品")}else FoxUI.toast.show("请输入快递单号")}})},initCancel:function(e){d.orderid=e.orderid,d.bundle=e.bundle,$(".cancel-params").unbind("click").click(function(){window.history.back()}),$(".submit-params").unbind("click").click(function(){if(!d.stop){var e={id:d.orderid,remark:d.getVal("remarksend")},i="确定为此订单取消发货吗？";d.bundle&&(i="确定要为选中包裹取消发货吗",e.bundles=d.checkVals(".check-group input",!0),""==e.bundles)?FoxUI.toast.show("请选择取消发货的包裹"):FoxUI.confirm(i,function(){d.stop=!0,r.json("mmanage/order/op/sendcancel",e,function(e){1!=e.status?(FoxUI.toast.show(e.result.message),d.stop=!1):(FoxUI.toast.show("取消发货成功"),setTimeout(function(){window.history.back()},500))},!0,!0)})}})},initPrice:function(e){d.orderid=e.orderid,$(".cancel-params").unbind("click").click(function(){window.history.back()})},initRefund:function(e){d.orderid=e.orderid,$(".fui-navbar:not(.params) .cancel-params").unbind("click").click(function(){window.history.back()}),$(".fui-navbar.params .cancel-params").unbind("click").click(function(){d.hideParams()}),$(".submit-params").unbind("click").click(function(){if(!d.stop){var e={id:d.orderid,refundstatus:d.radioVal("refundstatus",!0)};e.refundstatus?-1!=e.refundstatus||(e.refundcontent=d.getVal("refundcontent"),e.refundcontent&&""!=e.refundcontent)?FoxUI.confirm("确认提交吗？",function(){d.stop=!0,r.json("mmanage/order/op/refund",e,function(e){1!=e.status?(FoxUI.toast.show(e.result.message),d.stop=!1):(FoxUI.toast.show("提交成功"),setTimeout(function(){window.history.back()},500))},!0,!0)}):FoxUI.toast.show("请填写驳回原因"):FoxUI.toast.show("请选择处理结果")}}),$(".check-param").unbind("click").click(function(){var e=$(this).data("action");e&&(d.paction=e,d.showParams())}),$(".radio-group .fui-list").unbind("click").click(function(){var e=$(this).closest(".fui-list").find(".fui-list-media").find("input");e.is(":checked")||e.prop("checked","checked"),1==e.val()?$(".help-group").show():$(".help-group").hide(),-1==e.val()?$(".refuse-group").show():$(".refuse-group").hide()})},getVal:function(e,i,s){var n=s?".":"#",o=$.trim($(n+e).val());if(i){if(""==o)return 0;o=parseInt(o)}return o},selectVal:function(e,i){return i?$("#"+e).find("option:selected").val():$("#"+e).find("option:selected").text()},checkVal:function(e,i){return $((i?".":"#")+e).is(":checked")?1:0},checkVals:function(e,i){var s=[];return $(e).each(function(){var e=$(this).val();$(this).is(":checked")&&e&&s.push(e)}),i?s.join(","):s},radioVal:function(e,i){return e&&""!=e?$("input[name='"+e+"']:checked").val():i?0:""},showParams:function(){if(d.paction){$(".params-block .fui-navbar .cancel-params").css("display","table-cell"),"submit"==d.paction&&$(".params-block .fui-navbar .submit-params").css("display","table-cell");var e=$(".params-block").find(".param-"+d.paction);e.length<1||(e.show(),$(".params-block").addClass("in"),$(".btn-back").hide())}},hideParams:function(){$(".params-block .fui-navbar .nav-item").hide(),$(".params-block").find(".param-item").hide(),$(".params-block").removeClass("in"),$(".btn-back").show(),d.paction=!1,d.orderid=0}};return d});
+define(['core'], function (core) {
+    var modal = {orderid: 0};
+    modal.initRemark = function (params) {
+        modal.orderid = params.orderid;
+        $(".cancel-params").unbind('click').click(function () {
+            window.history.back()
+        });
+        $(".submit-params").unbind('click').click(function () {
+            if (modal.stop) {
+                return
+            }
+            var obj = {id: modal.orderid, remarksaler: modal.getVal('remarksaler')};
+            FoxUI.confirm("确定保存修改吗？", function () {
+                modal.stop = true;
+                core.json("mmanage/order/op/remarksaler", obj, function (json) {
+                    modal.stop = false;
+                    if (json.status != 1) {
+                        FoxUI.toast.show(json.result.message)
+                    } else {
+                        FoxUI.toast.show("保存成功");
+                        setTimeout(function () {
+                            window.remarksaler = obj.remarksaler != '' ? 1 : 2;
+                            window.orderid = obj.id;
+                            window.history.back()
+                        }, 500)
+                    }
+                }, true, true)
+            })
+        })
+    };
+    modal.initAddress = function (params) {
+        modal.orderid = params.orderid;
+        $(".toggle").unbind('click').click(function () {
+            var _this = $(this);
+            var check = _this.data('toggle-check');
+            var show = _this.data('show');
+            var hide = _this.data('hide');
+            if (check) {
+                var checked = _this.is(":checked");
+                if (checked) {
+                    $("." + hide).hide();
+                    $("." + show).show()
+                } else {
+                    $("." + show).hide();
+                    $("." + hide).show()
+                }
+            } else {
+                $("." + hide).hide();
+                $("." + show).show()
+            }
+        });
+        $(".cancel-params").unbind('click').click(function () {
+            window.history.back()
+        });
+        $(".submit-params").unbind('click').click(function () {
+            if (modal.stop) {
+                return
+            }
+            var obj = {
+                id: modal.orderid,
+                realname: modal.getVal('sel-realname'),
+                mobile: modal.getVal('sel-mobile'),
+                changead: modal.checkVal('changead')
+            };
+            if (obj.changead) {
+                obj.province = modal.selectVal('sel-provance');
+                obj.city = modal.selectVal('sel-city');
+                obj.area = modal.selectVal('sel-area');
+                obj.street = modal.selectVal('sel-street');
+                obj.address = modal.getVal('sel-address');
+                if (obj.province == '') {
+                    FoxUI.toast.show('请选择省份');
+                    return
+                }
+                if (obj.city == '') {
+                    FoxUI.toast.show('请选择城市');
+                    return
+                }
+                if (obj.area == '') {
+                    FoxUI.toast.show('请选择区/县');
+                    return
+                }
+                if (obj.address == '') {
+                    FoxUI.toast.show('请填写详细地址');
+                    return
+                }
+            }
+            FoxUI.confirm("确定要修改收货信息吗？", function () {
+                modal.stop = true;
+                core.json("mmanage/order/op/changeaddress", obj, function (json) {
+                    if (json.status != 1) {
+                        FoxUI.toast.show(json.result.message);
+                        modal.stop = false
+                    } else {
+                        FoxUI.toast.show("修改成功");
+                        setTimeout(function () {
+                            window.history.back()
+                        }, 500)
+                    }
+                }, true, true)
+            })
+        })
+    };
+    modal.initSend = function (params) {
+        modal.orderid = params.orderid;
+        modal.flag = params.flag;
+        modal.bundles = params.bundles;
+
+        $("#btn-qrcode").unbind('click').click(function () {
+            wx.scanQRCode({
+                needResult: 1, scanType: ["barCode"], success: function (res) {
+                    if (res.errMsg != "scanQRCode:ok") {
+                        FoxUI.toast.show(res.errMsg);
+                        return
+                    }
+                    var text = res.resultStr.split(',')[1];
+                    $("#expresssn").val(text);
+                    FoxUI.toast.show("扫描成功")
+                }
+            })
+        });
+        $("#myTab a").unbind('click').click(function () {
+            var tab = $(this).data('tab');
+            $(this).addClass('active').siblings().removeClass('active');
+            $(".tab-pane").hide();
+            $("#" + tab).show()
+        });
+        $(".check-group .fui-list .fui-list-media,.check-group .fui-list .fui-list-inner").unbind('click').click(function () {
+            var item = $(this).closest('.fui-list').find('.fui-list-media');
+            var checkbox = item.find("input");
+            if (checkbox.is(":checked")) {
+                checkbox.removeAttr('checked')
+            } else {
+                checkbox.prop('checked', 'checked')
+            }
+        });
+        $(".toggle").unbind('click').click(function () {
+            var _this = $(this);
+            var check = _this.data('toggle-check');
+            var show = _this.data('show');
+            var hide = _this.data('hide');
+            if (check) {
+                var checked = _this.is(":checked");
+                if (checked) {
+                    $("." + hide).hide();
+                    $("." + show).show()
+                } else {
+                    $("." + show).hide();
+                    $("." + hide).show()
+                }
+            } else {
+                $("." + hide).hide();
+                $("." + show).show()
+            }
+        });
+        $(".cancel-params").unbind('click').click(function () {
+            window.history.back()
+        });
+        $(".submit-params").unbind('click').click(function () {
+            if (modal.stop) {
+                return
+            }
+            var express = modal.selectVal('express', true);
+            var expresscom = modal.selectVal('express');
+            var expresssn = modal.getVal('expresssn');
+            if (expresssn == '') {
+                FoxUI.toast.show("请输入快递单号");
+                return
+            }
+            var obj = {
+                id: modal.orderid,
+                express: express,
+                expresssn: expresssn,
+                expresscom: expresscom,
+                sendtype: modal.checkVal('sendtype')
+            };
+            if (obj.sendtype == 1) {
+                obj.sendgoodsids = modal.checkVals('.parcel .fui-list input', true);
+                if (obj.sendgoodsids == '') {
+                    FoxUI.toast.show("请选择发货商品");
+                    return
+                }
+            }
+            var confirm_text = "确定要为此订单发货吗？";
+            var route = "send";
+            if (modal.flag == 1) {
+                if(params.bundles==1){
+                    obj.bundles = modal.checkVals(".check-group input", true);
+                    if (obj.bundles == '') {
+                        FoxUI.toast.show("请选择修改物流的包裹");
+                        return
+                    }
+                    confirm_text = "确定修改选定包裹物流吗？";
+                }else{
+                    confirm_text = "确定修改物流吗？";
+                }
+                route = "changeexpress"
+            }
+            FoxUI.confirm(confirm_text, function () {
+                modal.stop = true;
+                core.json("mmanage/order/op/" + route, obj, function (json) {
+                    if (json.status != 1) {
+                        FoxUI.toast.show(json.result.message)
+                    } else {
+                        FoxUI.toast.show(modal.flag == 1 ? "修改物流成功" : "发货成功");
+                        setTimeout(function () {
+                            window.backreload = true;
+                            window.history.back()
+                        }, 500)
+                    }
+                    modal.stop = false
+                }, true, true)
+            })
+        })
+    };
+    modal.initCancel = function (params) {
+        modal.orderid = params.orderid;
+        modal.bundle = params.bundle;
+        $(".cancel-params").unbind('click').click(function () {
+            window.history.back()
+        });
+        $(".submit-params").unbind('click').click(function () {
+            if (modal.stop) {
+                return
+            }
+            var obj = {id: modal.orderid, remark: modal.getVal("remarksend")};
+            var confirm_text = "确定为此订单取消发货吗？";
+            if (modal.bundle) {
+                confirm_text = "确定要为选中包裹取消发货吗";
+                obj.bundles = modal.checkVals(".check-group input", true);
+                if (obj.bundles == '') {
+                    FoxUI.toast.show("请选择取消发货的包裹");
+                    return
+                }
+            }
+            FoxUI.confirm(confirm_text, function () {
+                modal.stop = true;
+                core.json("mmanage/order/op/sendcancel", obj, function (json) {
+                    if (json.status != 1) {
+                        FoxUI.toast.show(json.result.message);
+                        modal.stop = false
+                    } else {
+                        FoxUI.toast.show("取消发货成功");
+                        setTimeout(function () {
+                            window.history.back()
+                        }, 500)
+                    }
+                }, true, true)
+            })
+        })
+    };
+    modal.initPrice = function (params) {
+        modal.orderid = params.orderid;
+        $(".cancel-params").unbind('click').click(function () {
+            window.history.back()
+        })
+    };
+    modal.initRefund = function (params) {
+        modal.orderid = params.orderid;
+        $(".fui-navbar:not(.params) .cancel-params").unbind('click').click(function () {
+            window.history.back()
+        });
+        $(".fui-navbar.params .cancel-params").unbind('click').click(function () {
+            modal.hideParams()
+        });
+        $(".submit-params").unbind('click').click(function () {
+            if (modal.stop) {
+                return
+            }
+            var obj = {id: modal.orderid, refundstatus: modal.radioVal('refundstatus', true)};
+            if (!obj.refundstatus) {
+                FoxUI.toast.show("请选择处理结果");
+                return
+            }
+            if (obj.refundstatus == -1) {
+                obj.refundcontent = modal.getVal('refundcontent');
+                if (!obj.refundcontent || obj.refundcontent == '') {
+                    FoxUI.toast.show("请填写驳回原因");
+                    return
+                }
+            }
+            FoxUI.confirm("确认提交吗？", function () {
+                modal.stop = true;
+                core.json("mmanage/order/op/refund", obj, function (json) {
+                    if (json.status != 1) {
+                        FoxUI.toast.show(json.result.message);
+                        modal.stop = false
+                    } else {
+                        FoxUI.toast.show("提交成功");
+                        setTimeout(function () {
+                            window.history.back()
+                        }, 500)
+                    }
+                }, true, true)
+            })
+        });
+        $(".check-param").unbind('click').click(function () {
+            var action = $(this).data('action');
+            if (action) {
+                modal.paction = action;
+                modal.showParams()
+            }
+        });
+        $(".radio-group .fui-list").unbind('click').click(function () {
+            var item = $(this).closest('.fui-list').find('.fui-list-media');
+            var radio = item.find("input");
+            if (!radio.is(":checked")) {
+                radio.prop('checked', 'checked')
+            }
+            if (radio.val() == 1) {
+                $(".help-group").show()
+            } else {
+                $(".help-group").hide()
+            }
+            if (radio.val() == -1) {
+                $(".refuse-group").show()
+            } else {
+                $(".refuse-group").hide()
+            }
+        })
+    };
+    modal.getVal = function (elm, int, isClass) {
+        var mark = isClass ? "." : "#";
+        var value = $.trim($(mark + elm).val());
+        if (int) {
+            if (value == '') {
+                return 0
+            }
+            value = parseInt(value)
+        }
+        return value
+    };
+    modal.selectVal = function (elm, isVal) {
+        if (isVal) {
+            return $("#" + elm).find('option:selected').val()
+        }
+        return $("#" + elm).find('option:selected').text()
+    };
+    modal.checkVal = function (elm, isClass) {
+        var mark = isClass ? "." : "#";
+        var checked = $(mark + elm).is(":checked") ? 1 : 0;
+        return checked
+    };
+    modal.checkVals = function (elm, isStr) {
+        var arr = [];
+        $(elm).each(function () {
+            var id = $(this).val();
+            var checked = $(this).is(":checked");
+            if (checked && id) {
+                arr.push(id)
+            }
+        });
+        if (isStr) {
+            return arr.join(",")
+        }
+        return arr
+    };
+    modal.radioVal = function (name, int) {
+        if (!name || name == '') {
+            return int ? 0 : ''
+        }
+        var value = $("input[name='" + name + "']:checked").val();
+        return value
+    };
+    modal.showParams = function () {
+        if (!modal.paction) {
+            return
+        }
+        $(".params-block .fui-navbar .cancel-params").css('display', 'table-cell');
+        if (modal.paction == 'submit') {
+            $(".params-block .fui-navbar .submit-params").css('display', 'table-cell')
+        }
+        var params_item = $(".params-block").find(".param-" + modal.paction);
+        if (params_item.length < 1) {
+            return
+        }
+        params_item.show();
+        $(".params-block").addClass('in');
+        $(".btn-back").hide()
+    };
+    modal.hideParams = function () {
+        $(".params-block .fui-navbar .nav-item").hide();
+        $(".params-block").find(".param-item").hide();
+        $(".params-block").removeClass('in');
+        $(".btn-back").show();
+        modal.paction = false;
+        modal.orderid = 0
+    };
+    return modal
+});

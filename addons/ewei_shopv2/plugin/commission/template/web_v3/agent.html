@@ -234,8 +234,8 @@
                            {php echo date('Y-m-d',$row['createtime'])} {php echo date('H:i',$row['createtime'])} <br/>
                            {if !empty($row['agenttime'])}
                            {php echo date('Y-m-d',$row['agenttime'])} {php echo date('H:i',$row['agenttime'])}
-                           {elseif $row['isagent'] == 1 && $row['status'] == 1 && $row['agenttime'] == 0}
-                           {php echo date('Y-m-d',$row['createtime'])} {php echo date('H:i',$row['createtime'])}
+                           {else}
+                           -
                            {/if}
                        </td>
 

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,9 +16,9 @@ class Set_EweiShopV2Page extends ComWebPage
 		global $_GPC;
 
 		if ($_W['ispost']) {
-			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
-			if (intval($data['closeorder_virtual']) < 3 && 0 < intval($data['closeorder_virtual'])) {
-				show_json(0, '最低时间为3分钟');
+			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			if ((intval($data['closeorder_virtual']) < 5) && (0 < intval($data['closeorder_virtual']))) {
+				show_json(0, '最低时间为5分钟');
 			}
 
 			if (intval($data['closeorder_virtual']) < 0) {

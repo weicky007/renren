@@ -61,7 +61,7 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">版块描述</label>
     <div class="col-sm-9 col-xs-12">
-        {ife 'sns.board' $item}
+        {ife 'goods.category' $item}
         <textarea name="desc" class="form-control" cols="70">{$item['desc']}</textarea>
         {else}
         <div class='form-control-static'>{$item['desc']}</div>

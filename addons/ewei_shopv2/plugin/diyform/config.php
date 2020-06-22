@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,8 +14,8 @@ return array(
 			array('title' => '模版管理', 'route' => 'temp'),
 			array('title' => '分类管理', 'route' => 'category'),
 			array('title' => '基础设置', 'route' => 'set')
+			)
 		)
-	)
-);
+	);
 
 ?>

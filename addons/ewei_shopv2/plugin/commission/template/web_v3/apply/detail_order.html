@@ -14,7 +14,6 @@
         </thead>
         <tbody>
         {loop $listpage $row}
-        {if $row['level'] <= $this->set['level']}
         {loop $row['goods'] $g}
         <tr class="" style="background: #f7f7f7;border: 1px solid #efefef;">
             <td colspan="6">
@@ -33,17 +32,17 @@
             <td style="text-align: center"
             ><span class="text-danger">{$row['price']}</span> <a ><i class="fa fa-question-circle"  data-toggle='popover' data-placement='right' data-html='true' data-trigger='hover'
                                                                      data-content="<table class='table table-hover'>
-                                                                   <tr><th>总金额</th><td>{$row['price']}</td></tr>
-                                                                   <tr><th>商品小计</th><td>{$row['goodsprice']}</td></tr>
-                                                                   <tr><th>运费</th><td>{$row['dispatchprice']}</td></tr>
-                                                                   <tr><th>会员折扣</th><td>{if $row['discountprice']>0}-{$row['discountprice']}{/if}</td></tr>
-                                                                   <tr><th>积分抵扣</th><td>{if $row['deductprice']>0}-{$row['deductprice']}{/if}</td></tr>
-                                                                   <tr><th>余额抵扣</th><td>{if $row['deductcredit2']>0}-{$row['deductcredit2']}{/if}</td></tr>
-                                                                   <tr><th>满额立减</th><td>{if $row['deductenough']>0}-{$row['deductenough']}{/if}</td></tr>
-                                                                   <tr><th>优惠券优惠</th><td>{if $row['couponprice']>0}-{$row['couponprice']}{/if}</td></tr>
-                                                                   <tr><th>卖家改价</th><td>{if 0<$item['changeprice']}+{else}-{/if}{php echo number_format(abs($item['changeprice']),2)}</td></tr>
-                                                                   <tr><th>卖家改运费</th><td>{if 0<$item['changedipatchpriceprice']}+{else}-{/if}{php echo number_format(abs($item['changedipatchpriceprice']),2)}</td></tr>
-                                                                   </table>"></i></a></td>
+                                                       <tr><th>总金额</th><td>{$row['price']}</td></tr>
+                                                       <tr><th>商品小计</th><td>{$row['goodsprice']}</td></tr>
+                                                       <tr><th>运费</th><td>{$row['dispatchprice']}</td></tr>
+                                                       <tr><th>会员折扣</th><td>{if $row['discountprice']>0}-{$row['discountprice']}{/if}</td></tr>
+                                                       <tr><th>积分抵扣</th><td>{if $row['deductprice']>0}-{$row['deductprice']}{/if}</td></tr>
+                                                       <tr><th>余额抵扣</th><td>{if $row['deductcredit2']>0}-{$row['deductcredit2']}{/if}</td></tr>
+                                                       <tr><th>满额立减</th><td>{if $row['deductenough']>0}-{$row['deductenough']}{/if}</td></tr>
+                                                       <tr><th>优惠券优惠</th><td>{if $row['couponprice']>0}-{$row['couponprice']}{/if}</td></tr>
+                                                       <tr><th>卖家改价</th><td>{if 0<$item['changeprice']}+{else}-{/if}{php echo number_format(abs($item['changeprice']),2)}</td></tr>
+                                                       <tr><th>卖家改运费</th><td>{if 0<$item['changedipatchpriceprice']}+{else}-{/if}{php echo number_format(abs($item['changedipatchpriceprice']),2)}</td></tr>
+                                                       </table>"></i></a></td>
 
             <td style="text-align: center">{if $row['paytype'] == 1}
                 <i class="icow icow-yue text-warning"></i>余额支付
@@ -68,20 +67,20 @@
                     <span class='input-group-addon' style='width:80px;'>{$g['commission1']}</span>
 
                     <span class='input-group-addon'>
-                                                                {if $g['status1']==-1}
-                                                                <span class='label label-default'>未通过</span>
-                                                                {elseif $g['status1']==1}
+                                                    {if $g['status1']==-1}
+                                                    <span class='label label-default'>未通过</span>
+                                                    {elseif $g['status1']==1}
 
-                                                                <label class='radio-inline' style='margin-top:-7px;'><input type='radio'  data-name="status1_{$g['id']}"  class='status1' value='-1'  name="status1[{$g['id']}]" /> 不通过</label>
-                                                                <label class='radio-inline'  style='margin-top:-7px;'><input type='radio'  data-name="status1_{$g['id']}"  value='2'   name="status1[{$g['id']}]"  /> 通过</label>
+                                                    <label class='radio-inline' style='margin-top:-7px;'><input type='radio'  data-name="status1_{$g['id']}"  class='status1' value='-1'  name="status1[{$g['id']}]" /> 不通过</label>
+                                                    <label class='radio-inline'  style='margin-top:-7px;'><input type='radio'  data-name="status1_{$g['id']}"  value='2'   name="status1[{$g['id']}]"  /> 通过</label>
 
 
-                                                                {elseif $g['status1']==2}
-                                                                <span class='text-success'>通过</span>
-                                                                {elseif $g['status1']==3}
-                                                                <span class='text-warning'>已打款</span>
-                                                                {/if}
-                                                            </span>
+                                                    {elseif $g['status1']==2}
+                                                    <span class='text-success'>通过</span>
+                                                    {elseif $g['status1']==3}
+                                                    <span class='text-warning'>已打款</span>
+                                                    {/if}
+                                                </span>
                     <span class='input-group-addon'>备注</span>
                     <input type='text' data-name="content1_{$g['id']}" class='form-control' name='content1[{$g['id']}]' style='width:150px;' value="{$g['content1']}"/>
                 </div>
@@ -95,42 +94,43 @@
                     <span class='input-group-addon' style='background:#fff;'>{$g['commission2']}</span>
                     <!--<span class='input-group-addon'>状态</span>-->
                     <span class='input-group-addon' style='background:#fff'>
-                                                                {if $g['status2']==-1}
-                                                                <span class='label label-default'>未通过</span>
-                                                                {elseif $g['status2']==1}
+                                                    {if $g['status2']==-1}
+                                                    <span class='label label-default'>未通过</span>
+                                                    {elseif $g['status2']==1}
 
-                                                                <label class='radio-inline' style='margin-top:-7px;'><input type='radio' class='status2' value='-1' data-name="status2_{$g['id']}"  name="status2[{$g['id']}]" /> 不通过</label>
-                                                                <label class='radio-inline' style='margin-top:-7px;'><input type='radio'  value='2'data-name="status2_{$g['id']}"   name="status2[{$g['id']}]"  /> 通过</label>
+                                                    <label class='radio-inline' style='margin-top:-7px;'><input type='radio' class='status2' value='-1' data-name="status2_{$g['id']}"  name="status2[{$g['id']}]" /> 不通过</label>
+                                                    <label class='radio-inline' style='margin-top:-7px;'><input type='radio'  value='2'data-name="status2_{$g['id']}"   name="status2[{$g['id']}]"  /> 通过</label>
 
-                                                                {elseif $g['status2']==2}
-                                                                <span class='label label-success'>通过</span>
-                                                                {elseif $g['status2']==3}
-                                                                <span class='label label-warning'>已打款</span>
-                                                                {/if}
-                                                            </span>
+                                                    {elseif $g['status2']==2}
+                                                    <span class='label label-success'>通过</span>
+                                                    {elseif $g['status2']==3}
+                                                    <span class='label label-warning'>已打款</span>
+                                                    {/if}
+                                                </span>
                     <span class='input-group-addon'>备注</span>
                     <input type='text' data-name="content2_{$g['id']}" class='form-control' name='content2[{$g['id']}]' style='width:150px;' value="{$g['content2']}">
                 </div>
                 </p>
                 {/if}
-                {if $this->set['level']>=3  && $row['level']==3}<p>
+                {if $this->set['level']>=2  && $row['level']==3}<p>
                 <div class='input-group'>
                     <span class='input-group-addon'  style='width:80px;'>三级佣金</span>
                     <span class='input-group-addon' style='background:#fff;'>{$g['commission3']}</span>
                     <!--<span class='input-group-addon'>状态</span>-->
                     <span class='input-group-addon' style='background:#fff'>
-                                                {if $g['status3']==-1}
-                                                <span class='label label-default'>未通过</span>
-                                                {elseif $g['status3']==1}
-                                                <label class='radio-inline' style='margin-top:-7px;'><input type='radio' class='status3' data-name="status3_{$g['id']}"  value='-1' name="status3[{$g['id']}]" /> 不通过</label>
-                                                <label class='radio-inline' style='margin-top:-7px;'><input type='radio' value='2' data-name="status3_{$g['id']}"      name="status3[{$g['id']}]"  /> 通过</label>
+                                    {if $g['status3']==-1}
+                                    <span class='label label-default'>未通过</span>
+                                    {elseif $g['status3']==1}
 
-                                                {elseif $g['status3']==2}
-                                                <span class='label label-success'>通过</span>
-                                                {elseif $g['status3']==3}
-                                                <span class='label label-warning'>已打款</span>
-                                                {/if}
-                                            </span>
+                                    <label class='radio-inline' style='margin-top:-7px;'><input type='radio' class='status3' data-name="status3_{$g['id']}"  value='-1' name="status3[{$g['id']}]" /> 不通过</label>
+                                    <label class='radio-inline' style='margin-top:-7px;'><input type='radio' value='2' data-name="status3_{$g['id']}"      name="status3[{$g['id']}]"  /> 通过</label>
+
+                                    {elseif $g['status3']==2}
+                                    <span class='label label-success'>通过</span>
+                                    {elseif $g['status3']==3}
+                                    <span class='label label-warning'>已打款</span>
+                                    {/if}
+                                </span>
                     <span class='input-group-addon'>备注</span>
                     <input type='text' data-name="content3_{$g['id']}" class='form-control' name='content3[{$g['id']}]' style='width:150px;'  value="{$g['content3']}"/>
                 </div>
@@ -140,7 +140,6 @@
         </tr>
         <tr></tr>
         {/loop}
-        {/if}
         {/loop}
     </table>
     {if $total>1}

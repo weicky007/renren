@@ -7,24 +7,12 @@
     <%each data as item index%>
     <div class="quick-item" data-index="<%index%>">
         <a class="thumb" href="{php echo mobileUrl('goods/detail')}&id=<%item.id%>" data-nocache="true">
-
-            <%if item.total ==0%>
-            <img src="<%imgsrc item.thumb%>" onerror="this.src='';" style="float:left;"  />
-            <div style="background: rgba(173,173,173,0.6);width:4rem;height:4rem;float:left;position: relative;left:0rem;top:-4rem;"><h3 style="font-size: 1rem;position: absolute;left:1rem;top:1rem;">售罄</h3></div>
-            <%/if%>
-            <%if item.total>0%>
-            <img src="<%imgsrc item.thumb%>" onerror="this.src='';" style="float:left" />
-           <%/if%>
+            <img src="<%imgsrc item.thumb%>" onerror="this.src='';" />
         </a>
-
         <div class="info">
             <a class="title" href="{php echo mobileUrl('goods/detail')}&id=<%item.id%>" data-nocache="true"><%if item.presell==1%><i class="fui-tag fui-tag-danger">预</i><%/if%><%if item.isbargain==1%><i class="fui-tag fui-tag-danger red">砍</i><%/if%><%item.title%></a>
             <a class="subtitle" href="{php echo mobileUrl('goods/detail')}&id=<%item.id%>" data-nocache="true"><%item.subtitle%></a>
-            <%if item.showsales==1 || item.showtotal==1%>
-            <div class="sales">
-                <%if item.showsales==1%>销量 <%item.sales||0%><%/if%> <%if item.showtotal==1%>库存 <%item.total||0%><%/if%>
-            </div>
-            <%/if%>
+            <div class="sales">销量 <%item.sales||0%> 库存 <%item.total||0%></div>
             <div class="buyline">
                 <div class="price">￥<%item.minprice%></div>
                 <div class="buy">
@@ -51,7 +39,6 @@
         <%if item.maxbuy>0%>
         <div class="sale"> 最多购买<%item.totalmaxbuy < item.maxbuy ? item.totalmaxbuy : item.maxbuy%><%item.unit%></div>
         <%else%>
-
         <%if item.minbuy>0%>
         <div class="sale"> 最少购买<%item.minbuy%><%item.unit%></div>
         <%/if%>
@@ -61,7 +48,7 @@
             <div class="quick-num open" data-num="0">
                 <div class="minus icon <%if item.dismin==1%>disabled<%/if%>"></div>
                 <div class="num"><%item.total%></div>
-                <div class="plus icon <%if item.dismax==1%>disabled<%/if%>" ></div>
+                <div class="plus icon <%if item.dismax==1%>disabled<%/if%>"></div>
             </div>
         </div>
     </div>
@@ -79,7 +66,6 @@
     <%/if%>
     <%/each%>
 </script>
-<%if item.total>0%>
 <script type="text/html" id="option-picker">
     <div class="option-picker">
         <div class="option-picker-inner">
@@ -106,7 +92,8 @@
                 </div>
                 <%/each%>
                 <%=diyformhtml%>
-                <%if (seckillinfo==false || ( seckillinfo && seckillinfo.status==1)) %>
+
+                <%if (seckillinfo==false || ( seckillinfo && seckillinfo.status==1)) && !goods.canAddCart %>
                 <div class="fui-cell-group">
                     <div class="fui-cell">
                         <div class="fui-cell-label">数量</div>
@@ -129,6 +116,4 @@
             </div>
         </div>
     </div>
-
 </script>
-<%/if%>
