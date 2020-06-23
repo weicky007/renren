@@ -761,7 +761,7 @@ $(function() {
 				'<div class="alert alert-info">'+
 					'<i class="wi wi-info-sign"></i>'+
 					'<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true" class="wi wi-error-sign"></span><span class="sr-only">Close</span></button>'+
-//					'<a href="{$url}" target="_blank">请尽快完善您在微擎云服务平台的站点注册信息。</a>'+
+//					'<a href="{$url}" target="_blank">请尽快完善您在黑马云服务平台的站点注册信息。</a>'+
 				'</div>'+
 			'</div>'+
 		'</div>';

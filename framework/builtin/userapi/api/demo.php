@@ -7,7 +7,7 @@ function render(&$str){
 
 $ret = preg_match('/(?:userapi)(.*)/i', $this->message['content'], $matchs);
 if(!$ret) {
-	return $this->respText('请输入合适的格式, "userapi+查询内容", 如: "userapi微擎"');
+	return $this->respText('请输入合适的格式, "userapi+查询内容", 如: "userapi黑马"');
 }
 $word = $matchs[1];
 

@@ -4,10 +4,10 @@ defined('IN_IA') or exit('Access Denied');
 $config = array();
 
 $config['db']['master']['host'] = '127.0.0.1';
-$config['db']['master']['username'] = 'renren';
-$config['db']['master']['password'] = 'rPYDAdshx3iMc484';
+$config['db']['master']['username'] = 'sstshop';
+$config['db']['master']['password'] = 'rwHLXL24Ey7PwSLA';
 $config['db']['master']['port'] = '3306';
-$config['db']['master']['database'] = 'renren';
+$config['db']['master']['database'] = 'sstshop';
 $config['db']['master']['charset'] = 'utf8';
 $config['db']['master']['pconnect'] = 0;
 $config['db']['master']['tablepre'] = 'ims_';
@@ -26,17 +26,17 @@ $config['db']['slave']['1']['weight'] = 0;
 $config['db']['common']['slave_except_table'] = array('core_sessions');
 
 // --------------------------  CONFIG COOKIE  --------------------------- //
-$config['cookie']['pre'] = '71c4_';
+$config['cookie']['pre'] = 'a566_';
 $config['cookie']['domain'] = '';
 $config['cookie']['path'] = '/';
 
 // --------------------------  CONFIG SETTING  --------------------------- //
 $config['setting']['charset'] = 'utf-8';
-$config['setting']['cache'] = 'mysql';
+$config['setting']['cache'] = 'redis';
 $config['setting']['timezone'] = 'Asia/Shanghai';
 $config['setting']['memory_limit'] = '256M';
 $config['setting']['filemode'] = 0644;
-$config['setting']['authkey'] = '02f3b53d';
+$config['setting']['authkey'] = 'fe0b80d5';
 $config['setting']['founder'] = '1';
 $config['setting']['development'] = 0;
 $config['setting']['referrer'] = 0;
@@ -61,8 +61,8 @@ $config['setting']['proxy']['host'] = '';
 $config['setting']['proxy']['auth'] = '';
 
 // --------------------------  CONFIG REDIS  --------------------------- //
-$config['setting']['redis']['server'] = '';
+$config['setting']['redis']['server'] = '127.0.0.1';
 $config['setting']['redis']['port'] = 6379;
-$config['setting']['redis']['pconnect'] = 0; 
+$config['setting']['redis']['pconnect'] = 1; 
 $config['setting']['redis']['requirepass'] = ''; 
 $config['setting']['redis']['timeout'] = 1;

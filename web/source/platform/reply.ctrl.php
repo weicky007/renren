@@ -358,7 +358,7 @@ if ('post' == $do) {
 				unset($installedmodulelist[$key]);
 				continue;
 			}
-			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+			$value['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '黑马团队'));
 		}
 		unset($value);
 		foreach ($installedmodulelist as $name => $module) {

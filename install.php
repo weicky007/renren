@@ -271,7 +271,7 @@ if($action == 'db') {
 					die('<script type="text/javascript">alert("连接不到服务器, 请稍后重试！");history.back();</script>');
 				}
 				if($ins == 'error') {
-					die('<script type="text/javascript">alert("版本错误，请确认是否为微擎最新版安装文件！");history.back();</script>');
+					die('<script type="text/javascript">alert("版本错误，请确认是否为黑马最新版安装文件！");history.back();</script>');
 				}
 
 				$link = new PDO("mysql:dbname={$db['name']};host={$db['server']};port={$db['port']}", $db['username'], $db['password']);
@@ -319,7 +319,7 @@ EOF;
 				
 
 			} else {
-				die('<script type="text/javascript">alert("你正在使用本地安装, 但未下载完整安装包, 请从微擎官网下载完整安装包后重试.");history.back();</script>');
+				die('<script type="text/javascript">alert("你正在使用本地安装, 但未下载完整安装包, 请从黑马官网下载完整安装包后重试.");history.back();</script>');
 			}
 
 			$salt = local_salt(8);
@@ -595,7 +595,7 @@ function tpl_frame() {
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>安装系统 - 微擎 - 公众平台自助开源引擎</title>
+		<title>安装系统 - 黑马 - 公众平台自助开源引擎</title>
 		<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<style>
 			html,body{font-size:13px;font-family:"Microsoft YaHei UI", "微软雅黑", "宋体";}
@@ -614,8 +614,8 @@ function tpl_frame() {
 		<div class="container">
 			<div class="header" style="margin:15px auto;">
 				<ul class="nav nav-pills pull-right" role="tablist">
-					<li role="presentation" class="active"><a href="javascript:;">安装微擎系统</a></li>
-					<li role="presentation"><a href="http://www.we7.cc">微擎官网</a></li>
+					<li role="presentation" class="active"><a href="javascript:;">安装黑马系统</a></li>
+					<li role="presentation"><a href="http://www.we7.cc">黑马官网</a></li>
 					<li role="presentation"><a href="http://bbs.we7.cc">访问论坛</a></li>
 				</ul>
 				<img src="?res=logo" />
@@ -645,7 +645,7 @@ function tpl_frame() {
 			</div>
 			<div class="footer" style="margin:15px auto;">
 				<div class="text-center">
-					<a href="http://www.we7.cc">关于微擎</a> &nbsp; &nbsp; <a href="http://bbs.we7.cc">微擎帮助</a> &nbsp; &nbsp; <a href="http://www.we7.cc">购买授权</a>
+					<a href="http://www.we7.cc">关于黑马</a> &nbsp; &nbsp; <a href="http://bbs.we7.cc">黑马帮助</a> &nbsp; &nbsp; <a href="http://www.we7.cc">购买授权</a>
 				</div>
 				<div class="text-center">
 					Powered by <a href="http://www.microeco.net"><b>百码云</b></a>  &copy; 2018 <a href="http://www.microeco.net">www.microeco.net</a>
@@ -665,19 +665,19 @@ function tpl_install_license() {
 		<div class="panel panel-default">
 			<div class="panel-heading">阅读许可协议</div>
 			<div class="panel-body" style="overflow-y:scroll;max-height:400px;line-height:20px;">
-				<h3>版权所有 (c)2014，微擎团队保留所有权利。 </h3>
+				<h3>版权所有 (c)2014，黑马团队保留所有权利。 </h3>
 				<p>
-					感谢您选择微擎 - 微信公众平台自助开源引擎（以下简称WE7，WE7基于 PHP + MySQL的技术开发，全部源码开放。 <br />
+					感谢您选择黑马 - 微信公众平台自助开源引擎（以下简称WE7，WE7基于 PHP + MySQL的技术开发，全部源码开放。 <br />
 					为了使你正确并合法的使用本软件，请你在使用前务必阅读清楚下面的协议条款：
 				</p>
 				<p>
-					<strong>一、本授权协议适用且仅适用于微擎系统(We7, MicroEngine. 以下简称微擎)任何版本，微擎官方对本授权协议的最终解释权。</strong>
+					<strong>一、本授权协议适用且仅适用于黑马系统(We7, MicroEngine. 以下简称黑马)任何版本，黑马官方对本授权协议的最终解释权。</strong>
 				</p>
 				<p>
 					<strong>二、协议许可的权利 </strong>
 					<ol>
 						<li>您可以在完全遵守本最终用户授权协议的基础上，将本软件应用于非商业用途，而不必支付软件版权授权费用。</li>
-						<li>您可以在协议规定的约束和限制范围内修改微擎源代码或界面风格以适应您的网站要求。</li>
+						<li>您可以在协议规定的约束和限制范围内修改黑马源代码或界面风格以适应您的网站要求。</li>
 						<li>您拥有使用本软件构建的网站全部内容所有权，并独立承担与这些内容的相关法律义务。</li>
 						<li>获得商业授权之后，您可以将本软件应用于商业用途，同时依据所购买的授权类型中确定的技术支持内容，自购买时刻起，在技术支持期限内拥有通过指定的方式获得指定范围内的技术支持服务。商业授权用户享有反映和提出意见的权力，相关意见将被作为首要考虑，但没有一定被采纳的承诺或保证。</li>
 					</ol>
@@ -687,7 +687,7 @@ function tpl_install_license() {
 					<ol>
 						<li>未获商业授权之前，不得将本软件用于商业用途（包括但不限于企业网站、经营性网站、以营利为目的或实现盈利的网站）。</li>
 						<li>未经官方许可，不得对本软件或与之关联的商业授权进行出租、出售、抵押或发放子许可证。</li>
-						<li>未经官方许可，禁止在微擎的整体或任何部分基础上以发展任何派生版本、修改版本或第三方版本用于重新分发。</li>
+						<li>未经官方许可，禁止在黑马的整体或任何部分基础上以发展任何派生版本、修改版本或第三方版本用于重新分发。</li>
 						<li>如果您未能遵守本协议的条款，您的授权将被终止，所被许可的权利将被收回，并承担相应法律责任。</li>
 					</ol>
 				</p>
@@ -827,7 +827,7 @@ function tpl_install_env($ret = array()) {
 			</table>
 		</div>
 
-		<div class="alert alert-info">系统要求微擎整个安装目录必须可写, 才能使用微擎所有功能。</div>
+		<div class="alert alert-info">系统要求黑马整个安装目录必须可写, 才能使用黑马所有功能。</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">目录权限监测</div>
 			<table class="table table-striped">
@@ -985,7 +985,7 @@ function tpl_install_finish() {
 	echo <<<EOF
 	<div class="page-header"><h3>安装完成</h3></div>
 	<div class="alert alert-success">
-		恭喜您!已成功安装“微擎 - 公众平台自助开源引擎”系统，您现在可以: <a target="_blank" class="btn btn-success" href="./web/index.php">访问网站首页</a>
+		恭喜您!已成功安装“黑马 - 公众平台自助开源引擎”系统，您现在可以: <a target="_blank" class="btn btn-success" href="./web/index.php">访问网站首页</a>
 	</div>
 EOF;
 	tpl_frame();

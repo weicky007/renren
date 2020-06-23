@@ -64,7 +64,7 @@ function _cloud_shipping_parse($dat, $file) {
 		return error(-1, '更新操作太频繁，请稍后再试！');
 	}
 	if ($dat['content'] == 'blacklist') {
-		return error(-1, '抱歉，您的站点已被列入云服务黑名单，云服务一切业务已被禁止，请联系微擎客服！');
+		return error(-1, '抱歉，您的站点已被列入云服务黑名单，云服务一切业务已被禁止，请联系黑马客服！');
 	}
 	if ($dat['content'] == 'install-theme-protect' || $dat['content'] == 'install-module-protect') {
 		return error('-1', '此' . ($dat['content'] == 'install-theme-protect' ? '模板' : '模块') . '已设置版权保护，您只能通过云平台来安装，请先删除该模块的所有文件，购买后再行安装。');

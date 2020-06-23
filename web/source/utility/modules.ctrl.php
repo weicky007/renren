@@ -49,7 +49,7 @@ if ('list' == $do) {
 	} else {
 		$installedmodulelist = uni_modules();
 		foreach ($installedmodulelist as $k => $value) {
-			$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+			$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '黑马团队'));
 			if (1 == $value['enabled']) {
 				$enable_modules[$k] = $value;
 			}

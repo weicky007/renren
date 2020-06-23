@@ -80,7 +80,7 @@ if ('display' == $do) {
 	if (empty($_W['setting']['remote_complete_info']['type'])) {
 		$info['attach']['url'] = $_W['siteroot'] . $_W['config']['upload']['attachdir'] . '/';
 	}
-	$info['company'] = '大 道 至 简 悟 在 天 成';//qwj
+	$info['company'] = '黑 马 科 技';//qwj
 	$info['developers'] = array('袁文涛', '任超 (米粥)', '马德坤', '宋建君 (Gorden)', '赵波', '杨峰', '卜睿君', '张宏', '高建业', '葛海波', '马莉娜', '樊永康', '王玉', '翟佳佳', '张拯', '张玮');
 	$info['operators'] = array('侯琪琪 (琪琪)', '杨欣雨 (小雨)', '赵小雷 (擎擎)', '蔡帅帅 (小帅)', '朱传宝 (阿宝)', '蒋康康 (阿康)', '王鹏 (鹏鹏)');
 	//qwj

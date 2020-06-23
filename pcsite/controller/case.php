@@ -1,5 +1,5 @@
 <?php
-//dezend by http://www.yunlu99.com/
+
 if (!defined('ES_PATH')) {
 	exit('Access Denied');
 }

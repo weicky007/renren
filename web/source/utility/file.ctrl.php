@@ -538,7 +538,7 @@ if ('module' == $do) {
 			}
 		}
 
-		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '微擎团队'));
+		$installedmodulelist[$k]['official'] = empty($value['issystem']) && (strexists($value['author'], 'WeEngine Team') || strexists($value['author'], '黑马团队'));
 	}
 	foreach ($installedmodulelist as $name => $module) {
 		if ($module['issystem']) {

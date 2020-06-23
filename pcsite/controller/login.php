@@ -1,5 +1,5 @@
 <?php
-//dezend by http://www.yunlu99.com/
+
 if (!defined('ES_PATH')) {
 	exit('Access Denied');
 }
@@ -75,7 +75,7 @@ class LoginController extends Controller
 				}
 
 				if (!empty($_W['isfounder'])) {
-					$data['msg'] = '您是超级管理员用户,请从微擎主页登陆';
+					$data['msg'] = '您是超级管理员用户,请从黑马主页登陆';
 					$data['name'] = 'system';
 					echo json_encode($data);
 					exit();
@@ -193,7 +193,7 @@ class LoginController extends Controller
 				$_W['isfounder'] = in_array($record['uid'], $founders);
 
 				if (!empty($_W['isfounder'])) {
-					$data['msg'] = '您是超级管理员用户,请从微擎主页登陆';
+					$data['msg'] = '您是超级管理员用户,请从黑马主页登陆';
 					$data['name'] = 'system';
 					echo json_encode($data);
 					exit();

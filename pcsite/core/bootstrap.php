@@ -1,4 +1,5 @@
 <?php
+
 global $_W;
 global $_GPC;
 require ES_CORE_PATH . 'functions.php';

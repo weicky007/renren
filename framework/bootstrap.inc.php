@@ -18,7 +18,7 @@ if (!file_exists($configfile)) {
 		require IA_ROOT . '/framework/version.inc.php';
 		echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
 		echo "·如果你还没安装本程序，请运行<a href='" . (false === strpos($_SERVER['SCRIPT_NAME'], 'web') ? './install.php' : '../install.php') . "'> install.php 进入安装&gt;&gt; </a><br/><br/>";
-		echo "&nbsp;&nbsp;<a href='http://www.w7.cc' style='font-size:12px' target='_blank'>Power by WE7 " . IMS_VERSION . ' &nbsp;微擎公众平台自助开源引擎</a>';
+		echo "&nbsp;&nbsp;<a href='http://www.w7.cc' style='font-size:12px' target='_blank'>Power by WE7 " . IMS_VERSION . ' &nbsp;黑马公众平台自助开源引擎</a>';
 		exit();
 	} else {
 		header('Content-Type: text/html; charset=utf-8');

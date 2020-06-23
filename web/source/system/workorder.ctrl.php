@@ -29,7 +29,7 @@ if ('display' == $do) { 	$message_id = intval($_GPC['message_id']);
 				'title' => '跳转云工单',
 			),
 		);
-		message('微擎云服务链接中断。请恢复后再进行尝试。或者直接登录微擎应用商城进行工单发布。', referer(), 'expired', '', $extend_buttons);
+		message('黑马云服务链接中断。请恢复后再进行尝试。或者直接登录黑马应用商城进行工单发布。', referer(), 'expired', '', $extend_buttons);
 	}
 	$iframe_url = $data['data']['url'].'&from='.urlencode($siteurl).'&uuid='.$uuid;
 	template('system/workorder');

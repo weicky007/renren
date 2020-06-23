@@ -1,4 +1,5 @@
 <?php
+
 class Controller
 {
 	public function template($name = '')

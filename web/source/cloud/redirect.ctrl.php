@@ -38,7 +38,7 @@ if ('appstore' == $do) {
 
 if ('promotion' == $do) {
 	if (empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
-		itoast('你的程序需要在微擎云服务平台注册你的站点资料, 来接入云平台服务后才能使用推广功能.', url('cloud/profile'), 'error');
+		itoast('你的程序需要在黑马云服务平台注册你的站点资料, 来接入云平台服务后才能使用推广功能.', url('cloud/profile'), 'error');
 	}
 	$iframe = cloud_auth_url('promotion');
 	$title = '我要推广';

@@ -174,7 +174,7 @@
 		<tr>
 			<td>注册/绑定验证码</td>
 			<td class="color-gray">您的短信验证码为:[数字] 您正在使用短信验证码相关功能, 需要你进行身份确认【xxx】</td>
-			<td>【{{settingSmsSign.register || '涛盛微擎团队'}}】</td>
+			<td>【{{settingSmsSign.register || '安徽黑马团队'}}】</td>
 			<td></td>
 			<td class="color-default">
 				<a href="javascript:;" ng-click="showModal('register')">
@@ -185,7 +185,7 @@
 		<tr>
 			<td>找回密码验证码</td>
 			<td class="color-gray">您的短信验证码为: [数字] 您正在使用短信验证码相关功能, 需要你进行身份确认【xxx】</td>
-			<td>【{{settingSmsSign.find_password || '涛盛微擎团队'}}】</td>
+			<td>【{{settingSmsSign.find_password || '安徽黑马团队'}}】</td>
 			<td></td>
 			<td class="color-default">
 				<a href="javascript:;" ng-click="showModal('find_password')">
@@ -196,7 +196,7 @@
 		<tr>
 			<td>用户过期提醒</td>
 			<td class="color-gray">您的用户名[username]即将过期。</td>
-			<td>【{{settingSmsSign.user_expire || '涛盛微擎团队'}}】</td>
+			<td>【{{settingSmsSign.user_expire || '安徽黑马团队'}}】</td>
 
             <td>
                 <div class="link-group">
@@ -217,7 +217,7 @@
 		<tr>
 			<td>平台到期提醒</td>
 			<td class="color-gray">您的平台账号${name}即将过期,为了不影响正常使用，请及时续费。</td>
-			<td>【{{settingSmsSign.account_sms_expire || '涛盛微擎团队'}}】</td>
+			<td>【{{settingSmsSign.account_sms_expire || '安徽黑马团队'}}】</td>
 
             <td>
                 <div class="link-group">
@@ -238,7 +238,7 @@
 		<tr>
 			<td>API余量提醒</td>
 			<td class="color-gray">您的平台账号${name}剩余的API流量即将耗尽，请及时购买。</td>
-			<td>【{{settingSmsSign.api_sms_expire || '涛盛微擎团队'}}】</td>
+			<td>【{{settingSmsSign.api_sms_expire || '安徽黑马团队'}}】</td>
 
             <td>
                 <div class="link-group">
@@ -299,7 +299,7 @@
 					<div class="form-group">
 						<select ng-model="currentSign">
 							<option value="{{item}}" ng-repeat="item in cloudSmsSigns">{{item}}</option>
-							<option value="">涛盛微擎团队</option>
+							<option value="">安徽黑马团队</option>
 						</select>
 					</div>
 				</div>

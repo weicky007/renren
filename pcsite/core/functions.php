@@ -1,4 +1,5 @@
 <?php
+
 function es_empty()
 {
 	$empty_file = ES_CONTROLLER_PATH . ES_EMPTY_CONTROLLER . '.php';
