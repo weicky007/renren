@@ -211,30 +211,30 @@ if ($_W['ispost']) {
         'manydeduct2' => $_GPC['manydeduct2'],
         'deduct2' => $_GPC['deduct2'],
         'virtual'=>$goodstype==3?intval($_GPC['virtual']):0,
-        'ednum' => intval($_GPC['ednum'])
-    , 'edareas' => trim($_GPC['edareas'])
-    , 'edareas_code' => trim($_GPC['edareas_code'])
-    , 'edmoney' => trim($_GPC['edmoney'])
-    , 'invoice' => intval($_GPC['invoice'])
-    , 'repair' => intval($_GPC['repair'])
-    , 'seven' => intval($_GPC['seven'])
-    , 'money'=>trim($_GPC['money'])
-    , 'province'=>trim($_GPC['province'])
-    , 'city'=>trim($_GPC['city'])
-    , 'quality'=>intval($_GPC['quality'])
-    , 'sharebtn'=>intval($_GPC['sharebtn'])
-    , 'autoreceive'=>intval($_GPC['autoreceive'])
-    , 'cannotrefund'=>intval($_GPC['cannotrefund'])
-    , 'refund'=>intval($_GPC['refund'])
-    , 'returngoods'=>intval($_GPC['returngoods'])
-    , 'exchange'=>intval($_GPC['exchange'])
-    , 'buyagain'=>floatval($_GPC['buyagain'])
-    , 'buyagain_islong'=>intval($_GPC['buyagain_islong'])
-    , 'buyagain_condition'=>intval($_GPC['buyagain_condition'])
-    , 'buyagain_sale'=>intval($_GPC['buyagain_sale'])
-    , 'diypage'=>intval($_GPC['diypage'])
-    , 'cashier'=>intval($_GPC['cashier'])
-    , 'video'=>trim($_GPC['video'])
+        'ednum' => intval($_GPC['ednum']),
+        'edareas' => trim($_GPC['edareas']),
+        'edareas_code' => trim($_GPC['edareas_code']),
+        'edmoney' => trim($_GPC['edmoney']),
+        'invoice' => intval($_GPC['invoice']),
+        'repair' => intval($_GPC['repair']),
+        'seven' => intval($_GPC['seven']),
+        'money'=>trim($_GPC['money']),
+        'province'=>trim($_GPC['province']),
+        'city'=>trim($_GPC['city']),
+        'quality'=>intval($_GPC['quality']),
+        'sharebtn'=>intval($_GPC['sharebtn']),
+        'autoreceive'=>intval($_GPC['autoreceive']),
+        'cannotrefund'=>intval($_GPC['cannotrefund']),
+        'refund'=>intval($_GPC['refund']),
+        'returngoods'=>intval($_GPC['returngoods']),
+        'exchange'=>intval($_GPC['exchange']),
+        'buyagain'=>floatval($_GPC['buyagain']),
+        'buyagain_islong'=>intval($_GPC['buyagain_islong']),
+        'buyagain_condition'=>intval($_GPC['buyagain_condition']),
+        'buyagain_sale'=>intval($_GPC['buyagain_sale']),
+        'diypage'=>intval($_GPC['diypage']),
+        'cashier'=>intval($_GPC['cashier']),
+        'video'=>trim($_GPC['video'])
     );
 
 
@@ -816,19 +816,25 @@ if ($_W['ispost']) {
         $id = pdo_insertid();
         plog('goods.add', "添加商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
     } else {
-        unset($data['createtime']);
+        $dataup = array();
+        foreach ($item as $key=>$val){
+            if($val != $data[$key] && $key != 'id' && !empty($data[$key])){
+                $dataup[$key] = $data[$key];
+            }
+        }
+        unset($dataup['createtime']);
         $old_data = pdo_fetch('SELECT nocommission,marketprice,total FROM '.tablename('ewei_shop_goods').' WHERE id=:id AND uniacid=:uniacid',array(':id'=>$id,':uniacid'=>$_W['uniacid']));
-        pdo_update('ewei_shop_goods', $data, array('id' => $id));
+        pdo_update('ewei_shop_goods', $dataup, array('id' => $id));
 
-        if ($old_data['marketprice'] != $data['marketprice']){
-            plog('goods.price.edit', "更改商品 ID: {$id} <br>价格为".$data['marketprice']);
+        if ($old_data['marketprice'] != $dataup['marketprice']){
+            plog('goods.price.edit', "更改商品 ID: {$id} <br>价格为".$dataup['marketprice']);
         }
 
-        if($old_data['nocommission'] != $data['nocommission']){
-            plog('goods.edit', "编辑商品 ID: {$id}<br>".(!empty($data['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
+        if($old_data['nocommission'] != $dataup['nocommission']){
+            plog('goods.edit', "编辑商品 ID: {$id}<br>".(!empty($dataup['nocommission']) ? "是否参与分销 -- 否" : "是否参与分销 -- 是"));
         }
-        if($old_data['total'] != $data['total']){
-            plog('goods.edit', "修改商品库存   ID: {$id} <br> 库存量为".$data['total']);
+        if($old_data['total'] != $dataup['total']){
+            plog('goods.edit', "修改商品库存   ID: {$id} <br> 库存量为".$dataup['total']);
         }
     }
     $param_ids = $_POST['param_id'];
