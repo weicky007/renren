@@ -270,7 +270,7 @@
         <span class="label" style="color: {$diypage['navbar']['style']['textcolor']}">关注</span>
     </a>
     {else}
-    <a  class="nav-item external" href="{if $navbaritem['type']=='shop'}{php echo !empty($goods['merchid']) ? mobileUrl('merch',array('merchid'=>$goods['merchid'])) : mobileUrl('');}{else}{$navbaritem['linkurl']}&goodsid={$goods['id']}&merch={$goods['merchid']}{/if}" {if $navbaritem['type']=='cart'}id="menucart"{/if}>
+    <a  class="nav-item external" href="{if $navbaritem['type']=='shop'}{php echo !empty($goods['merchid']) ? mobileUrl('merch',array('merchid'=>$goods['merchid'])) : mobileUrl('');}{else}{if strstr($navbaritem['linkurl'], 'tel:')}{$navbaritem['linkurl']}{else}{$navbaritem['linkurl']}&goodsid={$goods['id']}&merch={$goods['merchid']}{/if}{/if}" {if $navbaritem['type']=='cart'}id="menucart"{/if}>
         {if $navbaritem['type']=='cart' && $cartCount>0}
         <span style="background:{$diypage['navbar']['style']['dotcolor']}" class='badge {if $cartCount<=0}out{else}in{/if}'>{$cartCount}</span>
         {/if}

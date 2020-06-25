@@ -62,17 +62,28 @@
                     <div class='fui-cell-info c000'><input type="text" id='address' name='address' value="{$address['address']}" placeholder='街道，楼牌号等'  class="fui-input"/></div>
                 </div>
 
-
+                {if $address['ispass'] == 1 || !isset($address['ispass'])}
                 <div class="fui-cell ">
                     <div class="fui-cell-label" style="width:auto">修改剩余全部期数</div>
                     <div class="fui-cell-info ">
-                        <input type="checkbox" id='isall' class="fui-switch fui-switch-danger pull-right">
+                        <div class="fui-cell-remark noremark">
+                            <input  type="checkbox" class="fui-switch fui-switch-small fui-switch-danger pull-right">
+                            <input type="hidden" name="isall" id='isall' value="{$address['isall']}" />
+                        </div>
+
+                        <!--<input type="checkbox" class="fui-switch fui-switch-danger pull-right"  checked="true" />-->
                     </div>
                 </div>
+                {/if}
             </div>
+            <input type="hidden" name="cycleid" id="cycleid" value="{$_GPC['id']}">
+            {if $address['ispass'] == 0 && isset($address['ispass'])}
+            <a id="" class='external btn btn-danger block' style="margin-top:1.25rem">审核中</a>
+            {else}
+            <a id="btn-submit-cycle" class='external btn btn-danger block' style="margin-top:1.25rem">提交申请</a>
+            {/if}
 
 
-            <a id="btn-submit" class='external btn btn-danger block' style="margin-top:1.25rem">提交申请</a>
             {if is_weixin() && $_W['shopset']['trade']['shareaddress']}
             <!--<a id="btn-address" class='btn btn-success block'>读取微信地址</a>-->
             {/if}
@@ -85,6 +96,23 @@
     </script>
     <script>
         require(['../addons/ewei_shopv2/plugin/cycelbuy/static/js/address.js'], function (modal) {
+            $(".fui-switch").bind('click',function(){
+                if($(this).prop('checked')){
+                    $(this).next().val("1");
+                }else{
+                    $(this).next().val("0");
+                }
+            });
+//            $(".fui-switch").change(function () {
+//                console.log($(this).prop('check'))
+//                alert($(this).hasClass('checked'));
+//                var next = $(this).next();
+//                if(next.hasClass('checked')){
+//                    $(this).val("1").prev().val("0");
+//                }else{
+//                    $(this).val("0").prev().val("1");
+//                }
+//            });
         });
     </script>
 

@@ -148,6 +148,9 @@
                         {if cv('lottery')}
                         <option value="lottery">游戏中心类</option>
                         {/if}
+                        {if cv('task')}
+                        <option value="lottery">任务中心类</option>
+                        {/if}
                     </select>
                 </div>
                 <div class="panel-body tm tm-upgrade" style="display:none">
@@ -410,6 +413,23 @@
                     <a href='JavaScript:' class="btn btn-default btn-sm">活动名称</a>
                 </div>
 
+
+                <div class="panel-heading tm tm-task" style="display:none">通用任务</div>
+                <div class="panel-body tm tm-task" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">当前时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">接取时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">截止时间</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">任务名称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">分数进度</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">任务所有者昵称</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">已完成数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">待完成数</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">总需求数</a>
+                </div>
+                <div class="panel-heading tm tm-task" style="display:none">海报任务</div>
+                <div class="panel-body tm tm-task" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">关注者昵称</a>
+                </div>
                 <div class="panel-body">
                     点击变量后会自动插入选择的文本框的焦点位置，在发送给粉丝时系统会自动替换对应变量值
                     <div class="text text-danger">

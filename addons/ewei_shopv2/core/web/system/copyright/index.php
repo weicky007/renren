@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,8 +11,8 @@ class Index_EweiShopV2Page extends SystemPage
 		global $_W;
 		global $_GPC;
 		$wechatid = intval($_GPC['wechatid']);
-		if (!empty($wechatid) && ($wechatid != -1)) {
-			$copyrights = pdo_fetch('select * from ' . tablename('ewei_shop_system_copyright') . ' where uniacid=' . $wechatid . ' and ismanage=0 limit 1');
+		if (!empty($wechatid) && $wechatid != -1) {
+			$copyrights = pdo_fetch('select * from ' . tablename('ewei_shop_system_copyright') . (' where uniacid=' . $wechatid . ' and ismanage=0 limit 1'));
 		}
 
 		if (empty($copyrights)) {
@@ -31,7 +32,7 @@ class Index_EweiShopV2Page extends SystemPage
 
 			foreach ($sets as $set) {
 				$uniacid = $set['uniacid'];
-				if (($wechatid == $uniacid) || ($wechatid == -1)) {
+				if ($wechatid == $uniacid || $wechatid == -1) {
 					$cs = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_system_copyright') . ' where uniacid=:uniacid and ismanage=0 limit 1', array(':uniacid' => $uniacid));
 
 					if (empty($cs)) {

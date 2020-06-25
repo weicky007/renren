@@ -1,5 +1,7 @@
 <?php
-echo "\r\n";
+
+echo '
+';
 
 if (!defined('IN_IA')) {
 	exit('Access Denied');
@@ -22,8 +24,14 @@ class Goodssend_EweiShopV2Page extends ComWebPage
 		$psize = 10;
 		$condition = ' and cg.uniacid=:uniacid';
 		$params = array(':uniacid' => $uniacid);
-		$goodssends = pdo_fetchall('SELECT cg.*, c.couponname, c.thumb as cthumb,g.title,g.thumb as ghumb  FROM ' . tablename('ewei_shop_coupon_goodsendtask') . "  cg\r\n            left  join  " . tablename('ewei_shop_goods') . "  g on cg.goodsid =g.id\r\n            left  join  " . tablename('ewei_shop_coupon') . "  c on cg.couponid =c.id\r\n            WHERE 1 " . $condition . '   LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_coupon_goodsendtask') . "  cg\r\n            left  join  " . tablename('ewei_shop_goods') . "  g on cg.goodsid =g.id\r\n            left  join  " . tablename('ewei_shop_coupon') . "  c on cg.couponid =c.id\r\n                    WHERE 1 " . $condition . ' ', $params);
+		$goodssends = pdo_fetchall('SELECT cg.*, c.couponname, c.thumb as cthumb,g.title,g.thumb as ghumb  FROM ' . tablename('ewei_shop_coupon_goodsendtask') . '  cg
+            left  join  ' . tablename('ewei_shop_goods') . '  g on cg.goodsid =g.id
+            left  join  ' . tablename('ewei_shop_coupon') . '  c on cg.couponid =c.id
+            WHERE 1 ' . $condition . '   LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_coupon_goodsendtask') . '  cg
+            left  join  ' . tablename('ewei_shop_goods') . '  g on cg.goodsid =g.id
+            left  join  ' . tablename('ewei_shop_coupon') . '  c on cg.couponid =c.id
+                    WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -106,7 +114,7 @@ class Goodssend_EweiShopV2Page extends ComWebPage
 		}
 
 		if (empty($item['endtime'])) {
-			$item['endtime'] = time() + (60 * 60 * 24 * 7);
+			$item['endtime'] = time() + 60 * 60 * 24 * 7;
 		}
 
 		include $this->template();

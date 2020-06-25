@@ -69,6 +69,26 @@
 						</div>
 					</div>
 				{/if}
+
+				{if !empty($CardActivation['birthday'])}
+
+					<div class="fui-cell">
+						<div class="fui-cell-label">出生日期</div>
+						<div class="fui-cell-info"><input type="text"  class='fui-input'  id='birthday' name='birthday' placeholder="请选择出生日期"  value="{$member['birthday']}" readonly/></div>
+					</div>
+				{/if}
+
+				{if !empty($CardActivation['idnumber'])}
+					<div class="fui-cell">
+						<div class="fui-cell-label">
+							身份证
+						</div>
+						<div class="fui-cell-info">
+							<input type="text"  id='idnumber' name='idnumber' placeholder="请输入您的身份证信息"  value="" />
+						</div>
+					</div>
+				{/if}
+
 				{if !empty($CardActivation['sms_active'])&& !empty($CardActivation['mobile'])}
 					<div class="fui-cell">
 						<div class="fui-cell-label">
@@ -91,7 +111,7 @@
 
 <script language='javascript'>
 	require(['biz/member/activation'], function (modal) {
-		modal.init({needrealname:{$needrealname},needmobile:{$needmobile},needsmscode:{$needsmscode},card_id:'{$card_id}',encrypt_code:'{$encrypt_code}'});
+		modal.init({needrealname:{$needrealname},needmobile:{$needmobile},needsmscode:{$needsmscode},needsbirthday:{$needsbirthday},needsidnumber:{$needsidnumber},card_id:'{$card_id}',encrypt_code:'{$encrypt_code}'});
 	});
 </script>
 

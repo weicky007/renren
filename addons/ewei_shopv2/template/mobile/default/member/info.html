@@ -11,11 +11,31 @@
 		background: red;
 		width: 100%;
 	}
-	.fui-list-media img{
-		border-radius: 50%;
-	}
-	.fui-list-media{
+	.fui-list-img{
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-flex-shrink: 0;
+		-ms-flex: 0 0 auto;
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+		-webkit-box-lines: single;
+		-moz-box-lines: single;
+		-webkit-flex-wrap: nowrap;
+		flex-wrap: nowrap;
+		box-sizing: border-box;
+		-webkit-box-align: center;
+		-webkit-align-items: center;
+		align-items: center;
+		margin-right: .6rem;
+		color: #aaa;
+		position: relative;
 		margin-right: 0;
+	}
+	.fui-list-img img{
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
 	}
 	.fui-cell-group .fui-cell  .fui-cell-remark.down:after {
 		-webkit-transform: rotate(135deg);
@@ -53,16 +73,14 @@
 		<div class="fui-list-group">
 			<input type="file" name="file-avatar" id="file-avatar" />
 			<div class="fui-list" id="btn-avatar">
-				<div class="fui-list-inner" style="color: #666;">修改头像</div>
-				<div class="fui-list-media">
+				<div class="fui-list-inner" style="color: #666;">头像</div>
+				<div class="fui-list-img">
 					<img src="{$member['avatar']}" id="avatar"
 						 data-wechat="{$member['avatar_wechat']}"
 						 data-filename="{$member['avatar']}"
 						 onerror="this.src='../addons/ewei_shopv2/static/images/noface.png';" />
 				</div>
-				<div class="fui-list-angle">
-					<div class="angle"></div>
-				</div>
+				<div class="angle"></div>
 			</div>
 		</div>
 		<div class="fui-cell-group">

@@ -7,20 +7,40 @@ if (!defined('IN_IA')) {
 require_once 'chicken.php';
 class Mood_EweiShopV2Page extends PluginMobilePage
 {
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $table = 'ewei_open_farm_mood';
-	/**     * 当前数据表名称     * @var string     */
+	/**
+     * 当前数据表名称
+     * @var string
+     */
 	private $sonTable = 'ewei_open_farm_mood_image';
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $field = array('id', 'uniacid', 'logo', 'create_time');
-	/**     * 当前类的所有字段     * @var array     */
+	/**
+     * 当前类的所有字段
+     * @var array
+     */
 	private $sonField = array('id', 'uniacid', 'picture', 'create_time');
-	/**     * 需要验证是否非空的字段以及其回复     * @var array     */
+	/**
+     * 需要验证是否非空的字段以及其回复
+     * @var array
+     */
 	private $message = array('logo' => '请选择心情logo', 'picture_list' => '请选择心情图');
-	/**     * 默认openid     * @var string     */
+	/**
+     * 默认openid
+     * @var string
+     */
 	private $openid = '';
 
-	/**     * 初始化接口     */
+	/**
+     * 初始化接口
+     */
 	public function __construct()
 	{
 		parent::__construct();
@@ -28,13 +48,17 @@ class Mood_EweiShopV2Page extends PluginMobilePage
 		$_W['openid'] = $_W['openid'];
 	}
 
-	/**     * 首页方法     */
+	/**
+     * 首页方法
+     */
 	public function main()
 	{
 		require_once $this->template();
 	}
 
-	/**     * 获取信息     */
+	/**
+     * 获取信息
+     */
 	public function getInfo()
 	{
 		global $_W;
@@ -45,7 +69,9 @@ class Mood_EweiShopV2Page extends PluginMobilePage
 		$this->model->returnJson($moodInfo);
 	}
 
-	/**     * 获取子表数据     */
+	/**
+     * 获取子表数据
+     */
 	public function getSon()
 	{
 		global $_W;
@@ -61,7 +87,9 @@ class Mood_EweiShopV2Page extends PluginMobilePage
 		return $data;
 	}
 
-	/**     * 生成心情卡图片     */
+	/**
+     * 生成心情卡图片
+     */
 	public function generateMood()
 	{
 		global $_W;

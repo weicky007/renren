@@ -1,5 +1,7 @@
 <?php
-echo "\r\n";
+
+echo '
+';
 
 if (!defined('IN_IA')) {
 	exit('Access Denied');
@@ -25,10 +27,10 @@ return array(
 				'items' => array(
 					array('title' => '任务设置', 'route' => 'calendar'),
 					array('title' => '入口设置', 'route' => 'cover')
-					)
 				)
 			)
 		)
-	);
+	)
+);
 
 ?>

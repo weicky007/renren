@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,10 +16,10 @@ return array(
 				'title'   => '消息群发',
 				'route'   => '',
 				'extends' => array('messages.run', 'messages.showsign')
-				),
+			),
 			array('title' => '模版设置', 'route' => 'template')
-			)
 		)
-	);
+	)
+);
 
 ?>

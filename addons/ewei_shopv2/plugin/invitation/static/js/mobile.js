@@ -74,9 +74,12 @@ define(['core'], function (core) {
             }
         }, img.onerror = function (e) {
             var tip = modal.cardConfig.createdQr ? '头像' : '二维码';
-            FoxUI.toast.show(tip + ' 加载失败');
+            //FoxUI.toast.show(tip + ' 加载失败');
             if(modal.cardConfig.createdQr){
-                modal.cardConfig.headImg = modal.cardConfig.logoimg;
+                var host = window.location.host;
+                var url = document.location.toString();
+                var arrUrl = url.split("//");
+                modal.cardConfig.headImg = arrUrl[0]+"//"+host+'/addons/ewei_shopv2/static/images/noface.png';
                 modal.initCardBase(canvas);
             }
             //modal.initCardBase(canvas);

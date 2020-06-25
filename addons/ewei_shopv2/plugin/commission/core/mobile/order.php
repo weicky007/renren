@@ -1,4 +1,5 @@
 <?php
+
 function order_sort($a, $b)
 {
 	if ($a['createtime'] == $b['createtime']) {
@@ -46,7 +47,7 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 
 		if (1 <= $level) {
 			$level1_memberids = pdo_fetchall('select id from ' . tablename('ewei_shop_member') . ' where uniacid=:uniacid and agentid=:agentid', array(':uniacid' => $_W['uniacid'], ':agentid' => $member['id']), 'id');
-			$level1_orders = pdo_fetchall('select commission1,o.id,o.createtime,o.price,og.commissions from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where o.uniacid=:uniacid and o.agentid=:agentid ' . $condition . ' and og.status1>=0 and og.nocommission=0', array(':uniacid' => $_W['uniacid'], ':agentid' => $member['id']));
+			$level1_orders = pdo_fetchall('select commission1,o.id,o.createtime,o.price,og.commissions from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . (' where o.uniacid=:uniacid and o.agentid=:agentid ' . $condition . ' and og.status1>=0 and og.nocommission=0'), array(':uniacid' => $_W['uniacid'], ':agentid' => $member['id']));
 
 			foreach ($level1_orders as $o) {
 				if (empty($o['id'])) {
@@ -57,16 +58,16 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 				$commission = iunserializer($o['commission1']);
 
 				if (empty($commissions)) {
-					$commission_ok = (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : (isset($commission['default']) ? $commission['default'] : 0));
+					$commission_ok = isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : (isset($commission['default']) ? $commission['default'] : 0);
 				}
 				else {
-					$commission_ok = (isset($commissions['level1']) ? floatval($commissions['level1']) : 0);
+					$commission_ok = isset($commissions['level1']) ? floatval($commissions['level1']) : 0;
 				}
 
 				$hasorder = false;
 
 				foreach ($orders as &$or) {
-					if (($or['id'] == $o['id']) && ($or['level'] == 1)) {
+					if ($or['id'] == $o['id'] && $or['level'] == 1) {
 						$or['commission'] += $commission_ok;
 						$hasorder = true;
 						break;
@@ -83,7 +84,7 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 
 		if (2 <= $level) {
 			if (0 < $level1) {
-				$level2_orders = pdo_fetchall('select commission2 ,o.id,o.createtime,o.price,og.commissions   from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where o.uniacid=:uniacid and o.agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ')  ' . $condition . '  and og.status2>=0 and og.nocommission=0 ', array(':uniacid' => $_W['uniacid']));
+				$level2_orders = pdo_fetchall('select commission2 ,o.id,o.createtime,o.price,og.commissions   from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where o.uniacid=:uniacid and o.agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . (')  ' . $condition . '  and og.status2>=0 and og.nocommission=0 '), array(':uniacid' => $_W['uniacid']));
 
 				foreach ($level2_orders as $o) {
 					if (empty($o['id'])) {
@@ -94,16 +95,16 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 					$commission = iunserializer($o['commission2']);
 
 					if (empty($commissions)) {
-						$commission_ok = (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default']);
+						$commission_ok = isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
 					}
 					else {
-						$commission_ok = (isset($commissions['level2']) ? floatval($commissions['level2']) : 0);
+						$commission_ok = isset($commissions['level2']) ? floatval($commissions['level2']) : 0;
 					}
 
 					$hasorder = false;
 
 					foreach ($orders as &$or) {
-						if (($or['id'] == $o['id']) && ($or['level'] == 2)) {
+						if ($or['id'] == $o['id'] && $or['level'] == 2) {
 							$or['commission'] += $commission_ok;
 							$hasorder = true;
 							break;
@@ -121,7 +122,7 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 
 		if (3 <= $level) {
 			if (0 < $level2) {
-				$level3_orders = pdo_fetchall('select commission3 ,o.id,o.createtime,o.price,og.commissions  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where o.uniacid=:uniacid and o.agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')  ' . $condition . ' and og.status3>=0 and og.nocommission=0', array(':uniacid' => $_W['uniacid']));
+				$level3_orders = pdo_fetchall('select commission3 ,o.id,o.createtime,o.price,og.commissions  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join  ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where o.uniacid=:uniacid and o.agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . (')  ' . $condition . ' and og.status3>=0 and og.nocommission=0'), array(':uniacid' => $_W['uniacid']));
 
 				foreach ($level3_orders as $o) {
 					if (empty($o['id'])) {
@@ -132,16 +133,16 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 					$commission = iunserializer($o['commission3']);
 
 					if (empty($commissions)) {
-						$commission_ok = (isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default']);
+						$commission_ok = isset($commission['level' . $agentLevel['id']]) ? $commission['level' . $agentLevel['id']] : $commission['default'];
 					}
 					else {
-						$commission_ok = (isset($commissions['level3']) ? floatval($commissions['level3']) : 0);
+						$commission_ok = isset($commissions['level3']) ? floatval($commissions['level3']) : 0;
 					}
 
 					$hasorder = false;
 
 					foreach ($orders as &$or) {
-						if (($or['id'] == $o['id']) && ($or['level'] == 3)) {
+						if ($or['id'] == $o['id'] && $or['level'] == 3) {
 							$or['commission'] += $commission_ok;
 							$hasorder = true;
 							break;
@@ -173,24 +174,24 @@ class Order_EweiShopV2Page extends CommissionMobileLoginPage
 		$list = array();
 
 		if (!empty($orderids)) {
-			$list = pdo_fetchall('select id,ordersn,openid,createtime,status from ' . tablename('ewei_shop_order') . '  where uniacid =' . $_W['uniacid'] . ' and id in ( ' . implode(',', array_keys($orderids)) . ') order by id desc');
+			$list = pdo_fetchall('select id,ordersn,openid,createtime,status from ' . tablename('ewei_shop_order') . ('  where uniacid =' . $_W['uniacid'] . ' and id in ( ') . implode(',', array_keys($orderids)) . ') order by id desc');
 
 			foreach ($list as &$row) {
 				$row['commission'] = number_format((double) $orderids[$row['id']]['commission'], 2);
 				$row['createtime'] = date('Y-m-d H:i', $row['createtime']);
 
 				if ($row['status'] == 0) {
-					$row['status'] = '待付款';
+					$row['statusstr'] = '待付款';
 				}
 				else if ($row['status'] == 1) {
-					$row['status'] = '已付款';
+					$row['statusstr'] = '已付款';
 				}
 				else if ($row['status'] == 2) {
-					$row['status'] = '待收货';
+					$row['statusstr'] = '待收货';
 				}
 				else {
 					if ($row['status'] == 3) {
-						$row['status'] = '已完成';
+						$row['statusstr'] = '已完成';
 					}
 				}
 

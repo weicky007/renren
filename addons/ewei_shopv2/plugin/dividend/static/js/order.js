@@ -1,6 +1,7 @@
 define(['core', 'tpl'], function (core, tpl) {
     var modal = {page: 1, status: ''};
     modal.init = function () {
+        $('#container').empty();
         modal.page = 1;
         $('.fui-content').infinite({
             onLoading: function () {

@@ -1,9 +1,10 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-require MODULE_ROOT . '/defines.php';
+require dirname(__DIR__) . '/../defines.php';
 class PluginProcessor extends WeModuleProcessor
 {
 	public $model;
@@ -16,7 +17,7 @@ class PluginProcessor extends WeModuleProcessor
 		$this->modulename = 'ewei_shopv2';
 		$this->pluginname = $name;
 		$secure = $this->getIsSecureConnection();
-		$http = ($secure ? 'https' : 'http');
+		$http = $secure ? 'https' : 'http';
 		$_W['siteroot'] = strexists($_W['siteroot'], 'https://') ? $_W['siteroot'] : str_replace('http', $http, $_W['siteroot']);
 		$this->loadModel();
 	}
@@ -42,11 +43,11 @@ class PluginProcessor extends WeModuleProcessor
 
 	public function getIsSecureConnection()
 	{
-		if (isset($_SERVER['HTTPS']) && (('1' == $_SERVER['HTTPS']) || ('on' == strtolower($_SERVER['HTTPS'])))) {
+		if (isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))) {
 			return true;
 		}
 
-		if (isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'])) {
+		if (isset($_SERVER['SERVER_PORT']) && '443' == $_SERVER['SERVER_PORT']) {
 			return true;
 		}
 

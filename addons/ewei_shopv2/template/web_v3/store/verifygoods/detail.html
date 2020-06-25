@@ -68,7 +68,7 @@
      <div class="form-group showverifydays" {if !empty($item['limittype'])} style ='display:none;'{/if}>
          <label class="col-lg control-label">有效天数</label>
          <div class="col-sm-9 col-xs-12">
-             {ife 'shop.verify.store' $item}
+             {ifp 'store.verifygoods.edit'}
              <input type="text" name="limitdays" class="form-control" value="{$item['limitdays']}" data-rule-required="true" />
              <div class="help-block">设置为空或者0则默认为365天</div>
              {else}
@@ -79,7 +79,7 @@
      <div class="form-group showverifylimitdate" {if empty($item['limittype'])} style ='display:none;'{/if}>
              <label class="col-lg control-label">过期日期</label>
              <div class="col-sm-6 col-xs-12">
-                 {ife 'goods' $item}
+                 {ifp 'store.verifygoods.edit'}
                  <div class="input-group">
                      {php echo tpl_form_field_date('limitdate', !empty($item['limitdate']) ? date('Y-m-d H:i',$item['limitdate']) : date('Y-m-d H:i'),true)}
                  </div>
@@ -97,7 +97,7 @@
         <div class="form-group">
             <label class="col-lg control-label">可核销次数</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.verify.store' $item}
+                {ifp 'store.verifygoods.edit'}
                     <input type="text" name="limitnum" class="form-control" value="{$item['limitnum']}" data-rule-required="true" />
                     <div class="help-block">设置为空或者0则为不限制核销次数</div>
                 {else}
@@ -110,7 +110,7 @@
         <div class="form-group">
             <label class="col-lg control-label">是否有效</label>
             <div class="col-sm-9 col-xs-12">
-                {ifp 'store.verifygoods.detail'}
+                {ifp 'store.verifygoods.edit'}
                     <label class="radio-inline">
                         <input type="radio" value="0" name='invalid' {if empty($item['invalid'])}checked{/if} /> 有效
                     </label>
@@ -127,7 +127,7 @@
         <div class="form-group">
             <label class="col-lg control-label"></label>
             <div class="col-sm-9 col-xs-12">
-               {ife 'store.verifygoods.detail' $item}
+               {ifp 'store.verifygoods.edit'}
                     <input type="submit" value="提交" class="btn btn-primary"  />
                 {/if}
                <input type="button" name="back" onclick='history.back()' {ifp 'shop.verify.store.add|shop.verify.store.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />

@@ -65,39 +65,6 @@
 
         -webkit-line-clamp:2;
     }
-    /* 更改价格库存排序 */
-    .sorting {
-        color: #bcbdba;
-        display: none;
-    }
-
-    .hover_sanj, .hover_sank {
-        position: relative;
-    }
-
-    .hover_sanj:hover .sorting, .hover_sank:hover .sorting {
-        display: block;
-    }
-
-    .sorting .icon {
-        height: 8px;
-        position: absolute;
-        left: 40px;
-        font-size: 0.3rem;
-        text-align: center;
-    }
-
-    .sorting .icon-sanjiao2 {
-        top: 5px;
-    }
-
-    .sorting .icon-sanjiao1 {
-        bottom: 12px;
-    }
-
-    .sorting .color_red {
-        color: #f55;
-    }
 </style>
 <div class="page-header">
     当前位置：<span class="text-primary">商品管理</span>
@@ -220,29 +187,8 @@
                     <th style="width:80px;text-align:center;">排序</th>
                     <th style="width:80px;">商品</th>
                     <th style="">&nbsp;</th>
-                    <form action="" method="get" class="form-horizontal form-search" role="form" id="orderBy">
-                        <input type="hidden" name="c" value="site" />
-                        <input type="hidden" name="a" value="entry" />
-                        <input type="hidden" name="m" value="ewei_shopv2" />
-                        <input type="hidden" name="do" value="web" />
-                        <input type="hidden" name="r"  value="goods.{$goodsfrom}" />
-                        <input type="hidden" name="orderby" value="" />
-                        <th class="hover_sanj" style="width: 100px;">
-                            <button type="submit" style="background: transparent;text-align: left;width: 100%;">价格
-                                <span class="sorting">
-                            <i class="icon icon-sanjiao2"></i>
-                            <i class="icon icon-sanjiao1"></i>
-                        </span>
-                            </button>
-                        </th>
-                        <th class="hover_sank" style="width: 80px;">
-                            <button type="submit" style="background: transparent;text-align: left;width: 100%;">库存
-                                <span class="sorting">
-                            <i class="icon icon-sanjiao2"></i>
-                            <i class="icon icon-sanjiao1"></i>
-                        </span></button>
-                        </th>
-                    </form>
+                    <th style="width: 100px;">价格</th>
+                    <th style="width: 80px;">库存</th>
                     <th style="width: 80px;">销量</th>
                     <th style="width: 80px;" data-toggle="tooltip" data-placement="top" title="" data-original-title="不包含已申请维权订单">实际销量</th>
                     {if $goodsfrom!='cycle'}
@@ -682,61 +628,5 @@
                 }
             });
 
-        });
-    // 页面排序进入取参orderby
-    function orderBy(param) {
-        var reg = new RegExp("(^|&)" + param + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null)
-            return decodeURI(r[2]);
-        return null;
-    }
-    console.log(orderBy('orderby'));
-    if(orderBy('orderby') == 'price1') {
-        $('.hover_sanj').find('i:eq(0)').addClass('color_red');
-    }else if(orderBy('orderby') == 'price2') {
-        $('.hover_sanj').find('i:eq(1)').addClass('color_red');
-    }else if(orderBy('orderby') == 'total1') {
-        $('.hover_sank').find('i:eq(0)').addClass('color_red');
-    }else if(orderBy('orderby') == 'total2') {
-        $('.hover_sank').find('i:eq(1)').addClass('color_red');
-    }
-    // 价格与库存点击排序
-    $('.hover_sanj').on('click',function () {
-        $('.hover_sank').find('i:eq(0)').removeClass('color_red').end().find('i:eq(1)').removeClass('color_red');
-        var xiao = $(this).find('i:eq(0)').hasClass('color_red');
-        var da = $(this).find('i:eq(1)').hasClass('color_red');
-        if(!xiao && !da) {
-            $(this).find('i:eq(0)').addClass('color_red');
-            //价格倒叙
-            $('input[name=orderby]').val('price1');
-        }else if(xiao && !da) {
-            $(this).find('i:eq(0)').removeClass('color_red').end().find('i:eq(1)').addClass('color_red');
-            //价格正序
-            $('input[name=orderby]').val('price2');
-        }else if(!xiao && da) {
-            $(this).find('i:eq(1)').removeClass('color_red').end().find('i:eq(0)').addClass('color_red');
-            //价格倒叙
-            $('input[name=orderby]').val('price1');
-        }
-    });
-
-    $('.hover_sank').on('click',function () {
-        $('.hover_sanj').find('i:eq(0)').removeClass('color_red').end().find('i:eq(1)').removeClass('color_red');
-        var xiao = $(this).find('i:eq(0)').hasClass('color_red');
-        var da = $(this).find('i:eq(1)').hasClass('color_red');
-        if(!xiao && !da) {
-            $(this).find('i:eq(0)').addClass('color_red');
-            //库存倒叙
-            $('input[name=orderby]').val('total1');
-        }else if(xiao && !da) {
-            $(this).find('i:eq(0)').removeClass('color_red').end().find('i:eq(1)').addClass('color_red');
-            //库存正序
-            $('input[name=orderby]').val('total2');
-        }else if(!xiao && da) {
-            $(this).find('i:eq(1)').removeClass('color_red').end().find('i:eq(0)').addClass('color_red');
-            //库存倒叙
-            $('input[name=orderby]').val('total1');
-        }
-    })
+        })
 </script>

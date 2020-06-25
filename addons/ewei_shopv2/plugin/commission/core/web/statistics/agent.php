@@ -13,7 +13,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$agentlevels = $this->model->getLevels(true, true);
 		$level = $this->set['level'];
 		$pindex = max(1, intval($_GPC['page']));
-		$psize = 300;
+		$psize = 20;
 		$params = array();
 		$condition = '';
 		$searchfield = strtolower(trim($_GPC['searchfield']));
@@ -71,7 +71,11 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		}
 
 		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_commission_level') . ' l on l.id = dm.agentlevel' . ' left join ' . tablename('mc_mapping_fans') . ('f on f.openid=dm.openid and f.uniacid=' . $_W['uniacid']) . ' where dm.uniacid = ' . $_W['uniacid'] . (' and dm.isagent =1  ' . $condition . ' ORDER BY dm.agenttime desc');
-		$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+
+		if (empty($_GPC['export'])) {
+			$sql .= ' limit ' . ($pindex - 1) * $psize . ',' . $psize;
+		}
+
 		$list = pdo_fetchall($sql, $params);
 		$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm  ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . (' and dm.isagent =1 ' . $condition), $params);
 		$array = array('total', 'pay', 'ordercount0', 'ordermoney0', 'ordercount', 'ordermoney', 'ordercount3', 'ordermoney3');
@@ -143,7 +147,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 
 			foreach ($list as &$row) {
 				$row['createtime'] = date('Y-m-d H:i', $row['createtime']);
-				$row['agentime'] = empty($row['agenttime']) ? '' : date('Y-m-d H:i', $row['agentime']);
+				$row['agenttime'] = empty($row['agenttime']) ? '' : date('Y-m-d H:i', $row['agenttime']);
 				$row['groupname'] = empty($row['groupname']) ? '无分组' : $row['groupname'];
 				$row['levelname'] = empty($row['levelname']) ? '普通等级' : $row['levelname'];
 				$row['parentname'] = empty($row['parentname']) ? '总店' : '[' . $row['agentid'] . ']' . $row['parentname'];
@@ -175,8 +179,8 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				array('title' => '三级分销订单数量', 'field' => 'level3_ordercount', 'width' => 12),
 				array('title' => '下级累计佣金', 'field' => 'level_commission_total', 'width' => 12),
 				array('title' => '注册时间', 'field' => 'createtime', 'width' => 12),
-				array('title' => '成为分销商时间', 'field' => 'createtime', 'width' => 12),
-				array('title' => '审核状态', 'field' => 'createtime', 'width' => 12),
+				array('title' => '成为分销商时间', 'field' => 'agenttime', 'width' => 12),
+				array('title' => '审核状态', 'field' => 'statusstr', 'width' => 12),
 				array('title' => '是否关注', 'field' => 'followstr', 'width' => 12)
 			);
 

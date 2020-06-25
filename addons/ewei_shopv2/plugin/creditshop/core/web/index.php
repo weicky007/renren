@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -45,7 +46,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			ca('creditshop.notice.edit');
-			$data = (is_array($_GPC['tm']) ? $_GPC['tm'] : array());
+			$data = is_array($_GPC['tm']) ? $_GPC['tm'] : array();
 
 			if (is_array($_GPC['openids'])) {
 				$data['openids'] = implode(',', $_GPC['openids']);
@@ -67,7 +68,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 					$openids[] = '\'' . $openid . '\'';
 				}
 
-				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . ') and uniacid=' . $_W['uniacid']);
+				$salers = pdo_fetchall('select id,nickname,avatar,openid from ' . tablename('ewei_shop_member') . ' where openid in (' . implode(',', $openids) . (') and uniacid=' . $_W['uniacid']));
 			}
 		}
 

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,7 +21,7 @@ class Cover_EweiShopV2Page extends WebPage
 
 		if ($_W['ispost']) {
 			ca('sysset.cover.' . $key . '.edit');
-			$data = (is_array($_GPC['cover']) ? $_GPC['cover'] : array());
+			$data = is_array($_GPC['cover']) ? $_GPC['cover'] : array();
 
 			if (empty($data['keyword'])) {
 				show_json(0, '请输入关键词!');
@@ -29,7 +30,7 @@ class Cover_EweiShopV2Page extends WebPage
 			$keyword1 = m('common')->keyExist($data['keyword']);
 
 			if (!empty($keyword1)) {
-				if ($keyword1['name'] != ('ewei_shopv2' . $name . '入口设置')) {
+				if ($keyword1['name'] != 'ewei_shopv2' . $name . '入口设置') {
 					show_json(0, '关键字已存在!');
 				}
 			}

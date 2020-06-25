@@ -6,119 +6,6 @@
     .fui-cell-group:first-child{
         margin-top: 0;
     }
-    /* 智能地址识别样式 */
-    .fui-cell-group .fui-cell .intel {
-        top: -1px;
-    }
-
-    .fui-cell-group .fui-cell .remarkRotate {
-        top: 2px;
-    }
-
-    .fui-cell-group .fui-cell .intel{
-        content: " ";
-        display: inline-block;
-        transform: rotate(135deg);
-        height: 8px;
-        width: 8px;
-        border-width: 1px 1px 0 0;
-        border-color: #c8c8cd;
-        border-style: solid;
-        position: relative;
-        top: -1px;
-        margin-left: 0.3em;
-        transition: 1s;
-    }
-
-    .fui-cell-group .fui-cell .remarkRotate {
-        content: " ";
-        display: inline-block;
-        transform: rotate(-45deg);
-        height: 8px;
-        width: 8px;
-        border-width: 1px 1px 0 0;
-        border-color: #c8c8cd;
-        border-style: solid;
-        position: relative;
-        top: -1px;
-        margin-left: 0.3em;
-        transition: 1s;
-    }
-
-    /*.fui-cell-group .remark.fui-cell:before {*/
-    /*    border-top: none;*/
-    /*}*/
-
-    .intelligence {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: 50px;
-        line-height: 20px;
-    }
-
-    .intelligence textarea {
-        width: 270px;
-        margin-top: 4px;
-        transition: 1s;
-        font-size: 14px;
-    }
-
-    .intelligence .line {
-        height: 35px;
-        width: 0;
-        border: 0.5px solid #ebebeb;
-        margin: 5px 10px;
-    }
-
-    .intelligence .copy {
-        width: 55px;
-        height: 45px;
-        line-height: 45px;
-        font-size: 14px;
-        text-align: center;
-        color: #f55;
-    }
-
-    .fui-cell.remark.subBtn {
-        justify-content: flex-end;
-        padding-top: 0;
-    }
-
-    .fui-cell.remark .intelligenceSubmit {
-        width: 92px;
-        height: 34px;
-        line-height: 34px;
-        text-align: center;
-        font-size: 14px;
-        border-radius: 4px;
-        color: #fff;
-        background: #f55;
-    }
-    .fui-cell-group .border.fui-cell:before {
-        border-top: none;
-    }
-    .notop.fui-cell:before {
-        content: " ";
-        border-top: none;
-    }
-    .fui-cell-group .remark.border.fui-cell:after{
-        content: " ";
-        position: absolute;
-        left: 0.5rem;
-        right: 0.5rem;
-        bottom: -1px;
-        height: 1px;
-        border-top: 1px solid #ebebeb;
-        color: #D9D9D9;
-        -webkit-transform-origin: 0 0;
-        -ms-transform-origin: 0 0;
-        transform-origin: 0 0;
-        -webkit-transform: scaleY(0.5);
-        -ms-transform: scaleY(0.5);
-        transform: scaleY(0.5);
-    }
-    /* 智能地址识别样式结束 */
 </style>
 <div class='fui-page  fui-page-current'>
     <div class="fui-header">
@@ -172,24 +59,7 @@
                     <div class='fui-cell-label'>详细地址</div>
                     <div class='fui-cell-info c000'><input type="text" id='address' name='address' value="{$address['address']}" placeholder='街道，楼牌号等'  class="fui-input"/></div>
                 </div>
-                <!-- 智能填写地址新增 -->
-                <div class='fui-cell' id="intellete">
-                    <div class='fui-cell-label' style="width: 96%;color: #999;">智能填写</div>
-                    <div class="intel"></div>
-                </div>
-                <div class="slideup" style="display: none;">
-                    <div class="fui-cell border" >
-                        <div class="intelligence">
-                            <textarea type="text" id="intelIpt" placeholder="粘贴地址信息，可自动识别并填写如：姓名，电话，山东省青岛市xxx区xxx街道xxxxxxx"  value="" ></textarea>
-                            <!--<div class="line"></div>-->
-                            <!--<div class="copy">粘贴</div>-->
-                        </div>
-                    </div>
-                    <div class="fui-cell remark subBtn border" >
-                        <div class="intelligenceSubmit">提交</div>
-                    </div>
-                </div>
-                <!-- 智能填写地址结束 -->
+
 
                 {if empty($address['isdefault'])}
                     <div class="fui-cell ">
@@ -262,49 +132,6 @@
     <script language='javascript'>require(['biz/member/address'], function (modal) {
         modal.initList();
     });</script>
-    <!-- 智能识别js -->
-    <script>
-        $('#intellete').on('click',function(){
-            var bar = $(this).find('div').eq(1).hasClass('remarkRotate');
-            if(bar){
-                $(this).removeClass("notop");
-                $(this).find('div').eq(0).css('color','#999');
-                $(this).find('div').eq(1).removeClass('remarkRotate').addClass('intel');
-            }else {
-                $(this).addClass("notop");
-                $(this).find('div').eq(0).css('color','#f55');
-                $(this).find('div').eq(1).removeClass('intel').addClass('remarkRotate');
-            }
-            $('.slideup').slideToggle('slow');
-        });
-        $('.intelligenceSubmit').on('click',function(){
-            var value = $('#intelIpt').val();
-            if(!value) {
-                FoxUI.toast.show("粘贴内容不能为空");
-                return ;
-            }else {
-                const parseResult = window.ZhAddressParse(value, { type: 0, textFilter: ['电話', '電話', '聯系人'] });
-                // The parseResult is an object contain { province: '', name: '', city: '', area: '', detail: '', phone: '', postalCode: '' }
-                // 分别表示了省 收件人 城市 地区 详细地址 手机号 邮编
-                // console.log(parseResult);
-                $('#realname').val(parseResult.name);
-                $('#mobile').val(parseResult.phone);
-                $('#areas').val(parseResult.province + ' ' + parseResult.city + ' ' + parseResult.area);
-                $('#street').val(parseResult.street);
-                $('#address').val(parseResult.detail);
-            }
-        });
-        $('.copy').on('click',function () {
-            var pasteEvent = new ClipboardEvent('paste');
-            console.log(pasteEvent);
-            pasteEvent.clipboardData.add('My string', 'text/plain');
-            document.dispatchEvent(pasteEvent);
-            alert('粘贴');
-        });
-
-
-    </script>
-    <!-- 智能地址识别结束 -->
 </div>
 
 {template '_footer'}

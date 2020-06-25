@@ -1,4 +1,5 @@
 <?php
+
 class Store_EweiShopV2Model
 {
 	public function getStoreInfo($id)
@@ -108,7 +109,7 @@ class Store_EweiShopV2Model
 		$storeid = intval($storeid);
 
 		if ($storeid) {
-			$store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where uniacid=:uniacid and id=' . $storeid, array(':uniacid' => $_W['uniacid']));
+			$store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . (' where uniacid=:uniacid and id=' . $storeid), array(':uniacid' => $_W['uniacid']));
 			return $store;
 		}
 

@@ -28,7 +28,7 @@
 
 </ul>
 
-<form {ife 'sale.sendticket' $item}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
+<form {ifp 'sale.coupon'}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
 
 <div class="alert alert-info" style="margin-top: 0.8rem">
     <p>说明：</p>
@@ -62,7 +62,7 @@
 
             <div class="new_content" {if intval($item['status']) == 0}style="display:none"{/if}>
                 <div class="form-group">
-                    {ife 'sale.sendticket' $item}
+                    {ifp 'sale.coupon.setticket'}
                     <label class="col-sm-2 control-label must">选择优惠券</label>
                     <div class="col-sm-9 col-xs-12">
                         {php echo tpl_selector('couponid',array('required'=>false,'multi'=>1,'type'=>'coupon_cp','autosearch'=>1, 'preview'=>true,'url'=>webUrl('sale/coupon/querycplist'),'text'=>'couponname','items'=>$coupons,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券'))}
@@ -151,7 +151,7 @@
 </div>
 <input type="hidden" name="id" value="{$item['id']}">
 <input type="hidden" name="cpids" value="{$item['cpid']}">
-{ife 'sale.sendticket' $item}
+{ifp 'sale.coupon.setticket'}
 <div class="form-group">
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-9 col-xs-12">

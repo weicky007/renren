@@ -1,5 +1,5 @@
 <?php
-/*珍惜资源 请勿转卖*/
+
 class System_EweiShopV2Model
 {
 	private $merch = false;

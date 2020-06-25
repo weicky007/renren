@@ -32,7 +32,8 @@ define(['core'], function (core) {
                 isblack: modal.checkVal("isblack"),
                 content: modal.getVal("content"),
                 level: modal.getVal("level", true),
-                groupid: modal.getVal("group", true)
+                groupid: modal.getVal("group", true),
+                mobile: modal.getVal("mobile")
             };
             if (modal.hascom) {
                 obj.fixagentid = modal.checkVal("fixagentid");
@@ -45,7 +46,6 @@ define(['core'], function (core) {
             if (modal.bind) {
                 if (!modal.binded || modal.mobile == '') {
                     obj.password = modal.getVal("password");
-                    obj.mobile = modal.getVal("mobile");
                     obj.mobileverify = modal.checkVal("mobileverify");
                     if (obj.mobileverify == 1 && obj.mobile == '') {
                         FoxUI.toast.show("开启绑定前请先填写手机号");
@@ -56,6 +56,10 @@ define(['core'], function (core) {
                         return
                     }
                 }
+                if (modal.getVal("password")!='' && modal.binded){
+                    obj.password = modal.getVal("password");
+                }
+
             }
             core.json('mmanage/member/detail', obj, function (json) {
                 if (json.status == 1) {

@@ -3,8 +3,7 @@
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-//小程序签到相关独家接口（积分签到） 作者QQ:
-require EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
+require_once EWEI_SHOPV2_PLUGIN . 'app/core/page_mobile.php';
 class Sign_EweiShopV2Page extends AppMobilePage
 {
 	public function get_list()
@@ -16,7 +15,7 @@ class Sign_EweiShopV2Page extends AppMobilePage
 		$psign = p('sign');
 		$set = $psign->getSet();
 		if (empty($set['isopen'])) {
-			app_error($set['textsign'] . '未开启!');
+			return app_error($set['textsign'] . '未开启!');
 		}
 		if (!empty($set['sign_rule'])) {
 			$set['sign_rule'] = iunserializer($set['sign_rule']);
@@ -37,7 +36,7 @@ class Sign_EweiShopV2Page extends AppMobilePage
 			//$_SESSION['sign_uid_' . $_SESSION['sign_xcx_openid']] = $member['uid'];
 
 		if (empty($member) || empty($_W['openid'])) {
-			app_error('获取用户信息失败!');
+			return app_error('获取用户信息失败!');
 		}
 
 		$calendar = $psign->getCalendar($_GPC['year'], $_GPC['month']);
@@ -78,7 +77,7 @@ class Sign_EweiShopV2Page extends AppMobilePage
 		}
 
 		if (!empty($signinfo['signed'])) {
-			 return app_error('已经' . $set['textsign'] . '，不要重复' . $set['textsign'] . '哦~');
+			return app_error('已经' . $set['textsign'] . '，不要重复' . $set['textsign'] . '哦~');
 		}
 
 		if (!empty($date) && (time() < strtotime($date))) {
@@ -133,7 +132,8 @@ class Sign_EweiShopV2Page extends AppMobilePage
 				m('member')->setCredit($_W['openid'], 'credit1', 0 - $set['signold_price'], $set['textcredit'] . $set['textsign'] . ': ' . $set['textsignold'] . '扣除' . $set['signold_price'] . $set['textcredit']);
 			}
 		}
-	 	if (!empty($credit) && (0 < $credit)) {
+
+		if (!empty($credit) && (0 < $credit)) {
 			m('member')->setCredit($_W['openid'], 'credit1', 0 + $credit, $set['textcredit'] . $set['textsign'] . ': ' . $message);
 		}
 
@@ -164,19 +164,19 @@ class Sign_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		global $_GPC;
 		if (empty($_W['openid'])) {
-			app_error('您的身份信息未获取!');
+			return app_error('您的身份信息未获取!');
 		}
 	
 		$type = intval($_GPC['type']);
 		$day = intval($_GPC['day']);
 		if (empty($type) || empty($day)) {
-			app_error('请求参数错误!');
+			return app_error('请求参数错误!');
 		}
 		$psign = p('sign');
 		$set = $psign->getSet();
 
 		if (empty($set['isopen'])) {
-			app_error($set['textcredit'] . $set['textsign'] . '未开启!');
+			return app_error($set['textcredit'] . $set['textsign'] . '未开启!');
 		}
 
 		$reword_sum = iunserializer($set['reword_sum']);
@@ -192,7 +192,7 @@ class Sign_EweiShopV2Page extends AppMobilePage
 		$record = pdo_fetch('select * from ' . tablename('ewei_shop_sign_records') . ' where openid=:openid and `type`=' . $type . ' and `day`=' . $day . ' and uniacid=:uniacid ' . $condition . ' limit 1 ', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
 
 		if (!empty($record)) {
-			app_error('此奖励已经领取, 请不要重复领取!');
+			return app_error('此奖励已经领取, 请不要重复领取!');
 		}
 
 		$credit = 0;
@@ -233,7 +233,7 @@ class Sign_EweiShopV2Page extends AppMobilePage
 		global $_W;
 		global $_GPC;
 		if (empty($_W['openid'])) {
-			app_error('您的身份信息未获取!');
+			return app_error('您的身份信息未获取!');
 		}
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;

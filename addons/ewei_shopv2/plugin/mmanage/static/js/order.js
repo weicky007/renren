@@ -1,4 +1,4 @@
-define(['core', './order-base.js'], function (core, obase) {
+define(['core', './order-base.js', 'tpl'], function (core, obase, tpl) {
     var modal = {page: 1, status: 0, offset: 0, keywords: ''};
     modal.initList = function (params) {
         modal.status = params.status;
@@ -13,16 +13,19 @@ define(['core', './order-base.js'], function (core, obase) {
                 elm.find(".icon-pin").hide()
             }
         }
-        var leng = $.trim($('.container').html());
-        if (leng == '') {
-            modal.page = 1;
+        if (modal.page == 1) {
+            $("#container").html('');
             modal.getList();
         }
         $('.fui-content').infinite({
             onLoading: function () {
                 modal.getList()
             }
-        })
+        });
+
+        tpl.helper("calculate", function (value) {
+            return parseFloat(value).toFixed(2)
+        });
     };
     modal.initClick = function () {
         $("#tab a").unbind('click').click(function () {
@@ -65,6 +68,7 @@ define(['core', './order-base.js'], function (core, obase) {
         }
         core.json('mmanage/order/getlist', obj, function (json) {
             if (json.status != 1) {
+                FoxUI.toast.show(json.result.message);
                 return
             }
             var result = json.result;
@@ -85,9 +89,11 @@ define(['core', './order-base.js'], function (core, obase) {
                     $("#content-nomore").hide()
                 }
             }
-            modal.page++;
             result.status = modal.status;
             core.tpl('.container', 'tpl_order', result, modal.page > 1);
+            if($('.fui-list-group').length < result.total) {
+                modal.page++;
+            }
             FoxUI.loader.hide()
         }, false, true)
     };

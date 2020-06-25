@@ -97,8 +97,7 @@ class Virtual_EweiShopV2ComModel extends ComModel
 
 		$sort_order = 'orderid ASC,is_top desc,sort_time desc,id ASC';
 		$virtual_data = pdo_fetchall('SELECT id,typeid,fields FROM ' . tablename('ewei_shop_virtual_data') . ' WHERE typeid=:typeid and orderid=:orderid and uniacid=:uniacid and merchid = :merchid ' . $last_where . ' order by ' . $sort_order . ' limit ' . $goods['total'], array(':orderid' => 0, ':typeid' => $order['virtual'], ':uniacid' => $_W['uniacid'], ':merchid' => $order['merchid']));
-
-		if (count($virtual_data) < $goods['total']) {
+		if (empty($virtual_data) || count($virtual_data) < $goods['total']) {
 			return array('error' => -1, 'message' => '库存不足');
 		}
 
@@ -114,6 +113,7 @@ class Virtual_EweiShopV2ComModel extends ComModel
 		$fields = iunserializer($type['fields'], true);
 		$virtual_info = array();
 		$virtual_str = array();
+		$success_flag = true;
 
 		foreach ($virtual_data as $vd) {
 			$virtual_info[] = $vd['fields'];
@@ -125,8 +125,18 @@ class Virtual_EweiShopV2ComModel extends ComModel
 			}
 
 			$virtual_str[] = implode(' ', $strs);
-			pdo_update('ewei_shop_virtual_data', array('openid' => $order['openid'], 'orderid' => $order['id'], 'ordersn' => $order['ordersn'], 'price' => round($goods['realprice'] / $goods['total'], 2), 'usetime' => time()), array('id' => $vd['id']));
-			pdo_update('ewei_shop_virtual_type', 'usedata=usedata+1', array('id' => $vd['typeid']));
+			$virtual_data = pdo_update('ewei_shop_virtual_data', array('openid' => $order['openid'], 'orderid' => $order['id'], 'ordersn' => $order['ordersn'], 'price' => round($goods['realprice'] / $goods['total'], 2), 'usetime' => time()), array('id' => $vd['id']));
+
+			if ($virtual_data) {
+				pdo_update('ewei_shop_virtual_type', 'usedata=usedata+1', array('id' => $vd['typeid']));
+			}
+			else {
+				$success_flag = false;
+			}
+		}
+
+		if (!$success_flag || empty($virtual_info) || empty($virtual_str)) {
+			return array('error' => -1, 'message' => '数据出错请重试');
 		}
 
 		$this->updateStock($order['virtual']);
@@ -251,6 +261,14 @@ class Virtual_EweiShopV2ComModel extends ComModel
 			}
 
 			$res = p('lottery')->getLottery($order['openid'], 1, array('money' => $order['price'], 'paytype' => 1));
+
+			if ($order['virtual']) {
+				$afterorder = p('lottery')->getLottery($order['openid'], 1, array('money' => $order['price'], 'paytype' => 2));
+
+				if ($afterorder) {
+					p('lottery')->getLotteryList($order['openid'], array('lottery_id' => $afterorder));
+				}
+			}
 
 			if ($res) {
 				p('lottery')->getLotteryList($order['openid'], array('lottery_id' => $res));

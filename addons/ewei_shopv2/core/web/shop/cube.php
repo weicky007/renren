@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -28,7 +29,7 @@ class Cube_EweiShopV2Page extends WebPage
 			show_json(1);
 		}
 
-		$cubes = (isset($_W['shopset']['shop']['cubes']) ? $_W['shopset']['shop']['cubes'] : array());
+		$cubes = isset($_W['shopset']['shop']['cubes']) ? $_W['shopset']['shop']['cubes'] : array();
 		include $this->template();
 	}
 }

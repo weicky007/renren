@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -27,7 +28,11 @@ class SeckillModel extends PluginModel
 		$redis_prefix = $this->get_prefix();
 		$task = pdo_fetch('select * from ' . tablename('ewei_shop_seckill_task') . ' where id=:id limit 1', array(':id' => $id));
 		redis()->delete($redis_prefix . 'info_' . $id);
-		redis()->hMset($redis_prefix . 'info_' . $id, $task);
+
+		if (!empty($task)) {
+			redis()->hMset($redis_prefix . 'info_' . $id, $task);
+		}
+
 		$allrooms = pdo_fetchall('select * from ' . tablename('ewei_shop_seckill_task_room') . ' where taskid=:taskid and enabled=1 and uniacid=:uniacid order by `displayorder` desc', array(':taskid' => $id, ':uniacid' => $_W['uniacid']));
 		redis()->delete($redis_prefix . 'rooms_' . $id);
 
@@ -218,7 +223,7 @@ class SeckillModel extends PluginModel
 		$alltimes = array();
 
 		if (empty($times)) {
-			return false;
+			return $alltimes;
 		}
 
 		foreach ($times as $time) {
@@ -305,7 +310,7 @@ class SeckillModel extends PluginModel
 					continue;
 				}
 
-				if ((0 < $optionid) && ($key_optionid === $optionid)) {
+				if (0 < $optionid && $key_optionid === $optionid) {
 					++$count;
 				}
 				else {
@@ -318,7 +323,7 @@ class SeckillModel extends PluginModel
 					++$notpay;
 				}
 
-				if (!empty($openid) && ($data['openid'] == $openid)) {
+				if (!empty($openid) && $data['openid'] == $openid) {
 					if ($key_optionid == $optionid) {
 						++$selfcount;
 					}
@@ -326,7 +331,7 @@ class SeckillModel extends PluginModel
 					++$selftotalcount;
 				}
 
-				if (($data['status'] <= 0) && !empty($openid) && ($data['openid'] == $openid)) {
+				if ($data['status'] <= 0 && !empty($openid) && $data['openid'] == $openid) {
 					if ($key_optionid === $optionid) {
 						++$selfnotpay;
 					}
@@ -367,7 +372,7 @@ class SeckillModel extends PluginModel
 				return false;
 			}
 
-			if (($g['goodsid'] == $goodsid) || ($goodsid == 'all')) {
+			if ($g['goodsid'] == $goodsid || $goodsid == 'all') {
 				$timegoods[] = $g;
 			}
 		}
@@ -389,6 +394,10 @@ class SeckillModel extends PluginModel
 
 		$taskid = $seckillinfo['taskid'];
 		$timeid = $seckillinfo['timeid'];
+		if (!empty($seckillinfo['options']) && $seckillinfo['options'][0]['timeid'] != $timeid) {
+			$timeid = $seckillinfo['options'][0]['timeid'];
+		}
+
 		$goodsid = $goods['goodsid'];
 		$optionid = intval($goods['optionid']);
 		$date = date('Y-m-d');
@@ -410,7 +419,7 @@ class SeckillModel extends PluginModel
 				continue;
 			}
 
-			if (($data['orderid'] == $orderid) && ($data['openid'] == $openid)) {
+			if ($data['orderid'] == $orderid && $data['openid'] == $openid) {
 				$index = $dindex;
 				break;
 			}
@@ -450,57 +459,59 @@ class SeckillModel extends PluginModel
 		$keys = $redis->keys($redis_prefix . 'queue_*');
 		$orders = array();
 
-		foreach ($keys as $key) {
-			$queue = $redis->lGetRange($key, 0, -1);
-			$tags = explode('_', $key);
-			$taskid = $tags[8];
-			$task = $this->getTaskInfo($taskid);
-			$closesec = $task['closesec'];
+		if (is_array($keys)) {
+			foreach ($keys as $key) {
+				$queue = $redis->lGetRange($key, 0, -1);
+				$tags = explode('_', $key);
+				$taskid = $tags[8];
+				$task = $this->getTaskInfo($taskid);
+				$closesec = $task['closesec'];
 
-			if (!empty($queue)) {
-				foreach ($queue as $value) {
-					$data = @json_decode($value, true);
+				if (!empty($queue)) {
+					foreach ($queue as $value) {
+						$data = @json_decode($value, true);
 
-					if (!is_array($data)) {
-						continue;
-					}
+						if (!is_array($data)) {
+							continue;
+						}
 
-					if (($data['status'] <= 0) && ($closesec <= $currenttime - $data['createtime'])) {
-						$redis->lRemove($key, $value, 1);
+						if ($data['status'] <= 0 && $closesec <= $currenttime - $data['createtime']) {
+							$redis->lRemove($key, $value, 1);
 
-						if (!in_array($data['orderid'], $orders)) {
-							$orders[] = $data['orderid'];
+							if (!in_array($data['orderid'], $orders)) {
+								$orders[] = $data['orderid'];
+							}
 						}
 					}
 				}
-			}
 
-			if ($redis->lLen($key) <= 0) {
-				$redis->delete($key);
-			}
+				if ($redis->lLen($key) <= 0) {
+					$redis->delete($key);
+				}
 
-			if (!empty($orders)) {
-				$p = com('coupon');
+				if (!empty($orders)) {
+					$p = com('coupon');
 
-				foreach ($orders as $orderid) {
-					$o = pdo_fetch('select  id,openid,deductcredit2,ordersn,isparent,deductcredit,deductprice   from ' . tablename('ewei_shop_order') . ' where id=:id  limit 1', array(':id' => $orderid));
-					if (!empty($o) && ($o['status'] == 0)) {
-						if ($o['isparent'] == 0) {
-							if ($p) {
-								if (!empty($o['couponid'])) {
-									$p->returnConsumeCoupon($o['id']);
+					foreach ($orders as $orderid) {
+						$o = pdo_fetch('select  id,openid,deductcredit2,ordersn,isparent,deductcredit,deductprice,status   from ' . tablename('ewei_shop_order') . ' where id=:id  limit 1', array(':id' => $orderid));
+						if (!empty($o) && $o['status'] === '0') {
+							if ($o['isparent'] == 0) {
+								if ($p) {
+									if (!empty($o['couponid'])) {
+										$p->returnConsumeCoupon($o['id']);
+									}
+								}
+
+								m('order')->setStocksAndCredits($o['id'], 2);
+								m('order')->setDeductCredit2($o);
+
+								if (0 < $o['deductprice']) {
+									m('member')->setCredit($o['openid'], 'credit1', $o['deductcredit'], array('0', $_W['shopset']['shop']['name'] . ('秒杀自动关闭订单返还抵扣积分 积分: ' . $o['deductcredit'] . ' 抵扣金额: ' . $o['deductprice'] . ' 订单号: ' . $o['ordersn'])));
 								}
 							}
 
-							m('order')->setStocksAndCredits($o['id'], 2);
-							m('order')->setDeductCredit2($o);
-
-							if (0 < $o['deductprice']) {
-								m('member')->setCredit($o['openid'], 'credit1', $o['deductcredit'], array('0', $_W['shopset']['shop']['name'] . '秒杀自动关闭订单返还抵扣积分 积分: ' . $o['deductcredit'] . ' 抵扣金额: ' . $o['deductprice'] . ' 订单号: ' . $o['ordersn']));
-							}
+							pdo_query('update ' . tablename('ewei_shop_order') . ' set status=-1,canceltime=' . time() . ' where id=' . $o['id']);
 						}
-
-						pdo_query('update ' . tablename('ewei_shop_order') . ' set status=-1,canceltime=' . time() . ' where id=' . $o['id']);
 					}
 				}
 			}
@@ -532,6 +543,11 @@ class SeckillModel extends PluginModel
 		}
 
 		$times = $this->getTaskTimes($id);
+
+		if (empty($times)) {
+			$times = array();
+		}
+
 		$options = array();
 		$currenttime = time();
 		$timegoods = array();
@@ -555,23 +571,49 @@ class SeckillModel extends PluginModel
 
 			$time['endtime'] = $endtime;
 			$time['starttime'] = $starttime;
-			if (($starttime <= $currenttime) && ($currenttime <= $endtime)) {
+			if ($starttime <= $currenttime && $currenttime <= $endtime) {
 				$timeid = $time['id'];
 				$taskid = $time['taskid'];
 				$goods_starttime = $starttime;
 				$goods_endtime = $endtime;
 				$sktime = $time['time'];
-				$timegoods = $this->getSeckillGoods($id, $time['time'], $goodsid);
+				$z = $this->getSeckillGoods($id, $time['time'], $goodsid);
+
+				if (!empty($z)) {
+					$timegoods = $z;
+					$timegoods[0]['start_time'] = $goods_starttime;
+					$timegoods[0]['end_time'] = $goods_endtime;
+				}
+			}
+			else if ($currenttime < $starttime) {
+				if (empty($timegoods)) {
+					$timeid = $time['id'];
+					$goods_starttime = $starttime;
+					$goods_endtime = $endtime;
+					$taskid = $time['taskid'];
+					$sktime = $time['time'];
+					$z = $this->getSeckillGoods($id, $time['time'], $goodsid);
+
+					if (!empty($z)) {
+						$timegoods = $z;
+						$timegoods[0]['start_time'] = $goods_starttime;
+						$timegoods[0]['end_time'] = $goods_endtime;
+					}
+				}
 			}
 			else {
-				if ($currenttime < $starttime) {
-					if (empty($timegoods)) {
-						$timeid = $time['id'];
-						$goods_starttime = $starttime;
-						$goods_endtime = $endtime;
-						$taskid = $time['taskid'];
-						$sktime = $time['time'];
-						$timegoods = $this->getSeckillGoods($id, $time['time'], $goodsid);
+				if (empty($timegoods)) {
+					$timeid = $time['id'];
+					$goods_starttime = $starttime;
+					$goods_endtime = $endtime;
+					$taskid = $time['taskid'];
+					$sktime = $time['time'];
+					$z = $this->getSeckillGoods($id, $time['time'], $goodsid);
+
+					if (!empty($z)) {
+						$timegoods = $z;
+						$timegoods[0]['start_time'] = $goods_starttime;
+						$timegoods[0]['end_time'] = $goods_endtime;
 					}
 				}
 			}
@@ -606,8 +648,8 @@ class SeckillModel extends PluginModel
 			$total = $timegoods[0]['total'];
 			$price = $timegoods[0]['price'];
 			$totalmaxbuy = $timegoods[0]['totalmaxbuy'];
-			if ((count($timegoods) <= 1) && empty($timegoods['optionid'])) {
-				$counts = $this->getSeckillCount($id, $timeid, $timegoods[0]['goodsid'], 0, $openid);
+			if (count($timegoods) <= 1 && empty($timegoods['optionid'])) {
+				$counts = $this->getSeckillCount($id, $timegoods[0]['timeid'], $timegoods[0]['goodsid'], 0, $openid);
 				$count = $counts['count'];
 				$selfcount = $counts['selfcount'];
 				$selftotalcount = $counts['selftotalcount'];
@@ -615,7 +657,7 @@ class SeckillModel extends PluginModel
 				$selfnotpay = $counts['selfnotpay'];
 				$selftotalnotpay = $counts['selftotalnotpay'];
 				$maxbuy = $timegoods[0]['maxbuy'];
-				$percent = ceil(($count / (empty($total) ? 1 : $total)) * 100);
+				$percent = ceil($count / (empty($total) ? 1 : $total) * 100);
 				$options[] = $timegoods[0];
 			}
 			else {
@@ -628,7 +670,7 @@ class SeckillModel extends PluginModel
 						if ($g['optionid'] == $optionid) {
 							$total = $g['total'];
 							$price = $g['price'];
-							$counts = $this->getSeckillCount($id, $timeid, $g['goodsid'], $optionid, $openid);
+							$counts = $this->getSeckillCount($id, $timegoods[0]['timeid'], $g['goodsid'], $optionid, $openid);
 							$count = $counts['count'];
 							$selfcount = $counts['selfcount'];
 							$selftotalcount = $counts['selftotalcount'];
@@ -636,7 +678,8 @@ class SeckillModel extends PluginModel
 							$selftotalnotpay = $counts['selftotalnotpay'];
 							$notpay = $counts['notpay'];
 							$maxbuy = $g['maxbuy'];
-							$percent = ceil(($count / (empty($g['total']) ? 1 : $g['total'])) * 100);
+							$options[] = $g;
+							$percent = ceil($count / (empty($g['total']) ? 1 : $g['total']) * 100);
 							break;
 						}
 					}
@@ -659,7 +702,7 @@ class SeckillModel extends PluginModel
 					$notpay = $counts['notpay'];
 					$selftotalcount = $counts['selftotalcount'];
 					$selftotalnotpay = $counts['selftotalnotpay'];
-					$percent = ceil(($count / (empty($total) ? 1 : $total)) * 100);
+					$percent = ceil($count / (empty($total) ? 1 : $total) * 100);
 				}
 			}
 
@@ -669,7 +712,22 @@ class SeckillModel extends PluginModel
 
 			$tag = '';
 			$taskinfo = $this->getTaskInfo($taskid);
+
+			if ($taskinfo['enabled'] == 0) {
+				return false;
+			}
+
 			$roominfo = $this->getRoomInfo($taskid, $roomid);
+
+			if ($roominfo['enabled'] == 0) {
+				return false;
+			}
+
+			if ($timegoods[0]['end_time'] < $currenttime) {
+				if (!$roominfo['oldshow']) {
+					return false;
+				}
+			}
 
 			if (!empty($taskinfo['tag'])) {
 				$tag = $taskinfo['tag'];
@@ -680,7 +738,7 @@ class SeckillModel extends PluginModel
 			}
 
 			$status = false;
-			if (($goods_starttime <= $currenttime) && ($currenttime <= $goods_endtime)) {
+			if ($goods_starttime <= $currenttime && $currenttime <= $goods_endtime) {
 				$status = 0;
 			}
 			else if ($currenttime < $goods_starttime) {
@@ -707,7 +765,7 @@ class SeckillModel extends PluginModel
 		$goods = pdo_fetchall('SELECT g.id,g.credit, o.total,o.realprice FROM ' . tablename('ewei_shop_order_goods') . ' o left join ' . tablename('ewei_shop_goods') . ' g on o.goodsid=g.id ' . ' WHERE o.orderid=:orderid and o.uniacid=:uniacid', array(':orderid' => $item['id'], ':uniacid' => $item['uniacid']));
 
 		if ($item['paytype'] == 1) {
-			m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . '秒杀退款: ' . $realprice . '元 订单号: ' . $item['ordersn']));
+			m('member')->setCredit($item['openid'], 'credit2', $realprice, array(0, $shopset['name'] . ('秒杀退款: ' . $realprice . '元 订单号: ') . $item['ordersn']));
 			$result = true;
 		}
 		else {
@@ -743,11 +801,11 @@ class SeckillModel extends PluginModel
 		$credits = m('order')->getGoodsCredit($goods);
 
 		if (0 < $credits) {
-			m('member')->setCredit($item['openid'], 'credit1', 0 - $credits, array(0, $shopset['name'] . '退款扣除购物赠送积分: ' . $credits . ' 订单号: ' . $item['ordersn']));
+			m('member')->setCredit($item['openid'], 'credit1', 0 - $credits, array(0, $shopset['name'] . ('退款扣除购物赠送积分: ' . $credits . ' 订单号: ') . $item['ordersn']));
 		}
 
 		if (0 < $item['deductcredit']) {
-			m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', $shopset['name'] . '购物返还抵扣积分 积分: ' . $item['deductcredit'] . ' 抵扣金额: ' . $item['deductprice'] . ' 订单号: ' . $item['ordersn']));
+			m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', $shopset['name'] . ('购物返还抵扣积分 积分: ' . $item['deductcredit'] . ' 抵扣金额: ' . $item['deductprice'] . ' 订单号: ' . $item['ordersn'])));
 		}
 
 		if (!empty($refundtype)) {
@@ -764,6 +822,7 @@ class SeckillModel extends PluginModel
 		}
 
 		pdo_update('ewei_shop_order', array('refundstate' => 0, 'status' => -1, 'refundtime' => time()), array('id' => $item['id'], 'uniacid' => $item['uniacid']));
+		pdo_update('ewei_shop_order_refund', array('status' => -1), array('orderid' => $item['id'], 'uniacid' => $item['uniacid']));
 
 		foreach ($goods as $g) {
 			$salesreal = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid ' . ' where og.goodsid=:goodsid and o.status>=1 and o.uniacid=:uniacid limit 1', array(':goodsid' => $g['id'], ':uniacid' => $item['uniacid']));
@@ -781,7 +840,19 @@ class SeckillModel extends PluginModel
 			return false;
 		}
 
+		$redis_key = $_W['uniacid'] . '_seckill_order_refund_' . $orderid;
 		$redis = redis();
+
+		if ($redis->setnx($redis_key, time())) {
+			$redis->expireAt($redis_key, time() + 2);
+		}
+		else if ($redis->get($redis_key) + 2 < time()) {
+			$redis->del($redis_key);
+		}
+		else {
+			return false;
+		}
+
 		$redis_prefix = $this->get_prefix();
 		$date = date('Y-m-d');
 		$order = pdo_fetch('select id,ordersn, price,openid,status, paytype, deductcredit2, couponid,isparent,merchid,agentid,createtime from ' . tablename('ewei_shop_order') . ' where  id=:id and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $orderid));
@@ -795,7 +866,7 @@ class SeckillModel extends PluginModel
 			return 'refund';
 		}
 
-		$goods = pdo_fetchall('select uniacid,total,goodsid,optionid,seckill_timeid,seckill_taskid from  ' . tablename('ewei_shop_order_goods') . ' where orderid=' . $order['id'] . ' and  seckill=1 ');
+		$goods = pdo_fetchall('select uniacid,total,goodsid,optionid,seckill_timeid,seckill_taskid from  ' . tablename('ewei_shop_order_goods') . (' where orderid=' . $order['id'] . ' and  seckill=1 '));
 
 		foreach ($goods as $g) {
 			$key = $redis_prefix . 'queue_' . $date . '_' . $g['seckill_taskid'] . '_' . $g['seckill_timeid'] . '_' . $g['goodsid'] . '_' . $g['optionid'];
@@ -816,7 +887,7 @@ class SeckillModel extends PluginModel
 					continue;
 				}
 
-				if (($data['orderid'] == $order['id']) && ($data['openid'] == $order['openid'])) {
+				if ($data['orderid'] == $order['id'] && $data['openid'] == $order['openid']) {
 					$has = true;
 					$redis->lSet($key, $index, $paydata);
 				}
@@ -877,7 +948,7 @@ class SeckillModel extends PluginModel
 
 			$time['endtime'] = $endtime;
 			$time['starttime'] = $starttime;
-			if (($starttime <= $currenttime) && ($currenttime <= $endtime)) {
+			if ($starttime <= $currenttime && $currenttime <= $endtime) {
 				$timeid = $time['id'];
 				$taskid = $time['taskid'];
 				$goods_starttime = $starttime;
@@ -920,10 +991,15 @@ class SeckillModel extends PluginModel
 		}
 
 		$goodsids = array_keys($allgoods);
-		$dbgoods = pdo_fetchall('select id,thumb,marketprice from ' . tablename('ewei_shop_goods') . ' where id in (' . implode(',', $goodsids) . ') and uniacid=' . $_W['uniacid'], array(), 'id');
+		$dbgoods = pdo_fetchall('select id,thumb,marketprice,thumb_url,title from ' . tablename('ewei_shop_goods') . ' where id in (' . implode(',', $goodsids) . ') and uniacid=' . $_W['uniacid'], array(), 'id');
 		$goods = array();
 
 		foreach ($allgoods as $gid => $tgs) {
+			if (p('offic')) {
+				$dbgoods[$gid]['thumb_url'] = array_values(unserialize($dbgoods[$gid]['thumb_url']));
+				$dbgoods[$gid]['thumb'] = tomedia($dbgoods[$gid]['thumb_url'][0]);
+			}
+
 			$price = $tgs[0]['price'];
 
 			foreach ($tgs as $tg) {
@@ -932,7 +1008,7 @@ class SeckillModel extends PluginModel
 				}
 			}
 
-			$goods[] = array('thumb' => tomedia($dbgoods[$gid]['thumb']), 'price' => price_format($price), 'marketprice' => price_format($dbgoods[$gid]['marketprice']));
+			$goods[] = array('thumb' => tomedia($dbgoods[$gid]['thumb']), 'price' => price_format($price), 'title' => $dbgoods[$gid]['title'], 'id' => $dbgoods[$gid]['id'], 'marketprice' => price_format($dbgoods[$gid]['marketprice']));
 		}
 
 		return array('tag' => $task['tag'], 'status' => $status, 'time' => $sktime < 10 ? '0' . $sktime : $sktime, 'endtime' => $goods_endtime, 'starttime' => $goods_starttime, 'goods' => $goods);
@@ -940,13 +1016,15 @@ class SeckillModel extends PluginModel
 
 	public function checkBuy($seckillinfo, $title, $unit = '')
 	{
+		global $_W;
+
 		if (empty($unit)) {
 			$unit = '件';
 		}
 
 		if (100 <= $seckillinfo['percent']) {
 			if (0 < $seckillinfo['notpay']) {
-				return error(-1, $title . '<br/> 已经抢完了 ，但还有 ' . $seckillinfo['notpay'] . ' ' . $unit . '未付款的, 抓住机会哦~');
+				return error(-1, $title . '<br/> 已经抢完了 ，但还有 ' . $seckillinfo['notpay'] . (' ' . $unit . '未付款的, 抓住机会哦~'));
 			}
 
 			return error(-1, $title . '<br/> 已经抢完了 !');
@@ -955,7 +1033,7 @@ class SeckillModel extends PluginModel
 		if (0 < $seckillinfo['totalmaxbuy']) {
 			if ($seckillinfo['totalmaxbuy'] <= $seckillinfo['selftotalcount']) {
 				if (0 < $seckillinfo['selftotalnotpay']) {
-					return error(-1, $title . '<br/> 最多抢购 ' . $seckillinfo['totalmaxbuy'] . ' ' . $unit . ',  您有' . $seckillinfo['selftotalnotpay'] . '个未付款的，抓紧付款哦~');
+					return error(-1, $title . '<br/> 最多抢购 ' . $seckillinfo['totalmaxbuy'] . ' ' . $unit . (',  您有' . $seckillinfo['selftotalnotpay'] . '个未付款的，抓紧付款哦~'));
 				}
 
 				return error(-1, $title . '<br/> 您已经抢购 ' . $seckillinfo['totalmaxbuy'] . ' ' . $unit . '了哦，不能继续抢购了，看看别的吧!');
@@ -965,10 +1043,28 @@ class SeckillModel extends PluginModel
 		if (0 < $seckillinfo['maxbuy']) {
 			if ($seckillinfo['maxbuy'] <= $seckillinfo['selfcount']) {
 				if (0 < $seckillinfo['selfnotpay']) {
-					return error(-1, $title . '<br/> 最多抢购 ' . $seckillinfo['maxbuy'] . ' ' . $unit . ',  您有' . $seckillinfo['selfnotpay'] . '个未付款的，抓紧付款哦~');
+					return error(-1, $title . '<br/> 最多抢购 ' . $seckillinfo['maxbuy'] . ' ' . $unit . (',  您有' . $seckillinfo['selfnotpay'] . '个未付款的，抓紧付款哦~'));
 				}
 
 				return error(-1, $title . '<br/> 您已经抢购 ' . $seckillinfo['maxbuy'] . ' ' . $unit . '了哦，不能继续抢购了，看看别的吧!');
+			}
+		}
+
+		if (!empty($seckillinfo['options'])) {
+			$day = date('Y-m-d', time());
+			$seckillgoodsinfo = $seckillinfo['options'][0];
+			$redis_key = $_W['uniacid'] . '_seckill_stock_' . $seckillgoodsinfo['taskid'] . '_' . $seckillgoodsinfo['roomid'] . '_' . $seckillgoodsinfo['timeid'] . '_' . $seckillgoodsinfo['goodsid'] . '_' . $seckillgoodsinfo['optionid'] . '_' . $day;
+			$redis = redis();
+
+			if ($redis->exists($redis_key)) {
+				$totalstock = $redis->get($redis_key);
+				$newstock = $totalstock - 1;
+
+				if ($newstock < 0) {
+					return error(-1, $title . '<br/> 商品库存不足 ' . '了哦，不能继续抢购了，看看别的吧!');
+				}
+
+				$redis->set($redis_key, $newstock);
 			}
 		}
 
@@ -1000,7 +1096,7 @@ class SeckillModel extends PluginModel
 			}
 
 			foreach ($goods as $g) {
-				if (in_array($g['goodsid'], $goodsids) && ($g['roomid'] != $roomid)) {
+				if (in_array($g['goodsid'], $goodsids) && $g['roomid'] != $roomid) {
 					$room = $this->getRoomInfo($taskid, $g['roomid']);
 					$goodstitle = pdo_fetchcolumn('select title from ' . tablename('ewei_shop_goods') . ' where id=:id limit 1', array(':id' => $g['goodsid']));
 					$url = webUrl('seckill/room/edit', array('taskid' => $taskid, 'id' => $room['id']));

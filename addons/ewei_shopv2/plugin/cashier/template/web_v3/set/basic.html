@@ -43,14 +43,13 @@
 </div>
 
 <div class="form-group">
-	<label class="col-lg control-label">支付几天后可提现</label>
+	<label class="col-lg control-label must">支付几天后可提现</label>
 	<div class="col-sm-8">
 		{ifp 'cashier.set.edit'}
 		<div class="input-group">
-			<input type="text" name="data[payday]" class="form-control" value="{$data['payday']}">
+			<input type="text" name="data[payday]" class="form-control" value="{$data['payday']}"  data-rule-required="true" aria-required="true">
 			<span class="input-group-addon">天</span>
 		</div>
-		<span class="help-block">不填写则,支付完成就可以提现</span>
 		{else}
 		<div class="form-control-static">{$item['payday']}</div>
 		{/if}

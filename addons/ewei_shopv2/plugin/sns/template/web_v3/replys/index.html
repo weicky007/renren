@@ -135,7 +135,7 @@
 
             <div class="col-sm-8" style="border-left: 1px solid #efefef;padding-left: 30px">
                 <h3>{$post['title']} <h4 style="padding:0;line-height: 18px;font-weight: normal;"><br/>发布时间: {php echo date('Y-m-d H:i:s',$post['createtime'])}</h4></h3><br/>
-                {$post['content']}
+                {php echo htmlspecialchars_decode($post['content'])}
                 {if count($post['images'])>0}
                 <br/>
 {loop $post['images'] $img}
@@ -269,7 +269,7 @@
                                <br/>话题: {$row['member']['postcount']}
                                <br/>评论: {$row['member']['replycount']}
                            </td>
-                           <td class='full' style="overflow-x: hidden; width: 200px;">
+                           <td class='full' style="white-space: normal;word-wrap:break-word;width: 600px;display: block;text-align: left">
                                {if !empty($row['parent'])}
                                回复:{$row['parent']['nickname']}<br/>
                                {/if}

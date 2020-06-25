@@ -1,4 +1,5 @@
 <?php
+
 class Statistic_EweiShopV2Model
 {
 	public function o2oorderstatistic($days, $storeid = 0)
@@ -9,7 +10,7 @@ class Statistic_EweiShopV2Model
 			$days = 1;
 		}
 
-		$time = time() - ($days * 86400);
+		$time = time() - $days * 86400;
 		$sql = 'select count(1)   from ' . tablename('ewei_shop_order') . ' where uniacid =:uniacid and isnewstore=1 and paytime > :paytime';
 		$params = array(':uniacid' => $_W['uniacid'], ':paytime' => $time);
 
@@ -19,7 +20,9 @@ class Statistic_EweiShopV2Model
 		}
 
 		$total = pdo_fetchcolumn($sql, $params);
-		$sql = 'select s.id,s.storename,COUNT(1) as num  from  ' . tablename('ewei_shop_order') . " o\r\n        inner JOIN  " . tablename('ewei_shop_store') . "  s on o.storeid =s.id and isnewstore=1\r\n        where o.uniacid =:uniacid and o.isnewstore=1 and o.paytime > :paytime ";
+		$sql = 'select s.id,s.storename,COUNT(1) as num  from  ' . tablename('ewei_shop_order') . ' o
+        inner JOIN  ' . tablename('ewei_shop_store') . '  s on o.storeid =s.id and isnewstore=1
+        where o.uniacid =:uniacid and o.isnewstore=1 and o.paytime > :paytime ';
 
 		if (!empty($storeid)) {
 			$sql .= ' and o.storeid=:storeid';
@@ -39,7 +42,7 @@ class Statistic_EweiShopV2Model
 			$days = 1;
 		}
 
-		$time = time() - ($days * 86400);
+		$time = time() - $days * 86400;
 		$sql = 'select sum(price)  from ' . tablename('ewei_shop_order') . ' where uniacid =:uniacid and isnewstore=1 and paytime > :paytime';
 		$params = array(':uniacid' => $_W['uniacid'], ':paytime' => $time);
 
@@ -54,7 +57,9 @@ class Statistic_EweiShopV2Model
 			$total = 0;
 		}
 
-		$sql = 'select s.id,s.storename,sum(o.price) as num  from  ' . tablename('ewei_shop_order') . " o\r\n        inner JOIN  " . tablename('ewei_shop_store') . "  s on o.storeid =s.id and isnewstore=1\r\n        where o.uniacid =:uniacid and o.isnewstore=1 and o.paytime > :paytime";
+		$sql = 'select s.id,s.storename,sum(o.price) as num  from  ' . tablename('ewei_shop_order') . ' o
+        inner JOIN  ' . tablename('ewei_shop_store') . '  s on o.storeid =s.id and isnewstore=1
+        where o.uniacid =:uniacid and o.isnewstore=1 and o.paytime > :paytime';
 
 		if (!empty($storeid)) {
 			$sql .= ' and  o.storeid=:storeid';
@@ -74,7 +79,7 @@ class Statistic_EweiShopV2Model
 			$days = 1;
 		}
 
-		$time = time() - ($days * 86400);
+		$time = time() - $days * 86400;
 		$sql = 'select count(1)  from ' . tablename('ewei_shop_order') . ' where uniacid =:uniacid and isnewstore=1 and verifytime > :verifytime';
 		$params = array(':uniacid' => $_W['uniacid'], ':verifytime' => $time);
 
@@ -84,7 +89,9 @@ class Statistic_EweiShopV2Model
 		}
 
 		$total = pdo_fetchcolumn($sql, $params);
-		$sql = 'select s.id,s.storename,COUNT(1) as num  from  ' . tablename('ewei_shop_order') . " o\r\n        inner JOIN  " . tablename('ewei_shop_store') . "  s on o.storeid =s.id and isnewstore=1\r\n        where o.uniacid =:uniacid and o.isnewstore=1 and o.verifytime > :verifytime  ";
+		$sql = 'select s.id,s.storename,COUNT(1) as num  from  ' . tablename('ewei_shop_order') . ' o
+        inner JOIN  ' . tablename('ewei_shop_store') . '  s on o.storeid =s.id and isnewstore=1
+        where o.uniacid =:uniacid and o.isnewstore=1 and o.verifytime > :verifytime  ';
 
 		if (!empty($storeid)) {
 			$sql .= ' and  o.storeid=:storeid';
@@ -104,7 +111,7 @@ class Statistic_EweiShopV2Model
 			$days = 1;
 		}
 
-		$time = time() - ($days * 86400);
+		$time = time() - $days * 86400;
 		$sql = 'select sum(r.applyprice)  from ' . tablename('ewei_shop_order') . ' o INNER JOIN  ' . tablename('ewei_shop_order_refund') . '  r on o.id =r.orderid  where o.uniacid =:uniacid and o.isnewstore=1 and o.paytime > :paytime';
 		$params = array(':uniacid' => $_W['uniacid'], ':paytime' => $time);
 
@@ -130,7 +137,7 @@ class Statistic_EweiShopV2Model
 			$days = 1;
 		}
 
-		$time = time() - ($days * 86400);
+		$time = time() - $days * 86400;
 		$sql = 'select COUNT(1)  from ' . tablename('ewei_shop_order') . ' o INNER JOIN  ' . tablename('ewei_shop_order_refund') . '  r on o.id =r.orderid  where o.uniacid =:uniacid and isnewstore=1 and paytime > :paytime';
 		$params = array(':uniacid' => $_W['uniacid'], ':paytime' => $time);
 

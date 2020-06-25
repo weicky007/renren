@@ -1,11 +1,11 @@
 <div class="form-group">
     <label class="col-lg control-label">社区等级</label>
     <div class="col-sm-9 col-xs-12">
-        {ifp 'sns.member.edit'}
+        {ifp 'sns.level.edit'}
         <select name='snsdata[level]' class='form-control'>
             <option value='0'>{php echo empty($plugin_sns_set['levelname'])?'社区粉丝':$plugin_sns_set['levelname']} </option>
             {loop $snslevels $level}
-            <option value='{$level['id']}' {if $sns_member['level']==$level['id']}selected{/if}>{$level['levelname']}</option>
+            <option value="{$level['id']}" {if $sns_member['level']==$level['id']}selected{/if}>{$level['levelname']}</option>
             {/loop}
         </select>
         {else}
@@ -44,13 +44,13 @@
 <div class="form-group">
     <label class="col-lg control-label">注册时间</label>
     <div class="col-sm-9 col-xs-12">
-        <div class='form-control-static'>{php echo date('Y-m-d H:i:s',$sns_member['createtime'])}</div>
+        <div class='form-control-static'>{php echo empty($sns_member['createtime']) ? '' : date('Y-m-d H:i:s',$sns_member['createtime'])}</div>
     </div>
 </div>
 <div class="form-group">
     <label class="col-lg control-label">强制不自动升级</label>
     <div class="col-sm-9 col-xs-12">
-        {ifp 'abonus.agent.edit'}
+        {ifp 'sns.level.edit'}
         <label class="radio-inline" ><input type="radio" name="snsdata[notupgrade]" value="0" {if $sns_member['notupgrade']==0}checked{/if}>允许自动升级</label>
         <label class="radio-inline"><input type="radio" name="snsdata[notupgrade]" value="1" {if $sns_member['notupgrade']==1}checked{/if}>强制不自动升级</label>
         <span class="help-block">如果强制不自动升级，满足任何条件，此会员的社区级别也不会改变</span>
@@ -63,7 +63,7 @@
 <div class="form-group">
     <label class="col-lg control-label">黑名单</label>
     <div class="col-sm-9 col-xs-12">
-        {ifp 'sns.member.edit'}
+        {ifp 'sns.level.edit'}
         <label class="radio-inline"><input type="radio" name="snsdata[isblack]" value="1" {if $sns_member['isblack']==1}checked{/if}>是</label>
         <label class="radio-inline" ><input type="radio" name="snsdata[isblack]" value="0" {if $sns_member['isblack']==0}checked{/if}>否</label>
         <input type='hidden' name='oldsnsisblack' value="{$sns_member['isblack']}" />
@@ -72,4 +72,3 @@
         {/if}
     </div>
 </div>
-

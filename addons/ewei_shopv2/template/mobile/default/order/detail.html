@@ -116,11 +116,7 @@
 					(充值中)
 					{/if}
 					{elseif $order['status']==2 && $order['refundid'] ==0}
-					{if $order['city_express_state'] =1}
-					同城配送中
-					{else}
 					卖家已发货
-					{/if}
 					{elseif $order['status']==3}
 					交易完成
 					{if !empty($order['ccard'])}
@@ -483,15 +479,9 @@
 		<div class="fui-cell">
 			<div class="fui-cell-label">{$ordervirtualrow['key']}</div>
 			{if $order['islink'] == 1}
-			<div class="fui-cell-info" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"><a href="{$ordervirtualrow['value']}">{$ordervirtualrow['value']}</a></div>
-			<!-- 添加复制按钮 -->
-			{if $ordervirtualrow['value']}
-			<button class="pull-right credit_copy" data-clipboard-text="{$ordervirtualrow['value']}" style="background:transparent;border:none;color: #f55;font-size: 14px;" >复制</button>{/if}
+			<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word"><a href="{$ordervirtualrow['value']}">{$ordervirtualrow['value']}</a></div>
 			{else}
-			<div class="fui-cell-info" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{$ordervirtualrow['value']}</div>
-			<!-- 添加复制按钮 -->
-			{if $ordervirtualrow['value']}
-			<button class="pull-right credit_copy" data-clipboard-text="{$ordervirtualrow['value']}" style="background:transparent;border:none;color: #f55;font-size: 14px;">复制</button>{/if}
+			<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word">{$ordervirtualrow['value']}</div>
 			{/if}
 		</div>
 		{/loop}
@@ -505,9 +495,6 @@
 		<div class="fui-cell-title">发货信息</div>
 		<div class="fui-cell">
 			<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word">{$order['virtual_str']}</div>
-			<!-- 添加复制按钮 -->
-			{if $order['virtual_str']}
-			<button class="pull-right credit_copy" data-clipboard-text="{$order['virtual_str']}" style="background:transparent;border:none;color: #f55;font-size: 14px;">复制</button>{/if}
 		</div>
 		{if !empty($virtualtemp) && !empty($virtualtemp['linkurl'])}
 		<a class="btn btn-default block" href="{$virtualtemp['linkurl']}">{php echo !empty($virtualtemp['linktext'])? $virtualtemp['linktext']: '使用地址'}</a>
@@ -529,11 +516,9 @@
 				<div class="content-block">
 					<div class="fui-cell-group notop">
 						<div   class="fui-cell">
-							<div class="fui-cell-info" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+							<div class="fui-cell-info" style="white-space: normal;word-wrap: break-word">
 								{$order['virtualsend_info']}
 							</div>
-							<!-- 添加复制按钮 -->
-							<button class="pull-right credit_copy" data-clipboard-text="{$order['virtualsend_info']}" style="background:transparent;border:none;color: #f55;font-size: 14px;">复制</button>
 						</div>
 					</div>
 				</div>
@@ -912,24 +897,5 @@
         FoxUI.according.init();
         modal.init({orderid: "{$orderid}",fromDetail:true});
     });
-	// 实现复制发货信息的功能 先引入clipboardNew.min.js
-	var clipboard = new ClipboardJS('.credit_copy');
-	clipboard.on('success', function(e) {
-		var title = $(e.trigger).parent('.fui-cell').find('div.fui-cell-label').html();
-		// console.info('Action:', e.action);
-		// console.info('Text:', e.text);
-		// console.info('Trigger:', e.trigger);
-		e.clearSelection();
-		if(title){
-			FoxUI.toast.show(title + "复制成功");
-		}else {
-			FoxUI.toast.show("发货信息复制成功");
-		}
-	});
-	clipboard.on('error', function(e) {
-		console.error('Action:', e.action);
-		console.error('Trigger:', e.trigger);
-		FoxUI.toast.show("复制失败");
-	});
 </script>
 {template '_footer'}

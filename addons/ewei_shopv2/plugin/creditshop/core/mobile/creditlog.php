@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -29,7 +30,7 @@ class Creditlog_EweiShopV2Page extends PluginMobileLoginPage
 			$cset = $com->getSet();
 
 			if (!empty($cset)) {
-				if (($member['isagent'] == 1) && ($member['status'] == 1)) {
+				if ($member['isagent'] == 1 && $member['status'] == 1) {
 					$_W['shopshare']['link'] = mobileUrl('creditshop', array('mid' => $member['id']), true);
 					if (empty($cset['become_reg']) && (empty($member['realname']) || empty($member['mobile']))) {
 						$trigger = true;
@@ -63,17 +64,17 @@ class Creditlog_EweiShopV2Page extends PluginMobileLoginPage
 		}
 
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $openid);
-		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_log') . ' log where 1 ' . $condition;
+		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_log') . (' log where 1 ' . $condition);
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
 
 		if (!empty($total)) {
-			$sql = 'SELECT log.id,log.goodsid,g.title,g.thumb,g.credit,g.type,g.money,log.createtime, log.status, g.thumb FROM ' . tablename('ewei_shop_creditshop_log') . ' log ' . ' left join ' . tablename('ewei_shop_creditshop_goods') . ' g on log.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql = 'SELECT log.id,log.goodsid,g.title,g.thumb,g.credit,g.type,g.money,log.createtime, log.status, g.thumb FROM ' . tablename('ewei_shop_creditshop_log') . ' log ' . ' left join ' . tablename('ewei_shop_creditshop_goods') . ' g on log.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
 
 			foreach ($list as &$row) {
-				if ((0 < $row['credit']) & (0 < $row['money'])) {
+				if (0 < $row['credit'] & 0 < $row['money']) {
 					$row['acttype'] = 0;
 				}
 				else if (0 < $row['credit']) {

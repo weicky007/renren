@@ -40,11 +40,10 @@ class Extension_EweiShopV2Page extends PluginWebPage
 		}
 
 		$func = trim($_GPC['taskfunc']);
-
-		if (!(empty($func)) && method_exists($this, $func)) {
-			$this->$func();
+		if (!empty($func) && method_exists($this, $func)) {
+			$this->{$func}();
 		}
-		 else {
+		else {
 			$this->main();
 		}
 
@@ -77,7 +76,6 @@ class Extension_EweiShopV2Page extends PluginWebPage
 				show_json(0, '请填写标题');
 			}
 
-
 			switch ($this->action) {
 			case 'single':
 				$data['type'] = 1;
@@ -107,32 +105,28 @@ class Extension_EweiShopV2Page extends PluginWebPage
 			$data['endtime'] = intval(strtotime($data['time1']['end']));
 			$data['dotime'] = intval(strtotime($data['time2']['start']));
 			$data['donetime'] = intval(strtotime($data['time2']['end']));
-			unset($data['time1'], $data['time2']);
+			unset($data['time1']);
+			unset($data['time2']);
 			$data['timelimit'] = floatval($data['timelimit']);
 			$data['status'] = intval($data['status']);
-
-			if ((count($data['require_data']) < 1) && empty($data['certain'])) {
+			if (count($data['require_data']) < 1 && empty($data['certain'])) {
 				show_json(0, '请至少设置一个任务需求');
 			}
 
-
-			if (!(empty($data['require_data']))) {
-				foreach ($data['require_data'] as $k => $v ) {
-					if (0 < !($v['num'])) {
+			if (!empty($data['require_data'])) {
+				foreach ($data['require_data'] as $k => $v) {
+					if (0 < !$v['num']) {
 						show_json(0, '请把任务需求设置完整');
 					}
-
 				}
 			}
 
-
 			if (is_array($data['certain'])) {
-				foreach ($data['certain'] as $k => $v ) {
+				foreach ($data['certain'] as $k => $v) {
 					$goodsid = intval($v);
 					$data['require_data']['cost_goods' . $goodsid]['num'] = 1;
 				}
 			}
-
 
 			unset($data['certain']);
 			$data['require_data'] = serialize($data['require_data']);
@@ -145,24 +139,23 @@ class Extension_EweiShopV2Page extends PluginWebPage
 				pdo_insert('ewei_shop_task', $data);
 				$taskid = pdo_insertid();
 
-				if (!(empty($taskid))) {
+				if (!empty($taskid)) {
 					show_json(1, array('url' => webUrl('task.extension.' . $this->action, array('taskfunc' => 'add', 'id' => $taskid))));
 				}
-
 			}
-			 else if (pdo_update('ewei_shop_task', $data, array('id' => $id, 'uniacid' => $_W['uniacid']))) {
+			else if (pdo_update('ewei_shop_task', $data, array('id' => $id, 'uniacid' => $_W['uniacid']))) {
 				show_json(1, array('url' => webUrl('task.extension.' . $this->action, array('taskfunc' => 'add', 'id' => $id))));
 			}
-			 else {
+			else {
 				show_json(0, '没有任何更改');
 			}
 		}
-		 else {
+		else {
 			$data = pdo_get('ewei_shop_task', array('id' => $id, 'uniacid' => $_W['uniacid']));
-			$data['starttime'] = ((empty($data['starttime']) ? date('Y-m-d H:i') : date('Y-m-d H:i', $data['starttime'])));
-			$data['endtime'] = ((empty($data['endtime']) ? date('Y-m-d H:i', time() + 864000) : date('Y-m-d H:i', $data['endtime'])));
-			$data['dotime'] = ((empty($data['dotime']) ? date('Y-m-d H:i') : date('Y-m-d H:i', $data['dotime'])));
-			$data['donetime'] = ((empty($data['donetime']) ? date('Y-m-d H:i', time() + 864000) : date('Y-m-d H:i', $data['donetime'])));
+			$data['starttime'] = empty($data['starttime']) ? date('Y-m-d H:i') : date('Y-m-d H:i', $data['starttime']);
+			$data['endtime'] = empty($data['endtime']) ? date('Y-m-d H:i', time() + 864000) : date('Y-m-d H:i', $data['endtime']);
+			$data['dotime'] = empty($data['dotime']) ? date('Y-m-d H:i') : date('Y-m-d H:i', $data['dotime']);
+			$data['donetime'] = empty($data['donetime']) ? date('Y-m-d H:i', time() + 864000) : date('Y-m-d H:i', $data['donetime']);
 			$data['require_data'] = unserialize($data['require_data']);
 			$data['reward_data'] = unserialize($data['reward_data']);
 			$data['timelimit'] = floatval($data['timelimit']);
@@ -177,68 +170,65 @@ class Extension_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$type = trim($_GPC['type']);
 		$title = '';
-		$page = ((intval($_GPC['page']) ? intval($_GPC['page']) : 1));
+		$page = intval($_GPC['page']) ? intval($_GPC['page']) : 1;
 		$pageprev = $page - 1;
 		$pagenext = $page + 1;
 		$psize = 10;
 		$taskfunc = trim($_GPC['taskfunc']);
-		$type = ((empty($type) ? $taskfunc : $type));
+		$type = empty($type) ? $taskfunc : $type;
 
-		if (!(empty($_GPC['title']))) {
+		if (!empty($_GPC['title'])) {
 			$title = trim($_GPC['title']);
 		}
 
-
-		if (!(empty($type))) {
+		if (!empty($type)) {
 			if ($type == 'goods') {
 				$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid'], ':status' => '1');
 				$totalsql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . ' WHERE `uniacid`= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ';
-				$searchsql = 'SELECT id,title,productprice,marketprice,thumb,sales,unit,minprice,hasoption,`total`,`status`,`deleted` FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ORDER BY `status` DESC, `displayorder` DESC,`id` DESC LIMIT ' . (($page - 1) * $psize) . ',' . $psize;
+				$searchsql = 'SELECT id,title,productprice,marketprice,thumb,sales,unit,minprice,hasoption,`total`,`status`,`deleted` FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ORDER BY `status` DESC, `displayorder` DESC,`id` DESC LIMIT ' . ($page - 1) * $psize . ',' . $psize;
 				$total = pdo_fetchcolumn($totalsql, $params);
 				$pagelast = intval(($total - 1) / $psize) + 1;
 				$list = pdo_fetchall($searchsql, $params);
 				$spcSql = 'SELECT * FROM ' . tablename('ewei_shop_goods_option') . ' WHERE uniacid= :uniacid AND  goodsid= :goodsid';
 
-				foreach ($list as $key => $value ) {
+				foreach ($list as $key => $value) {
 					if ($value['hasoption']) {
 						$spcwhere = array(':uniacid' => $_W['uniacid'], ':goodsid' => $value['id']);
 						$spclist = pdo_fetchall($spcSql, $spcwhere);
 
-						if (!(empty($spclist))) {
+						if (!empty($spclist)) {
 							$list[$key]['spc'] = $spclist;
 						}
-						 else {
+						else {
 							$list[$key]['spc'] = '';
 						}
 					}
-
 				}
 			}
-			 else if ($type == 'coupon') {
-				$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid']);
-				$totalsql = 'select count(*) from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ';
-				$searchsql = 'select id,couponname,coupontype,enough,thumb,backtype,deduct,backmoney,backcredit,`total`,backredpack,discount,displayorder from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ORDER BY `displayorder` DESC,`id` DESC LIMIT ' . (($page - 1) * $psize) . ',' . $psize;
-				$total = pdo_fetchcolumn($totalsql, $params);
-				$pagelast = intval(($total - 1) / $psize) + 1;
-				$list = pdo_fetchall($searchsql, $params);
+			else {
+				if ($type == 'coupon') {
+					$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid']);
+					$totalsql = 'select count(*) from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ';
+					$searchsql = 'select id,couponname,coupontype,enough,thumb,backtype,deduct,backmoney,backcredit,`total`,backredpack,discount,displayorder from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ORDER BY `displayorder` DESC,`id` DESC LIMIT ' . ($page - 1) * $psize . ',' . $psize;
+					$total = pdo_fetchcolumn($totalsql, $params);
+					$pagelast = intval(($total - 1) / $psize) + 1;
+					$list = pdo_fetchall($searchsql, $params);
 
-				foreach ($list as &$d ) {
-					$d = com('coupon')->setCoupon($d, time(), false);
-					$d['last'] = com('coupon')->get_last_count($d['id']);
+					foreach ($list as &$d) {
+						$d = com('coupon')->setCoupon($d, time(), false);
+						$d['last'] = com('coupon')->get_last_count($d['id']);
 
-					if ($d['last'] == -1) {
-						$d['last'] = '不限';
+						if ($d['last'] == -1) {
+							$d['last'] = '不限';
+						}
 					}
 
+					unset($d);
 				}
-
-				unset($d);
 			}
-
 
 			include $this->template('task/extension/' . $type);
 		}
-
 	}
 
 	public function certain()
@@ -247,68 +237,65 @@ class Extension_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$type = trim($_GPC['type']);
 		$title = '';
-		$page = ((intval($_GPC['page']) ? intval($_GPC['page']) : 1));
+		$page = intval($_GPC['page']) ? intval($_GPC['page']) : 1;
 		$pageprev = $page - 1;
 		$pagenext = $page + 1;
 		$psize = 10;
 		$taskfunc = trim($_GPC['taskfunc']);
-		$type = ((empty($type) ? $taskfunc : $type));
+		$type = empty($type) ? $taskfunc : $type;
 
-		if (!(empty($_GPC['title']))) {
+		if (!empty($_GPC['title'])) {
 			$title = trim($_GPC['title']);
 		}
 
-
-		if (!(empty($type))) {
+		if (!empty($type)) {
 			if ($type == 'certain') {
 				$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid'], ':status' => '1');
 				$totalsql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_goods') . ' WHERE `uniacid`= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ';
-				$searchsql = 'SELECT id,title,productprice,marketprice,thumb,sales,unit,minprice,hasoption,`total`,`status`,`deleted` FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ORDER BY `status` DESC, `displayorder` DESC,`id` DESC LIMIT ' . (($page - 1) * $psize) . ',' . $psize;
+				$searchsql = 'SELECT id,title,productprice,marketprice,thumb,sales,unit,minprice,hasoption,`total`,`status`,`deleted` FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid= :uniacid and `status`=:status and `deleted`=0 AND merchid=0 AND title LIKE :title ORDER BY `status` DESC, `displayorder` DESC,`id` DESC LIMIT ' . ($page - 1) * $psize . ',' . $psize;
 				$total = pdo_fetchcolumn($totalsql, $params);
 				$pagelast = intval(($total - 1) / $psize) + 1;
 				$list = pdo_fetchall($searchsql, $params);
 				$spcSql = 'SELECT * FROM ' . tablename('ewei_shop_goods_option') . ' WHERE uniacid= :uniacid AND  goodsid= :goodsid';
 
-				foreach ($list as $key => $value ) {
+				foreach ($list as $key => $value) {
 					if ($value['hasoption']) {
 						$spcwhere = array(':uniacid' => $_W['uniacid'], ':goodsid' => $value['id']);
 						$spclist = pdo_fetchall($spcSql, $spcwhere);
 
-						if (!(empty($spclist))) {
+						if (!empty($spclist)) {
 							$list[$key]['spc'] = $spclist;
 						}
-						 else {
+						else {
 							$list[$key]['spc'] = '';
 						}
 					}
-
 				}
 			}
-			 else if ($type == 'coupon') {
-				$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid']);
-				$totalsql = 'select count(*) from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ';
-				$searchsql = 'select id,couponname,coupontype,enough,thumb,backtype,deduct,backmoney,backcredit,`total`,backredpack,discount,displayorder from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ORDER BY `displayorder` DESC,`id` DESC LIMIT ' . (($page - 1) * $psize) . ',' . $psize;
-				$total = pdo_fetchcolumn($totalsql, $params);
-				$pagelast = intval(($total - 1) / $psize) + 1;
-				$list = pdo_fetchall($searchsql, $params);
+			else {
+				if ($type == 'coupon') {
+					$params = array(':title' => '%' . $title . '%', ':uniacid' => $_W['uniacid']);
+					$totalsql = 'select count(*) from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ';
+					$searchsql = 'select id,couponname,coupontype,enough,thumb,backtype,deduct,backmoney,backcredit,`total`,backredpack,discount,displayorder from ' . tablename('ewei_shop_coupon') . ' where couponname LIKE :title and uniacid=:uniacid ORDER BY `displayorder` DESC,`id` DESC LIMIT ' . ($page - 1) * $psize . ',' . $psize;
+					$total = pdo_fetchcolumn($totalsql, $params);
+					$pagelast = intval(($total - 1) / $psize) + 1;
+					$list = pdo_fetchall($searchsql, $params);
 
-				foreach ($list as &$d ) {
-					$d = com('coupon')->setCoupon($d, time(), false);
-					$d['last'] = com('coupon')->get_last_count($d['id']);
+					foreach ($list as &$d) {
+						$d = com('coupon')->setCoupon($d, time(), false);
+						$d['last'] = com('coupon')->get_last_count($d['id']);
 
-					if ($d['last'] == -1) {
-						$d['last'] = '不限';
+						if ($d['last'] == -1) {
+							$d['last'] = '不限';
+						}
 					}
 
+					unset($d);
 				}
-
-				unset($d);
 			}
-
 
 			include $this->template('task/extension/' . $type);
 		}
-
 	}
 
 	public function record()
@@ -324,18 +311,16 @@ class Extension_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$ids = $_GPC['ids'];
 
-		if (!(is_array($ids))) {
+		if (!is_array($ids)) {
 			$ids = array(intval($ids));
 		}
 
-
-		foreach ($ids as $v ) {
+		foreach ($ids as $v) {
 			pdo_delete('ewei_shop_task', array('id' => intval($v), 'uniacid' => $_W['uniacid']));
 		}
 
 		show_json(1);
 	}
 }
-
 
 ?>

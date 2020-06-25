@@ -12,8 +12,8 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-toggle="tab" href="#tab-basic" aria-expanded="true"> 基本信息</a></li>
 				<li class=""><a data-toggle="tab" href="#tab-trade" aria-expanded="false"> 交易信息</a></li>
-				
-                               
+
+
 				{if $hascommission} {ifp 'commission.agent.main'}
 				<li class=""><a data-toggle="tab" href="#tab-commission" aria-expanded="false"> 分销商信息</a></li>
                                                         {/if}
@@ -67,11 +67,11 @@
 				{if $hassns}
 				<div id="tab-sns" class="tab-pane ">{template 'member/detail/sns'}</div>
 				{/if}
-				
+
 			</div>
 		</div>
 	</div>
-	<div class="form-group"></div>	
+	<div class="form-group"></div>
           <div class="form-group">
 		<label class="col-lg control-label"></label>
 		<div class="col-sm-9 col-xs-12">

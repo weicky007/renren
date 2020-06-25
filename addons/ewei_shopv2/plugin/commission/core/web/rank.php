@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,7 +23,7 @@ class Rank_EweiShopV2Page extends PluginWebPage
 
 			$data = array(
 				'rank' => array('type' => intval($_GPC['type']), 'num' => intval($_GPC['num']), 'title' => trim($_GPC['title']), 'status' => intval($_GPC['status']), 'content' => $content)
-				);
+			);
 			m('common')->updatePluginset(array('commission' => $data));
 			plog('commission.rank.edit', '修改积分排名设置');
 			show_json(1);
@@ -79,7 +80,7 @@ class Rank_EweiShopV2Page extends PluginWebPage
 		unset($list[$id]);
 		$data = array(
 			'rank' => array('content' => $list)
-			);
+		);
 		m('common')->updatePluginset(array('commission' => $data));
 		plog('commission.rank.edit', '修改积分排名设置-删除虚拟用户');
 		show_json(1);

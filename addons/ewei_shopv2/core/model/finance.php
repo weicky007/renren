@@ -1,5 +1,5 @@
 <?php
-/*WEMECMS  QQ4424986*/
+
 class Finance_EweiShopV2Model
 {
 	/**

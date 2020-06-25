@@ -128,8 +128,14 @@
 
 
         </div>
-
-        <a id='btn-next' class='btn btn-danger block mtop disabled '>提现</a>
+        {if $withdrawmoney > 0}
+        <div class='fui-cell-title' style="height: 2.45rem">
+            <div class='fui-cell-info' style='font-size:.7rem;color:#666;position: relative;height: 100%;line-height: 1.425rem'>
+                最小提现金额为 ￥{$withdrawmoney}
+            </div>
+        </div>
+        {/if}
+        <a id='btn-next' class='btn btn-danger block disabled '>提现</a>
         <div class='fui-cell-group' style="background: transparent;padding: .4rem 0;margin: 0;{if empty($withdrawcharge)}display: none;{/if}  ">
             <div class='fui-cell no-border'>
                 <div class='fui-cell-info' id="chargeinfo">详细说明</div>

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -30,9 +31,9 @@ class Goods_EweiShopV2Page extends PluginWebPage
 			$params[':cate'] = intval($_GPC['cate']);
 		}
 
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_creditshop_goods') . ' where  1 and ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_creditshop_goods') . (' where  1 and ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ') . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_goods') . ' where 1 and ' . $condition, $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_goods') . (' where 1 and ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		$category = pdo_fetchall('select id,name,thumb from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid order by displayorder desc', array(':uniacid' => $_W['uniacid']), 'id');
 		include $this->template();
@@ -105,7 +106,7 @@ class Goods_EweiShopV2Page extends PluginWebPage
 			$saler = m('member')->getMember($item['noticeopenid']);
 		}
 
-		$endtime = (empty($item['endtime']) ? date('Y-m-d H:i', time()) : date('Y-m-d H:i', $item['endtime']));
+		$endtime = empty($item['endtime']) ? date('Y-m-d H:i', time()) : date('Y-m-d H:i', $item['endtime']);
 		$levels = m('member')->getLevels();
 		$groups = m('member')->getGroups();
 		$category = pdo_fetchall('select id,name,thumb from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid order by displayorder desc', array(':uniacid' => $_W['uniacid']));
@@ -119,10 +120,10 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_creditshop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_creditshop_goods') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_creditshop_goods', array('deleted' => 1), array('id' => $id, 'uniacid' => $_W['uniacid']));
@@ -146,15 +147,15 @@ class Goods_EweiShopV2Page extends PluginWebPage
 
 			if ($type == 'istop') {
 				$typestr = '置顶';
-				$statusstr = ($value == 1 ? '置顶' : '取消置顶');
+				$statusstr = $value == 1 ? '置顶' : '取消置顶';
 			}
 			else if ($type == 'isrecommand') {
 				$typestr = '推荐';
-				$statusstr = ($value == 1 ? '推荐' : '取消推荐');
+				$statusstr = $value == 1 ? '推荐' : '取消推荐';
 			}
 			else if ($type == 'status') {
 				$typestr = '上下架';
-				$statusstr = ($value == 1 ? '上架' : '下架');
+				$statusstr = $value == 1 ? '上架' : '下架';
 			}
 			else {
 				if ($type == 'displayorder') {

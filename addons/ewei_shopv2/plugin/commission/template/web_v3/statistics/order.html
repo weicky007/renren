@@ -297,7 +297,7 @@
             <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
                 <a class='op text-primary'  href="{php echo webUrl('order/detail', array('id' => $item['id']))}" >查看详情</a><br/>
                 {if $item['addressid']!=0 && $item['statusvalue']>=2}
-                <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn']))}"   >物流信息</a>
+                <a class='op text-primary'  data-toggle="ajaxModal" href="{php echo webUrl('util/express', array('id' => $item['id'],'express'=>$item['express'],'expresssn'=>$item['expresssn'], 'mobile'=>$item['addressdata']['mobile']))}"   >物流信息</a>
                 {/if}
             </td>
 

@@ -52,7 +52,7 @@
 					</label>
 				</div>
 				<label class="checkbox-inline">
-					<input type='checkbox' value="goods" name="shop[]" /> 商品
+					<input type='checkbox' value="goods" name="shop[]" id="goods"/> 商品
 				</label>
 
 				<label class="checkbox-inline">
@@ -71,9 +71,15 @@
 				<label class="checkbox-inline">
 					<input type='checkbox' value="group" name="shop[]" /> 会员分组
 				</label>
-
+				<div class=" category" style="display: none;margin-top: 7px">
+					<div class="input-group-select">
+                    <select name="cate" class='form-control select2' style="width:200px;" data-placeholder="商品分类" id="cate">
+                        <option value="0">商品分类</option>
+                    </select>
+						<span class="help-block" style="margin-bottom:0px ">当不选择分类时默认为全部产品转移,请在使用时确认待转移商品在选中分类下,选择单个分类时，会在目标公众号新增此分类。</span>
+                </div>
+				</div>
 			</div>
-
 		</div>
 
 		<div class="form-group">
@@ -257,16 +263,40 @@
 <script type="text/javascript">
 
 	$(function () {
-	 
 		$('.checkline-all').click(function(){
 			var checked  =$(this).get(0).checked;
 			 
 			var name = $(this).val();
 			$(":checkbox[name='" + name+ "[]']").each(function(){
 				$(this).get(0).checked = checked;
+                if (this.checked) {
+                    $(".category").show();
+                }else{
+                    $(".category").hide();
+                }
 			})
-		})
-	})
+		});
+        $("#wechatid").on("change",function(){
+           var uniacid =  $("#wechatid  option:selected").val();
+            $.post("{php echo Weburl('system/data/transfer/getFullCategory')}",{aid: uniacid },function (data){
+                var category = data.result.category;
+                var str = '';
+                str += "<option value='"+0+"'>"+"全部分类"+"</option>";
+                if(category.length>0){
+                    $.each(category,function (index,obj) {
+                    str += "<option value='"+obj.id+"'>"+obj.name+"</option>";
+                });}
+                $("#cate").html(str);
+                },'JSON');
+		});
+        $("#goods").on("click",function(){
+            if (this.checked) {
+               $(".category").show();
+            }else{
+                $(".category").hide();
+			}
+        })
+	});
 
 	$('form').submit(function(){
 
@@ -293,4 +323,3 @@
 </script>
 
 {template '_footer'}
-

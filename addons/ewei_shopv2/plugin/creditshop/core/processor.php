@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -23,7 +24,7 @@ class CreditshopProcessor extends PluginProcessor
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
 		@session_start();
-		if (($msgtype == 'text') || ($event == 'click')) {
+		if ($msgtype == 'text' || $event == 'click') {
 			$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
 			if (empty($saler)) {
@@ -65,26 +66,35 @@ class CreditshopProcessor extends PluginProcessor
 						extract($allow);
 						$_SESSION[$this->sessionkey] = json_encode(array('logid' => $log['id'], 'openid' => $log['openid'], 'isverify' => $goods['isverify'], 'verifytype' => $goods['verifytype'], 'lastverifys' => $allow['lastverifys']));
 						$str = '';
-						$str .= "您正在对积分商城的订单进行线下兑换\r\n";
-						$str .= "\r\n订单号: " . $log['logno'] . "\r\n";
-						$str .= '商品: ' . $goods['title'] . "\r\n";
+						$str .= '您正在对积分商城的订单进行线下兑换
+';
+						$str .= '
+订单号: ' . $log['logno'] . '
+';
+						$str .= '商品: ' . $goods['title'] . '
+';
 
 						if ($goods['acttype'] == 0) {
-							$str .= '价格: ' . $goods['credit'] . '积分+' . $goods['money'] . "元\r\n";
+							$str .= '价格: ' . $goods['credit'] . '积分+' . $goods['money'] . '元
+';
 						}
 						else if ($goods['acttype'] == 1) {
-							$str .= '价格: ' . $goods['credit'] . "积分\r\n";
+							$str .= '价格: ' . $goods['credit'] . '积分
+';
 						}
 						else if ($goods['acttype'] == 2) {
-							$str .= '价格: ' . $goods['money'] . "元\r\n";
+							$str .= '价格: ' . $goods['money'] . '元
+';
 						}
 						else {
 							if ($goods['acttype'] == 3) {
-								$str .= "价格: 免费\r\n";
+								$str .= '价格: 免费
+';
 							}
 						}
 
-						$str .= "\r\n信息正确请回复 y 进行兑换确认，回复 n 退出。";
+						$str .= '
+信息正确请回复 y 进行兑换确认，回复 n 退出。';
 						return $obj->respText($str);
 					}
 

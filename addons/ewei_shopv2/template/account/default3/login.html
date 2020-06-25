@@ -4,6 +4,20 @@
     .header {background-image: url("{php echo empty($set['wap']['bg'])?'../addons/ewei_shopv2/template/account/default3/bg.jpg':tomedia($set['wap']['bg'])}"); background-repeat: no-repeat}
     .btn {background: {if !empty($set['wap']['color'])}{$set['wap']['color']}{else}#43afcf{/if};}
     .text a {color: {if !empty($set['wap']['color'])}{$set['wap']['color']}{else}#43afcf{/if};}
+    .agreement {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+    }
+    .agreement p{
+        font-size: 14px;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .agreement p a {
+        color: #0066cc;
+        cursor: pointer;
+    }
 </style>
 <div class="fui-page">
     {if is_h5app()}
@@ -54,7 +68,7 @@
                 </div>
                 <div class="icons">
                     {if !empty($sns['wx'])}
-                    <div class="item green btn-sns" data-sns="wx" {if is_ios()}style="display: none;" id="threeWX"{/if}><i class="icon icon-wechat1"></i></div>
+                    <div class="item green btn-sns" data-sns="wx" {if is_ios()}style="display: none;"{/if} id="threeWX"><i class="icon icon-wechat1"></i></div>
                     {/if}
                     {if !empty($sns['qq'])}
                     <div class="item blue btn-sns" data-sns="qq"><i class="icon icon-qq" style="font-size: 1.5rem"></i></div>
@@ -63,9 +77,16 @@
             </div>
             {/if}
         {/if}
+        {if is_h5app()}
+        {if $set['wap']['agr']}
+        <div class="agreement">
+            <p><input type="checkbox" class="agree" value="1" checked name="agree[]"> 登录注册代表同意 <a href="{php echo mobileUrl('account/agr')}" id="useragr">《用户协议与隐私政策》</a></p>
+        </div>
+        {/if}
+        {/if}
 
         <script language='javascript'>
-            require(['biz/member/account'], function (modal) {
+            require(['biz/member/account'], function (modal,modal2) {
                 modal.initLogin({backurl:'{$backurl}'});
             });
         </script>

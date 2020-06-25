@@ -1,5 +1,7 @@
 {template '_header'}
+{if p('commission')}
 {template 'commission/common'}
+{/if}
 <div class="fui-page fui-page-current page-commission-team">
 	<div class="fui-header">
 		<div class="fui-header-left">
@@ -21,7 +23,7 @@
 
 <script id='tpl_shop_notice' type='text/html'>
 	<%each list as notice%>
-	<a <%if notice.link !=''%>class="external"<%/if%> href="<%if notice.link !=''%><%notice.link%><%else%>{php echo mobileUrl('shop/notice/detail')}&id=<%notice.id%><%/if%>" data-nocache="true">
+	<a <%if notice.link !=''%>class="external"<%/if%> href="<%if notice.link !=''%><%notice.link%><%else%>{php echo mobileUrl('shop/notice/detail')}&id=<%notice.id%><%/if%>" data-nocache="true" class="notice-item">
 		<div class="fui-list">
 			<div class="fui-list-media">
 				<img data-lazy="<%if notice.thumb%><%notice.thumb%><%else%>{php echo tomedia($_W['shopset']['shop']['logo'])}<%/if%>" class="round">

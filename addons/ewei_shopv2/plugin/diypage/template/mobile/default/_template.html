@@ -90,7 +90,7 @@
     <%if data%>
         <div class="fui-icon-group noborder col-<%style.rownum%> <%style.navstyle%>" style="background: <%style.background||'#ffffff'%>">
             <%each data as item%>
-            <a class="fui-icon-col external" href="<%item.linkurl||'javascript:;'%>" data-nocache="true">
+            <a class="fui-icon-col external" href="<%item.linkurl||'javascript:;'%>" data-nocache="true" style="background-color: #ffffff">
                 <div class="icon"><img src="<%imgsrc item.imgurl%>"></div>
                 <div class="text" style="color: <%item.color%>"><%item.text%></div>
             </a>

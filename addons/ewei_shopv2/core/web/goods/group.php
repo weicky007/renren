@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,8 +21,8 @@ class Group_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods_group') . ' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_goods_group') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods_group') . (' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_goods_group') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -47,7 +48,7 @@ class Group_EweiShopV2Page extends WebPage
 
 			if (!empty($item['goodsids'])) {
 				$item['goodsids'] = trim($item['goodsids'], ',');
-				$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . ' where id in (' . $item['goodsids'] . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $item['goodsids'] . '\',id)');
+				$goods = pdo_fetchall('select id,title,thumb from ' . tablename('ewei_shop_goods') . (' where id in (' . $item['goodsids'] . ') and status=1 and deleted=0 and uniacid=' . $_W['uniacid'] . ' order by instr(\'' . $item['goodsids'] . '\',id)'));
 			}
 		}
 
@@ -90,10 +91,10 @@ class Group_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_goods_group') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_goods_group') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_goods_group', array('id' => $item['id']));
@@ -110,14 +111,14 @@ class Group_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_goods_group') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_goods_group') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goods_group', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('goods.group.edit', ('修改商品组状态<br/>ID: ' . $item['id'] . '<br/>商品组名称: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '启用' : '禁用');
+			plog('goods.group.edit', '修改商品组状态<br/>ID: ' . $item['id'] . '<br/>商品组名称: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled'] == 1 ? '启用' : '禁用');
 		}
 
 		show_json(1);
@@ -137,7 +138,7 @@ class Group_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods_group') . ' WHERE 1 ' . $condition . ' order by id desc', $params);
+		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods_group') . (' WHERE 1 ' . $condition . ' order by id desc'), $params);
 
 		if ($_GPC['suggest']) {
 			exit(json_encode(array('value' => $ds)));

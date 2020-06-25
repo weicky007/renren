@@ -1039,6 +1039,151 @@
     <div class="alert alert-danger" style="margin: 10px 10px 0;">提示：如果链接目标功能未开启，系统会自动过滤不显示。</div>
 </script>
 
+<script type="text/html" id="tpl_edit_nearshop">
+    <div class="form-group form-group-sm">
+        <div class="col-sm-2 control-label">顶部边距</div>
+        <div class="col-sm-10">
+            <div class="form-control-static">
+                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
+                <span class="input-group-addon btn btn-default" data-toggle="restColor" data-color="#ffffff">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">图标颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="iconcolor" value="<%style.iconcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" data-toggle="resetColor" data-color="#999999">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" data-toggle="resetColor" data-color="#000000">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">提示文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="remarkcolor" value="<%style.remarkcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" data-toggle="resetColor" data-color="#888888">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-items indent" data-min="1" data-max="8">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <%if child.number==1%>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-body">
+                    <div class="item-image square">
+                        <span class="btn-del" title="清空图标" onclick="$('#cicon-<%itemid%>').val('').trigger('change')"></span>
+                        <div class="icon-main">
+                            <span class="icox <%child.iconclass%>" id="picon-<%itemid%>"></span>
+                        </div>
+                        <div class="text" data-toggle="selectIcon3" data-input="#cicon-<%itemid%>" data-element="#picon-<%itemid%>">选择图标</div>
+                        <input type="hidden" id="cicon-<%itemid%>" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="iconclass" data-bind-init="true">
+                    </div>
+                    <div class="item-form">
+                        <div class="input-group" style="margin-bottom:0px; ">
+                            <span class="input-group-addon">左边</span>
+                            <input type="text" class="form-control input-sm diy-bind" value="<%child.text%>" placeholder="留空则不显示" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" maxlength="80">
+                            <span class="input-group-addon" style="border-left: 0; border-right: 0;">右边</span>
+                            <input type="text" class="form-control input-sm diy-bind" value="<%child.remark%>" placeholder="留空则不显示" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="remark" maxlength="40">
+                        </div>
+                        <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" data-bind-init="true" id="curl-<%itemid%>" placeholder="请选择链地址" value="<%child.linkurl%>" readonly />
+                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-platform="wxapp" data-input="#curl-<%itemid%>">选择链接</span>
+                            <%if child.linkurl%>
+                            <span class="input-group-addon btn btn-default" data-toggle="setNull" data-element="#curl-<%itemid%>">清除链接</span>
+                            <%/if%>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <%else if child.number==2%>
+            <div class="item" data-id="<%itemid%>">
+                    <span class="btn-del" title="删除"></span>
+                    <div class="item-body">
+                        <div class="item-image square">
+                            <span class="btn-del" title="清空图标" onclick="$('#cicon-<%itemid%>').val('').trigger('change')"></span>
+                            <div class="icon-main">
+                                <span class="icox <%child.iconclass%>" id="picon-<%itemid%>"></span>
+                            </div>
+                            <div class="text" data-toggle="selectIcon3" data-input="#cicon-<%itemid%>" data-element="#picon-<%itemid%>">选择图标</div>
+                            <input type="hidden" id="cicon-<%itemid%>" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="iconclass" data-bind-init="true">
+                        </div>
+                        <div class="item-form">
+                            <div class="input-group" style="margin-bottom:0px; ">
+                                <span class="input-group-addon" style="text-align: left;"><%child.text%></span>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+                <%else if child.number==3%>
+                <div class="item" data-id="<%itemid%>">
+                    <span class="btn-del" title="删除"></span>
+                    <div class="item-body">
+                        <div class="item-image square">
+                            <span class="btn-del" title="清空图标" onclick="$('#cicon-<%itemid%>').val('').trigger('change')"></span>
+                            <div class="icon-main">
+                                <span class="icox <%child.iconclass%>" id="picon-<%itemid%>"></span>
+                            </div>
+                            <div class="text" data-toggle="selectIcon3" data-input="#cicon-<%itemid%>" data-element="#picon-<%itemid%>">选择图标</div>
+                            <input type="hidden" id="cicon-<%itemid%>" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="iconclass" data-bind-init="true">
+                        </div>
+                        <div class="item-form">
+                            <div class="input-group" style="margin-bottom:0px; ">
+                                <span class="input-group-addon" style="text-align: left;"><%child.text%></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%/if%>
+            <%/each%>
+
+<!--
+            <div class="item" data-id="C0123456789103">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-body">
+                    <div class="item-image square">
+                        <span class="btn-del" title="清空图标" onclick="$('#cicon-C0123456789103').val('').trigger('change')"></span>
+                        <div class="icon-main">
+                            <span class="icox" id="picon-C0123456789103"></span>
+                        </div>
+                        <div class="text" data-toggle="selectIcon3" data-input="#cicon-C0123456789103" data-element="#picon-C0123456789103">选择图标</div>
+                        <input type="hidden" id="cicon-C0123456789103" class="diy-bind" data-bind-parent="data" data-bind-child="C0123456789103" data-bind="iconclass" data-bind-init="true">
+                    </div>
+                    <div class="item-form">
+                        <div class="input-group" style="margin-bottom:0px; text-align: left;">
+                            <span class="input-group-addon" style="text-align: left;">门店地址（动态显示不可填写）</span>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+    <div class="alert alert-danger" style="margin: 10px 10px 0;">提示：如果链接目标功能未开启，系统会自动过滤不显示。</div>
+</script>
+
 <script type="text/html" id="tpl_edit_picture">
     <div class="form-group form-group-sm">
         <div class="col-sm-2 control-label">上下边距</div>

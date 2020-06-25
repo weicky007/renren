@@ -1,4 +1,5 @@
 <?php
+
 class Cookie_EweiShopV2Model
 {
 	private $prefix;
@@ -11,7 +12,7 @@ class Cookie_EweiShopV2Model
 
 	public function set($key, $value)
 	{
-		setcookie($this->prefix . $key, iserializer($value), time() + (3600 * 24 * 365));
+		setcookie($this->prefix . $key, iserializer($value), time() + 3600 * 24 * 365);
 	}
 
 	public function get($key)

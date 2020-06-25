@@ -66,7 +66,7 @@
             {if $this->set['withdraw']>0}<br/>注意：可用{php echo $this->set['texts']['dividend']}满 <span class='text-orange'>{php echo $this->set['withdraw']}{php echo $this->set['texts']['yuan']}</span> 后才能申请{php echo $this->set['texts']['withdraw']}{/if}
         </div>
 
-        <a {if $cansettle }href="{php echo mobileUrl('dividend/apply')}"{/if} class="withdrawbtn{if !$cansettle } disabled{/if}">我要提现</a
+        <a {if $cansettle }href="{php echo mobileUrl('dividend/apply')}"{/if} class="withdrawbtn{if !$cansettle } disabled{/if}">我要{php echo $this->set['texts']['withdraw']}</a
 
     </div>
     <!--<div class="share-footbar">-->

@@ -87,7 +87,15 @@
         require(['../addons/ewei_shopv2/plugin/cashier/static/js/mobile.js'], function (modal) {
             modal.init({php echo intval($_GPC['jie']).','.intval($_GPC['cashierid']).','.intval($_GPC['operatorid']).",'$id'"});
         });
+
+        //强制刷新一遍页面，针对安卓调不起微信支付的问题
+        $(function(){
+            if (localStorage.getItem('refreshed') !== 'true') {
+                window.location.reload();
+                localStorage.setItem('refreshed', 'true')
+            }
+        });
     </script>
 </div>
-<iframe id="ali" style="display: none;"></iframe>
+<!--<iframe id="ali" style="display: none;"></iframe>-->
 {template '_footer'}

@@ -14,12 +14,12 @@
 </div>
 <div class="page-content">
 
-    <form {ife 'shop.cityexpress' $cityexpress}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
+    <form {if cv('shop.cityexpress')}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
         <input type="hidden" name="id" value="{$cityexpress['id']}" />
         <div class="form-group">
             <label class="col-lg control-label ">状态</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <label class='radio-inline'><input type='radio' name='enabled' value='1' {if $cityexpress['enabled']==1}checked{/if} /> 启用</label>
                 <label class='radio-inline'><input type='radio' name='enabled' value='0' {if $cityexpress['enabled']==0}checked{/if} /> 禁用</label>
                 {else}
@@ -31,7 +31,7 @@
         <div class="form-group">
             <label class="col-lg control-label ">购买多件商品时运费</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <label class='radio-inline'><input type='radio' name='is_sum' value='1' {if $cityexpress['is_sum']==1}checked{/if} /> 叠加</label>
                 <label class='radio-inline'><input type='radio' name='is_sum' value='0' {if $cityexpress['is_sum']==0}checked{/if} /> 不叠加</label>
                 {else}
@@ -44,7 +44,7 @@
         <div class="form-group">
             <label class="col-lg control-label ">超出同城配送范围后</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <label class='radio-inline'><input type='radio' name='is_dispatch' value='1' {if $cityexpress['is_dispatch']==1}checked{/if} /> 使用快递方式</label>
                 <label class='radio-inline'><input type='radio' name='is_dispatch' value='0' {if $cityexpress['is_dispatch']==0}checked{/if} /> 不使用快递方式</label>
                 {else}
@@ -57,7 +57,7 @@
     <div class="form-group dispatch0">
         <label class="col-lg control-label ">物流公司</label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <select name='express_type' id="express_type" class="form-control select2">
                 <option  {if $cityexpress['express_type']==0 }selected{/if} value="0"  >商家配送</option>
                 <option  {if $cityexpress['express_type']==1 }selected{/if} value="1"  >达达配送</option>
@@ -73,7 +73,7 @@
         <div class="form-group">
             <label class="col-lg control-label must">接口信息</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <div class="input-group">
                     <div class="ban">
                         <span class="input-group-addon">app_key</span>
@@ -93,7 +93,7 @@
         <div class="form-group">
             <label class="col-lg control-label "></label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <div class="input-group">
                     <div class="ban">
                         <span class="input-group-addon">商户ID</span>
@@ -113,7 +113,7 @@
         <div class="form-group dispatch0">
             <label class="col-lg control-label ">所在城市</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                 <select name='config[city_code]' id="city_code" class="form-control select2">
                     <option {if $cityexpress['city_code']=='021' }selected{/if}  value="021">上海</option>
                     <option {if $cityexpress['city_code']=='010' }selected{/if}  value="010">北京</option>
@@ -154,6 +154,7 @@
                     <option {if $cityexpress['city_code']=='0757' }selected{/if}  value="0757">佛山</option>
                     <option {if $cityexpress['city_code']=='0769' }selected{/if}  value="0769">东莞</option>
                     <option {if $cityexpress['city_code']=='0555' }selected{/if}  value="0555">马鞍山</option>
+                    <option {if $cityexpress['city_code']=='0851' }selected{/if}  value="0851">贵阳</option>
                 </select>
                 {else}
                 <div class='form-control-static'>
@@ -196,6 +197,7 @@
                     {if $cityexpress['city_code']=='0757' }佛山{/if}
                     {if $cityexpress['city_code']=='0769' }东莞{/if}
                     {if $cityexpress['city_code']=='0555' }马鞍山{/if}
+                    {if $cityexpress['city_code']=='0851' }贵阳{/if}
                 </div>
                 {/if}
             </div>
@@ -205,7 +207,7 @@
     <div class="form-group tel">
         <label class="col-lg control-label must">配送电话</label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <div class="ban">
                     <span class="input-group-addon">联系电话1</span>
@@ -225,7 +227,7 @@
     <div class="form-group">
         <label class="col-lg control-label must">计费方式</label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <div class="ban">
                     <span class="input-group-addon">起步价</span>
@@ -246,7 +248,7 @@
     <div class="form-group">
         <label class="col-lg control-label "></label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <div class="ban">
                     <span class="input-group-addon">超出起步范围</span>
@@ -268,7 +270,7 @@
     <div class="form-group">
         <label class="col-lg control-label "></label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <div class="ban">
                     <span class="input-group-addon">超出</span>
@@ -290,7 +292,7 @@
     <div class="form-group">
         <label class="col-lg control-label must">自动收货</label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <span class="input-group-addon">发货几天后</span>
                 <input type="number" name="receive_goods"  class="form-control valid" value="{$cityexpress['receive_goods']}" aria-invalid="false" data-rule-required="true">
@@ -306,7 +308,7 @@
     <div class="form-group">
         <label class="col-lg control-label must">高德Web服务接口key</label>
         <div class="col-sm-9 col-xs-12">
-            {ife 'shop.cityexpress' $cityexpress}
+            {if cv('shop.cityexpress.edit')}
             <div class="input-group">
                 <input type="text" name="geo_key"  class="form-control valid" value="{$cityexpress['geo_key']}" aria-invalid="false" data-rule-required="true">
             </div>
@@ -329,7 +331,7 @@
             <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
             <div id="container" class="map" > </div>
             <div class="button-group" style="bottom: 0px;right: 15px;">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress.edit')}
                     <input type="button" class="button" value="开始选取坐标范围" id="start_position" />
                     <input type="button" class="button" value="结束选取坐标范围" id="stop_position" />
                 {/if}
@@ -473,7 +475,7 @@
         <div class="form-group">
             <label class="col-lg control-label "></label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'shop.cityexpress' $cityexpress}
+                {if cv('shop.cityexpress')}
                     <input type="submit" value="提交" class="btn btn-primary"  />
                 {/if}
             </div>

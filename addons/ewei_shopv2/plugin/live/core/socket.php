@@ -1,5 +1,5 @@
 <?php
-/*珍惜资源 请勿转卖*/
+
 class LiveSocket
 {
 	public function redis($server)

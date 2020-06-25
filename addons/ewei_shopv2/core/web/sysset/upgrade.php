@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,7 +12,7 @@ if (!$_W['isfounder']) {
 }
 
 $entry = IA_ROOT . '/addons/ewei_shopv2/plugin/poster/model.php';
-$op = (empty($_GPC['op']) ? 'display' : $_GPC['op']);
+$op = empty($_GPC['op']) ? 'display' : $_GPC['op'];
 load()->func('communication');
 load()->func('file');
 
@@ -24,7 +25,7 @@ if ($op == 'display') {
 else if ($op == 'check') {
 	set_time_limit(0);
 	$auth = $this->getAuthSet();
-	$version = (defined('EWEI_SHOPV2_VERSION') ? EWEI_SHOPV2_VERSION : '1.0');
+	$version = defined('EWEI_SHOPV2_VERSION') ? EWEI_SHOPV2_VERSION : '1.0';
 	$resp = ihttp_post(EWEI_SHOPV2_AUTH_URL, array('type' => 'check', 'ip' => $auth['ip'], 'id' => $auth['id'], 'code' => $auth['code'], 'domain' => $auth['domain'], 'version' => $version, 'manual' => 1));
 	$templatefiles = '';
 	$ret = @json_decode($resp['content'], true);
@@ -38,10 +39,11 @@ else if ($op == 'check') {
 			if (!empty($ret['files'])) {
 				foreach ($ret['files'] as $file) {
 					$entry = IA_ROOT . '/addons/ewei_shopv2/' . $file['path'];
-					if (!is_file($entry) || (md5_file($entry) != $file['hash'])) {
+					if (!is_file($entry) || md5_file($entry) != $file['hash']) {
 						$files[] = array('path' => $file['path'], 'download' => 0);
 						if (strexists($entry, 'template/mobile') && strexists($entry, '.html')) {
-							$templatefiles .= '/' . $file['path'] . "\r\n";
+							$templatefiles .= '/' . $file['path'] . '
+';
 						}
 					}
 				}
@@ -51,10 +53,12 @@ else if ($op == 'check') {
 			$log = base64_decode($ret['log']);
 
 			if (!empty($templatefiles)) {
-				$log = '<br/><b>模板变化:</b><br/>' . $templatefiles . "\r\n" . $log;
+				$log = '<br/><b>模板变化:</b><br/>' . $templatefiles . '
+' . $log;
 			}
 
-			exit(json_encode(array('result' => 1, 'version' => $ret['version'], 'filecount' => count($files), 'upgrade' => !empty($ret['upgrade']), 'log' => str_replace("\r\n", '<br/>', $log))));
+			exit(json_encode(array('result' => 1, 'version' => $ret['version'], 'filecount' => count($files), 'upgrade' => !empty($ret['upgrade']), 'log' => str_replace('
+', '<br/>', $log))));
 		}
 	}
 

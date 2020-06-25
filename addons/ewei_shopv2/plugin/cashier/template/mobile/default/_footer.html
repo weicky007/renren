@@ -32,7 +32,7 @@
 	window.shareData = {php echo json_encode($_W['shopshare'])};
 	jssdkconfig = {php echo json_encode($_W['account']['jssdkconfig']);} || { jsApiList:[] };
 	jssdkconfig.debug = false;
-	jssdkconfig.jsApiList = ['checkJsApi','onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','showOptionMenu', 'hideMenuItems', 'onMenuShareQZone','scanQRCode'];
+	jssdkconfig.jsApiList = ['checkJsApi','onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','showOptionMenu', 'hideMenuItems', 'onMenuShareQZone','scanQRCode','openAddress'];
 	wx.config(jssdkconfig);
 	wx.ready(function () {
 		wx.showOptionMenu();
@@ -89,7 +89,7 @@
 	require(['//qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js'], function(setShareInfo) {
 		setShareInfo({
 			title: "{$_W['shopshare']['title']}",
-			summary: "{$_W['shopshare']['desc']}",
+			summary: "{php echo str_replace(array('\r','\n'),'',$_W['shopshare']['desc'])}",
 			pic: "{$_W['shopshare']['imgUrl']}",
 			url: "{$_W['shopshare']['link']}"
 		});

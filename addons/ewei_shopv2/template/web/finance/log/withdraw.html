@@ -117,7 +117,7 @@
         <td>{$row['money']}<br/>{$row['realmoney']}<br/>{$row['deductionmoney']}</td>
         <td>{if (float)$row['sendmoney'] != 0}{$row['sendmoney']}{else}-{/if}</td>
         <td title="{if empty($row['applytype'])}{$row['typestr']}{else if $row['applytype']=='2'}{$row['typestr']}{else if $row['applytype']=='3'}{$row['typestr']}{/if}{if $row['applytype'] == 2}
-            姓名:{$row['realname']}
+            姓名:{$row['applyrealname']}
             帐号:{$row['alipay']}
             {else if $row['applytype'] == 3}
             姓名:{$row['applyrealname']}
@@ -134,7 +134,7 @@
 
             {if $row['applytype'] == 2}
             <br/>
-            姓名:{$row['realname']}<br/>
+            姓名:{$row['applyrealname']}<br/>
             帐号:<br/>{$row['alipay']}
             {else if $row['applytype'] == 3}
             <br/>

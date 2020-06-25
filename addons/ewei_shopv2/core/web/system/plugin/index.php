@@ -49,7 +49,14 @@ class Index_EweiShopV2Page extends SystemPage
 
 	public function apps()
 	{
-		header('location:https://www.we7shop.com');
+		global $_W;
+		global $_GPC;
+		$domain = trim(preg_replace('/http(s)?:\\/\\//', '', rtrim($_W['siteroot'], '/')));
+		$setting = setting_load('site');
+		$id = isset($setting['site']['key']) ? $setting['site']['key'] : (isset($setting['key']) ? $setting['key'] : '0');
+		$authcode = get_authcode();
+		$auth = base64_encode(authcode($domain . '|' . $id . '|' . $authcode, 'ENCODE', 'ewei_shopv2_apps'));
+		header('location:https://u.we7shop.com/?auth=' . $auth);
 	}
 
 	public function arrayToHashTable($arr, $key)

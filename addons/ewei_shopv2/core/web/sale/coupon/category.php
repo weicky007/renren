@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -34,7 +35,7 @@ class Category_EweiShopV2Page extends ComWebPage
 			show_json(1);
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=0 ORDER BY displayorder asc');
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=0 ORDER BY displayorder asc'));
 		include $this->template();
 	}
 
@@ -43,7 +44,7 @@ class Category_EweiShopV2Page extends ComWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_coupon_category') . ' WHERE id = \'' . $id . '\' and merchid=0 AND uniacid=' . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_coupon_category') . (' WHERE id = \'' . $id . '\' and merchid=0 AND uniacid=') . $_W['uniacid'] . '');
 
 		if (!empty($item)) {
 			pdo_delete('ewei_shop_coupon_category', array('id' => $id));

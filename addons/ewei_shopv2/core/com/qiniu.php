@@ -1,4 +1,15 @@
 <?php
+
+function qiniuClassLoader($class)
+{
+	$path = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+	$file = IA_ROOT . '/framework/library/qiniu/src/' . $path . '.php';
+
+	if (file_exists($file)) {
+		require_once $file;
+	}
+}
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,7 +28,7 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 		}
 
 		$ext = strrchr($url, '.');
-		if (($ext != '.jpeg') && ($ext != '.gif') && ($ext != '.jpg') && ($ext != '.png')) {
+		if ($ext != '.jpeg' && $ext != '.gif' && $ext != '.jpg' && $ext != '.png') {
 			return '';
 		}
 
@@ -112,7 +123,14 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 			$url = $filename;
 		}
 
-		require_once IA_ROOT . '/framework/library/qiniu/autoload.php';
+		if (!function_exists('classLoader')) {
+			require_once IA_ROOT . '/framework/library/qiniu/autoload.php';
+		}
+		else {
+			spl_autoload_register('qiniuClassLoader');
+			require_once IA_ROOT . '/framework/library/qiniu/src/Qiniu/functions.php';
+		}
+
 		$auth = new \Qiniu\Auth($config['access_key'], $config['secret_key']);
 
 		if (is_callable('\\Qiniu\\Zone::zone0')) {
@@ -150,9 +168,9 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 	}
 
 	/**
-	 * 获取配置
-	 * @return boolean
-	 */
+     * 获取配置
+     * @return boolean
+     */
 	public function getConfig()
 	{
 		global $_W;
@@ -188,7 +206,7 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 			return false;
 		}
 
-		if (empty($_W['isfounder']) && ($_W['role'] != 'manager')) {
+		if (empty($_W['isfounder']) && $_W['role'] != 'manager') {
 			return false;
 		}
 

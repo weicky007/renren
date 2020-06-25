@@ -55,6 +55,42 @@
 	</div>
 </div>
 
+<div class="form-group">
+	<label class="col-lg control-label must">出生日期</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'member.card' $item}
+		<label class="radio-inline"><input type="radio" value="1" name="birthday"  {if $item['birthday'] == 1}checked="true"{/if} >填写</label>
+		<label class="radio-inline"><input type="radio" value="0" name="birthday"  {if empty($item['birthday'])}checked="true"{/if}  >不填写</label>
+		{else}
+		<div class='form-control-static'>
+			{if $item['birthday']==0}
+			关闭
+			{else if $item['birthday']==1}
+			开启
+			{/if}
+		</div>
+		{/if}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-lg control-label must">身份证号</label>
+	<div class="col-sm-9 col-xs-12">
+		{ife 'member.card' $item}
+		<label class="radio-inline"><input type="radio" value="1" name="idnumber"  {if $item['idnumber'] == 1}checked="true"{/if} >填写</label>
+		<label class="radio-inline"><input type="radio" value="0" name="idnumber"  {if empty($item['idnumber'])}checked="true"{/if}  >不填写</label>
+		{else}
+		<div class='form-control-static'>
+			{if $item['idnumber']==0}
+			关闭
+			{else if $item['idnumber']==1}
+			开启
+			{/if}
+		</div>
+		{/if}
+	</div>
+</div>
+
 
 <div class="form-group">
 	<label class="col-lg control-label must">手机号</label>

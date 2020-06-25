@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,8 +25,8 @@ class Refundaddress_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_refund_address') . ' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_refund_address') . ' WHERE 1 ' . $condition, $params);
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_refund_address') . (' WHERE 1 ' . $condition . '  ORDER BY id DESC limit ') . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_refund_address') . (' WHERE 1 ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -79,7 +80,7 @@ class Refundaddress_EweiShopV2Page extends WebPage
 		}
 
 		if (!empty($id)) {
-			$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_refund_address') . ' WHERE id = \'' . $id . '\' and merchid=0 and uniacid = \'' . $_W['uniacid'] . '\'');
+			$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_refund_address') . (' WHERE id = \'' . $id . '\' and merchid=0 and uniacid = \'' . $_W['uniacid'] . '\''));
 		}
 
 		$area_set = m('util')->get_area_config_set();
@@ -95,10 +96,10 @@ class Refundaddress_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_refund_address') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_refund_address') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_refund_address', array('id' => $item['id']));
@@ -115,18 +116,18 @@ class Refundaddress_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		if ($_GPC['isdefault'] == 1) {
 			pdo_update('ewei_shop_refund_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'merchid' => 0));
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_refund_address') . ' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_refund_address') . (' WHERE id in( ' . $id . ' ) AND merchid=0 AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_refund_address', array('isdefault' => intval($_GPC['isdefault'])), array('id' => $item['id']));
-			plog('shop.refundaddress.edit', ('修改配送方式默认状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['isdefault']) == 1 ? '是' : '否');
+			plog('shop.refundaddress.edit', '修改配送方式默认状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['isdefault'] == 1 ? '是' : '否');
 		}
 
 		show_json(1, array('url' => referer()));

@@ -19,7 +19,7 @@
                     </div>
 
 
-                    <div class="col-sm-5 pull-right">
+                    <div class="col-sm-6 pull-right">
 
                         <select name='operatorid'  class='form-control  input-sm select-sm'   style="width:120px;"  >
 
@@ -38,11 +38,12 @@
                             {/loop}
                         </select>
 
-                        <select name='status'  class='form-control  input-sm select-sm'   style="width:120px;"  >
+                        <select name='status'  class='form-control  input-sm select-sm'   style="width:140px;"  >
 
                             <option value=''>付款状态</option>
                             <option value='0' {if $_GPC['status']=='0'}selected{/if}>未支付</option>
                             <option value='1' {if $_GPC['status']=='1'}selected{/if}>已支付</option>
+                            <option value='-1' {if $_GPC['status']=='-1'}selected{/if}>已关闭/已退款</option>
 
                         </select>
 
@@ -53,6 +54,9 @@
                             <input type="text" class="form-control input-sm" value="{$total_money}元" placeholder="" disabled/>
                             <span class="input-group-btn">
                                                     <button class="btn btn-sm" type="submit"> 查询</button>
+                                                </span>
+                            <span class="input-group-btn">
+                                                    <button class="btn btn-sm" type="submit" name="export" value="1"> 导出</button>
                                                 </span>
                         </div>
                     </div>
@@ -72,15 +76,15 @@
                 <th class="col-sm-1">随机减<br/>满额减</th>
                 <th class="col-sm-1">余额抵扣<br/>固定折扣</th>
                 <th class="col-sm-1">优惠券减免<br/>赠送积分</th>
-                <th class="col-sm-1">操作</th>
+                <th class="col-sm-1" style="width: 13%">操作</th>
             </tr>
             </thead>
             <tbody>
             {loop $list $key $value}
             <tr data-status="{$value['status']}">
-                <td id="{$value['id']}">{if $value['status'] == '1'}<span class="label label-primary">已支付</span>{elseif $value['status'] == '-1'}<span class="label label-warning">已退款</span>{else}<span class="label label-default">未支付</span>{/if}</td>
-                <td >{$value['logno']}</td>
-                <td>{php echo date('Y-m-d H:i',$value['createtime'])}</td>
+                <td id="{$value['id']}">{if $value['status'] == '1'}<span class="label label-primary">已支付</span>{elseif $value['status'] == '-1'}<span class="label label-warning">已关闭/已退款</span>{else}<span class="label label-default">未支付</span>{/if}</td>
+                <td title="{$value['logno']}">{$value['logno']}</td>
+                <td title="{php echo date('Y-m-d H:i',$value['createtime'])}">{php echo date('Y-m-d',$value['createtime'])}<br>{php echo date('H:i',$value['createtime'])}</td>
                 <td>{if empty($value['operatorid'])}管理员{else}{php echo isset($operator[$value['operatorid']]) ? $operator[$value['operatorid']]['title'] : ''}{/if}</td>
                 <td>{php echo CashierModel::$paytype[$value['paytype']]}</td>
                 <td>{php echo $value['money'] + $value['deduction']}</td>
@@ -106,15 +110,20 @@
                 </td>
                 <td>
                     {if $value['status'] == 1 && ($value['money'] + $value['deduction'])>0}
+                    {if time()< $value['paytime']+$payday*3600*24&&$value['is_applypay']==0}
                     <button class="btn btn-sm refund" type="submit" data-toggle='ajaxPost' data-confirm="确认退款?" data-href="{php echo cashierUrl('order/refund',array('id'=>$value['id']))}"> 退款</button>
+                    {else}
+                    <button class="btn btn-sm  disabled"  data-toggle="tooltip" title="交易完成之后{$payday}天内可申请退款" data-placement="right">退款</button>
+                    {/if}
                     {/if}
                     {if $value['status'] == -1}
                     <span> 退款人<br>{if !empty($operator[$value['refunduser']]['title'])}{$operator[$value['refunduser']]['title']}{else}管理员{/if}</span>
                     {/if}
+                    <a class="text-primary" data-toggle="ajaxModal"  href="{php echo cashierUrl('order/change',array('id' => $value['id']))}">查看商品</a>
                 </td>
             </tr>
             {/loop}
-            <tr><td colspan="9">{$pager}</td></tr>
+            <tr><td colspan="11" class="page">{$pager}</td></tr>
             </tbody>
         </table>
     </div>

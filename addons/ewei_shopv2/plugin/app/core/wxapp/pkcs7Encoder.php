@@ -1,5 +1,5 @@
 <?php
-/*珍惜资源 请勿转卖*/
+
 class PKCS7Encoder
 {
 	static public $block_size = 16;

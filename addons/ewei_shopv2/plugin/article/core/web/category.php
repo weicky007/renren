@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,7 +10,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_article_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder desc ,id desc');
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_article_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder desc ,id desc'));
 		include $this->template();
 	}
 
@@ -51,7 +52,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,category_name FROM ' . tablename('ewei_shop_article_category') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,category_name FROM ' . tablename('ewei_shop_article_category') . (' WHERE id = \'' . $id . '\' AND uniacid=') . $_W['uniacid'] . '');
 
 		if (!empty($item)) {
 			pdo_delete('ewei_shop_article_category', array('id' => $id));

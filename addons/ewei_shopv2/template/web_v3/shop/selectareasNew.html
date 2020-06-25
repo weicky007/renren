@@ -346,7 +346,7 @@
             city_html += value+';';
             var checked_num = $(".ccode_a"+code+"").find(".areaall:checked").length;
             var all_num = $(".ccode_a"+code+"").find(".areaall").length;
-            if(checked_num!=all_num){
+            if(1||checked_num!=all_num){
                 $(".ccode_a"+code+"").find(".areaall:checked").each(function () {
                     var value = $(this).attr('value');
                     city_html += value+';';

@@ -1,4 +1,5 @@
 <?php
+
 class Cache_EweiShopV2Model
 {
 	public function get_key($key = '', $uniacid = '')
@@ -7,7 +8,7 @@ class Cache_EweiShopV2Model
 		static $APPID;
 		static $_uniacid;
 		$account_key = '';
-		$isme = ($uniacid == $_W['uniacid']) || empty($uniacid);
+		$isme = $uniacid == $_W['uniacid'] || empty($uniacid);
 
 		if ($isme) {
 			$uniacid = $_W['uniacid'];
@@ -24,7 +25,7 @@ class Cache_EweiShopV2Model
 
 				if (empty($account_key)) {
 					if ($isme) {
-						if (is_null($APPID) || empty($APPID) || ($_uniacid != $uniacid)) {
+						if (is_null($APPID) || empty($APPID) || $_uniacid != $uniacid) {
 							$_uniacid = $uniacid;
 							$APPID = pdo_fetchcolumn('SELECT `key` FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid', array(':uniacid' => $uniacid));
 						}

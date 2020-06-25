@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -15,9 +16,9 @@ return array(
 			array(
 				'title'   => '邀请卡管理',
 				'extends' => array('invitation.log')
-				)
 			)
 		)
-	);
+	)
+);
 
 ?>

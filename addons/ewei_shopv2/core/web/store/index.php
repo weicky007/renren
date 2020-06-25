@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -30,9 +31,9 @@ class Index_EweiShopV2Page extends ComWebPage
 			$paras[':type'] = $type;
 		}
 
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_store') . ' WHERE ' . $condition . ' ORDER BY displayorder desc,id desc';
-		$sql .= ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
-		$sql_count = 'SELECT count(1) FROM ' . tablename('ewei_shop_store') . ' WHERE ' . $condition;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_store') . (' WHERE ' . $condition . ' ORDER BY displayorder desc,id desc');
+		$sql .= ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
+		$sql_count = 'SELECT count(1) FROM ' . tablename('ewei_shop_store') . (' WHERE ' . $condition);
 		$total = pdo_fetchcolumn($sql_count, $paras);
 		$pager = pagination2($total, $pindex, $psize);
 		$list = pdo_fetchall($sql, $paras);
@@ -139,7 +140,7 @@ class Index_EweiShopV2Page extends ComWebPage
 				$cates = implode(',', $_GPC['cates']);
 			}
 
-			if (empty($_GPC['tel']) || (strlen(trim($_GPC['tel'])) <= 0)) {
+			if (empty($_GPC['tel']) || strlen(trim($_GPC['tel'])) <= 0) {
 				show_json(0, '门店电话不能为空');
 			}
 			else {
@@ -205,10 +206,10 @@ class Index_EweiShopV2Page extends ComWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_store', array('id' => $item['id']));
@@ -224,7 +225,7 @@ class Index_EweiShopV2Page extends ComWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$displayorder = intval($_GPC['value']);
-		$item = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$item = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (!empty($item)) {
 			pdo_update('ewei_shop_store', array('displayorder' => $displayorder), array('id' => $id));
@@ -241,14 +242,14 @@ class Index_EweiShopV2Page extends ComWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_store', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('shop.verify.store.edit', ('修改门店状态<br/>ID: ' . $item['id'] . '<br/>门店名称: ' . $item['storename'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '启用' : '禁用');
+			plog('shop.verify.store.edit', '修改门店状态<br/>ID: ' . $item['id'] . '<br/>门店名称: ' . $item['storename'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '启用' : '禁用');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -259,7 +260,7 @@ class Index_EweiShopV2Page extends ComWebPage
 		global $_W;
 		global $_GPC;
 		$kwd = trim($_GPC['keyword']);
-		$limittype = (empty($_GPC['limittype']) ? 0 : intval($_GPC['limittype']));
+		$limittype = empty($_GPC['limittype']) ? 0 : intval($_GPC['limittype']);
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = ' and uniacid=:uniacid  and status=1 ';
@@ -273,7 +274,7 @@ class Index_EweiShopV2Page extends ComWebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
+		$ds = pdo_fetchall('SELECT id,storename FROM ' . tablename('ewei_shop_store') . (' WHERE 1 ' . $condition . ' order by id asc'), $params);
 
 		if ($_GPC['suggest']) {
 			exit(json_encode(array('value' => $ds)));
@@ -297,7 +298,7 @@ class Index_EweiShopV2Page extends ComWebPage
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 
-		$ds = pdo_fetchall('SELECT id,title,thumb FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' order by createtime desc', $params);
+		$ds = pdo_fetchall('SELECT id,title,thumb FROM ' . tablename('ewei_shop_goods') . (' WHERE 1 ' . $condition . ' order by createtime desc'), $params);
 		$ds = set_medias($ds, array('thumb', 'share_icon'));
 
 		if ($_GPC['suggest']) {

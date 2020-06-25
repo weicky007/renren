@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -42,7 +43,8 @@ class Index_EweiShopV2Page extends CreditshopMobilePage
 
 				foreach ($merch_category as $index => $row) {
 					if (0 < $row) {
-						$list = pdo_fetch('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . "\r\n\t\t\t\t\t\twhere id = " . $index . ' and uniacid=:uniacid and  enabled=1 ', array(':uniacid' => $uniacid));
+						$list = pdo_fetch('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . '
+						where id = ' . $index . ' and uniacid=:uniacid and  enabled=1 ', array(':uniacid' => $uniacid));
 						$list = set_medias($list, 'thumb');
 						$category[$i] = $list;
 						++$i;
@@ -56,52 +58,57 @@ class Index_EweiShopV2Page extends CreditshopMobilePage
 		}
 
 		array_values($category);
-		$lotterydraws = pdo_fetchall('select id, title,goodstype, subtitle, credit, money, thumb,`type`,price from ' . tablename('ewei_shop_creditshop_goods') . "\r\n\t\t\t\twhere " . $contation . ' and isrecommand = 1 and `type` = 1 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+		$lotterydraws = pdo_fetchall('select id, title,goodstype, subtitle, credit, money, thumb,`type`,price from ' . tablename('ewei_shop_creditshop_goods') . '
+				where ' . $contation . ' and isrecommand = 1 and `type` = 1 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
 		$lotterydraws = set_medias($lotterydraws, 'thumb');
-		is_array($lotterydraws) ? $lotterydraws : $lotterydraws = array();
+		is_array($lotterydraws) ? $lotterydraws : ($lotterydraws = array());
 
 		foreach ($lotterydraws as $key => $value) {
-			if ((intval($value['money']) - $value['money']) == 0) {
+			if (intval($value['money']) - $value['money'] == 0) {
 				$lotterydraws[$key]['money'] = intval($value['money']);
 			}
 		}
 
-		$exchanges = pdo_fetchall('select id, title,goodstype, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . "\r\n\t\t\t\twhere " . $contation . ' and isrecommand = 1 and goodstype = 0 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+		$exchanges = pdo_fetchall('select id, title,goodstype, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . '
+				where ' . $contation . ' and isrecommand = 1 and goodstype = 0 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
 		$exchanges = set_medias($exchanges, 'thumb');
-		is_array($exchanges) ? $exchanges : $exchanges = array();
+		is_array($exchanges) ? $exchanges : ($exchanges = array());
 
 		foreach ($exchanges as $key => $value) {
-			if ((intval($value['money']) - $value['money']) == 0) {
+			if (intval($value['money']) - $value['money'] == 0) {
 				$exchanges[$key]['money'] = intval($value['money']);
 			}
 		}
 
-		$coupons = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . "\r\n\t\t\t\twhere " . $contation . ' and isrecommand = 1 and goodstype = 1 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+		$coupons = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . '
+				where ' . $contation . ' and isrecommand = 1 and goodstype = 1 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
 		$coupons = set_medias($coupons, 'thumb');
-		is_array($coupons) ? $coupons : $coupons = array();
+		is_array($coupons) ? $coupons : ($coupons = array());
 
 		foreach ($coupons as $key => $value) {
-			if ((intval($value['money']) - $value['money']) == 0) {
+			if (intval($value['money']) - $value['money'] == 0) {
 				$coupons[$key]['money'] = intval($value['money']);
 			}
 		}
 
-		$balances = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . "\r\n\t\t\t\twhere " . $contation . ' and isrecommand = 1 and goodstype = 2 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+		$balances = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . '
+				where ' . $contation . ' and isrecommand = 1 and goodstype = 2 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
 		$balances = set_medias($balances, 'thumb');
-		is_array($balances) ? $balances : $balances = array();
+		is_array($balances) ? $balances : ($balances = array());
 
 		foreach ($balances as $key => $value) {
-			if ((intval($value['money']) - $value['money']) == 0) {
+			if (intval($value['money']) - $value['money'] == 0) {
 				$balances[$key]['money'] = intval($value['money']);
 			}
 		}
 
-		$redbags = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . "\r\n\t\t\t\twhere " . $contation . ' and isrecommand = 1 and goodstype = 3 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
+		$redbags = pdo_fetchall('select id, title, subtitle, credit, money, thumb,`type` from ' . tablename('ewei_shop_creditshop_goods') . '
+				where ' . $contation . ' and isrecommand = 1 and goodstype = 3 and `type` = 0 and  status=1 and deleted=0 order by displayorder,id desc limit 4', array(':uniacid' => $uniacid));
 		$redbags = set_medias($redbags, 'thumb');
-		is_array($redbags) ? $redbags : $redbags = array();
+		is_array($redbags) ? $redbags : ($redbags = array());
 
 		foreach ($redbags as $key => $value) {
-			if ((intval($value['money']) - $value['money']) == 0) {
+			if (intval($value['money']) - $value['money'] == 0) {
 				$redbags[$key]['money'] = intval($value['money']);
 			}
 		}
@@ -114,7 +121,7 @@ class Index_EweiShopV2Page extends CreditshopMobilePage
 			$cset = $com->getSet();
 
 			if (!empty($cset)) {
-				if (($member['isagent'] == 1) && ($member['status'] == 1)) {
+				if ($member['isagent'] == 1 && $member['status'] == 1) {
 					$_W['shopshare']['link'] = mobileUrl('creditshop', array('mid' => $member['id']), true);
 					if (empty($cset['become_reg']) && (empty($member['realname']) || empty($member['mobile']))) {
 						$trigger = true;
@@ -128,6 +135,7 @@ class Index_EweiShopV2Page extends CreditshopMobilePage
 			}
 		}
 
+		$data = m('common')->getSysset('trade');
 		include $this->template();
 	}
 }

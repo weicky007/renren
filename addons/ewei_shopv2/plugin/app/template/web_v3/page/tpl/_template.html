@@ -184,6 +184,32 @@
     </div>
 </script>
 
+<script type="text/html" id="tpl_show_nearshop">
+    <div class="drag" data-itemid="<%itemid%>">
+        <div class="fui-cell-group fui-cell-click noborder" style="margin-top: <%style.margintop%>px; background-color: <%style.background%>;">
+            <%each data as item%>
+            <%if item.number==1%>
+            <div class="fui-cell" style="position:unset;">
+                <%if item.iconclass%>
+                <div class="fui-cell-icon" style="color: <%style.iconcolor%>;"><i class="icox <%item.iconclass%>"></i></div>
+                <%/if%>
+                <div class="fui-cell-text" style="color: <%style.textcolor%>;"><%item.text%></div>
+                <div class="fui-cell-remark" style="color:#44abf7;"><%item.remark%></div>
+            </div>
+            <%else%>
+            <div class="fui-cell" style="position:unset;">
+                <%if item.iconclass%>
+                <div class="fui-cell-icon" style="color: <%style.iconcolor%>;"><i class="icox <%item.iconclass%>"></i></div>
+                <%/if%>
+                <div class="fui-cell-text" style="color: <%style.textcolor%>;"><%item.text%></div>
+                <div class="fui-cell-remark" style="color: <%style.remarkcolor%>;"><%item.remark%></div>
+            </div>
+            <%/if%>
+            <%/each%>
+        </div>
+    </div>
+</script>
+
 <script type="text/html" id="tpl_show_picture">
     <div class="drag" data-itemid="<%itemid%>">
         <div class="fui-picture" style="padding-bottom: <%style.paddingtop%>px; background: <%style.background%>;">

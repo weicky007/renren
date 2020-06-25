@@ -83,7 +83,11 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$time = time();
 		$sign_str = md5(md5('site_id=' . $site_id . '&request_time=' . $time . '&salt=FOXTEAM_AUTH'));
 		load()->func('communication');
-		
+//        $result = ihttp_post('https://u.we7shop.com/api/platform/geturl', array(
+//            'site'=>$site_id,
+//            'time'=>$time,
+//            'sign'=>$sign_str
+//        ));
 		$content = json_decode($result['content'], true);
 		$siteroot = $content['errmsg'];
 
@@ -94,8 +98,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 		if ($_W['ispost']) {
 			$status = intval($_GPC['status']);
 			m('common')->updatePluginset(array(
-	'taobao' => array('taobao_status' => $status)
-	));
+				'taobao' => array('taobao_status' => $status)
+			));
 			show_json(1);
 		}
 

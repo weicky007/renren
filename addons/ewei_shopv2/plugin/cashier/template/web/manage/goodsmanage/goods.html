@@ -1,7 +1,11 @@
 {template '_header'}
 
 <div class="panel panel-default panel-class" style="margin-top: 20px;">
-    <div class="panel-heading">添加/删除 商城商品</div>
+    <div class="panel-heading">添加/删除 商城商品
+        <span class='pull-right'>
+            <a class='btn btn-sm' href="{php echo cashierUrl('goodsmanage/goods',array('export' => 1))}"><i class="fa fa-shopping-cart"></i> 导出商品 </a>
+        </span>
+    </div>
     <form id="setform"  action="" method="post" class="form-horizontal form-validate">
     <div class="form-group">
         <label class="col-sm-1 control-label"></label>

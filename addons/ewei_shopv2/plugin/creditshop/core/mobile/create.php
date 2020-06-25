@@ -36,6 +36,7 @@ class Create_EweiShopV2Page extends PluginMobileLoginPage
 		$pay = m('common')->getSysset('pay');
 		$pay['weixin'] = !empty($pay['weixin_sub']) ? 1 : $pay['weixin'];
 		$pay['weixin_jie'] = !empty($pay['weixin_jie_sub']) ? 1 : $pay['weixin_jie'];
+		$pay['app_alipay'] = 0;
 		$goods['jie'] = intval($pay['weixin_jie']);
 		$set = m('common')->getPluginset('creditshop');
 		$goods['followed'] = m('user')->followed($openid);
@@ -68,6 +69,15 @@ class Create_EweiShopV2Page extends PluginMobileLoginPage
 			}
 		}
 
+		if ($goods['type'] == '1') {
+			$goods['dispatch'] = 0;
+		}
+
+		$sysSet = m('common')->getSysset();
+		$sec = m('common')->getSec();
+		$sec = iunserializer($sec['sec']);
+		$payinfo = array('wechat' => !empty($sec['app_wechat']['merchname']) && !empty($sysSet['pay']['app_wechat']) && !empty($sec['app_wechat']['appid']) && !empty($sec['app_wechat']['appsecret']) && !empty($sec['app_wechat']['merchid']) && !empty($sec['app_wechat']['apikey']) ? true : false, 'alipay' => false, 'mcname' => $sec['app_wechat']['merchname'], 'aliname' => empty($_W['shopset']['shop']['name']) ? $sec['app_wechat']['merchname'] : $_W['shopset']['shop']['name'], 'attach' => $_W['uniacid'] . ':2', 'type' => 7);
+
 		if ($_W['ispost']) {
 			show_json(1, $goods);
 		}
@@ -92,7 +102,8 @@ class Create_EweiShopV2Page extends PluginMobileLoginPage
 		$merchid = $goods['merchid'];
 		$dispatch = 0;
 		$dispatch_array = array();
-		$address = pdo_fetch('select id,realname,mobile,address,province,city,area,datavalue from ' . tablename('ewei_shop_member_address') . "\r\n        where id=:id and uniacid=:uniacid limit 1", array(':id' => $addressid, ':uniacid' => $_W['uniacid']));
+		$address = pdo_fetch('select id,realname,mobile,address,province,city,area,datavalue,street from ' . tablename('ewei_shop_member_address') . '
+        where id=:id and uniacid=:uniacid limit 1', array(':id' => $addressid, ':uniacid' => $_W['uniacid']));
 		$user_city = '';
 		$user_city_code = '';
 

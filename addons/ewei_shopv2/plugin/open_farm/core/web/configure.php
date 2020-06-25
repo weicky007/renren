@@ -1,5 +1,5 @@
 <?php
-//06-20修复  底部版权问题  修复左侧系统设置问题
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -7,46 +7,30 @@ if (!defined('IN_IA')) {
 class Configure_EweiShopV2Page extends PluginWebPage
 {
 	/**
-
      * 当前数据表名称
-
      * @var string
-
      */
 	private $table = 'ewei_open_farm_configure';
 	/**
-
      * 当前类的所有字段
-
      * @var array
-
      */
 	private $field = array('id', 'uniacid', 'name', 'url', 'qrcode', 'keyword', 'title', 'logo', 'describe', 'public_qrcode', 'force_follow', 'create_time');
 	/**
-
      * 需要验证是否非空的字段以及其回复
-
      * @var array
-
      */
 	private $message = array('name' => '请填写农场名', 'qrcode' => '请上传公众号二维码', 'keyword' => '请填写关键字', 'title' => '请填写分享标题', 'logo' => '请上传分享图标', 'describe' => '请填写分享描述', 'public_qrcode' => '请上传公众号二维码', 'force_follow' => '请选择是否强制关注');
 	/**
-
      * 需要验证是否非空的字段以及其回复
-
      * @var array
-
      */
 	private $imageArr = array('public_qrcode', 'logo');
 
 	/**
-
      * 初始化配置类
-
      * Configure_EweiShopV2Page constructor.
-
      * @param bool $_init
-
      */
 	public function __construct($_init = true)
 	{
@@ -55,9 +39,7 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 首页主方法
-
      */
 	public function main()
 	{
@@ -66,11 +48,8 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 判断当前公众号是否已经有数据在数据库中
-
      * 若没有则添加
-
      */
 	private function addInfo()
 	{
@@ -87,9 +66,7 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 获取农场信息
-
      */
 	public function getInfo()
 	{
@@ -102,9 +79,7 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 编辑农场信息
-
      */
 	public function editInfo()
 	{
@@ -124,11 +99,8 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 设置农场关键字
-
      * @param $configure
-
      */
 	public function setReplyKeywordRule($configure)
 	{
@@ -141,11 +113,8 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 验证提交数据
-
      * @param $data
-
      */
 	private function checkInfo($data)
 	{
@@ -154,9 +123,7 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * @return bool
-
      */
 	public function getRule()
 	{
@@ -176,13 +143,9 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 设置回复信息
-
      * @param $rule
-
      * @param array $data
-
      */
 	public function setReply($rule, array $data)
 	{
@@ -208,13 +171,9 @@ class Configure_EweiShopV2Page extends PluginWebPage
 	}
 
 	/**
-
      * 设置触发关键字
-
      * @param $rule
-
      * @param array $data
-
      */
 	public function setKeyword($rule, array $data)
 	{

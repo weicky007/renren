@@ -21,6 +21,7 @@
             <li  {if $_GPC['tab']=='sale'}class="active"{/if}><a href="#tab_sale">营销设置</a></li>
             <li  {if $_GPC['tab']=='withdraw'}class="active"{/if}><a href="#tab_withdraw">结算设置</a></li>
             <li  {if $_GPC['tab']=='account'}class="active"{/if}><a href="#tab_account">账户设置</a></li>
+            <li  {if $_GPC['tab']=='notice'}class="active"{/if}><a href="#tab_notice">通知设置</a></li>
         </ul>
         <div class="tab-content ">
             <div class="tab-pane {if empty($_GPC['tab']) || $_GPC['tab']=='basic'}active{/if}" id="tab_basic">{template 'cashier/user/post/basic'}</div>
@@ -29,6 +30,7 @@
             <div class="tab-pane {if $_GPC['tab']=='sale'}active{/if}" id="tab_sale">{template 'cashier/user/post/sale'}</div>
             <div class="tab-pane {if $_GPC['tab']=='withdraw'}active{/if}" id="tab_withdraw">{template 'cashier/user/post/withdraw'}</div>
             <div class="tab-pane {if $_GPC['tab']=='account'}active{/if}" id="tab_account">{template 'cashier/user/post/account'}</div>
+            <div class="tab-pane {if $_GPC['tab']=='notice'}active{/if}" id="tab_notice">{template 'cashier/user/post/notice'}</div>
         </div>
     </div>
     {ifp 'cashier.set.edit'}

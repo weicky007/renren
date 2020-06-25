@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -31,7 +32,7 @@ foreach ($sets as $set) {
 	}
 
 	$daytimes = 86400 * $days;
-	$orders = pdo_fetchall('select id,openid,deductcredit2,ordersn,isparent,deductcredit,deductprice,status,isparent,isverify from ' . tablename('ewei_shop_order') . ' where uniacid=' . $_W['uniacid'] . '  and paytype<>3  and ((createtime + ' . $daytimes . ' <=unix_timestamp() and status=0) or (status = 1 and `isverify` = 1 and `verifyendtime` <= unix_timestamp() and `verifyendtime` > 0))');
+	$orders = pdo_fetchall('select id,openid,deductcredit2,ordersn,isparent,deductcredit,deductprice,status,isparent,isverify from ' . tablename('ewei_shop_order') . (' where uniacid=' . $_W['uniacid'] . '  and paytype<>3  and ((createtime + ' . $daytimes . ' <=unix_timestamp() and status=0) or (status = 1 and `isverify` = 1 and `verifyendtime` <= unix_timestamp() and `verifyendtime` > 0))'));
 	$p = com('coupon');
 
 	foreach ($orders as $o) {
@@ -49,7 +50,7 @@ foreach ($sets as $set) {
 				m('order')->setDeductCredit2($o);
 
 				if (0 < $o['deductprice']) {
-					m('member')->setCredit($o['openid'], 'credit1', $o['deductcredit'], array('0', $_W['shopset']['shop']['name'] . '自动关闭订单返还抵扣积分 积分: ' . $o['deductcredit'] . ' 抵扣金额: ' . $o['deductprice'] . ' 订单号: ' . $o['ordersn']));
+					m('member')->setCredit($o['openid'], 'credit1', $o['deductcredit'], array('0', $_W['shopset']['shop']['name'] . ('自动关闭订单返还抵扣积分 积分: ' . $o['deductcredit'] . ' 抵扣金额: ' . $o['deductprice'] . ' 订单号: ' . $o['ordersn'])));
 				}
 			}
 
@@ -75,7 +76,7 @@ foreach ($sets as $set) {
 			pdo_query('update ' . tablename('ewei_shop_order') . ' set status=-1,canceltime=' . time() . ' where id=' . $o['id']);
 		}
 		else {
-			if (($o['status'] == 1) && ($o['isverify'] == 1)) {
+			if ($o['status'] == 1 && $o['isverify'] == 1) {
 				pdo_query('update ' . tablename('ewei_shop_order') . ' set status=-1,canceltime=' . time() . ' where id=' . $o['id']);
 			}
 		}

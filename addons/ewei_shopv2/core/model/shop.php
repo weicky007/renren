@@ -1,4 +1,5 @@
 <?php
+
 class Shop_EweiShopV2Model
 {
 	/**
@@ -134,7 +135,24 @@ class Shop_EweiShopV2Model
 				exit();
 			}
 
-			exit("<!DOCTYPE html>\r\n\t\t\t\t\t<html>\r\n\t\t\t\t\t\t<head>\r\n\t\t\t\t\t\t\t<meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=0'>\r\n\t\t\t\t\t\t\t<title>抱歉，商城暂时关闭</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=0'><link rel='stylesheet' type='text/css' href='https://res.wx.qq.com/connect/zh_CN/htmledition/style/wap_err1a9853.css'>\r\n\t\t\t\t\t\t</head>\r\n\t\t\t\t\t\t<body>\r\n\t\t\t\t\t\t<style type='text/css'>\r\n\t\t\t\t\t\tbody { background:#fbfbf2; color:#333;}\r\n\t\t\t\t\t\timg { display:block; width:100%;}\r\n\t\t\t\t\t\t.header {\r\n\t\t\t\t\t\twidth:100%; padding:10px 0;text-align:center;font-weight:bold;}\r\n\t\t\t\t\t\t</style>\r\n\t\t\t\t\t\t<div class='page_msg'>\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\t<div class='inner'><span class='msg_icon_wrp'><i class='icon80_smile'></i></span>" . $close['detail'] . "</div></div>\r\n\t\t\t\t\t\t</body>\r\n\t\t\t\t\t</html>");
+			exit('<!DOCTYPE html>
+					<html>
+						<head>
+							<meta name=\'viewport\' content=\'width=device-width, initial-scale=1, user-scalable=0\'>
+							<title>抱歉，商城暂时关闭</title><meta charset=\'utf-8\'><meta name=\'viewport\' content=\'width=device-width, initial-scale=1, user-scalable=0\'><link rel=\'stylesheet\' type=\'text/css\' href=\'https://res.wx.qq.com/connect/zh_CN/htmledition/style/wap_err1a9853.css\'>
+						</head>
+						<body>
+						<style type=\'text/css\'>
+						body { background:#fbfbf2; color:#333;}
+						img { display:block; width:100%;}
+						.header {
+						width:100%; padding:10px 0;text-align:center;font-weight:bold;}
+						</style>
+						<div class=\'page_msg\'>
+						
+						<div class=\'inner\'><span class=\'msg_icon_wrp\'><i class=\'icon80_smile\'></i></span>' . $close['detail'] . '</div></div>
+						</body>
+					</html>');
 		}
 	}
 
@@ -143,7 +161,7 @@ class Shop_EweiShopV2Model
 		global $_W;
 		$allcategory = m('cache')->getArray('allcategoryarr');
 		if (empty($allcategory) || $refresh) {
-			$allcategory = pdo_fetchall('SELECT id,parentid,uniacid,name,thumb FROM ' . tablename('ewei_shop_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'', array(), 'id');
+			$allcategory = pdo_fetchall('SELECT id,parentid,uniacid,name,thumb FROM ' . tablename('ewei_shop_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\''), array(), 'id');
 			m('cache')->set('allcategoryarr', $allcategory);
 		}
 

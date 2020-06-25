@@ -3,9 +3,12 @@
     <h2>收银台结算</h2>
 </div>
 
-<form action="./cashier.php" method="get" class="form-horizontal table-search" role="form">
-    <input type="hidden" name="i" value="{$_GPC['i']}" />
-    <input type="hidden" name="r" value="clearing" />
+<form method="get" class="form-horizontal table-search" role="form">
+    <input type="hidden" name="c" value="site" />
+    <input type="hidden" name="a" value="entry" />
+    <input type="hidden" name="m" value="ewei_shopv2" />
+    <input type="hidden" name="do" value="web" />
+    <input type="hidden" name="r" value="cashier.clearing" />
     <div class="page-toolbar row m-b-sm m-t-sm">
         <div class="col-sm-5">
             <div class="btn-group btn-group-sm" style='float:left'>
@@ -17,7 +20,7 @@
             <select name='status'  class='form-control  input-sm select-md'   style="width:120px;">
                 <option value='' {if $_GPC['status']==''}selected{/if}>结算状态</option>
                 <option value='0' {if $_GPC['status']=='0'}selected{/if}>未结算</option>
-                <option value='1' {if $_GPC['status']=='1'}selected{/if}>结算中</option>
+                <option value='1' {if $_GPC['status']=='1'}selected{/if}>待结算</option>
                 <option value='2' {if $_GPC['status']=='2'}selected{/if}>已结算</option>
             </select>
             <div class="input-group">

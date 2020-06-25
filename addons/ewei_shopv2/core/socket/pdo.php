@@ -1,4 +1,5 @@
 <?php
+
 class sw_pdo
 {
 	static public $pdo;
@@ -174,7 +175,7 @@ class sw_pdo
 		$result = array(
 			'fields' => ' 1 ',
 			'params' => array()
-			);
+		);
 		$split = '';
 		$suffix = '';
 		$allow_operator = array('>', '<', '<>', '!=', '>=', '<=', '+=', '-=', 'LIKE', 'like');

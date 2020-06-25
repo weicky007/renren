@@ -1,4 +1,5 @@
 <?php
+
 class Message_EweiShopV2Model
 {
 	/**
@@ -31,20 +32,25 @@ class Message_EweiShopV2Model
 
 		if (is_array($msg)) {
 			foreach ($msg as $key => $value) {
+				$value['value'] = empty($value['value']) ? '' : $value['value'];
+
 				if (!empty($value['title'])) {
-					$content .= $value['title'] . ':' . $value['value'] . "\n";
+					$content .= $value['title'] . ':' . $value['value'] . '
+';
 				}
 				else {
-					$content .= $value['value'] . "\n";
+					$content .= $value['value'] . '
+';
 
 					if ($key == 0) {
-						$content .= "\n";
+						$content .= '
+';
 					}
 				}
 			}
 		}
 		else {
-			$content = $msg;
+			$content = addslashes($msg);
 		}
 
 		if (!empty($url)) {
@@ -52,10 +58,10 @@ class Message_EweiShopV2Model
 		}
 
 		return $account->sendCustomNotice(array(
-	'touser'  => $openid,
-	'msgtype' => 'text',
-	'text'    => array('content' => urlencode($content))
-	));
+			'touser'  => $openid,
+			'msgtype' => 'text',
+			'text'    => array('content' => urlencode($content))
+		));
 	}
 
 	/**
@@ -68,10 +74,10 @@ class Message_EweiShopV2Model
 	{
 		$account = m('common')->getAccount();
 		return $account->sendCustomNotice(array(
-	'touser'  => $openid,
-	'msgtype' => 'image',
-	'image'   => array('media_id' => $mediaid)
-	));
+			'touser'  => $openid,
+			'msgtype' => 'image',
+			'image'   => array('media_id' => $mediaid)
+		));
 	}
 
 	public function sendNews($openid, $articles, $account = NULL)
@@ -81,10 +87,10 @@ class Message_EweiShopV2Model
 		}
 
 		return $account->sendCustomNotice(array(
-	'touser'  => $openid,
-	'msgtype' => 'news',
-	'news'    => array('articles' => $articles)
-	));
+			'touser'  => $openid,
+			'msgtype' => 'news',
+			'news'    => array('articles' => $articles)
+		));
 	}
 
 	public function sendTexts($openid, $content, $url = '', $account = NULL)
@@ -94,14 +100,15 @@ class Message_EweiShopV2Model
 		}
 
 		if (!empty($url)) {
-			$content .= "\n<a href='" . $url . '\'>点击查看详情</a>';
+			$content .= '
+<a href=\'' . $url . '\'>点击查看详情</a>';
 		}
 
 		return $account->sendCustomNotice(array(
-	'touser'  => $openid,
-	'msgtype' => 'text',
-	'text'    => array('content' => urlencode($content))
-	));
+			'touser'  => $openid,
+			'msgtype' => 'text',
+			'text'    => array('content' => urlencode($content))
+		));
 	}
 }
 

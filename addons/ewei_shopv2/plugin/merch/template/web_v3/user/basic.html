@@ -298,7 +298,7 @@
     <label class="col-lg control-label must">收款人</label>
     <div class="col-sm-8">
         {ife 'merch.user' $item}
-        {php echo tpl_selector('payopenid',array('required'=>false,'preview'=>false,'key'=>'openid','text'=>'nickname','type'=>'text','placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择收款人 ', 'items'=>$user,'url'=>webUrl('member/query') ))}
+        {php echo tpl_selector('payopenid',array('value'=>!empty($user['nickname'])?$user['nickname']:"",'required'=>false,'preview'=>false,'key'=>'openid','text'=>'nickname','type'=>'text','placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择收款人 ', 'items'=>$user,'url'=>webUrl('member/query') ))}
         {else}
         <div class="form-control-static">{$item['payopenid']}</div>
         {/if}

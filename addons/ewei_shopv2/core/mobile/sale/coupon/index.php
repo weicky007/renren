@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -35,7 +36,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 
 		$merchdata = $this->merchData();
 		extract($merchdata);
-		$advs = (is_array($set['advs']) ? $set['advs'] : array());
+		$advs = is_array($set['advs']) ? $set['advs'] : array();
 		$shop = m('common')->getSysset('shop');
 		$param = array();
 		$param[':uniacid'] = $_W['uniacid'];
@@ -142,7 +143,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 				else {
 					$totle = $row['t'];
 					$row['last'] = $last;
-					$row['lastratio'] = intval(($last / $totle) * 100);
+					$row['lastratio'] = intval($last / $totle * 100);
 				}
 			}
 			else {
@@ -233,17 +234,17 @@ class Index_EweiShopV2Page extends MobileLoginPage
 						$title5 = '消费满' . (double) $row['enough'];
 					}
 
-					if (!empty($row['backmoney']) && (0 < $row['backmoney'])) {
+					if (!empty($row['backmoney']) && 0 < $row['backmoney']) {
 						$title3 = '立返';
 						$title5 = $title5 . '立返余额';
 					}
 					else {
-						if (!empty($row['backcredit']) && (0 < $row['backcredit'])) {
+						if (!empty($row['backcredit']) && 0 < $row['backcredit']) {
 							$title3 = '立返';
 							$title5 = $title5 . '立返积分';
 						}
 						else {
-							if (!empty($row['backredpack']) && (0 < $row['backredpack'])) {
+							if (!empty($row['backredpack']) && 0 < $row['backredpack']) {
 								$title5 = $title5 . '立返红包';
 							}
 						}
@@ -382,7 +383,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 			if ($row['islimitlevel'] == 1) {
 				$openid = trim($_W['openid']);
 				$member = m('member')->getMember($openid);
-				if (!empty($row['limitmemberlevels']) || ($row['limitmemberlevels'] == '0')) {
+				if (!empty($row['limitmemberlevels']) || $row['limitmemberlevels'] == '0') {
 					$shop = $_W['shopset']['shop'];
 
 					if (in_array($member['level'], $limitmemberlevels)) {
@@ -390,24 +391,24 @@ class Index_EweiShopV2Page extends MobileLoginPage
 					}
 				}
 
-				if ((!empty($row['limitagentlevels']) || ($row['limitagentlevels'] == '0')) && $hascommission) {
-					if (($member['isagent'] == '1') && ($member['status'] == '1')) {
+				if ((!empty($row['limitagentlevels']) || $row['limitagentlevels'] == '0') && $hascommission) {
+					if ($member['isagent'] == '1' && $member['status'] == '1') {
 						if (in_array($member['agentlevel'], $limitagentlevels)) {
 							$pass = true;
 						}
 					}
 				}
 
-				if ((!empty($row['limitpartnerlevels']) || ($row['limitpartnerlevels'] == '0')) && $hasglobonus) {
-					if (($member['ispartner'] == '1') && ($member['partnerstatus'] == '1')) {
+				if ((!empty($row['limitpartnerlevels']) || $row['limitpartnerlevels'] == '0') && $hasglobonus) {
+					if ($member['ispartner'] == '1' && $member['partnerstatus'] == '1') {
 						if (in_array($member['partnerlevel'], $limitpartnerlevels)) {
 							$pass = true;
 						}
 					}
 				}
 
-				if ((!empty($row['limitaagentlevels']) || ($row['limitaagentlevels'] == '0')) && $hasabonus) {
-					if (($member['isaagent'] == '1') && ($member['aagentstatus'] == '1')) {
+				if ((!empty($row['limitaagentlevels']) || $row['limitaagentlevels'] == '0') && $hasabonus) {
+					if ($member['isaagent'] == '1' && $member['aagentstatus'] == '1') {
 						if (in_array($member['aagentlevel'], $limitaagentlevels)) {
 							$pass = true;
 						}
@@ -422,7 +423,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 			$row['contype'] = 1;
 			$totle = $row['t'];
 			$last = $row['last'];
-			$row['lastratio'] = intval(($last / $totle) * 100);
+			$row['lastratio'] = intval($last / $totle * 100);
 			$title2 = '';
 			$title3 = '';
 			$title4 = '';
@@ -430,7 +431,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 
 			if ($row['coupontype'] == '0') {
 				if (0 < $row['least_cost']) {
-					$title2 = '满' . ((double) $row['least_cost'] / 100) . '元可用';
+					$title2 = '满' . (double) $row['least_cost'] / 100 . '元可用';
 				}
 				else {
 					$title2 = '无金额门槛';
@@ -438,7 +439,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 			}
 
 			if ($row['card_type'] == 'CASH') {
-				$title3 = '<span class="subtitle">￥</span>' . ((double) $row['reduce_cost'] / 100);
+				$title3 = '<span class="subtitle">￥</span>' . (double) $row['reduce_cost'] / 100;
 
 				if (empty($row['least_cost'])) {
 					$title5 = '消费任意金额立减' . (double) $row['deduct'];
@@ -446,7 +447,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 					$tagtitle = '代金券';
 				}
 				else {
-					$title5 = '消费满' . ((double) $row['least_cost'] / 100) . '立减' . ((double) $row['reduce_cost'] / 100);
+					$title5 = '消费满' . (double) $row['least_cost'] / 100 . '立减' . (double) $row['reduce_cost'] / 100;
 					$row['color'] = 'blue';
 					$tagtitle = '满减券';
 				}
@@ -512,7 +513,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 		$i = 0;
 
 		while ($i < count($cards)) {
-			if (((($pindex - 1) * $psize) <= $i) && ($i < ($pindex * $psize))) {
+			if (($pindex - 1) * $psize <= $i && $i < $pindex * $psize) {
 				$cardslist[] = $cards[$i];
 			}
 
@@ -530,7 +531,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 		$nonce_str = random(16) + '';
 		$card_id = $_GPC['card_id'];
 		$openid = $_GPC['openid'];
-		$code = (empty($_GPC['code']) ? '' : $_GPC['code']);
+		$code = empty($_GPC['code']) ? '' : $_GPC['code'];
 		$signature = com('wxcard')->getsignature($card_id, $timestamp, $nonce_str, $openid, $code);
 		$arr = array('code' => $code, 'openid' => $openid, 'timestamp' => $timestamp, 'nonce_str' => $nonce_str, 'signature' => $signature);
 		show_json(1, array('cardExt' => json_encode($arr)));
@@ -541,10 +542,20 @@ class Index_EweiShopV2Page extends MobileLoginPage
 		global $_W;
 		global $_GPC;
 		$cardList = $_GPC['cardList'];
+		if ($cardList && !is_array($cardList)) {
+			$cardList = json_decode($cardList, true);
+		}
+
 		sleep(5);
 
 		foreach ($cardList as $card) {
-			com('wxcard')->wxCardUpdateQuantity($card['cardId']);
+			if ($card && !is_array($card)) {
+				$card = json_decode($card, true);
+			}
+
+			if (com('wxcard')) {
+				com('wxcard')->wxCardUpdateQuantity($card['cardId']);
+			}
 		}
 
 		show_json(1);

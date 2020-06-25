@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -16,7 +17,7 @@ class Funbar_EweiShopV2Page extends WebPage
 		}
 
 		if ($_W['ispost']) {
-			$datas = trim($_GPC['datas']);
+			$datas = $_GPC['datas'];
 
 			if (!empty($datas)) {
 				$datas = htmlspecialchars_decode($datas);
@@ -56,7 +57,7 @@ class Funbar_EweiShopV2Page extends WebPage
 				$newdata = array();
 			}
 
-			$newitem = (is_array($_GPC['funbardata']) ? $_GPC['funbardata'] : array());
+			$newitem = is_array($_GPC['funbardata']) ? $_GPC['funbardata'] : array();
 			$funbardata = array_merge(array($newitem), $newdata);
 			$funbardata = iserializer($funbardata);
 

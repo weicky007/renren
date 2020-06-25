@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -20,7 +21,8 @@ class Sendtask_EweiShopV2Page extends ComWebPage
 		$psize = 10;
 		$condition = ' and cs.uniacid=:uniacid';
 		$params = array(':uniacid' => $uniacid);
-		$sendtasks = pdo_fetchall('SELECT cs.*, c.couponname, c.thumb FROM ' . tablename('ewei_shop_coupon_sendtasks') . '  cs left  join  ' . tablename('ewei_shop_coupon') . "  c on cs.couponid =c.id\r\n                    WHERE 1 " . $condition . '  order by enough LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$sendtasks = pdo_fetchall('SELECT cs.*, c.couponname, c.thumb FROM ' . tablename('ewei_shop_coupon_sendtasks') . '  cs left  join  ' . tablename('ewei_shop_coupon') . '  c on cs.couponid =c.id
+                    WHERE 1 ' . $condition . '  order by enough LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_coupon_sendtasks') . ' cs WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
@@ -73,6 +75,10 @@ class Sendtask_EweiShopV2Page extends ComWebPage
 				show_json(0, '发送数量不能小于1');
 			}
 
+			if (50 < intval($_GPC['sendnum'])) {
+				show_json(0, '发送数量不能大于50');
+			}
+
 			if (intval($_GPC['num']) < 0) {
 				show_json(0, '剩余数量不能小于0');
 			}
@@ -101,7 +107,7 @@ class Sendtask_EweiShopV2Page extends ComWebPage
 		}
 
 		if (empty($item['endtime'])) {
-			$item['endtime'] = time() + (60 * 60 * 24 * 7);
+			$item['endtime'] = time() + 60 * 60 * 24 * 7;
 		}
 
 		include $this->template();

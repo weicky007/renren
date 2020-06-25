@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -24,7 +25,6 @@ class BargainModel extends PluginModel
 
 		$sets = pdo_fetchcolumn('SELECT `sets` FROM ' . tablename('ewei_shop_sysset') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
 		$qr = unserialize($sets);
-		logg('qr.txt', json_encode($qr));
 		return array(0, tomedia($qr['share']['followqrcode']));
 	}
 

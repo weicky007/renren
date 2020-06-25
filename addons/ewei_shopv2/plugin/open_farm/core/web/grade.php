@@ -53,7 +53,7 @@ class Grade_EweiShopV2Page extends PluginWebPage
 		$data['create_time'] = date('Y-m-d H:i:s');
 		$this->checkInfo($data);
 		$data = $this->model->removeUselessField($data, $this->field);
-		$where = array('level' => $data['level']);
+		$where = array('level' => $data['level'], 'uniacid' => $_W['uniacid']);
 		$info = pdo_get($this->table, $where);
 
 		if ($info) {

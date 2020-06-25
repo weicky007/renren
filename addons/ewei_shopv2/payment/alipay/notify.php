@@ -43,9 +43,10 @@ class aliApy
         if($this->post['trade_status']!='TRADE_SUCCESS' && $this->post['trade_status']!='TRADE_FINISHED'){
             exit('fail');
         }
-  
+        /*file_put_contents(__DIR__.'/3test_'. time(),json_encode($this->post));*/
+
         $this->strs = explode(':', $this->body);
-        $this->type = intval($this->strs[1]); 
+        $this->type = intval($this->strs[1]); //类型 0 购物 1 充值 2收银台
         $this->total_fee= round($this->post['total_fee'],2);
         $GLOBALS['_W']['uniacid'] = intval($this->strs[0]);
         $_W['uniacid'] = intval($this->strs[0]);
@@ -72,7 +73,9 @@ class aliApy
         exit('success');
     }
 
-
+    /**
+     * 订单支付
+     */
     public function order()
     {
         if (!$this->publicMethod()){
@@ -88,6 +91,7 @@ class aliApy
         $params[':tid'] = $tid;
         $params[':module'] = 'ewei_shopv2';
         $log = pdo_fetch($sql, $params);
+        //新版支付宝，非APP
         if(!$this->isapp && $this->post['sign_type']=="RSA"){
             if($this->post['total_amount']!=$log['fee']){
                 exit('fail');
@@ -101,7 +105,6 @@ class aliApy
                 exit('fail');
             }
         }
-
 
         if (!empty($log) && $log['status'] == '0') {
             $site = WeUtility::createModuleSite($log['module']);
@@ -125,6 +128,7 @@ class aliApy
                     pdo_update('ewei_shop_order', array('paytype' => 22),array('uniacid'=>$log['uniacid'],'ordersn' => $log['tid']));
 
                     $result = $site->$method($ret);
+
                     if ($result) {
 
                         $log['tag'] = iunserializer($log['tag']);
@@ -142,18 +146,24 @@ class aliApy
             }
         }
     }
+    /**
+     * 3N营销支付
+     */
     public function threen()
     {
         global $_W;
         if (!$this->publicMethod()){
             exit(__FUNCTION__);
         }
+        //充值
         $logno = trim($this->post['out_trade_no']);
 
         if (empty($logno)) {
             exit;
         }
         $log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_threen_log') . ' WHERE `uniacid`=:uniacid and logno = :logno limit 1', array(':uniacid' => $_W['uniacid'], ':logno' => $logno));
+
+        //新版支付宝，非APP
         if(!$this->isapp && $this->post['sign_type']=="RSA"){
             if($this->post['total_amount']!=$log['moneychange']){
                 exit('fail');
@@ -172,18 +182,24 @@ class aliApy
             p('threen')->payResult($log['logno'],'alipay', $this->isapp?true:false);
         }
     }
+    /**
+     * 会员充值
+     */
     public function recharge()
     {
         global $_W;
         if (!$this->publicMethod()){
             exit(__FUNCTION__);
         }
+        //充值
         $logno = trim($this->post['out_trade_no']);
 
         if (empty($logno)) {
             exit;
         }
         $log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_log') . ' WHERE `uniacid`=:uniacid and `logno`=:logno limit 1', array(':uniacid' => $_W['uniacid'], ':logno' => $logno));
+
+        //新版支付宝，非APP
         if(!$this->isapp && $this->post['sign_type']=="RSA"){
             if($this->post['total_amount']!=$log['money']){
                 exit('fail');
@@ -199,13 +215,24 @@ class aliApy
         }
 
         if (!empty($log) && empty($log['status'])) {
+            //充值状态
             pdo_update('ewei_shop_member_log', array('status' => 1, 'rechargetype' => 'alipay', 'apppay'=>$this->isapp?1:0,'transid'=>$this->post['trade_no']), array('id' => $log['id']));
+            //增加会员余额
             $shopset = m('common')->getSysset('shop');
             m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, $shopset['name'].'会员充值:credit2:' . $log['money']));
+            //充值积分
             m('member')->setRechargeCredit($log['openid'], $log['money']);
+
+            //充值活动
             com_run('sale::setRechargeActivity', $log);
+
+            //优惠券
             com_run('coupon::useRechargeCoupon', $log);
+
+            //模板消息
             m('notice')->sendMemberLogMessage($log['id']);
+
+            //充值打印小票
             $member =m('member')->getMember($log['openid']);
             $params=array(
                 'nickname'=>empty($member['nickname'])?'未更新':$member['nickname'],
@@ -217,7 +244,9 @@ class aliApy
         }
     }
 
-
+    /**
+     * 收银台支付
+     */
     public function cashier()
     {
         global $_W;
@@ -226,11 +255,13 @@ class aliApy
             exit;
         }
         if(p('cashier')){
-            p('cashier')->payResult($ordersn);
+//            p('cashier')->payResult($ordersn);
         }
     }
 
-
+    /**
+     * 积分商城兑换
+     */
     public function creditShop()
     {
         global $_W;
@@ -243,6 +274,14 @@ class aliApy
             exit;
         }
         $logno = str_replace('_borrow','',$logno);
+        /*$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_creditshop_log') . ' WHERE `logno`=:logno and `uniacid`=:uniacid  limit 1', array(':uniacid' => $_W['uniacid'], ':logno' => $logno));
+        if (!empty($log) && empty($log['status'])) {
+            $goods = pdo_fetch("SELECT * FROM" .tablename("ewei_shop_creditshop_goods") . "WHERE id=:id and uniacid=:uniacid limit 1 ",array(":id"=>$log['goodsid'], ":uniacid"=>$_W['uniacid']));
+            if(!empty($goods) && $this->total_fee==$goods['money']){
+                pdo_update('ewei_shop_creditshop_log', array('paystatus' => 1, 'paytype' => 1), array('id' => $log['id']));
+            }
+        }*/
+        //新版支付宝，非APP
         $total_fee = $this->total_fee;
         if(empty($total_fee)){
             $total_fee = $this->post['total_amount'];
@@ -261,6 +300,7 @@ class aliApy
         $id = $post[0];
         $money = $post[1];
 
+        //CP 佣金打款 RW 余额提现
         if (strexists($this->post['batch_no'],'CP')){
             $this->batch_trans_notify_cp($id,$money);
         }elseif (strexists($this->post['batch_no'],'RW')){
@@ -269,6 +309,11 @@ class aliApy
         exit('success');
     }
 
+    /**
+     * 支付宝佣金打款回调
+     * @param $id
+     * @param $money
+     */
     public function batch_trans_notify_cp($id,$money)
     {
         global $_W;
@@ -285,6 +330,8 @@ class aliApy
         $GLOBALS['_W']['uniacid']= $apply['uniacid'];
         $_W['uniacid']= $apply['uniacid'];
 
+
+        //下级代理
         $agentid = $apply['mid'];
         $member = p('commission')->getInfo($agentid, array('total', 'ok', 'apply', 'lock', 'check'));
         $hasagent = $member['agentcount'] > 0;
@@ -313,6 +360,7 @@ class aliApy
         $totalpay = 0;
         $totalmoney = 0;
         foreach ($list as &$row) {
+            //判断是几级订单
             foreach ($orderids as $o) {
                 if ($o['orderid'] == $row['id']) {
                     $row['level'] = $o['level'];
@@ -418,6 +466,8 @@ class aliApy
             }
         }
         pdo_update('ewei_shop_commission_apply', array('status' => 3, 'paytime' => $time, 'commission_pay' => $totalpay, 'realmoney' => $realmoney, 'deductionmoney' => $deductionmoney), array('id' => $id, 'uniacid' => $_W['uniacid']));
+
+        //佣金打款记录
         $log = array(
             'uniacid' => $_W['uniacid'],
             'applyid' => $apply['id'],
@@ -436,8 +486,13 @@ class aliApy
         if (!empty($deductionmoney)) {
             $mcommission .= ',实际到账金额:' . $realmoney . ',提现手续费金额:' . $deductionmoney;
         }
+
+        //发送打款处理消息
         p('commission')->sendMessage($member['openid'], array('commission' => $mcommission, 'type' => $apply_type[$apply['type']]), TM_COMMISSION_PAY);
+        //升级
         p('commission')->upgradeLevelByCommissionOK($member['openid']);
+
+        //股东升级
         if(p('globous')){
             p('globous')->upgradeLevelByCommissionOK($member['openid']);
         }
@@ -445,6 +500,11 @@ class aliApy
         plog('commission.apply.pay', "佣金打款 ID: {$id} 申请编号: {$apply['applyno']} 打款方式: {$apply_type[$apply['type']]} 总佣金: {$totalcommission} 审核通过佣金: {$totalpay} 实际到账金额: {$realmoney} 提现手续费金额: {$deductionmoney} 提现手续费税率: {$set_array['charge']}%");
     }
 
+    /**
+     * 余额提现回调
+     * @param $id
+     * @param $money
+     */
     public function batch_trans_notify_rw($id,$money)
     {
         $log = pdo_fetch('select * from ' . tablename('ewei_shop_member_log') . ' where id=:id limit 1', array(
@@ -460,6 +520,8 @@ class aliApy
         $_W['uniacid'] = $log['uniacid'];
 
         pdo_update('ewei_shop_member_log', array('status' => 1), array('id' => $id, 'uniacid' => $_W['uniacid']));
+
+        //模板消息
         m('notice')->sendMemberLogMessage($log['id']);
         $member = m('member')->getMember($log['openid']);
         plog('finance.log.wechat', "余额提现 ID: {$log['id']} 方式: 微信 提现金额: {$log['money']} ,到账金额: {$money} ,手续费金额 : {$log['deductionmoney']}<br/>会员信息:  ID: {$member['id']} / {$member['openid']}/{$member['nickname']}/{$member['realname']}/{$member['mobile']}");
@@ -470,15 +532,22 @@ class aliApy
         $post = explode('MONEY',substr($this->post['batch_no'],10));
         $id = $post[0];
         $money = $post[1];
+
+        //RF 支付宝订单退款
         if (strexists($this->post['batch_no'],'RF')){
             $this->batch_refund_notify_rf($id,$money);
 
-        }elseif (strexists($this->post['batch_no'],'RC')){
+        }elseif (strexists($this->post['batch_no'],'RC')){//充值退款
             $this->batch_refund_notify_rc($id,$money);
         }
         exit('success');
     }
 
+    /**
+     * 支付宝订单退款
+     * @param $id
+     * @param $money
+     */
     public function batch_refund_notify_rf($id,$money)
     {
         $item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_order') . " WHERE id = :id limit 1", array(':id' => $id));
@@ -492,17 +561,20 @@ class aliApy
         $goods = pdo_fetchall("SELECT g.id,g.credit, o.total,o.realprice FROM " . tablename('ewei_shop_order_goods') .
             " o left join " . tablename('ewei_shop_goods') . " g on o.goodsid=g.id " . " WHERE o.orderid=:orderid and o.uniacid=:uniacid", array(':orderid' => $item['id'], ':uniacid' => $item['uniacid']));
 
+        //计算订单中商品累计赠送的积分
         $credits = m('order')->getGoodsCredit($goods);
 
-
+        //扣除会员购物赠送积分
         if($credits>0){
             m('member')->setCredit($item['openid'], 'credit1', -$credits, array(0,"退款扣除购物赠送积分: {$credits} 订单号: " . $item['ordersn']));
         }
 
+        //返还抵扣积分
         if ($item['deductcredit'] > 0) {
             m('member')->setCredit($item['openid'], 'credit1', $item['deductcredit'], array('0', "购物返还抵扣积分 积分: {$item['deductcredit']} 抵扣金额: {$item['deductprice']} 订单号: {$item['ordersn']}"));
         }
         if (!empty($refundtype)) {
+            //在线支付，返还余额抵扣
 
             if ($money < 0) {
                 $item['deductcredit2'] = $money;
@@ -520,24 +592,28 @@ class aliApy
             $change_refund['operatetime'] = $time;
         }
 
+        //同意
         pdo_update('ewei_shop_order_refund', $change_refund, array('id' => $item['refundid']));
 
-
+        //处理赠送余额情况
         m('order')->setGiveBalance($item['id'], 2);
 
         m('order')->setStocksAndCredits($item['id'], 2);
 
 
         if ($refund['orderprice'] == $refund['applyprice']) {
-
+            //退还优惠券
             if (com('coupon') && !empty($item['couponid'])) {
-                com('coupon')->returnConsumeCoupon($item['id']); 
+                com('coupon')->returnConsumeCoupon($item['id']); //申请退款成功
             }
         }
 
+        //更新订单退款状态
         pdo_update('ewei_shop_order', array('refundstate' => 0, 'status' => -1, 'refundtime' => $time), array('id' => $item['id'], 'uniacid' => $item['uniacid']));
 
+        //更新实际销量
         foreach ($goods as $g) {
+            //实际销量
             $salesreal = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_order_goods') . ' og '
                 . ' left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid '
                 . ' where og.goodsid=:goodsid and o.status>=1 and o.uniacid=:uniacid limit 1', array(':goodsid' => $g['id'], ':uniacid' => $item['uniacid']));
@@ -552,6 +628,8 @@ class aliApy
         }
 
         plog('order.op.refund', $log);
+
+        //模板消息
         m('notice')->sendOrderMessage($item['id'], true);
     }
 
@@ -567,17 +645,25 @@ class aliApy
         $_W['uniacid'] = $log['uniacid'];
 
         pdo_update('ewei_shop_member_log', array('status' => 3), array('id' => $id, 'uniacid' => $_W['uniacid']));
+        //减少余额 充值+赠送的
         $refundmoney = $log['money'] + $log['gives'];
         m('member')->setCredit($log['openid'], 'credit2', -$refundmoney, array(0,'充值退款'));
+
+        //模板消息
         m('notice')->sendMemberLogMessage($log['id']);
         $member = m('member')->getMember($log['openid']);
         plog('finance.log.refund', "充值退款 ID: {$log['id']} 金额: {$log['money']} <br/>会员信息:  ID: {$member['id']} / {$member['openid']}/{$member['nickname']}/{$member['realname']}/{$member['mobile']}");
     }
 
+    /**
+     * 使用商城自带支付 公用方法
+     * @return bool
+     */
     public function publicMethod()
     {
         global $_W;
         $this->setting = uni_setting($_W['uniacid'], array('payment'));
+
         if (isset($this->strs[2]) && $this->strs[2]=='APP'){
             $wapset = m('common')->getSysset('wap');
             $this->setting['payment']['alipay'] = array(
@@ -627,18 +713,22 @@ class aliApy
         return false;
     }
 
+    /**
+     * 会员卡购买支付
+     */
     public function membercard()
     {
         global $_W;
         if (!$this->publicMethod()){
             exit(__FUNCTION__);
         }
+        //积分兑换
         $logno = trim($this->post['out_trade_no']);
         if (empty($logno)) {
             exit;
         }
         $logno = str_replace('_borrow','',$logno);
-
+        //新版支付宝，非APP
         $total_fee = $this->total_fee;
         if(empty($total_fee)){
             $total_fee = $this->post['total_amount'];

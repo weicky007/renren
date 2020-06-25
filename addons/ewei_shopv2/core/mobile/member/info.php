@@ -81,6 +81,12 @@ class Info_EweiShopV2Page extends MobileLoginPage
 			$m_data['diymemberdata'] = $data;
 			unset($mc_data['credit1']);
 			unset($m_data['credit2']);
+
+			if (!empty($memberdata['edit_avatar'])) {
+				$m_data['avatar'] = $memberdata['edit_avatar'];
+			}
+
+			$m_data['nickname'] = $memberdata['nickname'];
 			pdo_update('ewei_shop_member', $m_data, array('openid' => $_W['openid'], 'uniacid' => $_W['uniacid']));
 
 			if (!empty($this->member['uid'])) {
@@ -110,7 +116,7 @@ class Info_EweiShopV2Page extends MobileLoginPage
 		show_json(1);
 	}
 
-	public function face() 
+	public function face()
 	{
 		global $_W;
 		global $_GPC;

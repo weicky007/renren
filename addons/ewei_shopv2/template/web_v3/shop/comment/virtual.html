@@ -17,7 +17,19 @@
         <div class="form-group">
             <label class="col-lg control-label">评论时间</label>
             <div class="col-sm-9 col-xs-12">
-                {php echo tpl_form_field_date('createtime', !empty($item['createtime']) ? date('Y-m-d H:i',$item['createtime']) : date('Y-m-d H:i'),true)}
+                <input type="text" name="createtime" value="{php echo  !empty($item['createtime']) ? date('Y-m-d H:i',$item['createtime']) : date('Y-m-d H:i')}" placeholder="请选择日期时间" readonly="readonly" class="datetimepicker form-control valid" style="padding-left:12px;" aria-invalid="false">
+                <script type="text/javascript">
+                    require(["datetimepicker"], function(){
+                        var option = {
+                            lang : "zh",
+                            step : 1,
+                            timepicker : true,
+                            closeOnDateSelect : true,
+                            format : "Y-m-d H:i"
+                        };
+                        $(".datetimepicker[name = 'createtime']").datetimepicker(option);
+                    });
+                </script>
                 <span class='help-block'>评论时间，如果不选择，默认当前时间</span>
             </div>
         </div>
@@ -135,4 +147,3 @@
 </script>
 
 {template '_footer'}
-

@@ -1,15 +1,17 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class DividendMobilePage extends PluginMobilePage 
+
+class DividendMobilePage extends PluginMobilePage
 {
-	public function __construct() 
+	public function __construct()
 	{
 		parent::__construct();
 		global $_W;
 		global $_GPC;
 	}
 }
+
 ?>

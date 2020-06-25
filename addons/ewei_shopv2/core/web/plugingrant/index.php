@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,7 +23,7 @@ class Index_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		if (empty($sort) || ($sort == 'time')) {
+		if (empty($sort) || $sort == 'time') {
 			$sortcondition = ' gp.createtime desc ';
 		}
 		else {
@@ -31,13 +32,16 @@ class Index_EweiShopV2Page extends WebPage
 			}
 		}
 
-		$list = pdo_fetchall('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " as gp\r\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid\r\n                WHERE 1 " . $condition . ' ORDER BY ' . $sortcondition . ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$list = pdo_fetchall('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . ' as gp
+                left join ' . tablename('ewei_shop_plugin') . (' as p on p.id = gp.pluginid
+                WHERE 1 ' . $condition . ' ORDER BY ' . $sortcondition . ' LIMIT ') . ($pindex - 1) * $psize . ',' . $psize, $params);
 
 		foreach ($list as $key => $value) {
 			$list[$key]['data'] = unserialize($value['data']);
 		}
 
-		$package = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_package') . " \r\n                WHERE state = 1 and rec = 1 ORDER BY id desc ");
+		$package = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_package') . ' 
+                WHERE state = 1 and rec = 1 ORDER BY id desc ');
 
 		foreach ($package as $key => $value) {
 			$pluginid = explode(',', $value['pluginid']);
@@ -49,7 +53,9 @@ class Index_EweiShopV2Page extends WebPage
 			$package[$key]['data'] = unserialize($value['data']);
 		}
 
-		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " as gp\r\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid\r\n                WHERE 1 " . $condition . ' ', $params);
+		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . ' as gp
+                left join ' . tablename('ewei_shop_plugin') . (' as p on p.id = gp.pluginid
+                WHERE 1 ' . $condition . ' '), $params);
 		$pager = pagination($total, $pindex, $psize);
 		$adv = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_adv') . ' WHERE enabled = 1  ORDER BY displayorder DESC ');
 		include $this->template();
@@ -70,16 +76,25 @@ class Index_EweiShopV2Page extends WebPage
 		}
 		else {
 			if ($type == 'plugin') {
-				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc,p.isv2 FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " gp\r\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid \r\n                WHERE gp.id =:id limit 1", array(':id' => $id));
+				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc,p.isv2 FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . ' gp
+                left join ' . tablename('ewei_shop_plugin') . ' as p on p.id = gp.pluginid 
+                WHERE gp.id =:id limit 1', array(':id' => $id));
 
 				if (!empty($item)) {
-					$package = pdo_fetchall('select * from ' . tablename('ewei_shop_system_plugingrant_package') . " \r\n                    where find_in_set('" . $item['pluginid'] . '\',pluginid) and state = 1 ');
+					$package = pdo_fetchall('select * from ' . tablename('ewei_shop_system_plugingrant_package') . ' 
+                    where find_in_set(\'' . $item['pluginid'] . '\',pluginid) and state = 1 ');
 
 					foreach ($package as $key => $value) {
 						$packplugin = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_plugin') . '  WHERE id in (' . $value['pluginid'] . ') ');
 						$package[$key]['plugin'] = $packplugin;
 						$package[$key]['data'] = unserialize($value['data']);
 					}
+				}
+
+				$plugingrant_log = pdo_fetchall('select *  from ' . tablename('ewei_shop_system_plugingrant_log') . ' where uniacid=:uniacid and  pluginid=:pluginid ', array(':uniacid' => $_W['uniacid'], ':pluginid' => $item['pluginid']));
+
+				if (!empty($plugingrant_log)) {
+					$is_repeat = true;
 				}
 
 				$item['data'] = unserialize($item['data']);
@@ -112,7 +127,8 @@ class Index_EweiShopV2Page extends WebPage
 		$title = '';
 
 		if ($cate == 'package') {
-			$package = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_package') . " \r\n                    where id = " . $id . ' and state = 1 ');
+			$package = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_package') . ' 
+                    where id = ' . $id . ' and state = 1 ');
 			$packplugin = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_plugin') . '  WHERE id in (' . $package['pluginid'] . ') ');
 			$package['plugin'] = $packplugin;
 
@@ -124,9 +140,11 @@ class Index_EweiShopV2Page extends WebPage
 		}
 		else {
 			if ($cate = 'plugin') {
-				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " gp\r\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid \r\n                WHERE gp.id =:id and state = 1 limit 1", array(':id' => $id));
+				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . ' gp
+                left join ' . tablename('ewei_shop_plugin') . ' as p on p.id = gp.pluginid 
+                WHERE gp.id =:id and state = 1 limit 1', array(':id' => $id));
 				$item['data'] = unserialize($item['data']);
-				$title = (!empty($item['name']) ? $item['name'] : $item['pname']);
+				$title = !empty($item['name']) ? $item['name'] : $item['pname'];
 			}
 		}
 
@@ -147,7 +165,8 @@ class Index_EweiShopV2Page extends WebPage
 		$logdata = array('logno' => m('common')->createNO('system_plugingrant_log', 'logno', 'GT'), 'uniacid' => $_W['uniacid'], 'username' => $_W['user']['username'], 'price' => $price, 'month' => $month, 'createtime' => time());
 
 		if ($cate == 'package') {
-			$package = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_package') . " \r\n                    where id = " . $id . ' and state = 1 ');
+			$package = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_package') . ' 
+                    where id = ' . $id . ' and state = 1 ');
 			$packplugin = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_plugin') . '  WHERE id in (' . $package['pluginid'] . ') ');
 
 			foreach ($packplugin as $key => $value) {
@@ -159,8 +178,10 @@ class Index_EweiShopV2Page extends WebPage
 		}
 		else {
 			if ($cate = 'plugin') {
-				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " gp\r\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid \r\n                WHERE gp.id =:id limit 1", array(':id' => $id));
-				$title = (!empty($item['name']) ? $item['name'] : $item['pname']);
+				$item = pdo_fetch('SELECT gp.*,p.identity,p.name as pname,p.category,p.version,p.author,p.status,p.thumb,p.desc FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . ' gp
+                left join ' . tablename('ewei_shop_plugin') . ' as p on p.id = gp.pluginid 
+                WHERE gp.id =:id limit 1', array(':id' => $id));
+				$title = !empty($item['name']) ? $item['name'] : $item['pname'];
 				$logdata['pluginid'] = intval($item['pluginid']);
 			}
 		}

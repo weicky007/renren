@@ -30,7 +30,7 @@
                             <div class="total">规格: <%g.optiontitle||"无"%> 编码: <%g.goodssn||"无"%></div>
                         </div>
                     </div>
-                    <div class="fui-list-angle auto">￥<span class="marketprice"><%g.realprice/g.total%><br> x<%g.total%></span></div>
+                    <div class="fui-list-angle auto">￥<span class="marketprice"><%calculate(g.realprice/g.total)%><br> x<%g.total%></span></div>
                 </div>
             <%/each%>
             <div class="fui-list log-list noclick">
@@ -79,11 +79,11 @@
 
             <div class="fui-list-group-title text-right big">
                 <!-- 维权 -->
-                <%if item.refundid>0%>
+                <%if item.refundid>0 && item.merchid==0%>
                     <a class="btn btn-success btn-sm order-btn" data-action="refund" data-orderid="<%item.id%>">维权<%item.refundstate>0?"处理":"详情"%></a>
                 <%/if%>
                 <!-- 未付款 -->
-                <%if item.statusvalue==0%>
+                <%if item.statusvalue==0 && item.merchid==0%>
                     <%if item.paytypevalue==3%>
                         <a class="btn btn-success btn-sm order-btn" data-action="send" data-orderid="<%item.id%>">确认发货</a>
                     <%else%>
@@ -94,7 +94,7 @@
                 <%/if%>
 
                 <!-- 已付款 -->
-                <%if item.statusvalue==1%>
+                <%if item.statusvalue==1 && item.merchid==0%>
                     <%if item.addressid>0%>
                         {ifp 'order.op.send'}
                             <!-- 快递发货 -->
@@ -122,7 +122,7 @@
                 <%/if%>
 
                 <!-- 已发货 -->
-                <%if item.statusvalue==2%>
+                <%if item.statusvalue==2 && item.merchid==0%>
                     {ifp 'order.op.sendcancel'}
                         <a class="btn btn-success btn-sm order-btn" data-action="sendcancel" data-orderid="<%item.id%>">取消发货</a>
                     {/if}
@@ -130,7 +130,9 @@
                         <a class="btn btn-success btn-sm order-btn" data-action="finish" data-orderid="<%item.id%>">确认收货</a>
                     {/if}
                 <%/if%>
-                <a class="btn btn-sm btn-default order-btn" data-action="remarksaler" data-orderid="<%item.id%>"><i class="text-success icon icon-pin" style="font-size: 0.65rem; <%if !item.remarksaler%>display: none;<%/if%>"></i> 备注</a>
+                <%if item.merchid==0%>
+                    <a class="btn btn-sm btn-default order-btn" data-action="remarksaler" data-orderid="<%item.id%>"><i class="text-success icon icon-pin" style="font-size: 0.65rem; <%if !item.remarksaler%>display: none;<%/if%>"></i> 备注</a>
+                <%/if%>
                 <a class="btn btn-default btn-sm" href="{php echo mobileUrl('mmanage/order/detail')}&id=<%item.id%>">查看详情</a>
             </div>
         </div>

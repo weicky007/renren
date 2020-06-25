@@ -570,6 +570,10 @@
                     ordre_status.hide();
                     tip.msgbox.err(data.result.message);
                     return false;
+                }else if(data.status == -1){
+                    ordre_status.hide();
+                    tip.msgbox.err(data.result.message);
+                    return false;
                 }
             }, 'json')
         });

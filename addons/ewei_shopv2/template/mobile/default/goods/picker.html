@@ -222,12 +222,12 @@
     var height = window.screen.height *  window.devicePixelRatio;
     var h = document.body.offsetHeight *  window.devicePixelRatio;
 
-    /*if(height==2436 && width==1125){
+    if(height==2436 && width==1125){
         $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").addClass('iphonex')
     }
     if(h == 1923){
         $(".fui-navbar,.cart-list,.fui-footer,.fui-content.navbar").removeClass('iphonex');
-    }*/
+    }
     $(function(){
         $(document).on("blur", '.option-picker input,.option-picker select, .option-picker textarea',function (e) {
             $('.option-picker .btn').trigger('focus');

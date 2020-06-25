@@ -34,6 +34,9 @@
                   <label class="radio radio-inline">
                       <input type="radio" name="data[leveltype]" value="1" {if $data['leveltype']==1}checked{/if}/> 已完成的订单数量
                   </label>
+                  <label class="radio radio-inline">
+                      <input type="radio" name="data[leveltype]" value="2" {if $data['leveltype']==2}checked{/if}/> 购买指定商品
+                  </label>
                   <span class="help-block">默认为完成订单金额</span>
                   {else}
                   <input type="hidden" name="data[leveltype]" value="{$data['leveltype']}" />

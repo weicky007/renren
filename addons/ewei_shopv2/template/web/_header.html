@@ -52,20 +52,21 @@
                 {if $_W['role'] == 'manager' || $_W['role'] == 'founder'}
                 <li><a href="./index.php?c=account&a=post&uniacid={$GLOBALS['_W']['uniacid']}&acid={$GLOBALS['_W']['acid']}" target="_blank"><i class="icon icon-wechat"></i>  编辑公众号</a></li>
                 <li><a href="{php echo webUrl('sysset/payset')}"><i class="icon icon-pay"></i>  支付方式</a></li>
-                {/if}
                 <li><a href="./index.php?c=utility&a=emulator&" target="_blank"><i class="icon icon-machinery"></i>  模拟测试</a></li>
+                {/if}
+
                 {ifp 'perm'}
                 <li class="divider"></li>
                 <li><a href="{php echo webUrl('perm')}"><i class="icon icon-person2"></i> 权限管理</a></li>
                 {/if}
                 {if $_W['role'] == 'founder'}
                 <li class="divider"></li>
+                <li><a href="{php echo webUrl('system/plugin/apps')}" style="color: red;"><b><i class="icon icon-app"></i> 应用中心</b></a></li>
                 {if p("grant")}
                 <li><a href="{php echo webUrl('plugingrant')}"><i class="icon icon-assessedbadge"></i> 应用授权</a></li>
                 {/if}
                 <li><a href="{php echo webUrl('system')}"><i class="icon icon-settings"></i> 系统管理</a></li>
-                <li class="divider"></li> 
-	            <li><a href="{php echo webUrl('system/auth/upgrade')}" style="color: red;"><b><i class="icon icon-down"></i> 系统更新</b></a></li>
+                <li><a href="{php echo webUrl('system/auth/upgrade')}"><i class="icon icon-down"></i> 系统更新</a></li>
                 {/if}
                 <li><a href="./index.php?c=user&a=profile&" target="_blank"><i class="icon icon-lock"></i>  修改密码</a></li>
                 <li><a href="./index.php?c=account&a=display&" target="_blank"><i class="icon icon-back"></i>  返回系统</a></li>
@@ -79,8 +80,8 @@
         <li {if $_W['current_menu']=='plugin'} class="active"{/if}><a href="{php echo webUrl('system/plugin')}"> 应用</a></li>
         <li {if $_W['current_menu']=='copyright'} class="active"{/if}><a href="{php echo webUrl('system/copyright')}">版权</a></li>
         <li {if $_W['current_menu']=='data'} class="active"{/if}><a href="{php echo webUrl('system/data')}">数据</a></li>
-		<li {if $_W['current_menu']=='site'} class="active"{/if}><a href="{php echo webUrl('system/site')}">网站</a></li>
-        <li {if $_W['current_menu']=='auth'} class="active"{/if}><a href="{php echo webUrl('system/auth/upgrade')}">更新</a></li>
+        <li {if $_W['current_menu']=='site'} class="active"{/if}><a href="{php echo webUrl('system/site')}">网站</a></li>
+        <li {if $_W['current_menu']=='auth'} class="active"{/if}><a href="{php echo webUrl('system/auth')}">授权</a></li>
     </ul>
     <ul class="nav navbar-top-links navbar-right" style="width: 120px !important;">
         <li>

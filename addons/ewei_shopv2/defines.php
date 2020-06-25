@@ -4,7 +4,6 @@ if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
-
 define('EWEI_SHOPV2_DEBUG', false);
 !defined('EWEI_SHOPV2_PATH') && define('EWEI_SHOPV2_PATH', IA_ROOT . '/addons/ewei_shopv2/');
 !defined('EWEI_SHOPV2_CORE') && define('EWEI_SHOPV2_CORE', EWEI_SHOPV2_PATH . 'core/');

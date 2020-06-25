@@ -49,7 +49,7 @@ class Category_EweiShopV2Page extends ComWebPage
 			show_json(1, array('url' => webUrl('goods/virtual/category')));
 		}
 
-		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_virtual_category') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=0 ORDER BY id DESC');
+		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_virtual_category') . (' WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=0 ORDER BY id DESC'));
 		include $this->template();
 	}
 
@@ -58,7 +58,7 @@ class Category_EweiShopV2Page extends ComWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_virtual_category') . ' WHERE id = \'' . $id . '\' and merchid=0 AND uniacid=' . $_W['uniacid'] . '');
+		$item = pdo_fetch('SELECT id,name FROM ' . tablename('ewei_shop_virtual_category') . (' WHERE id = \'' . $id . '\' and merchid=0 AND uniacid=') . $_W['uniacid'] . '');
 
 		if (empty($item)) {
 			$this->message('抱歉，分类不存在或是已经被删除！', webUrl('goods/virtual/category', array('op' => 'display')), 'error');

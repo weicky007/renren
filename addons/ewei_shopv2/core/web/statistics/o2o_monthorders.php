@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,7 +12,7 @@ class O2o_monthorders_EweiShopV2Page extends WebPage
 		global $_GPC;
 		$years = array();
 		$current_year = date('Y');
-		$year = (empty($_GPC['year']) ? $current_year : $_GPC['year']);
+		$year = empty($_GPC['year']) ? $current_year : $_GPC['year'];
 		$i = $current_year - 10;
 
 		while ($i <= $current_year) {
@@ -110,10 +111,12 @@ class O2o_monthorders_EweiShopV2Page extends WebPage
 			}
 		}
 
-		$sql = 'SELECT  s.id, s.storename,ifnull(a.num,0) as num ,ifnull(a.num2,0) as num2,ifnull(a.num3,0) as num3 from  ' . tablename('ewei_shop_store') . "   s left join\r\n        (SELECT  storeid,count(*) as num,TRUNCATE(avg(price-dispatchprice),2) as num2,sum(price) as num3  from    " . tablename('ewei_shop_order') . '  where uniacid=:uniacid  ' . $condition . "  and isnewstore=1 GROUP BY storeid) a on s.id =a.storeid\r\n        where s.uniacid=:uniacid and s.`status`=1 " . $condition2 . '  order by ' . $orderby . ' desc';
+		$sql = 'SELECT  s.id, s.storename,ifnull(a.num,0) as num ,ifnull(a.num2,0) as num2,ifnull(a.num3,0) as num3 from  ' . tablename('ewei_shop_store') . '   s left join
+        (SELECT  storeid,count(*) as num,TRUNCATE(avg(price-dispatchprice),2) as num2,sum(price) as num3  from    ' . tablename('ewei_shop_order') . ('  where uniacid=:uniacid  ' . $condition . '  and isnewstore=1 GROUP BY storeid) a on s.id =a.storeid
+        where s.uniacid=:uniacid and s.`status`=1 ' . $condition2 . '  order by ' . $orderby . ' desc');
 
 		if (empty($_GPC['export'])) {
-			$sql .= ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+			$sql .= ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		}
 
 		$list = pdo_fetchall($sql, $params);
@@ -122,15 +125,15 @@ class O2o_monthorders_EweiShopV2Page extends WebPage
 
 		if ($_GPC['export'] == 1) {
 			m('excel')->export($list, array(
-	'title'   => '会员消费排行报告-' . date('Y-m-d-H-i', time()),
-	'columns' => array(
-		array('title' => '门店id', 'field' => 'id', 'width' => 12),
-		array('title' => '门店名称', 'field' => 'storename', 'width' => 12),
-		array('title' => '订单数量', 'field' => 'num', 'width' => 12),
-		array('title' => '订单总销售额', 'field' => 'num3', 'width' => 12),
-		array('title' => '订单平均单价', 'field' => 'num2', 'width' => 12)
-		)
-	));
+				'title'   => '会员消费排行报告-' . date('Y-m-d-H-i', time()),
+				'columns' => array(
+					array('title' => '门店id', 'field' => 'id', 'width' => 12),
+					array('title' => '门店名称', 'field' => 'storename', 'width' => 12),
+					array('title' => '订单数量', 'field' => 'num', 'width' => 12),
+					array('title' => '订单总销售额', 'field' => 'num3', 'width' => 12),
+					array('title' => '订单平均单价', 'field' => 'num2', 'width' => 12)
+				)
+			));
 			plog('statistics.member_cost.export', '导出会员消费排行');
 		}
 

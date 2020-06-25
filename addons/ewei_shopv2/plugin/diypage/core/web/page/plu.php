@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -55,7 +56,7 @@ class Plu_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$result = $this->model->verify($do, 'plu');
 		extract($result);
-		if ($template && ($do == 'add')) {
+		if ($template && $do == 'add') {
 			$template['data'] = base64_decode($template['data']);
 			$template['data'] = json_decode($template['data'], true);
 			$page = $template;
@@ -83,7 +84,7 @@ class Plu_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
 		$this->model->delPage($id);

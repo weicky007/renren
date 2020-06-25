@@ -37,7 +37,6 @@ class Market_EweiShopV2Page extends PluginWebPage
      */
 	public function main()
 	{
-		global $_W;
 		require_once $this->template();
 	}
 

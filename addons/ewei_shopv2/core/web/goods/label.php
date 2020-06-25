@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -25,8 +26,9 @@ class Label_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-		$label = pdo_fetchall('SELECT id,uniacid,label,labelname,status,displayorder FROM ' . tablename('ewei_shop_goods_label') . "\r\n                WHERE uniacid=:uniacid " . $condition . ' order by id limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
-		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_goods_label') . ' WHERE uniacid=:uniacid ' . $condition, $params);
+		$label = pdo_fetchall('SELECT id,uniacid,label,labelname,status,displayorder FROM ' . tablename('ewei_shop_goods_label') . '
+                WHERE uniacid=:uniacid ' . $condition . ' order by id limit ' . ($pindex - 1) * $psize . ',' . $psize, $params);
+		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_goods_label') . (' WHERE uniacid=:uniacid ' . $condition), $params);
 		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
@@ -49,7 +51,8 @@ class Label_EweiShopV2Page extends WebPage
 		$uniacid = intval($_W['uniacid']);
 
 		if (!empty($id)) {
-			$item = pdo_fetch('SELECT id,uniacid,label,labelname,status,displayorder FROM ' . tablename('ewei_shop_goods_label') . "\r\n                    WHERE id=:id and uniacid=:uniacid limit 1 ", array(':id' => $id, ':uniacid' => $uniacid));
+			$item = pdo_fetch('SELECT id,uniacid,label,labelname,status,displayorder FROM ' . tablename('ewei_shop_goods_label') . '
+                    WHERE id=:id and uniacid=:uniacid limit 1 ', array(':id' => $id, ':uniacid' => $uniacid));
 
 			if (json_decode($item['labelname'], true)) {
 				$labelname = json_decode($item['labelname'], true);
@@ -64,7 +67,7 @@ class Label_EweiShopV2Page extends WebPage
 				$_GPC['labelname'] = array();
 			}
 
-			$data = array('label' => trim($_GPC['label']), 'labelname' => serialize(array_filter($_GPC['labelname'])), 'status' => intval($_GPC['status']));
+			$data = array('label' => trim($_GPC['label']), 'labelname' => serialize(array_filter($_GPC['labelname'])), 'status' => intval($_GPC['status']), 'displayorder' => intval($_GPC['displayorder']));
 
 			if (!empty($item)) {
 				pdo_update('ewei_shop_goods_label', $data, array('id' => $item['id']));
@@ -90,10 +93,10 @@ class Label_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,label FROM ' . tablename('ewei_shop_goods_label') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,label FROM ' . tablename('ewei_shop_goods_label') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (empty($item)) {
 			$item = array();
@@ -114,10 +117,10 @@ class Label_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,label FROM ' . tablename('ewei_shop_goods_label') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,label FROM ' . tablename('ewei_shop_goods_label') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		if (empty($item)) {
 			$item = array();
@@ -125,7 +128,7 @@ class Label_EweiShopV2Page extends WebPage
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_goods_label', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('goods.label.edit', ('修改标签组状态<br/>ID: ' . $item['id'] . '<br/>标签组名称: ' . $item['label'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '上架' : '下架');
+			plog('goods.label.edit', '修改标签组状态<br/>ID: ' . $item['id'] . '<br/>标签组名称: ' . $item['label'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '上架' : '下架');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -145,7 +148,7 @@ class Label_EweiShopV2Page extends WebPage
 			$params[':keywords'] = '%' . $kwd . '%';
 		}
 
-		$labels = pdo_fetchall('SELECT id,label,labelname FROM ' . tablename('ewei_shop_goods_label') . ' WHERE 1 ' . $condition . ' order by id desc', $params);
+		$labels = pdo_fetchall('SELECT id,label,labelname FROM ' . tablename('ewei_shop_goods_label') . (' WHERE 1 ' . $condition . ' order by id desc'), $params);
 
 		if (empty($labels)) {
 			$labels = array();
@@ -175,7 +178,7 @@ class Label_EweiShopV2Page extends WebPage
 
 		$params = array(':uniacid' => $_W['uniacid'], ':id' => $id, ':status' => 1);
 		$condition = ' and id = :id and uniacid=:uniacid and status = :status ';
-		$labels = pdo_fetch('SELECT id,label,labelname FROM ' . tablename('ewei_shop_goods_label') . ' WHERE 1 ' . $condition . ' order by id desc', $params);
+		$labels = pdo_fetch('SELECT id,label,labelname FROM ' . tablename('ewei_shop_goods_label') . (' WHERE 1 ' . $condition . ' order by id desc'), $params);
 
 		if (empty($labels)) {
 			$labels = array();

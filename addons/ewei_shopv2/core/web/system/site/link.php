@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Link_EweiShopV2Page extends SystemPage
 
 		if (!empty($_GPC['id'])) {
 			foreach ($_GPC['id'] as $k => $v) {
-				$data = array('name' => trim($_GPC['name'][$k]), 'url' => trim($_GPC['url'][$k]), 'thumb' => trim($_GPC['thumb'][$k]), 'displayorder' => $k, 'status' => intval($_GPC['status'][$k]));
+				$data = array('name' => trim($_GPC['name'][$k]), 'url' => trim($_GPC['url'][$k]), 'thumb' => save_media($_GPC['thumb'][$k]), 'displayorder' => $k, 'status' => intval($_GPC['status'][$k]));
 				if (empty($v) && !empty($data['name'])) {
 					pdo_insert('ewei_shop_system_link', $data);
 					$insert_id = pdo_insertid();

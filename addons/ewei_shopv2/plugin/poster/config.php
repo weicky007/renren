@@ -1,5 +1,7 @@
 <?php
-echo "\r\n";
+
+echo '
+';
 
 if (!defined('IN_IA')) {
 	exit('Access Denied');
@@ -19,9 +21,9 @@ return array(
 				'title'   => '海报管理',
 				'route'   => '',
 				'extends' => array('poster.scan')
-				)
 			)
 		)
-	);
+	)
+);
 
 ?>

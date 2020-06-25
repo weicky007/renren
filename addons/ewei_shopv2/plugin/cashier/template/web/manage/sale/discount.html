@@ -1,7 +1,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">固定折扣活动时间</label>
                 <div class="col-sm-4 col-xs-6">
-                    {php echo tpl_form_field_daterange('discounttime', array('starttime'=>date('Y-m-d H:i', !empty($item['discounttime']['start'])?$item['discounttime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['discounttime']['end'])?$item['discounttime']['end']:time())),true);}
+                    {php echo tpl_form_field_eweishop_daterange('discounttime', array('starttime'=>date('Y-m-d H:i', !empty($item['discounttime']['start'])?$item['discounttime']['start']:time()),'endtime'=>date('Y-m-d H:i', !empty($item['discounttime']['end'])?$item['discounttime']['end']:time())),true);}
                 </div>
             </div>
 

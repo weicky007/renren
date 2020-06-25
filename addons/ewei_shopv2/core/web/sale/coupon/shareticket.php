@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -34,7 +35,8 @@ class Shareticket_EweiShopV2Page extends WebPage
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
 
-		$gifts = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sendticket_share') . "\r\n                    WHERE 1 " . $condition . ' ORDER BY `order` DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$gifts = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_sendticket_share') . '
+                    WHERE 1 ' . $condition . ' ORDER BY `order` DESC,id DESC LIMIT ' . ($pindex - 1) * $psize . ',' . $psize, $params);
 
 		foreach ($gifts as $gk => $gv) {
 			if ($gv['expiration'] == 0) {
@@ -47,15 +49,15 @@ class Shareticket_EweiShopV2Page extends WebPage
 			}
 			else {
 				if ($gv['expiration'] == 1) {
-					if (($gv['starttime'] <= time()) && (time() <= $gv['endtime']) && ($gv['status'] == 1)) {
+					if ($gv['starttime'] <= time() && time() <= $gv['endtime'] && $gv['status'] == 1) {
 						$gifts[$gk]['state'] = '进行中';
 					}
 					else {
-						if ((time() < $gv['starttime']) && ($gv['status'] == 1)) {
+						if (time() < $gv['starttime'] && $gv['status'] == 1) {
 							$gifts[$gk]['state'] = '未开始';
 						}
 						else {
-							if (($gv['endtime'] < time()) || ($gv['status'] == 0)) {
+							if ($gv['endtime'] < time() || $gv['status'] == 0) {
 								$gifts[$gk]['state'] = '已结束';
 							}
 						}
@@ -137,7 +139,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 					}
 
 					if ($count == 3) {
-						if (($_GPC['couponid'][0] == $_GPC['couponid'][1]) || ($_GPC['couponid'][0] == $_GPC['couponid'][2]) || ($_GPC['couponid'][1] == $_GPC['couponid'][2])) {
+						if ($_GPC['couponid'][0] == $_GPC['couponid'][1] || $_GPC['couponid'][0] == $_GPC['couponid'][2] || $_GPC['couponid'][1] == $_GPC['couponid'][2]) {
 							show_json(0, '同一张优惠券不能重复选择！');
 						}
 					}
@@ -150,7 +152,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 					$newcpids = array();
 
 					foreach ($_GPC['couponid'] as $ck => $cv) {
-						if ((intval($_GPC['couponnum' . $cv]) < 1) || (3 < intval($_GPC['couponnum' . $cv]))) {
+						if (intval($_GPC['couponnum' . $cv]) < 1 || 3 < intval($_GPC['couponnum' . $cv])) {
 							show_json(0, '每张优惠券的每人领取数量不能小于1或者大于3！');
 						}
 						else {
@@ -227,7 +229,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 						}
 
 						if ($count == 3) {
-							if (($_GPC['couponid'][0] == $_GPC['couponid'][1]) || ($_GPC['couponid'][0] == $_GPC['couponid'][2]) || ($_GPC['couponid'][1] == $_GPC['couponid'][2])) {
+							if ($_GPC['couponid'][0] == $_GPC['couponid'][1] || $_GPC['couponid'][0] == $_GPC['couponid'][2] || $_GPC['couponid'][1] == $_GPC['couponid'][2]) {
 								show_json(0, '同一张优惠券不能重复选择！');
 							}
 						}
@@ -240,7 +242,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 						$newcpids = array();
 
 						foreach ($_GPC['couponid'] as $ck => $cv) {
-							if ((intval($_GPC['couponnum' . $cv]) < 1) || (3 < intval($_GPC['couponnum' . $cv]))) {
+							if (intval($_GPC['couponnum' . $cv]) < 1 || 3 < intval($_GPC['couponnum' . $cv])) {
 								show_json(0, '每张优惠券的每人领取数量不能小于1或者大于3！');
 							}
 							else {
@@ -308,7 +310,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 						}
 
 						if ($count == 3) {
-							if (($_GPC['couponids'][0] == $_GPC['couponids'][1]) || ($_GPC['couponids'][0] == $_GPC['couponids'][2]) || ($_GPC['couponids'][1] == $_GPC['couponids'][2])) {
+							if ($_GPC['couponids'][0] == $_GPC['couponids'][1] || $_GPC['couponids'][0] == $_GPC['couponids'][2] || $_GPC['couponids'][1] == $_GPC['couponids'][2]) {
 								show_json(0, '同一张优惠券不能重复选择！');
 							}
 						}
@@ -321,7 +323,7 @@ class Shareticket_EweiShopV2Page extends WebPage
 						$newcpids_p = array();
 
 						foreach ($_GPC['couponids'] as $ck => $cv) {
-							if ((intval($_GPC['couponsnum' . $cv]) < 1) || (3 < intval($_GPC['couponsnum' . $cv]))) {
+							if (intval($_GPC['couponsnum' . $cv]) < 1 || 3 < intval($_GPC['couponsnum' . $cv])) {
 								show_json(0, '每张优惠券的每人领取数量不能小于1或者大于3！');
 							}
 							else {
@@ -408,15 +410,15 @@ class Shareticket_EweiShopV2Page extends WebPage
 		if ($item['issync'] == 1) {
 			$paycpids = array();
 			$paycpids = array();
-			if (!empty($item['paycpid1']) && ($item['paycpid1'] != 0)) {
+			if (!empty($item['paycpid1']) && $item['paycpid1'] != 0) {
 				$paycpids[] = $item['paycpid1'];
 			}
 
-			if (!empty($item['paycpid2']) && ($item['paycpid2'] != 0)) {
+			if (!empty($item['paycpid2']) && $item['paycpid2'] != 0) {
 				$paycpids[] = $item['paycpid2'];
 			}
 
-			if (!empty($item['paycpid3']) && ($item['paycpid3'] != 0)) {
+			if (!empty($item['paycpid3']) && $item['paycpid3'] != 0) {
 				$paycpids[] = $item['paycpid3'];
 			}
 
@@ -427,15 +429,15 @@ class Shareticket_EweiShopV2Page extends WebPage
 			}
 
 			$sharecpid = array();
-			if (!empty($item['sharecpid1']) && ($item['sharecpid1'] != 0)) {
+			if (!empty($item['sharecpid1']) && $item['sharecpid1'] != 0) {
 				$sharecpid[] = $item['sharecpid1'];
 			}
 
-			if (!empty($item['sharecpid2']) && ($item['sharecpid2'] != 0)) {
+			if (!empty($item['sharecpid2']) && $item['sharecpid2'] != 0) {
 				$sharecpid[] = $item['sharecpid2'];
 			}
 
-			if (!empty($item['sharecpid3']) && ($item['sharecpid3'] != 0)) {
+			if (!empty($item['sharecpid3']) && $item['sharecpid3'] != 0) {
 				$sharecpid[] = $item['sharecpid3'];
 			}
 
@@ -448,15 +450,15 @@ class Shareticket_EweiShopV2Page extends WebPage
 		else {
 			if ($item['issync'] == 0) {
 				$paycpids = array();
-				if (!empty($item['paycpid1']) && ($item['paycpid1'] != 0)) {
+				if (!empty($item['paycpid1']) && $item['paycpid1'] != 0) {
 					$paycpids[] = $item['paycpid1'];
 				}
 
-				if (!empty($item['paycpid2']) && ($item['paycpid2'] != 0)) {
+				if (!empty($item['paycpid2']) && $item['paycpid2'] != 0) {
 					$paycpids[] = $item['paycpid2'];
 				}
 
-				if (!empty($item['paycpid3']) && ($item['paycpid3'] != 0)) {
+				if (!empty($item['paycpid3']) && $item['paycpid3'] != 0) {
 					$paycpids[] = $item['paycpid3'];
 				}
 
@@ -478,14 +480,14 @@ class Shareticket_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,sharetitle FROM ' . tablename('ewei_shop_sendticket_share') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,sharetitle FROM ' . tablename('ewei_shop_sendticket_share') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_update('ewei_shop_sendticket_share', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('sale.sendticket.share.edit', ('修改分享状态<br/>ID: ' . $item['id'] . '<br/>分享名称: ' . $item['sharetitle'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '开启' : '关闭');
+			plog('sale.sendticket.share.edit', '修改分享状态<br/>ID: ' . $item['id'] . '<br/>分享名称: ' . $item['sharetitle'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '开启' : '关闭');
 		}
 
 		show_json(1, array('url' => referer()));
@@ -498,10 +500,10 @@ class Shareticket_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id,sharetitle FROM ' . tablename('ewei_shop_sendticket_share') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,sharetitle FROM ' . tablename('ewei_shop_sendticket_share') . (' WHERE id in( ' . $id . ' ) AND uniacid=') . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_sendticket_share', array('id' => $item['id']));

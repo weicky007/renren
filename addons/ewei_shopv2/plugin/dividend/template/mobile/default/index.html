@@ -6,7 +6,7 @@
         <div class="fui-header-left">
             <a class="back"></a>
         </div>
-        <div class="title">分红中心</div>
+        <div class="title">{php echo $this->set['texts']['center']}</div>
         <div class="fui-header-right"></div>
     </div>
     <div class="fui-content footbar">
@@ -16,7 +16,7 @@
             </div>
             <div class='inner'>
                 <div class='title'>{$member['nickname']}</div>
-                <div><span class='subtitle'>队长</span><span class='subtitle'>{$member['levelname']}</span></div>
+                <div><span class='subtitle'>{php echo $this->set['texts']['agent']}</span><span class='subtitle'>{$member['levelname']}</span></div>
             </div>
         </div>
         {if empty($isbuild)}
@@ -24,7 +24,7 @@
             <div class='member-cell'>
                 <div class='member-cell-inner column'>
                     <p>请先点击创建团队。</p>
-                    <p>团队创建后才能获得分红收益。</p>
+                    <p>团队创建后才能获得{php echo $this->set['texts']['dividend']}收益。</p>
                 </div>
             </div>
         </div>
@@ -32,18 +32,18 @@
         {else}
         <div class='member-group'>
             <div class='member-cell'>
-                <a href="{php echo mobileUrl('dividend/order')}" class='member-cell-inner column'>分红订单</a>
+                <a href="{php echo mobileUrl('dividend/order')}" class='member-cell-inner column'>{php echo $this->set['texts']['dividend']}订单</a>
                 <div class='member-cell-remark column'></div>
             </div>
         </div>
 
         <div class='member-group'>
             <div class='member-cell'>
-                <div class='member-cell-inner column'>成功提现分红(元)</div>
+                <div class='member-cell-inner column'>{php echo $this->set['texts']['dividend_pay']}({php echo $this->set['texts']['yuan']})</div>
                 <div class='member-cell-remark noremark column'>{$member['dividend_pay']}</div>
             </div>
             <div class='member-cell'>
-                <div class='member-cell-inner column'>可提现分红(元)</div>
+                <div class='member-cell-inner column'>{php echo $this->set['texts']['dividend_ok']}({php echo $this->set['texts']['yuan']})</div>
                 <div class='member-cell-remark noremark column'>{$member['dividend_ok']}</div>
             </div>
         </div>
@@ -52,7 +52,7 @@
             <a href="{php echo mobileUrl('dividend/log')}" class='item'>
                 <div class='item-icon column'><text class="icon icon-tixianmingxi"></text></div>
                 <div class='item-inner column'>
-                    <div class='title'>提现明细</div>
+                    <div class='title'>{php echo $this->set['texts']['withdraw']}明细</div>
                     <div class='subtitle'>{$member['applycount']}笔</div>
                 </div>
             </a>
@@ -71,15 +71,15 @@
     <div class="share-footbar">
         <a  href="#"  class='item active'>
             <i class="icon icon-dividendhome"></i>
-            <span class='text'>分红中心</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}中心</span>
         </a>
         <a href="{php echo mobileUrl('dividend/withdraw')}" class='item'>
             <i class="icon icon-fenxiaoyongjin1"></i>
-            <span class='text'>分红佣金</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}佣金</span>
         </a>
         <a href="{php echo mobileUrl('dividend/order')}" class='item'>
             <i class="icon icon-fenxiaodingdan1"></i>
-            <span class='text'>分红订单</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}订单</span>
         </a>
         <a href="{php echo mobileUrl('dividend/down')}" class='item'>
             <i class="icon icon-wodetuandui2"></i>

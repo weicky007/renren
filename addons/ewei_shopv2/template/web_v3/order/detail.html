@@ -730,10 +730,6 @@
                     {/if}
                 </div>
                 {/if}
-                <!-- 3.20优化维权商品明显提示 -->
-                {if !empty($item['single_refundid']) || !empty($item['refundid']) || $item['refundstate'] != 0}
-                <div class="col-md-12" style="color:#f55;padding: 0;margin-top: 15px;">该订单有维权商品，请核对发货信息</div>
-                {/if}
             </div>
             {if p('commission') && count($agents)>0}
             <div class="distribution col-sm-4 col-md-3">

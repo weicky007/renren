@@ -292,7 +292,7 @@ class Index_EweiShopV2Page extends DividendWebPage
 			$data['register_bottom_content'] = m('common')->html_images($data['register_bottom_content']);
 			m('common')->updatePluginset(array('dividend' => $data));
 			m('cache')->set('template_' . $this->pluginname, $data['style']);
-			plog('dividend.set.edit', '修改基本设置<br>成为队长条件 -- ' . $become);
+			plog('dividend.set.edit', '修改基本设置<br>成为队长条件 -- ' . $become . '<br/>分红比例' . $data['ratio'] . '%');
 			show_json(1, array('url' => webUrl('dividend/set', array('tab' => str_replace('#tab_', '', $_GPC['tab'])))));
 		}
 

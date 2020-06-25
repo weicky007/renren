@@ -78,7 +78,7 @@
                          {/if}
                      </div>
                  </div>
-                <table class="table">
+                <table class="table table-hover table-responsive">
             <thead class="navbar-inner">
             <tr>
                 <th style="width:25px;"></th>
@@ -104,7 +104,7 @@
                         <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch'  data-href="{php echo webUrl('sale/package/status',array('status'=>0))}">
                             <i class="icow icow-xiajia3"></i> 下架
                         </button>
-                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{php echo webUrl('salse/package/status',array('status'=>1))}">
+                        <button class="btn btn-default btn-sm btn-operation" type="button" data-toggle='batch' data-href="{php echo webUrl('sale/package/status',array('status'=>1))}">
                             <i class="icow icow-shangjia2"></i> 上架
                         </button>
                         {/if}
@@ -134,4 +134,3 @@
     <!--</div>-->
 </div>
 {template '_footer'}
-

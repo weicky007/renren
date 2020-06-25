@@ -1,5 +1,6 @@
 <?php
-class Page_EweiShopV2Page extends ComWebPage
+
+class Page_EweiShopV2Page extends WebPage
 {
 	/**
      * 门店页面编辑
@@ -37,7 +38,7 @@ class Page_EweiShopV2Page extends ComWebPage
 		}
 
 		$condition .= ' ORDER BY id DESC ';
-		$limit = ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$limit = ' LIMIT ' . ($pindex - 1) * $psize . ',' . $psize;
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_newstore_diypage') . 'WHERE ' . $condition . $limit, $params);
 		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_newstore_diypage') . 'WHERE ' . $condition, $params);
 		$pager = pagination2($total, $pindex, $psize);
@@ -107,10 +108,10 @@ class Page_EweiShopV2Page extends ComWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_newstore_diypage') . ' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_newstore_diypage') . (' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid'), array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($items)) {
 			foreach ($items as $item) {
@@ -132,15 +133,15 @@ class Page_EweiShopV2Page extends ComWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
+			$id = is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0;
 		}
 
-		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_newstore_diypage') . ' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id, `name` FROM ' . tablename('ewei_shop_newstore_diypage') . (' WHERE id in( ' . $id . ' ) AND uniacid=:uniacid'), array(':uniacid' => $_W['uniacid']));
 
 		if (!empty($items)) {
 			foreach ($items as $item) {
 				pdo_update('ewei_shop_newstore_diypage', array('status' => intval($_GPC['status'])), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
-				plog('newstore.diypage.status', ('修改门店页面状态<br/>ID: ' . $item['id'] . '<br/>页面名称: ' . $item['name'] . '<br/>状态: ' . $_GPC['status']) == 1 ? '启用' : '禁用');
+				plog('newstore.diypage.status', '修改门店页面状态<br/>ID: ' . $item['id'] . '<br/>页面名称: ' . $item['name'] . '<br/>状态: ' . $_GPC['status'] == 1 ? '启用' : '禁用');
 			}
 		}
 

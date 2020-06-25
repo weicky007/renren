@@ -1,408 +1,342 @@
 <?php
 
-if (!defined('IN_IA')) {
-    exit('Access Denied');
-}
+class Verifygoods_EweiShopV2Model
+{
+	/**
+     *
+     * @param type $orderid
+     */
+	public function createverifygoods($orderid)
+	{
+		global $_W;
+		$verifygoods = pdo_fetchall('select  *   from  ' . tablename('ewei_shop_verifygoods') . ' where  orderid=:orderid ', array(':orderid' => $orderid));
 
-class Verifygoods_EweiShopV2Model {
+		if (!empty($verifygoods)) {
+			return false;
+		}
 
-    public function createverifygoods($orderid) {
-
-        global $_W;
-
-        $verifygoods = pdo_fetchall('select  *   from  ' . tablename('ewei_shop_verifygoods') . ' where  orderid=:orderid ', array(':orderid' => $orderid));
-
-        if(!empty($verifygoods))
-        {
-            return false;
-        }
-
-        $sql2="";
-
-        $ordergoods = pdo_fetchall('select o.openid,o.uniacid,o.id as orderid , og.id as ordergoodsid, g.verifygoodstype, g.verifygoodsdays,g.verifygoodsnum,g.verifygoodslimittype,g.verifygoodslimitdate,og.total,o.storeid '.$sql2.' from ' . tablename('ewei_shop_order_goods') . '   og inner join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id
+		$sql2 = '';
+		$ordergoods = pdo_fetchall('select o.openid,o.uniacid,o.id as orderid , og.id as ordergoodsid, g.verifygoodstype, g.verifygoodsdays,g.verifygoodsnum,g.verifygoodslimittype,g.verifygoodslimitdate,og.total,o.storeid ' . $sql2 . ' from ' . tablename('ewei_shop_order_goods') . '   og inner join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id
           inner join ' . tablename('ewei_shop_order') . ' o on og.orderid = o.id
           where   og.orderid =:orderid and g.type = 5', array(':orderid' => $orderid));
 
+		if (count($ordergoods) != 1) {
+			return false;
+		}
 
-        if(count($ordergoods)!=1){
-            return false;
-        }
-        $time = time();
-        $goods = $ordergoods[0];
-        if(empty($goods['verifygoodstype'])){
-        
+		$time = time();
+		$goods = $ordergoods[0];
 
-            foreach($ordergoods  as  $ordergood)
-            {
-                $total = intval($ordergood['total']);
-                for($i=0;$i<$total;$i++)
-                {
-                    $data=array(
-                        "uniacid"=>$ordergood['uniacid'],
-                        "openid"=>$ordergood['openid'],
-                        "orderid"=>$ordergood['orderid'],
-                        "ordergoodsid"=>$ordergood['ordergoodsid'],
-                        "starttime"=>$time,
-                        "limittype"=>intval($ordergood['verifygoodslimittype']),
-                        "limitdate"=>intval($ordergood['verifygoodslimitdate']),
-                        "limitdays"=>intval($ordergood['verifygoodsdays']),
-                        "limitnum"=>intval($ordergood['verifygoodsnum']),
-                        "used"=>0,
-                        "invalid"=>0,
-                        'storeid'=>intval($ordergood['storeid'])
-                    );
+		if (empty($goods['verifygoodstype'])) {
+			foreach ($ordergoods as $ordergood) {
+				$total = intval($ordergood['total']);
+				$i = 0;
 
+				while ($i < $total) {
+					$data = array('uniacid' => $ordergood['uniacid'], 'openid' => $ordergood['openid'], 'orderid' => $ordergood['orderid'], 'ordergoodsid' => $ordergood['ordergoodsid'], 'starttime' => $time, 'limittype' => intval($ordergood['verifygoodslimittype']), 'limitdate' => intval($ordergood['verifygoodslimitdate']), 'limitdays' => intval($ordergood['verifygoodsdays']), 'limitnum' => intval($ordergood['verifygoodsnum']), 'used' => 0, 'invalid' => 0, 'storeid' => intval($ordergood['storeid']));
+					pdo_insert('ewei_shop_verifygoods', $data);
+					++$i;
+				}
+			}
+		}
+		else {
+			$data = array('uniacid' => $goods['uniacid'], 'openid' => $goods['openid'], 'orderid' => $goods['orderid'], 'ordergoodsid' => $goods['ordergoodsid'], 'starttime' => $time, 'limittype' => intval($goods['verifygoodslimittype']), 'limitdate' => intval($goods['verifygoodslimitdate']), 'limitdays' => intval($goods['verifygoodsdays']), 'limitnum' => intval($goods['verifygoodsnum']) * $goods['total'], 'used' => 0, 'invalid' => 0, 'storeid' => intval($goods['storeid']));
+			pdo_insert('ewei_shop_verifygoods', $data);
+		}
 
-                    pdo_insert("ewei_shop_verifygoods",$data);
-                }
-            }
+		return true;
+	}
 
-        }else{
-
-      
-            $data=array(
-                "uniacid"=>$goods['uniacid'],
-                "openid"=>$goods['openid'],
-                "orderid"=>$goods['orderid'],
-                "ordergoodsid"=>$goods['ordergoodsid'],
-                "starttime"=>$time,
-                "limittype"=>intval($goods['verifygoodslimittype']),
-                "limitdate"=>intval($goods['verifygoodslimitdate']),
-                "limitdays"=>intval($goods['verifygoodsdays']),
-                "limitnum"=>intval($goods['verifygoodsnum']) * $goods['total'],
-                "used"=>0,
-                "invalid"=>0,
-                'storeid'=>intval($goods['storeid'])
-            );
-
-
-            pdo_insert("ewei_shop_verifygoods",$data);
-        }
-
-
-
-
-
-        return true;
-    }
-
-
-
-
-    public function getCanUseVerifygoods($openid)
-    {
-        global $_W;
-        $time = time();
-        $sql = 'select vg.*,g.title,g.subtitle,g.thumb,c.card_id  from ' . tablename('ewei_shop_verifygoods') . '   vg
+	/**
+     *
+     * @param type $openid
+     */
+	public function getCanUseVerifygoods($openid)
+	{
+		global $_W;
+		$time = time();
+		$sql = 'select vg.*,g.title,g.subtitle,g.thumb,c.card_id  from ' . tablename('ewei_shop_verifygoods') . '   vg
                  inner join ' . tablename('ewei_shop_order_goods') . ' og on vg.ordergoodsid = og.id
                  left  join ' . tablename('ewei_shop_order') . ' o on vg.orderid = o.id
                  left  join ' . tablename('ewei_shop_order_refund') . ' orf on o.refundid = orf.id
                  inner join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id
                  left  join ' . tablename('ewei_shop_goods_cards') . ' c on c.id = g.cardid
                  where   vg.uniacid=:uniacid and vg.openid=:openid and vg.invalid =0 and (o.refundid=0 or orf.status<0) and o.status>0
-                 and    ((vg.limittype=0   and vg.limitdays * 86400 + vg.starttime >='.$time.' )or ( vg.limittype=1   and vg.limitdate >='.$time.' ))  and  vg.used =0 order by vg.starttime desc';
+                 and    ((vg.limittype=0   and vg.limitdays * 86400 + vg.starttime >=' . $time . ' )or ( vg.limittype=1   and vg.limitdate >=' . $time . ' ))  and  vg.used =0 order by vg.starttime desc';
+		$verifygoods = set_medias(pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $openid)), 'thumb');
 
-        $verifygoods = set_medias(pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $openid)), 'thumb');
+		if (empty($verifygoods)) {
+			$verifygoods = array();
+		}
 
-        if (empty($verifygoods)) {
-            $verifygoods = array();
-        }
+		foreach ($verifygoods as $i => &$row) {
+			$row['numlimit'] = 0;
 
-        foreach ($verifygoods as $i => &$row) {
+			if (!empty($row['limitnum'])) {
+				$row['numlimit'] = 1;
+			}
 
-            $row['numlimit'] = 0;
+			if (is_weixin()) {
+				if (!empty($row['card_id']) && empty($row['activecard'])) {
+					$row['cangetcard'] = 1;
+				}
+			}
+		}
 
-            if (!empty($row['limitnum'])) {
-                $row['numlimit'] = 1;
-            }
+		unset($row);
+		return $verifygoods;
+	}
 
-            if (is_weixin()) {
-                if (!empty($row['card_id']) && empty($row['activecard'])) {
-                    $row['cangetcard'] = 1;
-                }
-            }
-        }
+	/**
+     * 检测计次核销码是否可用，返回核销verify_goods记录
+     * @param $verifycode
+     */
+	public function search($verifycode)
+	{
+		global $_W;
+		global $_GPC;
+		$verifygood = pdo_fetch('select *  from ' . tablename('ewei_shop_verifygoods') . ' where uniacid=:uniacid and  verifycode=:verifycode and invalid =0  limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode));
 
-        unset($row);
+		if (empty($verifygood)) {
+			return error(1, '未查询到记次时商品或核销码已失效,请核对核销码!');
+		}
 
-        return $verifygoods;
+		if (intval($verifygood['codeinvalidtime']) < time()) {
+			return error(1, '核销码已过期，请刷新页面重新获取核销码!');
+		}
 
-    }
+		$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where  status=1  and  openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
 
-    public function search($verifycode ){
+		if (empty($saler)) {
+			return error(1, '您不是核销员,无权核销');
+		}
 
-        global $_W,$_GPC;
-        $verifygood = pdo_fetch('select *  from ' . tablename('ewei_shop_verifygoods') . " where uniacid=:uniacid and  verifycode=:verifycode and invalid =0  limit 1 ", array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode));
+		$store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $saler['storeid'], ':uniacid' => $_W['uniacid']));
+		if (!empty($verifygood['storeid']) && !empty($store) && $verifygood['storeid'] != $store['id']) {
+			return error(1, '该商品无法在您所属门店核销!请重新确认!');
+		}
 
-        if (empty($verifygood)) {
-            return error(1, '未查询到记次时商品或核销码已失效,请核对核销码!');
-        }
+		return $verifygood;
+	}
 
-        if(intval($verifygood['codeinvalidtime'])<time()) {
-            return error(1, '核销码已过期，请刷新页面重新获取核销码!');
-        }
+	public function allow($verifycode, $times)
+	{
+		global $_W;
+		global $_GPC;
+		$lastVerifyNumber = 0;
+		$verifygood = pdo_fetch('select *  from ' . tablename('ewei_shop_verifygoods') . ' where uniacid=:uniacid and  verifycode=:verifycode and invalid =0  limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode));
 
+		if (empty($verifygood)) {
+			return error(1, '未查询到记次时商品或核销码已失效,请核对核销码!');
+		}
 
-        $saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where  status=1  and  openid=:openid and uniacid=:uniacid limit 1', array(
-            ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']
-        ));
-        if (empty($saler)) {
-            return error(1, '您不是核销员,无权核销');
-        }
+		if (intval($verifygood['codeinvalidtime']) < time()) {
+			return error(1, '核销码已过期，请刷新页面重新获取核销码!');
+		}
 
-        $store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $saler['storeid'], ':uniacid' => $_W['uniacid']));
+		$order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid  limit 1', array(':id' => $verifygood['orderid'], ':uniacid' => $verifygood['uniacid']));
 
-        if(!empty($verifygood['storeid'])&&!empty($store)&&$verifygood['storeid']!=$store['id'])
-        {
-            return error(1, '该商品无法在您所属门店核销!请重新确认!');
-        }
+		if (empty($order)) {
+			return error(-1, '订单不存在!');
+		}
 
-        return $verifygood;
-    }
+		if ($order['status'] == '-1') {
+			return error(-1, '订单已维权,无法核销!');
+		}
 
-    public function allow($verifycode, $times){
-        global $_W,$_GPC;
+		if (0 < $order['refundstate'] && $order['refundid'] != 0 && $order['refundtime'] == 0 || 0 < $order['refundstate'] && $order['refundtime'] == 0 && $order['refundstate'] == 3) {
+			return error(-1, '订单在维权中,请去后台处理!');
+		}
 
-        $lastVerifyNumber = 0;
-        $verifygood = pdo_fetch('select *  from ' . tablename('ewei_shop_verifygoods') . " where uniacid=:uniacid and  verifycode=:verifycode and invalid =0  limit 1 ", array(':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode));
+		$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where status=1  and openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
 
-        if (empty($verifygood)) {
-            return error(1, '未查询到记次时商品或核销码已失效,请核对核销码!');
-        }
+		if (empty($saler)) {
+			return error(1, '您不是核销员,无权核销');
+		}
 
-        if(intval($verifygood['codeinvalidtime'])<time()) {
-            return error(1, '核销码已过期，请刷新页面重新获取核销码!');
-        }
+		$store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $saler['storeid'], ':uniacid' => $_W['uniacid']));
+		if (!empty($verifygood['storeid']) && !empty($store) && $verifygood['storeid'] != $store['id']) {
+			return error(1, '该商品无法在您所属门店核销!请重新确认!');
+		}
 
-        $order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid  limit 1', array(':id' => $verifygood['orderid'], ':uniacid' => $verifygood['uniacid']));
-        if (empty($order)) {
-            return error(-1, "订单不存在!");
-        }
+		$used = 0;
 
-        $saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where status=1  and openid=:openid and uniacid=:uniacid limit 1', array(
-            ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']
-        ));
-        if (empty($saler)) {
-            return error(1, '您不是核销员,无权核销');
-        }
+		if (!empty($verifygood['limitnum'])) {
+			$verifygoodlogs = pdo_fetchall('select *  from ' . tablename('ewei_shop_verifygoods_log') . '    where verifygoodsid =:id  ', array(':id' => $verifygood['id']));
+			$verifynum = 0;
 
-        $store = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $saler['storeid'], ':uniacid' => $_W['uniacid']));
+			foreach ($verifygoodlogs as $verifygoodlog) {
+				$verifynum += intval($verifygoodlog['verifynum']);
+			}
 
-        if(!empty($verifygood['storeid'])&&!empty($store)&&$verifygood['storeid']!=$store['id']) {
-            return error(1, '该商品无法在您所属门店核销!请重新确认!');
-        }
+			$lastverifys = intval($verifygood['limitnum']) - $verifynum;
 
-        $used=0;
+			if ($lastverifys < $times) {
+				return error(1, '商品可核销次数不足!');
+			}
 
-  
-        if(!empty($verifygood['limitnum'])) {
-            $verifygoodlogs = pdo_fetchall('select *  from ' . tablename('ewei_shop_verifygoods_log') . '    where verifygoodsid =:id  ', array(':id' => $verifygood['id']));
-            $verifynum = 0;
-            foreach($verifygoodlogs as $verifygoodlog) {
-                $verifynum +=intval($verifygoodlog['verifynum']);
-            }
-            $lastverifys = intval($verifygood['limitnum']) - $verifynum;
+			if ($lastverifys == $times) {
+				$used = 1;
+			}
+		}
 
-            if($lastverifys<$times) {
-                return error(1, '商品可核销次数不足!');
-            }
-            if($lastverifys==$times) {
-                $used=1;
-            }
-        }
+		if (empty($verifygood['limittype'])) {
+			$limitdate = intval($verifygood['starttime']) + intval($verifygood['limitdays']) * 86400;
+		}
+		else {
+			$limitdate = intval($verifygood['limitdate']);
+		}
 
-        if(empty($verifygood['limittype'])) {
-            $limitdate = intval($verifygood['starttime']) +  intval($verifygood['limitdays'])*86400;
+		if ($limitdate < time()) {
+			return error(1, '该商品已过期!');
+		}
 
-        }else {
-            $limitdate = intval($verifygood['limitdate']);
-        }
-
-        if($limitdate<time()) {
-            return error(1,'该商品已过期!');
-        }
-
- 
-        $verifygoods_detail = pdo_fetch('select vg.*,g.id as goodsid ,g.title,g.subtitle,g.thumb,vg.storeid  from ' . tablename('ewei_shop_verifygoods') . '   vg
+		$verifygoods_detail = pdo_fetch('select vg.*,g.id as goodsid ,g.title,g.subtitle,g.thumb,vg.storeid  from ' . tablename('ewei_shop_verifygoods') . '   vg
 		 inner join ' . tablename('ewei_shop_order_goods') . ' og on vg.ordergoodsid = og.id
 		 inner join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id
-		 where  vg.id =:id and  vg.verifycode=:verifycode and vg.uniacid=:uniacid and vg.invalid =0 limit 1', array(':id' => $verifygood['id'],':uniacid' => $_W['uniacid'],':verifycode' => $verifycode));
+		 where  vg.id =:id and  vg.verifycode=:verifycode and vg.uniacid=:uniacid and vg.invalid =0 limit 1', array(':id' => $verifygood['id'], ':uniacid' => $_W['uniacid'], ':verifycode' => $verifycode));
+		$order['verifytype'] = 1;
 
-     
-        $order['verifytype'] = 1;
+		if (intval($lastverifys) <= 0) {
+			$lastverifys = '不限';
+		}
 
-    
-        if(intval($lastverifys) <= 0) {
-            $lastverifys = '不限';
-        }
+		return array('verifygood' => $verifygood, 'saler' => $saler, 'used' => $used, 'store' => $store, 'lastverifys' => $lastverifys, 'order' => $order, 'allgoods' => $verifygoods_detail, 'lv' => $lastverifys);
+	}
 
-        return array(
-            'verifygood'=>$verifygood,
-            'saler'=>$saler,
-            'used'=>$used,
-            'store'=>$store,
-            'lastverifys'=>$lastverifys,
-            'order'=>$order,
-            'allgoods' => $verifygoods_detail,
-            'lv' => $lastverifys
+	/**
+     * 进行核销
+     * @param $verifycode
+     * @param $times
+     * @param $remarks
+     * @return array
+     */
+	public function complete($verifycode, $times, $remarks)
+	{
+		global $_W;
+		global $_GPC;
+		$allow = $this->allow($verifycode, $times);
 
-        );
-    }
+		if (is_error($allow)) {
+			return $allow;
+		}
 
+		extract($allow);
+		$data = array('uniacid' => $_W['uniacid'], 'verifygoodsid' => $verifygood['id'], 'salerid' => $saler['id'], 'storeid' => $store['id'], 'verifynum' => $times, 'verifydate' => time(), 'remarks' => $remarks);
+		pdo_insert('ewei_shop_verifygoods_log', $data);
+		$logid = pdo_insertid();
+		m('notice')->sendVerifygoodMessage($logid);
+		pdo_query('update ' . tablename('ewei_shop_verifygoods') . ' set used=:used , verifycode=null ,codeinvalidtime=0 where id=:id', array(':id' => $verifygood['id'], ':used' => $used));
 
-    public function complete($verifycode, $times, $remarks){
+		if (!empty($verifygood['activecard'])) {
+			com_run('wxcard::updateusercardbyvarifygoodid', $verifygood['id']);
+		}
 
-        global $_W,$_GPC;
+		$finishorderid = 0;
+		$isonlyverifygood = m('order')->checkisonlyverifygoods($verifygood['orderid']);
 
-        $allow = $this->allow($verifycode,$times);
-        if(is_error($allow)){
-            return $allow;
-        }
-        extract($allow);
+		if ($isonlyverifygood) {
+			$status = pdo_fetchcolumn('select status  from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and id=:id  limit 1 ', array(':uniacid' => $_W['uniacid'], ':id' => $verifygood['orderid']));
+			$verifytypexzx = pdo_fetchall('select verifytype  from ' . tablename('ewei_shop_order') . ' where uniacid=:uniacid and id=:id  limit 1 ', array(':uniacid' => $_W['uniacid'], ':id' => $verifygood['orderid']));
+			$finishorderid = $verifygood['orderid'];
+			$this->finishorder($finishorderid, array('times' => $times, 'lastverifys' => $allow['lv'], 'storeid' => $store['id']));
+		}
 
-        $data = array(
-            "uniacid"=>$_W['uniacid'],
-            "verifygoodsid"=>$verifygood['id'],
-            "salerid"=>$saler['id'],
-            "storeid"=>$store['id'],
-            "verifynum"=>$times,
-            "verifydate"=>time(),
-            "remarks"=>$remarks
-        );
+		return array('verifygoodid' => $verifygood['id'], 'orderid' => $finishorderid);
+	}
 
-        pdo_insert("ewei_shop_verifygoods_log",$data);
+	/**
+     * 记次商品完成订单
+     * @param $id
+     */
+	public function finishorder($id, $arr = array())
+	{
+		global $_W;
+		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$verifyinfo = iunserializer($item['verifyinfo']);
+		$i = 1;
 
-        $logid = pdo_insertid();
+		while ($i <= $arr['times']) {
+			$verifyinfo[] = array('verifyopenid' => $_W['openid'], 'verifystoreid' => $arr['storeid'], 'verifytime' => time());
+			++$i;
+		}
 
-        m('notice')->sendVerifygoodMessage($logid);
+		pdo_update('ewei_shop_order', array('status' => 3, 'sendtime' => time(), 'finishtime' => time(), 'verifyinfo' => iserializer($verifyinfo)), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 
-        pdo_query("update ".tablename("ewei_shop_verifygoods")." set used=:used , verifycode=null ,codeinvalidtime=0 where id=:id",array(":id"=>$verifygood['id'],":used"=>$used));
+		if ($item['status'] == 2) {
+			m('order')->setGiveBalance($item['id'], 1);
+			m('order')->setStocksAndCredits($item['id'], 3);
+		}
 
-        if(!empty($verifygood['activecard']))
-        {
-  
-            com_run('wxcard::updateusercardbyvarifygoodid',$verifygood['id']);
-        }
+		m('order')->fullback($item['id']);
+		if (p('ccard') && !empty($item['ccardid'])) {
+			p('ccard')->setBegin($item['id'], $item['ccardid']);
+		}
 
-        $finishorderid = 0;
-        $isonlyverifygood = m('order')->checkisonlyverifygoods($verifygood['orderid']);
-  
-        if($isonlyverifygood)
-        {
-            $status = pdo_fetchcolumn('select status  from ' . tablename('ewei_shop_order') . " where uniacid=:uniacid and id=:id  limit 1 ", array(':uniacid' => $_W['uniacid'], ':id' => $verifygood['orderid']));
-       
-            $verifytypexzx = pdo_fetchall('select verifytype  from ' . tablename('ewei_shop_order') . " where uniacid=:uniacid and id=:id  limit 1 ", array(':uniacid' => $_W['uniacid'], ':id' => $verifygood['orderid']));
-            $finishorderid=$verifygood['orderid'];
-   
-                $this->finishorder($finishorderid,
-                    array('times' => $times,'lastverifys' => $allow['lv']));
-   
+		m('member')->upgradeLevel($item['openid'], $item['id']);
+		m('notice')->sendOrderMessage($item['id']);
 
+		if (!empty($arr)) {
+			com_run('printer::sendOrderMessage', $item['id'], array('type' => 1, 'times' => $arr['times'], 'lastverifys' => $arr['lastverifys']));
+		}
+		else {
+			com_run('printer::sendOrderMessage', $item['id']);
+		}
 
-        }
+		if (com('coupon')) {
+			com('coupon')->sendcouponsbytask($item['id']);
 
-        return array(
-            'verifygoodid'=>$verifygood['id'],
-            'orderid'=>$finishorderid
-        );
+			if (!empty($item['couponid'])) {
+				com('coupon')->backConsumeCoupon($item['id']);
+			}
+		}
 
-    }
+		if (p('lineup')) {
+			p('lineup')->checkOrder($item);
+		}
 
+		if (p('commission')) {
+			p('commission')->checkOrderFinish($item['id']);
+		}
 
-    public function finishorder($id,$arr = array()){
-        global $_W;
+		if (p('lottery')) {
+			$res = p('lottery')->getLottery($item['openid'], 1, array('money' => $item['price'], 'paytype' => 2));
 
-        $item = pdo_fetch("SELECT * FROM " . tablename('ewei_shop_order') . " WHERE id = :id and uniacid=:uniacid", array(':id' => $id, ':uniacid' => $_W['uniacid']));
+			if ($res) {
+				p('lottery')->getLotteryList($item['openid'], array('lottery_id' => $res));
+			}
+		}
 
+		plog('order.op.finish', '订单完成 ID: ' . $item['id'] . ' 订单号: ' . $item['ordersn']);
+		return true;
+	}
 
-
-        pdo_update('ewei_shop_order', array(
-            'status' => 3 ,
-            'sendtime' => time(),
-            'finishtime' => time()
-        ), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
-
-
-  
-        m('order')->fullback($item['id']);
-        if (p('ccard') && !empty($item['ccardid'])) {
-            p('ccard')->setBegin($item['id'], $item['ccardid']);
-        }
-
- 
-        m('member')->upgradeLevel($item['openid'],$item['id']);
-
-
-        m('order')->setStocksAndCredits($item['id'], 3);//订单完成后赠送积分
-
- 
-        m('order')->setGiveBalance($item['id'], 1);
-
- 
-        m('notice')->sendOrderMessage($item['id']);
-
-   
-        if(!empty($arr)){
-            com_run('printer::sendOrderMessage',$item['id'],
-                array('type' => 1,'times' => $arr['times'],'lastverifys' => $arr['lastverifys']));
-
-        }else{
-            com_run('printer::sendOrderMessage',$item['id']);
-        }
-
-
-
-        if (com('coupon')) {
-            com('coupon')->sendcouponsbytask($item['id']); 
-
-         
-            if (!empty($item['couponid'])) {
-                com('coupon')->backConsumeCoupon($item['id']);
-            }
-        }
-
-
-
-        if (p('lineup')) {
-            p('lineup')->checkOrder($item);
-        }
-
-        if (p('commission')) {
-            p('commission')->checkOrderFinish($item['id']);
-        }
-     
-        if(p('lottery')){
-         
-            $res = p('lottery')->getLottery($item['openid'],1,array('money'=>$item['price'],'paytype'=>2));
-            if($res){
-                p('lottery')->getLotteryList($item['openid'],array('lottery_id'=>$res));
-            }
-        }
-        plog('order.op.finish', "订单完成 ID: {$item['id']} 订单号: {$item['ordersn']}");
-
-        return true;
-    }
-
-    public function checkhaveverifygoods($openid)
-    {
-        global $_W;
-        $sql = 'select  COUNT(1)  from ' . tablename('ewei_shop_verifygoods') . '   vg
+	/**
+     *
+     * @param type $openid
+     */
+	public function checkhaveverifygoods($openid)
+	{
+		global $_W;
+		$sql = 'select  COUNT(1)  from ' . tablename('ewei_shop_verifygoods') . '   vg
                  inner join ' . tablename('ewei_shop_order_goods') . ' og on vg.ordergoodsid = og.id
                  left  join ' . tablename('ewei_shop_order') . ' o on vg.orderid = o.id
                  left  join ' . tablename('ewei_shop_order_refund') . ' orf on o.refundid = orf.id
                  inner join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id
                  left  join ' . tablename('ewei_shop_goods_cards') . ' c on c.id = g.cardid
                  where   vg.uniacid=:uniacid and vg.openid=:openid and vg.invalid =0   order by vg.starttime desc';
+		$verifygoods = pdo_fetchcolumn($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 
-        $verifygoods = pdo_fetchcolumn($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+		if (!empty($verifygoods)) {
+			return 1;
+		}
 
-        if (!empty($verifygoods)) {
-            return 1;
-        }
-
-        return 0;
-
-    }
-
-
+		return 0;
+	}
 }
+
+if (!defined('IN_IA')) {
+	exit('Access Denied');
+}
+
+?>

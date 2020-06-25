@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +13,7 @@ class Set_EweiShopV2Page extends PluginWebPage
 
 		if ($_W['ispost']) {
 			ca('creditshop.set.edit');
-			$data = (is_array($_GPC['data']) ? $_GPC['data'] : array());
+			$data = is_array($_GPC['data']) ? $_GPC['data'] : array();
 			$data['share_icon'] = save_media($data['share_icon']);
 			$exchangekeyword = $data['exchangekeyword'];
 			$keyword = m('common')->keyExist($exchangekeyword);
@@ -54,7 +55,7 @@ class Set_EweiShopV2Page extends PluginWebPage
 
 		if ($handle = opendir($dir)) {
 			while (($file = readdir($handle)) !== false) {
-				if (($file != '..') && ($file != '.')) {
+				if ($file != '..' && $file != '.') {
 					if (is_dir($dir . '/' . $file)) {
 						$styles[] = $file;
 					}

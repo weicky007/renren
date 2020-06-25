@@ -19,7 +19,7 @@
             <br/><span class="text-default">{if empty($set['noregdesc'])}
 			想成为区域代理商吗？请立即联系我们！
 			{else}
-			{$set['noregdesc']}
+            <textarea style="resize:none;border: none;background-color:#f3f3f3;"rows="20" cols="40" disabled>{$set['noregdesc']}</textarea>
 			{/if}
 			<br/>
 
@@ -231,4 +231,3 @@
     </script>
 </div>
 {template '_footer'}
-

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -32,16 +33,23 @@ class Index_EweiShopV2Page extends PluginWebPage
 
 				$rule = pdo_fetch('select * from ' . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name  limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':name' => 'ewei_shopv2:mmanage'));
 
+				if (empty($rule)) {
+					$rule = pdo_fetch('select * from ' . tablename('rule') . ' where uniacid=:uniacid and module=:module and name=:name  limit 1', array(':uniacid' => $_W['uniacid'], ':module' => 'cover', ':name' => 'ewei_shopv2手机管理入口'));
+				}
+
 				if (!empty($rule)) {
-					pdo_update('rule_keyword', array('content' => $arr['keyword']), array('rid' => $rule['id']));
+					pdo_delete('rule', array('id' => $rule['id'], 'uniacid' => $_W['uniacid']));
+					pdo_delete('rule_keyword', array('rid' => $rule['id'], 'uniacid' => $_W['uniacid']));
+					pdo_delete('cover_reply', array('rid' => $rule['id'], 'uniacid' => $_W['uniacid']));
 				}
-				else {
-					$rule_data = array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2:mmanage', 'module' => 'ewei_shopv2', 'displayorder' => 0, 'status' => 1);
-					pdo_insert('rule', $rule_data);
-					$rid = pdo_insertid();
-					$keyword_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'ewei_shopv2', 'content' => $arr['keyword'], 'type' => 1, 'displayorder' => 0, 'status' => 1);
-					pdo_insert('rule_keyword', $keyword_data);
-				}
+
+				$rule_data = array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2手机管理入口', 'module' => 'cover', 'displayorder' => 0, 'status' => intval($arr['status']));
+				pdo_insert('rule', $rule_data);
+				$rid = pdo_insertid();
+				$keyword_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => 'cover', 'content' => trim($arr['keyword']), 'type' => 1, 'displayorder' => 0, 'status' => intval($arr['status']));
+				pdo_insert('rule_keyword', $keyword_data);
+				$cover_data = array('uniacid' => $_W['uniacid'], 'rid' => $rid, 'module' => $this->modulename, 'title' => trim($arr['title']), 'description' => trim($arr['desc']), 'thumb' => save_media($arr['thumb']), 'url' => mobileUrl('mmanage'));
+				pdo_insert('cover_reply', $cover_data);
 			}
 			else {
 				if (!empty($data['keyword'])) {

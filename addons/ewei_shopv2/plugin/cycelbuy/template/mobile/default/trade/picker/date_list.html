@@ -28,7 +28,7 @@
                 class="day {if $tmonth > (date('m',$ttime))}
 
                                     {else}
-                                        {if $v[0].$mm.$dd == $nowtime}active{/if}
+                                        {if $v[0].$mm.$dd == $nowtime && date('m',$ttime)==$mm }active{/if}
                                     {/if}"
              {else}
                     {php $active="0"}

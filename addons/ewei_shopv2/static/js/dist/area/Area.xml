@@ -1154,6 +1154,7 @@
   <county name="奉化市" /> 
   </city>
  <city name="温州市">
+  <county name="龙港市" />
   <county name="市辖区" />
   <county name="鹿城区" /> 
   <county name="龙湾区" /> 
@@ -1161,8 +1162,7 @@
   <county name="洞头县" /> 
   <county name="永嘉县" /> 
   <county name="平阳县" /> 
-  <county name="苍南县" />
-  <county name="龙港市" />
+  <county name="苍南县" /> 
   <county name="文成县" /> 
   <county name="泰顺县" /> 
   <county name="瑞安市" /> 
@@ -3267,7 +3267,7 @@
   <county name="华坪县" /> 
   <county name="宁蒗彝族自治县" /> 
   </city>
- <city name="普洱市">
+ <city name="思茅市">
   <county name="市辖区" /> 
   <county name="翠云区" /> 
   <county name="普洱哈尼族彝族自治县" /> 

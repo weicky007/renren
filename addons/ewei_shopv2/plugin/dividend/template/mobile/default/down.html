@@ -21,15 +21,15 @@
     <div class="share-footbar">
         <a  href="{php echo mobileUrl('dividend')}"  class='item external'>
             <i class="icon icon-dividendhome"></i>
-            <span class='text'>分红中心</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}中心</span>
         </a>
         <a href="{php echo mobileUrl('dividend/withdraw')}" class='item '>
             <i class="icon icon-fenxiaoyongjin1"></i>
-            <span class='text'>分红佣金</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}佣金</span>
         </a>
         <a href="{php echo mobileUrl('dividend/order')}" class='item '>
             <i class="icon icon-fenxiaodingdan1"></i>
-            <span class='text'>分红订单</span>
+            <span class='text'>{php echo $this->set['texts']['dividend']}订单</span>
         </a>
         <a href="#" class='item active'>
             <i class="icon icon-wodetuandui2"></i>

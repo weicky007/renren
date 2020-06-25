@@ -1,5 +1,5 @@
 <?php
-/*珍惜资源 请勿转卖*/
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }

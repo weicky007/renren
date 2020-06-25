@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -10,7 +11,7 @@ class Receiver extends WeModuleReceiver
 		global $_W;
 		$type = $this->message['type'];
 		$event = $this->message['event'];
-		if (($event == 'subscribe') && ($type == 'subscribe')) {
+		if ($event == 'subscribe' && $type == 'subscribe') {
 			$this->saleVirtual();
 		}
 	}
@@ -32,12 +33,40 @@ class Receiver extends WeModuleReceiver
 
 		load()->model('account');
 		$account = account_fetch($_W['uniacid']);
-		$totalagent = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . (int) $account['uniacid'] . ' and isagent =1');
-		$totalmember = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . (int) $account['uniacid']);
+		$open_redis = function_exists('redis') && !is_error(redis());
+
+		if ($open_redis) {
+			$redis_key1 = 'ewei_' . $_W['uniacid'] . '_member_salevirtual_isagent';
+			$redis_key2 = 'ewei_' . $_W['uniacid'] . '_member_salevirtual';
+			$redis = redis();
+
+			if (!is_error($redis)) {
+				if ($redis->get($redis_key1) != false) {
+					$totalagent = $redis->get($redis_key1);
+					$totalmember = $redis->get($redis_key2);
+				}
+				else {
+					$totalagent = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . $_W['uniacid'] . ' and isagent =1');
+					$totalmember = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . $_W['uniacid']);
+					$redis->set($redis_key1, $totalagent, array('nx', 'ex' => '3600'));
+					$redis->set($redis_key2, $totalmember, array('nx', 'ex' => '3600'));
+				}
+			}
+		}
+		else {
+			$totalagent = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . $_W['uniacid'] . ' and isagent =1');
+			$totalmember = pdo_fetchcolumn('select count(*) from' . tablename('ewei_shop_member') . ' where uniacid =' . $_W['uniacid']);
+		}
+
 		$acc = WeAccount::create();
 		$member = abs((int) $data['virtual_people']) + (int) $totalmember;
 		$commission = abs((int) $data['virtual_commission']) + (int) $totalagent;
 		$user = m('member')->checkMemberFromPlatform($obj->message['from'], $acc);
+
+		if ($_SESSION['eweishop']['poster_member']) {
+			$user['isnew'] = true;
+			$_SESSION['eweishop']['poster_member'] = NULL;
+		}
 
 		if ($user['isnew']) {
 			$message = str_replace('[会员数]', $member, $data['virtual_text']);

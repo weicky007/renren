@@ -1,105 +1,102 @@
 <?php
+
 namespace core\job;
 
 class sendPoster
 {
+	public $openid;
+	public $acid;
+	public $uniacid;
+	public $content;
 
-    public $openid;
-    public $acid;
-    public $uniacid;
-    public $content;
+	public function __construct($config = array())
+	{
+		if (!empty($config)) {
+			foreach ($config as $name => $value) {
+				$this->{$name} = $value;
+			}
+		}
+	}
 
-    public function __construct($config = array())
-    {
-        if (!empty($config)){
-            foreach ($config as $name => $value) {
-                $this->$name = $value;
-            }
+	public function execute($queue)
+	{
+		global $_W;
+		$_W['uniacid'] = $this->uniacid;
+		$_W['acid'] = $this->acid;
+		$openid = $this->openid;
+		$content = $this->content;
 
-        }
-    }
+		if (empty($openid)) {
+			return NULL;
+		}
 
-    public function execute($queue)
-    {
-        global $_W;
-        $_W['uniacid'] = $this->uniacid;
-        $_W['acid'] = $this->acid;
-        $openid = $this->openid;
-        $content = $this->content;
-//用户
-        if(empty($openid)){
-            return;
-        }
-        $member = m('member')->getMember($openid);
-        if(empty($member)){
-            return;
-        }
+		$member = m('member')->getMember($openid);
 
-        if (strexists($content, '+')) {
+		if (empty($member)) {
+			return NULL;
+		}
 
-            $msg = explode('+', $content);
+		if (strexists($content, '+')) {
+			$msg = explode('+', $content);
+			$poster = pdo_fetch('select * from ' . tablename('ewei_shop_poster') . ' where keyword2=:keyword and type=3 and isdefault=1 and uniacid=:uniacid limit 1', array(':keyword' => $msg[0], ':uniacid' => $_W['uniacid']));
 
-            $poster = pdo_fetch('select * from ' . tablename('ewei_shop_poster') . ' where keyword2=:keyword and type=3 and isdefault=1 and uniacid=:uniacid limit 1', array(':keyword' => $msg[0], ':uniacid' => $_W['uniacid']));
-            if (empty($poster)) {
-                m('message')->sendCustomNotice($openid, '未找到商品海报类型!');
-                return;
-            }
-            $goodsid = intval($msg[1]);
-            if (empty($goodsid)) {
-                m('message')->sendCustomNotice($openid, '未找到商品, 无法生成海报 !');
-                return;
-            }
-        } else {
-            //查找二维码类型
+			if (empty($poster)) {
+				m('message')->sendCustomNotice($openid, '未找到商品海报类型!');
+				return NULL;
+			}
 
-            $poster = pdo_fetch('select * from ' . tablename('ewei_shop_poster') . ' where keyword2=:keyword and isdefault=1 and uniacid=:uniacid limit 1', array(':keyword' => $content, ':uniacid' => $_W['uniacid']));
-            if (empty($poster)) {
-                m('message')->sendCustomNotice($openid, '未找到海报类型!');
-                return;
-            }
-        }
+			$goodsid = intval($msg[1]);
 
-        if ($member['isagent'] != 1 || $member['status'] != 1) {
+			if (empty($goodsid)) {
+				m('message')->sendCustomNotice($openid, '未找到商品, 无法生成海报 !');
+				return NULL;
+			}
+		}
+		else {
+			$poster = pdo_fetch('select * from ' . tablename('ewei_shop_poster') . ' where keyword2=:keyword and isdefault=1 and uniacid=:uniacid limit 1', array(':keyword' => $content, ':uniacid' => $_W['uniacid']));
 
-            $set = array();
+			if (empty($poster)) {
+				m('message')->sendCustomNotice($openid, '未找到海报类型!');
+				return NULL;
+			}
+		}
 
-            if(p('commission')){
-                $set = p('commission')->getSet();
-            }
+		if ($member['isagent'] != 1 || $member['status'] != 1) {
+			$set = array();
 
-            //如果不分销商
-            if (empty($poster['isopen']) ) {
+			if (p('commission')) {
+				$set = p('commission')->getSet();
+			}
 
-                $opentext = !empty($poster['opentext'])?$poster['opentext']:'您还不是我们'.$set['texts']['agent'].'，去努力成为'.$set['texts']['agent'].'，拥有你的专属海报吧!';
-                m('message')->sendCustomNotice($openid, $opentext, trim($poster['openurl']));
-                return;
-            }
-        }
+			if (empty($poster['isopen'])) {
+				$opentext = !empty($poster['opentext']) ? $poster['opentext'] : '您还不是我们' . $set['texts']['agent'] . '，去努力成为' . $set['texts']['agent'] . '，拥有你的专属海报吧!';
+				m('message')->sendCustomNotice($openid, $opentext, trim($poster['openurl']));
+				return NULL;
+			}
+		}
 
-        $waittext = !empty($poster['waittext'])?htmlspecialchars_decode($poster['waittext'],ENT_QUOTES):'您的专属海报正在拼命生成中，请等待片刻...';
-        $waittext = str_replace('"','\"',$waittext);
-        m('message')->sendCustomNotice($openid, $waittext);
+		$waittext = !empty($poster['waittext']) ? htmlspecialchars_decode($poster['waittext'], ENT_QUOTES) : '您的专属海报正在拼命生成中，请等待片刻...';
+		$waittext = str_replace('"', '\\"', $waittext);
+		m('message')->sendCustomNotice($openid, $waittext);
+		$qr = p('poster')->getQR($poster, $member, $goodsid);
 
-//获取二维码图片
-        $qr = p('poster')->getQR($poster, $member, $goodsid);
-        if (is_error($qr)) {
-            m('message')->sendCustomNotice($openid, '生成二维码出错: ' . $qr['message']);
-            return;
-        }
-//生成海报
-        $img = p('poster')->createPoster($poster, $member, $qr);
+		if (is_error($qr)) {
+			m('message')->sendCustomNotice($openid, '生成二维码出错: ' . $qr['message']);
+			return NULL;
+		}
 
-        $mediaid = $img['mediaid'];
+		$img = p('poster')->createPoster($poster, $member, $qr);
+		$mediaid = $img['mediaid'];
 
-
-
-        if(!empty($mediaid)){
-            //发送海报
-            m('message')->sendImage($openid,$mediaid);
-        }
-        else{
-            $oktext= "<a href='".$img['img']."'>点击查看您的专属海报</a>";
-            m('message')->sendCustomNotice($openid, $oktext);
-        }
-    }
+		if (!empty($mediaid)) {
+			m('message')->sendImage($openid, $mediaid);
+		}
+		else {
+			$oktext = '<a href=\'' . $img['img'] . '\'>点击查看您的专属海报</a>';
+			m('message')->sendCustomNotice($openid, $oktext);
+		}
+	}
 }
+
+
+?>

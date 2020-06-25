@@ -157,7 +157,7 @@
 
 		<!--如果不是时间选择器  显示底下这个option-picker-inner-->
 		<div class="option-picker-inner cyclenotime" style="display: block">
-			<div class="option-picker-cell goodinfo">
+			<div class="option-picker-cell goodinfo" style="min-height: 3.3rem;">
 				<div class="closebtn"><i class="icon icon-guanbi1"></i></div>
 				<div class="img"><img class='thumb' src="<%goods.thumb%>" /></div>
 				<div class="info info-price text-danger">
@@ -185,14 +185,13 @@
 				</span>
 
 				{/if}
+
 				<span class="cycle-tip cycle-tip2">周期购</span>
 				</div>
+				{if $goods['cansee']>0 &&  $goods['seecommission']>0 }
+				<div class="option-Commission" style="margin: 0.2rem 0"> {php echo empty($goods['seetitle'])?'预计最高佣金':$goods['seetitle']}￥<span>{$goods['seecommission']}</span></div>
+				{/if}
 
-				<div class="info info-total">
-					<%if seckillinfo==false || ( seckillinfo && seckillinfo.status==1) %>
-					<%if goods.showtotal != 0%><%if goods.unite_total != 0%>总<%/if%>库存 <span class='total'><%goods.total%></span> 件<%/if%>
-					<%/if%>
-				</div>
 				<div class="info info-titles"><%if specs.length>0%>请选择规格<%/if%></div>
 			</div>
 
@@ -208,6 +207,7 @@
 						<a href="javascript:;" class="btn btn-default btn-sm nav spec-item spec-item<%item.id%>" data-id="<%item.id%>"  <%if item.cycelbuy_day > 0%>data-day="<%item.cycelbuy_day%>"<%/if%> <%if item.cycelbuy_num > 0%>data-num="<%item.cycelbuy_nums%>"<%/if%>   data-thumb="<%item.thumb%>">
 							<%if item.cycelbuy_day > 0%>
 								<%item.cycelbuy_day%><%if item.cycelbuy_num==0%>天<%else if item.cycelbuy_num==1 %>周<%else if item.cycelbuy_num==2 %>月<%/if%>1期，共<%item.cycelbuy_nums%>期
+
 							<%else%>
 								<%item.title%>
 							<%/if%>

@@ -387,7 +387,7 @@ class Detail_EweiShopV2Page extends WebPage
      * 导致下单后订单详情中不能显示客户购买了什么规格,导致无法发货,
      * 由于部分商户涉及到的数据量达十几万条,数据难以弥补
      * 此方法在optionname标题不存在时,重组规格标题用作显示作用
-     *  黑马取消了UNION ALL写法 之后优化了方法的sql
+     *  微擎取消了UNION ALL写法 之后优化了方法的sql
      * 2018.9.19 重写了获取规格的方法,传入$spec
      * @author cunxin,sunchao
      * @return string 规格标题optionname

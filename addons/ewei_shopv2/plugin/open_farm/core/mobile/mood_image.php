@@ -2,7 +2,11 @@
 
 class MoodImage
 {
-	/**     * 传入路径返回图像资源     * @param string $path     * @return resource|null     */
+	/**
+     * 传入路径返回图像资源
+     * @param string $path
+     * @return resource|null
+     */
 	static public function getFileImg($path)
 	{
 		$pathInfo = pathinfo($path);
@@ -25,7 +29,12 @@ class MoodImage
 		return $image;
 	}
 
-	/**     * 根据文件地址获取初始化的图片资源     * 并设置背景和透明度     * @param $path     * @return resource     */
+	/**
+     * 根据文件地址获取初始化的图片资源
+     * 并设置背景和透明度
+     * @param $path
+     * @return resource
+     */
 	static public function initialFileBackground($path)
 	{
 		$image = self::getFileImg($path);
@@ -33,7 +42,14 @@ class MoodImage
 		return $image;
 	}
 
-	/**     * 获取字符串起始位置     * @param $totalLength     * @param $byteLength     * @param $emptyLength     * @param $str     * @return float|int     */
+	/**
+     * 获取字符串起始位置
+     * @param $totalLength
+     * @param $byteLength
+     * @param $emptyLength
+     * @param $str
+     * @return float|int
+     */
 	static public function getStrStart($totalLength, $byteLength, $emptyLength, $str)
 	{
 		$width = mb_strwidth($str);
@@ -41,13 +57,28 @@ class MoodImage
 		return ($totalLength - ($width * $byteLength + $length * $emptyLength)) / 2;
 	}
 
-	/**     * 计算图片最居中的起始位置     * @param $overallLength     * @param $insideLength     * @return float|int     */
+	/**
+     * 计算图片最居中的起始位置
+     * @param $overallLength
+     * @param $insideLength
+     * @return float|int
+     */
 	static public function getImageLength($overallLength, $insideLength)
 	{
 		return ($overallLength - $insideLength) / 2;
 	}
 
-	/**     * 运行主方法     * @param $backgroundPath     * @param $picturePath     * @param $portraitPath     * @param $qrCodePath     * @param $nickname     * @param $autograph     * @param $save     * @param bool $savePath     */
+	/**
+     * 运行主方法
+     * @param $backgroundPath
+     * @param $picturePath
+     * @param $portraitPath
+     * @param $qrCodePath
+     * @param $nickname
+     * @param $autograph
+     * @param $save
+     * @param bool $savePath
+     */
 	static public function main($backgroundPath, $picturePath, $portraitPath, $qrCodePath, $nickname, $autograph, $save = false, $savePath = false)
 	{
 		if (!$save) {

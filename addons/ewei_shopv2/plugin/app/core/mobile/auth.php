@@ -1,11 +1,9 @@
-<?php 
-if( !defined("IN_IA") ) 
-{
-    exit( "Access Denied" );
+<?php
+
+if (!defined("IN_IA")) {
+    exit("Access Denied");
 }
-
-require_once(EWEI_SHOPV2_PLUGIN . "app/core/page_mobile.php");
-
+require_once EWEI_SHOPV2_PLUGIN . "app/core/page_mobile.php";
 class Auth_EweiShopV2Page extends AppMobilePage
 {
     public function __construct()
@@ -13,7 +11,6 @@ class Auth_EweiShopV2Page extends AppMobilePage
         global $_W;
         $this->authkey = $_W["setting"]["site"]["token"] . "_" . $_W["uniacid"];
     }
-
     public function main()
     {
         global $_W;
@@ -21,42 +18,31 @@ class Auth_EweiShopV2Page extends AppMobilePage
         $token = trim($_GPC["token"]);
         $callback = trim($_GPC["callback"]);
         $callback = urldecode($callback);
-        if( !empty($token) && !empty($callback) ) 
-        {
+        if (!empty($token) && !empty($callback)) {
             $token = authcode(base64_decode($token), "DECODE", $this->authkey);
             $params = explode("|", $token);
-            if( !empty($params[0]) ) 
-            {
+            if (!empty($params[0])) {
                 $member = m("member")->getMember($params[0]);
-                if( !empty($member) && strexists($callback, "&c=entry&m=ewei_shopv2&do=mobile") ) 
-                {
+                if (!empty($member) && strexists($callback, "&c=entry&m=ewei_shopv2&do=mobile")) {
                     m("account")->setLogin($member);
                 }
-
             }
-
         }
-
         header("location: " . $callback);
     }
-
     public function token()
     {
         global $_GPC;
         $token = trim($_GPC["token"]);
-        if( !empty($token) ) 
-        {
+        if (!empty($token)) {
             $token = authcode(base64_decode($token), "DECODE", "*736bg%21@");
-            if( !empty($token) ) 
-            {
-                return app_json(array( "token" => $token ));
+            if (!empty($token)) {
+                return app_json(array("token" => $token));
             }
-
             return app_error(AppError::$UserTokenFail);
         }
-
         return app_json();
     }
-
 }
+
 ?>
