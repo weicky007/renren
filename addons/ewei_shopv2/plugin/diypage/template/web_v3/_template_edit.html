@@ -19,7 +19,7 @@
     </div>
 </script>
 <style>
-    .pull-right.btn-uploader{float:left!important;width:100%;}
+    .pull-right.btn-uploader{float:left!important;width:100%;} 
 </style>
 <script type="text/html" id="edit-del">
      <!--<div class="btn-edit-del"> -->
@@ -83,6 +83,20 @@
         </div>
     </div>
     <%/if%>
+    
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景图</div> 
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind="backgroundimg" data-placeholder="" placeholder="" value="<%page.backgroundimg%>" id="backgroundimg" />
+                <span data-input="#backgroundimg" data-img="#backgroundimg1" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
+            </div>
+            <div class="input-group " style="margin-top:.5em;">
+                <img src="<%imgsrc page.backgroundimg%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png';" class="img-responsive img-thumbnail" width="150" id="backgroundimg1">
+                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#iconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
+            </div>
+        </div>
+    </div>
 
     <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
@@ -277,6 +291,7 @@
             </div>
         </div>
     </div>
+
     <div class="form-group">
         <div class="col-sm-2 control-label">按钮底部边距</div>
         <div class="col-sm-10">
@@ -297,6 +312,52 @@
             </div>
         </div>
     </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">上下边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.paddingtop%>" data-min="2" data-max="200"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.paddingtop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="paddingtop" value="<%style.paddingtop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">左右边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.paddingleft%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.paddingleft%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="paddingleft" value="<%style.paddingleft%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图片样式</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.yuan%>" data-min="1" data-max="50"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.yuan%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="yuan" value="<%style.yuan%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">轮播图透明度</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8 " data-value="<%style.backopacity%>" data-min="0" data-max="10" data-decimal="10"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.backopacity%></span>(最大是1)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="backopacity" value="<%style.backopacity%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
     <div class="form-items" data-min="1">
         <div class="inner" id="form-items">
             <%each data as child itemid %>
@@ -595,6 +656,15 @@
     <div class="line"></div>
 
     <div class="form-group">
+        <div class="col-sm-2 control-label">是否有背景色</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="touming" value="" class="diy-bind" data-bind-child="style" data-bind="touming" <%if style.touming==''%>checked="checked"<%/if%> > 否</label>
+            <label class="radio-inline"><input type="radio" name="touming" value="touming" class="diy-bind" data-bind-child="style" data-bind="touming" <%if style.touming=='radius'%>checked="checked"<%/if%>> 是</label>
+           
+        </div>
+    </div>
+
+    <!-- <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
@@ -602,7 +672,9 @@
                 <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f1f1f2').trigger('propertychange')">重置</span>
             </div>
         </div>
-    </div>
+    </div> -->
+
+    
 
     <div class="form-group">
         <div class="col-sm-2 control-label">输入框背景</div>
@@ -662,6 +734,30 @@
             </div>
         </div>
     </div>
+
+    <!-- <div class="form-group">
+        <div class="col-sm-2 control-label">外上下边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">外左右边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.marginleft%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.marginleft%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="marginleft" value="<%style.marginleft%>" type="hidden" />
+            </div>
+        </div>
+    </div> -->
+
+    
 
     <div class="form-group">
         <div class="col-sm-2 control-label">搜索框样式</div>
@@ -766,6 +862,81 @@
     </div>
 
     <div class="form-group">
+        <div class="col-sm-2 control-label">外上下边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="2" data-max="200"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">外左右边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.marginleft%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.marginleft%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="marginleft" value="<%style.marginleft%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">div圆角</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.yuan%>" data-min="1" data-max="50"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.yuan%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="yuan" value="<%style.yuan%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">按钮内边距（上下）</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.anniu%>" data-min="0" data-max="10"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.anniu%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="anniu" value="<%style.anniu%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <div class="col-sm-2 control-label">按钮内边距(左右)</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.anniu1%>" data-min="-10" data-max="5"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.anniu1%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="anniu1" value="<%style.anniu1%>" type="hidden" />
+            </div>
+        </div>
+    </div> -->
+    <div class="form-group">
+        <div class="col-sm-2 control-label">阴影效果</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.yinying%>" data-min="0" data-max="20"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.yinying%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="yinying" value="<%style.yinying%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">阴影颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="yinyingcolor" value="<%style.yinyingcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">清除</span>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="form-group">
         <div class="col-sm-2 control-label">按钮形状</div>
         <div class="col-sm-10">
             <label class="radio-inline"><input type="radio" name="navstyle" value="" class="diy-bind" data-bind-child="style" data-bind="navstyle" <%if style.navstyle==''%>checked="checked"<%/if%>> 正方形</label>
@@ -788,6 +959,7 @@
             <label class="radio-inline"><input type="radio" name="rownum" value="3" class="diy-bind" data-bind-child="style" data-bind="rownum" <%if style.rownum=='3'%>checked="checked"<%/if%>> 3个</label>
             <label class="radio-inline"><input type="radio" name="rownum" value="4" class="diy-bind" data-bind-child="style" data-bind="rownum" <%if style.rownum=='4'%>checked="checked"<%/if%>> 4个</label>
             <label class="radio-inline"><input type="radio" name="rownum" value="5" class="diy-bind" data-bind-child="style" data-bind="rownum" <%if style.rownum=='5'%>checked="checked"<%/if%>> 5个</label>
+            <label class="radio-inline"><input type="radio" name="rownum" value="6" class="diy-bind" data-bind-child="style" data-bind="rownum" <%if style.rownum=='6'%>checked="checked"<%/if%>> 6个</label>
         </div>
     </div>
 
@@ -906,7 +1078,7 @@
         <div class="col-sm-2 control-label">上下边距</div>
         <div class="col-sm-10">
             <div class="form-group">
-                <div class="slider col-sm-8" data-value="<%style.paddingtop%>" data-min="0" data-max="50"></div>
+                <div class="slider col-sm-8" data-value="<%style.paddingtop%>" data-min="0" data-max="200"></div>
                 <div class="col-sm-4 control-labe count"><span><%style.paddingtop%></span>px(像素)</div>
                 <input class="diy-bind input" data-bind-child="style" data-bind="paddingtop" value="<%style.paddingtop%>" type="hidden" />
             </div>
@@ -3761,6 +3933,7 @@
             </div>
         </div>
     </div>
+   
     <div class="form-group">
         <div class="col-sm-2 control-label">透明度</div>
         <div class="col-sm-10">
@@ -4245,6 +4418,16 @@
             <label class="radio-inline"><input type="radio" name="ratio" value="2" class="diy-bind" data-bind-child="style" data-bind="showtype" data-bind-init="false" <%if style.showtype =='2'%>checked="checked"<%/if%>>样式二</label>
         </div>
     </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">是否有背景色</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="touming" value="" class="diy-bind" data-bind-child="style" data-bind="touming" <%if style.touming==''%>checked="checked"<%/if%> > 否</label>
+            <label class="radio-inline"><input type="radio" name="touming" value="touming" class="diy-bind" data-bind-child="style" data-bind="touming" <%if style.touming=='radius'%>checked="checked"<%/if%>> 是</label>
+           
+        </div>
+    </div>
+
     <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
         <div class="col-sm-4">
@@ -4274,6 +4457,27 @@
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activecolor" value="<%style.activecolor%>" type="color">
                 <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">上下边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.paddingtop%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.paddingtop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="paddingtop" value="<%style.paddingtop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">左右边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.paddingleft%>" data-min="2" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.paddingleft%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="paddingleft" value="<%style.paddingleft%>" type="hidden" />
             </div>
         </div>
     </div>

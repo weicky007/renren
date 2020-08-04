@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-</script>
+</script> 
 
 <script type="text/html" id="tpl_show_richtext">
     <div class="drag" data-itemid="<%itemid%>">
@@ -43,9 +43,11 @@
 
 <script type="text/html" id="tpl_show_banner">
     <div class="drag" data-itemid="<%itemid%>">
-        <div class="diy-banner">
+        <div class="diy-banner" style="opacity：<%style.backopacity||'1'%>;padding: <%style.paddingtop||'0'%>px <%style.paddingleft||'0'%>px;">
             <%each data as item%>
-            <img src="<%imgsrc item.imgurl%>"/>
+            
+            <img src="<%imgsrc item.imgurl%>" style="border-radius:<%style.yuan||'1'%>px;"/>
+            
             <%/each%>
             <div class="dots <%style.dotalign||'left'%> <%style.dotstyle||'rectangle'%>" style="padding: 0 <%style.leftright||'10'%>px; bottom: <%style.bottom||'10'%>px; opacity: <%style.opacity||'0.8'%>;">
                 <%each data as item%>
@@ -73,8 +75,8 @@
 
 <script type="text/html" id="tpl_show_search">
     <div class="drag" data-itemid="<%itemid%>">
-        <div class="diy-search <%style.searchstyle%>" style="background: <%style.background%>; padding: <%style.paddingtop||'10'%>px <%style.paddingleft||'10'%>px;">
-            <div class="inner left" style="background: <%style.inputbackground||'#fff'%>;">
+        <div class="diy-search <%style.searchstyle%> <%style.touming%>" style="padding: <%style.paddingtop||'10'%>px <%style.paddingleft||'10'%>px;">
+            <div class="inner left" style="background: <%style.inputbackground||'#fff'%>;position: relative;">
                 <div class="search-icon" style="color: <%style.iconcolor%>;"><i class="icon icon-search"></i></div>
                 <div class="search-input" style="text-align: <%style.textalign%>; color: <%style.color%>;">
                     <span><%params.placeholder%></span>
@@ -101,9 +103,9 @@
         <%if data==''%>
         <div class="nochild">您还没有添加图标</div>
         <%else%>
-        <div class="fui-icon-group noborder col-<%style.rownum%> <%style.navstyle%> <%if style.showtype>0%>pb10<%/if%>" style="background: <%style.background||'#ffffff'%>">
+        <div class="fui-icon-group noborder col-<%style.rownum%> <%style.navstyle%> <%if style.showtype>0%>pb10<%/if%>" style="background: <%style.background||'#ffffff'%>;margin: <%style.margintop||'2'%>px <%style.marginleft||'2'%>px;border-radius:<%style.yuan||'1'%>px;box-shadow:0 0 <%style.yinying||'0'%>px <%style.yinying||'0'%>px <%style.yinyingcolor||'#999'%>;">
             <%each data as item%>
-            <div class="fui-icon-col">
+            <div class="fui-icon-col" style="margin:<%style.anniu||'10'%>px 0px;height: 60px;">
                 <div class="icon"><img src="<%imgsrc item.imgurl%>"></div>
                 <div class="text" style="color: <%item.color%>"><%item.text%></div>
             </div>
@@ -1826,12 +1828,12 @@
 <!--选项卡-->
 <script type="text/html" id="tpl_show_tabbar">
     <div class="drag" data-itemid="<%itemid%>">
-        <div class="fui-tab fui-tab-danger <%if style.showtype =='1'%>style1<%/if%> <%if style.showtype =='2'%>style2<%/if%>">
+        <div class="fui-tab fui-tab-danger  <%if style.showtype =='1'%>style1<%/if%> <%if style.showtype =='2'%>style2<%/if%>" style="padding: <%style.paddingtop||'10'%>px <%style.paddingleft||'10'%>px;<%if style.touming =='touming'%>background: rgba(241, 241, 242, 0);<%/if%>">
             <!--样式一-->
             <%if style.showtype =='1'%>
             <%define index=0%>
             <%each data as item%>
-            <a <%if index==0%>class="active" style="color: <%style.activecolor%>; border-color: <%style.activecolor%>; background: <%style.activebackground%>;"<%else%>style="color: <%style.color%>;background: <%style.background%>;""<%/if%>><%item.text||'未设置'%></a>
+            <a <%if index==0%>class="active" style="border-bottom: 0px solid transparent;color: <%style.activecolor%>; border-color: <%style.activecolor%>; background: <%style.activebackground%>;<%if style.touming =='touming'%>background: rgba(241, 241, 242, 0);<%/if%>"<%else%>style="color: <%style.color%>;background: <%style.background%>;<%if style.touming =='touming'%>background: rgba(241, 241, 242, 0);<%/if%>""<%/if%>><%item.text||'未设置'%></a>
             <%define index++%>
             <%/each%>
             <%/if%>
@@ -1839,7 +1841,7 @@
             <%if style.showtype =='2'%>
             <%define index=0%>
             <%each data as item%>
-            <a <%if index==0%>class="active" style="color: <%style.activecolor%>; border-color: <%style.activecolor%>; background: <%style.activebackground%>;"<%else%>style="color: <%style.color%>;background: <%style.background%>;""<%/if%>><%item.text||'未设置'%></a>
+            <a <%if index==0%>class="active" style="border-bottom: 0px solid transparent;color: <%style.activecolor%>; border-color: <%style.activecolor%>; background: <%style.activebackground%>;<%if style.touming =='touming'%>background: rgba(241, 241, 242, 0);<%/if%>"<%else%>style="color: <%style.color%>;background: <%style.background%>;<%if style.touming =='touming'%>background: rgba(241, 241, 242, 0);<%/if%>""<%/if%>><%item.text||'未设置'%></a>
             <%define index++%>
             <%/each%>
             <%/if%>

@@ -14,7 +14,7 @@
                 </a>
             {/if}
             <div class="center {$diyitem['params']['searchstyle']}">
-                <input type="search" value="" placeholder="{$diyitem['params']['placeholder']}" style="color: {$diyitem['style']['searchtextcolor']}; opacity: {$diyitem['style']['opacityinput']}; background: {$diyitem['style']['searchbackground']};" name="keywords" />
+                <input type="search" value="" placeholder="{$diyitem['params']['placeholder']}" style="color: {$diyitem['style']['searchtextcolor']}; opacity: {$diyitem['style']['opacity']}; background: {$diyitem['style']['searchbackground']};" name="keywords" />
             </div>
             {if !empty($diyitem['params']['rightnav'])}
                 <a class="rightnav"  {if empty($diyitem['params']['rightnavclick'])}href="{php echo !empty($diyitem['params']['rightnavlink'])?$diyitem['params']['rightnavlink']:'javascript:;'}" {else}onclick="fixedsearch()"{/if} data-nocache="true">

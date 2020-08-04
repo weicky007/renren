@@ -7,16 +7,19 @@
     .fui-header ~ .diy-fixedsearch {top: 3.2rem;}
     .fui-header~.fui-content .fui-topmenu {top: 3.2rem;}
     {/if}
+    .fui-icon-group.col-6 .fui-icon-col {
+        width: 16.66%;
+    }
 </style>
 {if $page['type']==4}
 {template 'commission/common'}
 {/if}
-<div class='fui-page  shop-index-page fui-page-current {if $page['type']==3}member-page{elseif $page['type']==4}page-commission-index{/if}' style="top: 0; background-color: {$page['data']['page']['background']}; ">
+<div class='fui-page  shop-index-page fui-page-current {if $page['type']==3}member-page{elseif $page['type']==4}page-commission-index{/if}' style="top: 0;background-color: {$page['data']['page']['background']};">
 {if !empty($page['data']['page']['followbar'])}
 {php $this->followBar(true, $page['merch'])}
 {/if}
 {if !is_weixin()}
-<div class="fui-header" style="max-width:750px;">
+<div class="fui-header">
     <div class="fui-header-left">
         {if $page['type']==1}
         <a href="{php echo mobileUrl()}" class="external"><i class="icon icon-home"></i> </a>
@@ -32,11 +35,11 @@
 {/if}
 
 <div id="amap-container" style="display: none;"></div>
-<div class="fui-content {if $page['diymenu']>-1}navbar{/if}" id="container" style="background-color: {$page['data']['page']['background']}; {if $page['diymenu']>-1}padding-bottom: 0;{/if} {if !empty($diyitem_search) && empty($diy_topmenu)}margin-top: 44px;{/if}">
+<div class="fui-content {if $page['diymenu']>-1}navbar{/if}" id="container" style="background-color: {$page['data']['page']['background']};{if $page['diymenu']>-1}padding-bottom: 0;{/if} {if !empty($diyitem_search) && empty($diy_topmenu)}margin-top: 44px;{/if}">
     {if $diy_topmenu}
     {template 'diypage/template/tpl_topmenu_data'}
     {/if}
-    <div class="default-items">
+    <div class="default-items" style="{if $page['data']['page']['backgroundimg'] != ''}background-image:url({php echo tomedia($page['data']['page']['backgroundimg'])});background-repeat:no-repeat;background-size:100%;{else}background-color: {$page['data']['page']['background']};{/if}">
         {if !empty($diyitems)}
         {loop $diyitems $diyitemid $diyitem}
         {template 'diypage/template/tpl_'.$diyitem['id']}

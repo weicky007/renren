@@ -8,20 +8,16 @@
     <title><?php  if(empty($this->merch_user)) { ?><?php  echo $_W['shopset']['shop']['name'];?><?php  } else { ?><?php  echo $this->merch_user['merchname']?><?php  } ?></title>
 
     <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/static/js/dist/foxui/css/foxui.min.css?v=0.2">
-    <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/style.css?v=<?php  echo time()?>">
+    <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/style.css?v=">
     <?php  if(is_h5app()) { ?>
     <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/h5app.css?v=2.0.3">
     <?php  } ?>
 
-    <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/iconfont.css?v=2017070719">
+    <link rel="stylesheet" type="text/css" href="<?php  echo EWEI_SHOPV2_LOCAL?>static/fonts/iconfont.css?v=">
     <!--<link rel="stylesheet" href="//at.alicdn.com/t/font_82607_e93d131lklr6n7b9.css">-->
     <script src="./resource/js/lib/jquery-1.11.1.min.js"></script>
     <script src='//res.wx.qq.com/open/js/jweixin-1.3.0.js'></script>
     <!--   <script src="../addons/ewei_shopv2/static/js/dist/foxui/js/foxui.min.js"></script>-->
-    <!-- 智能地址识别js引入 -->
-    <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/js/dist/zh-address-parse.min.js"></script>
-    <!-- 卡密复制兼容浏览器js引入 -->
-    <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/js/dist/clipboardNew.min.js"></script>
     <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/js/require.js"></script>
     <script src="<?php  echo EWEI_SHOPV2_LOCAL?>static/js/myconfig-app.js"></script>
     <script language="javascript">

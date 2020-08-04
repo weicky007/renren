@@ -18,7 +18,7 @@
         width: 56px;
         height: 100%;
         text-align: center;
-        color: #fff;
+        color: #fff; 
         font-size: 12px;
         float: left;
         cursor: pointer;
@@ -32,6 +32,12 @@
     }
     .diy-toolbar .item p.txt{
         line-height: 1;
+    }
+    .touming{
+        background: rgba(241, 241, 242, 0);
+    }
+    .fui-icon-group.col-6 .fui-icon-col {
+        width: 16.66%;
     }
 </style>
 
@@ -112,8 +118,8 @@
 
 
 <script language="javascript">
-    var path = '../../plugin/diypage/static/js/diy.min';
-    myrequire([path,'tpl','web/biz'],function(modal,tpl){
+    var path = '../../plugin/diypage/static/js/diy.min'; 
+    myrequire([path,'tpl','web/biz'],function(modal,tpl){ 
         modal.init({
             tpl: tpl,
             attachurl: "{$_W['attachurl']}",

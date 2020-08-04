@@ -5,6 +5,10 @@ html {
     font-family: sans-serif;
 }
 
+.fui-icon-group.col-6 .fui-icon-col {
+    width: 16.66%;
+}
+
 .text-yellow {
     color: #feb312;
 }

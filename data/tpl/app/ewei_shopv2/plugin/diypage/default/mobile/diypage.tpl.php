@@ -1,7 +1,7 @@
 <?php defined('IN_IA') or exit('Access Denied');?><?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('_header', TEMPLATE_INCLUDEPATH)) : (include template('_header', TEMPLATE_INCLUDEPATH));?>
 <script>document.title = "<?php  if(!empty($page)&&!empty($page['data']['page']['title'])) { ?><?php  echo $page['data']['page']['title'];?><?php  } else { ?><?php  echo $_W['shopset']['shop']['name'];?><?php  } ?>"; </script>
 <link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/swiper/swiper.min.css">
-<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v=201705261648"rel="stylesheet"type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v="rel="stylesheet"type="text/css"/>
 <style type="text/css">
     <?php  if(is_h5app()&&is_ios()) { ?>
     .fui-header ~ .diy-fixedsearch {top: 3.2rem;}
