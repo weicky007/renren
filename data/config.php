@@ -3,9 +3,9 @@ defined('IN_IA') or exit('Access Denied');
 
 $config = array();
 
-$config['db']['master']['host'] = '127.0.0.1';
-$config['db']['master']['username'] = 'sstshop';
-$config['db']['master']['password'] = 'rwHLXL24Ey7PwSLA';
+$config['db']['master']['host'] = '119.45.35.161';
+$config['db']['master']['username'] = 'root';
+$config['db']['master']['password'] = 'heimakeji007../';
 $config['db']['master']['port'] = '3306';
 $config['db']['master']['database'] = 'sstshop';
 $config['db']['master']['charset'] = 'utf8';
@@ -26,7 +26,7 @@ $config['db']['slave']['1']['weight'] = 0;
 $config['db']['common']['slave_except_table'] = array('core_sessions');
 
 // --------------------------  CONFIG COOKIE  --------------------------- //
-$config['cookie']['pre'] = 'a566_';
+$config['cookie']['pre'] = '234c_';
 $config['cookie']['domain'] = '';
 $config['cookie']['path'] = '/';
 
@@ -36,11 +36,11 @@ $config['setting']['cache'] = 'redis';
 $config['setting']['timezone'] = 'Asia/Shanghai';
 $config['setting']['memory_limit'] = '256M';
 $config['setting']['filemode'] = 0644;
-$config['setting']['authkey'] = 'fe0b80d5';
+$config['setting']['authkey'] = 'a283f128';
 $config['setting']['founder'] = '1';
 $config['setting']['development'] = 0;
 $config['setting']['referrer'] = 0;
-$config['setting']['https'] = 0;
+$config['setting']['https'] = 1;
 
 // --------------------------  CONFIG UPLOAD  --------------------------- //
 $config['upload']['image']['extentions'] = array('gif', 'jpg', 'pem', 'jpeg', 'png');
@@ -63,6 +63,8 @@ $config['setting']['proxy']['auth'] = '';
 // --------------------------  CONFIG REDIS  --------------------------- //
 $config['setting']['redis']['server'] = '127.0.0.1';
 $config['setting']['redis']['port'] = 6379;
-$config['setting']['redis']['pconnect'] = 1; 
-$config['setting']['redis']['requirepass'] = ''; 
+$config['setting']['redis']['pconnect'] = 1;
+$config['setting']['redis']['auth'] = '';  //redis密码, 默认为空
+$config['setting']['redis']['requirepass'] = '';  //redis密码，默认为空，没用人人商城删除这行
 $config['setting']['redis']['timeout'] = 1;
+$config['setting']['redis']['session'] = 1;

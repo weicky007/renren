@@ -371,7 +371,7 @@
     $(function () {
         $("form").submit(function () {
             var openwap = $("input[name='data[open]']:checked").val();
-            /*if (openwap == '0'){
+            if (openwap == '0'){
                 $("form").removeAttr('stop');
                 return true;
             }
@@ -402,7 +402,7 @@
                 $('#myTab a[href="#tab_sms"]').tab('show');
                 $('form').attr('stop',1);
                 return false;
-            }*/
+            }
             $("form").removeAttr('stop');
             return true;
         });
