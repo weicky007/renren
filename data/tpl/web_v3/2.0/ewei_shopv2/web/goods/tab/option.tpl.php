@@ -25,7 +25,7 @@
 			<div class="col-sm-11">
 				<?php if( ce('goods' ,$item) ) { ?>
 				<div class="input-group fixsingle-input-group">
-					<input type="text" name="weight" id="weight" class="form-control hasoption" value="<?php  echo $item['weight'];?>" <?php  if($item['hasoption']) { ?>readonly<?php  } ?>/>
+					<input type="text" name="weight" id="weight" class="form-control hasoption" value="<?php  echo $item['weight'];?>" <?php  if($item['hasoption'] || $item['type']==3) { ?>readonly<?php  } ?>/>
 					<span class="input-group-addon">克</span>
 				</div>
 				<?php  } else { ?>
@@ -38,7 +38,7 @@
 			<label class="col-sm-1 control-label">库存</label>
 			<div class="col-sm-11">
 				<?php if( ce('goods' ,$item) ) { ?>
-				<input type="text" name="total" id="total" class="form-control hasoption" value="<?php  echo $item['total'];?>"  style="width:150px;display: inline;margin-right: 20px;" <?php  if($item['hasoption']) { ?>readonly<?php  } ?>/>
+				<input type="text" name="total" id="total" class="form-control hasoption" value="<?php  echo $item['total'];?>"  style="width:150px;display: inline;margin-right: 20px;" <?php  if($item['hasoption'] || $item['type']==3) { ?>readonly<?php  } ?>/>
 				<label class="checkbox-inline">
 					<input type="checkbox" id="showtotal" value="1" name="showtotal" <?php  if($item['showtotal']==1) { ?>checked<?php  } ?> />显示库存
 				</label>
@@ -317,10 +317,10 @@
 				$('#spec_item_' + specid).append(data);
 				var len = $("#spec_" + specid + " .spec_item_title").length -1;
 				$("#spec_" + specid + " .spec_item_title:eq(" +len+ ")").focus();
-				refreshOptions
-                                                                        if(type==3 && virtual==0){
-                                                                                    $(".choosetemp").show();
-                                                                         }
+				refreshOptions();
+				if(type==3 && virtual==0){
+					$(".choosetemp").show();
+				}
 			}
 		});
 	}
@@ -400,7 +400,7 @@
 		}
 	}
 
-//  商品类型如果为虚拟卡密则不允许修改库存
+	/*商品类型如果为虚拟卡密则不允许修改库存*/
 	if(type==3){
         html += '<th><div class=""><div style="padding-bottom:10px;text-align:center;">库存</div><div class="input-group"><input type="text" class="form-control  input-sm option_stock_all" readonly="readonly" VALUE=""/><span class="input-group-addon disabled"><a href="javascript:;" class="fa fa-angle-double-down" title="批量设置"></a></span></div></div></th>';
 	}else{
@@ -420,52 +420,65 @@
 		var k = 0,kid = 0,n=0;
 		for(var j=0;j<newlen;j++){
 			var rowspan = rowspans[m];
+            var spec_item = specs[m].items[kid] || {};
+            var spec_item_title = spec_item.title;
+            if(!spec_item_title || spec_item_title == 'undefined'){
+                spec_item_title = '';
+            }
 			if( j % rowspan==0){
-				h[m][j]={title: specs[m].items[kid].title, virtual: specs[m].items[kid].virtual,html: "<td class='full' rowspan='" +rowspan + "'>"+ specs[m].items[kid].title+"</td>\r\n",id: specs[m].items[kid].id};
+			    h[m][j]={title: spec_item_title, virtual: spec_item.virtual,html: "<td class='full' rowspan='" +rowspan + "'>"+ spec_item_title+"</td>\r\n",id: spec_item.id};
 			}
 			else{
-				h[m][j]={title:specs[m].items[kid].title,virtual: specs[m].items[kid].virtual, html: "",id: specs[m].items[kid].id};
+			    h[m][j]={title:spec_item_title,virtual: spec_item.virtual, html: "",id: spec_item.id};
 			}
 			n++;
 			if(n==rowspan){
-			kid++; if(kid>specs[m].items.length-1) { kid=0; }
-			n=0;
+				kid++; if(kid>specs[m].items.length-1) { kid=0; }
+				n=0;
 			}
 		}
 	}
-
 	var hh = "";
 	for(var i=0;i<newlen;i++){
-		hh+="<tr>";
+		if (i != 0) {
+			hh+="<tr style='border-top: 1px solid #eee'>";
+		} else {
+			hh+="<tr>";
+		}
+
 		var ids = [];
 		var titles = [];
-                                    var virtuals = [];
+		var virtuals = [];
 		for(var j=0;j<len;j++){
 			hh+=h[j][i].html;
 			ids.push( h[j][i].id);
 			titles.push( h[j][i].title);
-                           virtuals.push( h[j][i].virtual);
+		    virtuals.push( h[j][i].virtual);
 		}
-		ids =ids.join('_');
-		titles= titles.join('+');
 
+        var sortarr  = permute([],ids);
+        titles= titles.join('+');
+		ids = ids.join('_');
 		var val ={ id : "",title:titles, stock : "",presell : "",costprice : "",productprice : "",marketprice : "",weight:"",productsn:"",goodssn:"",virtual:virtuals };
-		if( $(".option_id_" + ids).length>0){
-			val ={
-				id : $(".option_id_" + ids+":eq(0)").val(),
-				title: titles,
-				stock : $(".option_stock_" + ids+":eq(0)").val(),
-				presell : $(".option_presell_" + ids+":eq(0)").val(),
-				costprice : $(".option_costprice_" + ids+":eq(0)").val(),
-				productprice : $(".option_productprice_" + ids+":eq(0)").val(),
-				marketprice : $(".option_marketprice_" + ids +":eq(0)").val(),
-                                    goodssn : $(".option_goodssn_" + ids +":eq(0)").val(),
-                                    productsn : $(".option_productsn_" + ids +":eq(0)").val(),
-				weight : $(".option_weight_" + ids+":eq(0)").val(),
-                                  virtual : virtuals
-			}
-		}
-
+		for(var kkk=0;kkk<sortarr.length;kkk++) {
+		    var sids = sortarr[kkk].join('_');
+            if ($(".option_id_" + sids).length > 0) {
+                val = {
+                    id: $(".option_id_" + sids + ":eq(0)").val(),
+                    title: titles,
+                    stock: $(".option_stock_" + sids + ":eq(0)").val(),
+                    presell: $(".option_presell_" + sids + ":eq(0)").val(),
+                    costprice: $(".option_costprice_" + sids + ":eq(0)").val(),
+                    productprice: $(".option_productprice_" + sids + ":eq(0)").val(),
+                    marketprice: $(".option_marketprice_" + sids + ":eq(0)").val(),
+                    goodssn: $(".option_goodssn_" + sids + ":eq(0)").val(),
+                    productsn: $(".option_productsn_" + sids + ":eq(0)").val(),
+                    weight: $(".option_weight_" + sids + ":eq(0)").val(),
+                    virtual: virtuals
+                }
+                break;
+            }
+        }
 		hh += '<td>'
         //  商品类型如果为虚拟卡密则不允许修改库存
         if(type==3){
@@ -504,7 +517,25 @@
 			$('.type-4').show();
 		}
 }
-
+             function permute(temArr,testArr){
+                 var permuteArr=[];
+                 var arr = testArr;
+                 function innerPermute(temArr){
+                     for(var i=0,len=arr.length; i<len; i++) {
+                         if(temArr.length == len - 1) {
+                             if(temArr.indexOf(arr[i]) < 0) {
+                                 permuteArr.push(temArr.concat(arr[i]));
+                             }
+                             continue;
+                         }
+                         if(temArr.indexOf(arr[i]) < 0) {
+                             innerPermute(temArr.concat(arr[i]));
+                         }
+                     }
+                 }
+                 innerPermute(temArr);
+                 return permuteArr;
+             }
 	function refreshDiscount() {
 		var html = '<table class="table table-bordered table-condensed"><thead><tr class="active">';
 		var specs = [];
@@ -525,7 +556,7 @@
 					title: __this.find(".spec_item_title").val(),
 					virtual: __this.find(".spec_item_virtual").val(),
 					show: __this.find(".spec_item_show").get(0).checked ? "1" : "0"
-				}
+				};
 				items.push(item);
 			});
 			spec.items = items;
@@ -577,20 +608,25 @@
 			var k = 0, kid = 0, n = 0;
 			for (var j = 0; j < newlen; j++) {
 				var rowspan = rowspans[m];
+                var spec_item = specs[m].items[kid] || {};
+                var spec_item_title = spec_item.title;
+                if(!spec_item_title || spec_item_title == 'undefined'){
+                    spec_item_title = '';
+                }
 				if (j % rowspan == 0) {
-					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
-						html: "<td class='full' rowspan='" + rowspan + "'>" + specs[m].items[kid].title + "</td>\r\n",
-						id: specs[m].items[kid].id
+				    h[m][j] = {
+						title: spec_item_title,
+						virtual: spec_item.virtual,
+						html: "<td class='full' rowspan='" + rowspan + "'>" + spec_item_title + "</td>\r\n",
+						id: spec_item.id
 					};
 				}
 				else {
-					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
+				    h[m][j] = {
+						title: spec_item_title,
+						virtual: spec_item.virtual,
 						html: "",
-						id: specs[m].items[kid].id
+						id: spec_item.id
 					};
 				}
 				n++;
@@ -754,20 +790,25 @@
 			var k = 0, kid = 0, n = 0;
 			for (var j = 0; j < newlen; j++) {
 				var rowspan = rowspans[m];
+                var spec_item = specs[m].items[kid] || {};
+                var spec_item_title = spec_item.title;
+                if(!spec_item_title || spec_item_title == 'undefined'){
+                    spec_item_title = '';
+                }
 				if (j % rowspan == 0) {
 					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
-						html: "<td class='full' rowspan='" + rowspan + "'>" + specs[m].items[kid].title + "</td>\r\n",
-						id: specs[m].items[kid].id
+						title: spec_item_title,
+						virtual: spec_item.virtual,
+						html: "<td class='full' rowspan='" + rowspan + "'>" + spec_item_title + "</td>\r\n",
+						id: spec_item.id
 					};
 				}
 				else {
 					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
+						title: spec_item_title,
+						virtual: spec_item.virtual,
 						html: "",
-						id: specs[m].items[kid].id
+						id: spec_item.id
 					};
 				}
 				n++;
@@ -927,20 +968,25 @@
 			var k = 0, kid = 0, n = 0;
 			for (var j = 0; j < newlen; j++) {
 				var rowspan = rowspans[m];
+                var spec_item = specs[m].items[kid] || {};
+                var spec_item_title = spec_item.title;
+                if(!spec_item_title || spec_item_title == 'undefined'){
+                    spec_item_title = '';
+                }
 				if (j % rowspan == 0) {
 					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
-						html: "<td class='full' rowspan='" + rowspan + "'>" + specs[m].items[kid].title + "</td>\r\n",
-						id: specs[m].items[kid].id
+						title: spec_item_title,
+						virtual: spec_item.virtual,
+						html: "<td class='full' rowspan='" + rowspan + "'>" + spec_item_title + "</td>\r\n",
+						id: spec_item.id
 					};
 				}
 				else {
 					h[m][j] = {
-						title: specs[m].items[kid].title,
-						virtual: specs[m].items[kid].virtual,
+						title: spec_item_title,
+						virtual: spec_item.virtual,
 						html: "",
-						id: specs[m].items[kid].id
+						id: spec_item.id
 					};
 				}
 				n++;

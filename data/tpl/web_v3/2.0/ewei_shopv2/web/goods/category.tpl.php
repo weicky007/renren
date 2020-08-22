@@ -133,7 +133,7 @@
                                                 <?php  if($third['enabled']==1) { ?>显示<?php  } else { ?>隐藏<?php  } ?></div>
 
                                                     <?php if(cv('goods.category.edit|goods.category.view')) { ?><a class='btn btn-default btn-sm btn-operation btn-op' href="<?php  echo webUrl('goods/category/edit', array('id' => $third['id']))?>" title="" >
-                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="添加子分类">
+                                                     <span data-toggle="tooltip" data-placement="top" title="" data-original-title="修改">
                                                         <i class="icow icow-bianji2"></i>
                                                          </span>
                                                     </a><?php  } ?>
@@ -226,5 +226,4 @@
         </script>
 
         <?php (!empty($this) && $this instanceof WeModuleSite || 1) ? (include $this->template('_footer', TEMPLATE_INCLUDEPATH)) : (include template('_footer', TEMPLATE_INCLUDEPATH));?>
-
 

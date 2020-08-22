@@ -3,7 +3,7 @@ defined('IN_IA') or exit('Access Denied');
 
 $config = array();
 
-$config['db']['master']['host'] = '119.45.35.161';
+$config['db']['master']['host'] = '127.0.0.1';
 $config['db']['master']['username'] = 'root';
 $config['db']['master']['password'] = 'heimakeji007../';
 $config['db']['master']['port'] = '3306';
@@ -13,11 +13,11 @@ $config['db']['master']['pconnect'] = 0;
 $config['db']['master']['tablepre'] = 'ims_';
 
 $config['db']['slave_status'] = false;
-$config['db']['slave']['1']['host'] = '';
-$config['db']['slave']['1']['username'] = '';
-$config['db']['slave']['1']['password'] = '';
+$config['db']['slave']['1']['host'] = '119.45.35.161';
+$config['db']['slave']['1']['username'] = 'root';
+$config['db']['slave']['1']['password'] = 'heimakeji007../';
 $config['db']['slave']['1']['port'] = '3307';
-$config['db']['slave']['1']['database'] = '';
+$config['db']['slave']['1']['database'] = 'sstshop';
 $config['db']['slave']['1']['charset'] = 'utf8';
 $config['db']['slave']['1']['pconnect'] = 0;
 $config['db']['slave']['1']['tablepre'] = 'ims_';
@@ -39,8 +39,8 @@ $config['setting']['filemode'] = 0644;
 $config['setting']['authkey'] = 'a283f128';
 $config['setting']['founder'] = '1';
 $config['setting']['development'] = 0;
-$config['setting']['referrer'] = 0;
-$config['setting']['https'] = 1;
+$config['setting']['referrer'] = 1;
+$config['setting']['https'] = 0;
 
 // --------------------------  CONFIG UPLOAD  --------------------------- //
 $config['upload']['image']['extentions'] = array('gif', 'jpg', 'pem', 'jpeg', 'png');

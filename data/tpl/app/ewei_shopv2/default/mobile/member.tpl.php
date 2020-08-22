@@ -14,13 +14,13 @@
 
 </style>
 <div class='fui-page  fui-page-current'>
-    <div class="fui-header">
+    <!--<div class="fui-header">
 		<div class="fui-header-left">
 			<a class="back" onclick='location.back()'></a>
 		</div>
 		<div class="title">会员中心</div>
 		<div class="fui-header-right"></div>
-	</div>
+	</div>-->
 
 	<div class='fui-content member-page navbar'>
 		<div style="overflow: hidden;height: 9rem;position: relative;background: #fff">

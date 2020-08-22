@@ -117,24 +117,24 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label">会员组浏览权限</label>
+		<label class="col-sm-2 control-label">标签组浏览权限</label>
 		<div class="col-sm-9 col-xs-12 chks" >
 			<?php if( ce('goods' ,$item) ) { ?>
 			<select name='showgroups[]' class='form-control select2' multiple=''>
-				<option value="0"  <?php  if($item['showgroups']!='' && is_array($item['showgroups'])  && in_array('0', $item['showgroups'])) { ?>selected<?php  } ?>>无分组</option>
+				<option value="0"  <?php  if($item['showgroups']!='' && is_array($item['showgroups'])  && in_array('0', $item['showgroups'])) { ?>selected<?php  } ?>>无会员标签组</option>
 				<?php  if(is_array($groups)) { foreach($groups as $group) { ?>
 				<option value="<?php  echo $group['id'];?>" <?php  if(is_array($item['showgroups']) && in_array($group['id'], $item['showgroups'])) { ?>selected<?php  } ?>><?php  echo $group['groupname'];?></option>
 				<?php  } } ?>
 			</select>
-			<span class='help-block'>不设置默认全部会员分组</span>
+			<span class='help-block'>不设置默认全部会员标签组</span>
 
 			<?php  } else { ?>
 			<div class='form-control-static'>
 				<?php  if($item['showgroups']=='') { ?>
-				全部会员等级
+				全部会员标签组
 				<?php  } else { ?>
 				<?php  if($item['showgroups']!='' && is_array($item['showgroups']) && in_array('0', $item['showgroups'])) { ?>
-				<?php echo empty($shop['levelname'])?'普通等级':$shop['levelname']?>;
+				<?php echo empty($shop['levelname'])?'无会员标签组':$shop['levelname']?>;
 				<?php  } ?>
 				<?php  if(is_array($levels)) { foreach($levels as $level) { ?>
 				<?php  if($item['showgroups']!='' && is_array($item['showgroups'])  && in_array($level['id'], $item['showgroups'])) { ?>
@@ -150,23 +150,23 @@
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-2 control-label">会员组购买权限</label>
+		<label class="col-sm-2 control-label">会员标签组购买权限</label>
 		<div class="col-sm-9 col-xs-12 chks" >
 			<?php if( ce('goods' ,$item) ) { ?>
 			<select name='buygroups[]' class='form-control select2' multiple=''>
-				<option value="0"  <?php  if($item['buygroups']!='' && is_array($item['buygroups'])  && in_array('0', $item['buygroups'])) { ?>selected<?php  } ?>>无分组</option>
+				<option value="0"  <?php  if($item['buygroups']!='' && is_array($item['buygroups'])  && in_array('0', $item['buygroups'])) { ?>selected<?php  } ?>>无标签组</option>
 				<?php  if(is_array($groups)) { foreach($groups as $group) { ?>
 				<option value="<?php  echo $group['id'];?>" <?php  if(is_array($item['buygroups']) && in_array($group['id'], $item['buygroups'])) { ?>selected<?php  } ?>><?php  echo $group['groupname'];?></option>
 				<?php  } } ?>
 			</select>
-			<span class='help-block'>不设置默认全部会员分组</span>
+			<span class='help-block'>不设置默认全部标签组</span>
 			<?php  } else { ?>
 			<div class='form-control-static'>
 				<?php  if($item['buygroups']=='') { ?>
-				全部会员等级
+				全部会员标签组
 				<?php  } else { ?>
 				<?php  if($item['buygroups']!='' && is_array($item['buygroups']) && in_array('0', $item['buygroups'])) { ?>
-				<?php echo empty($shop['levelname'])?'普通等级':$shop['levelname']?>;
+				<?php echo empty($shop['levelname'])?'无会员标签组':$shop['levelname']?>;
 				<?php  } ?>
 				<?php  if(is_array($levels)) { foreach($levels as $level) { ?>
 				<?php  if($item['buygroups']!='' && is_array($item['buygroups'])  && in_array($level['id'], $item['buygroups'])) { ?>

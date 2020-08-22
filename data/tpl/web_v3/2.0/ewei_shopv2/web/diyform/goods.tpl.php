@@ -86,7 +86,7 @@
 
     </div>
 
-    <div class="diyform-group" style="margin:0 25px;" <?php  if($item['diyformtype'] != 2) { ?>style="display:none;"<?php  } ?>>
+    <div class="diyform-group" style="margin:0 25px;  <?php  if($item['diyformtype']!=2) { ?>display:none;<?php  } ?>">
     <?php (!empty($this) && $this instanceof WeModuleSite || 1) ? (include $this->template('diyform/temp/tpl/data', TEMPLATE_INCLUDEPATH)) : (include template('diyform/temp/tpl/data', TEMPLATE_INCLUDEPATH));?>
     </div>
 

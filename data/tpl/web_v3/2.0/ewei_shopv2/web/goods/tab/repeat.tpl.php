@@ -45,7 +45,7 @@
 		<?php if( ce('goods' ,$item) ) { ?>
 		<label class="radio-inline"><input type="radio" name="buyagain_sale" value="1" <?php  if($item['buyagain_sale'] == 1) { ?>checked="true"<?php  } ?>   /> 是</label>
 		<label class="radio-inline"><input type="radio" name="buyagain_sale" value="0" <?php  if(empty($item['buyagain_sale'])) { ?>checked="true"<?php  } ?>/> 否</label>
-		<span class="help-block">重复购买时,是否与其他优惠共享!其他优惠享受后,在使用这个折扣</span>
+		<span class="help-block">重复购买时,是否与其他优惠共享!其他优惠享受后,在使用这个折扣（其他优惠不包含优惠券）</span>
 		<?php  } else { ?>
 		<div class='form-control-static'><?php  if(empty($item['buyagain_condition'])) { ?>否<?php  } else { ?>是<?php  } ?></div>
 		<?php  } ?>

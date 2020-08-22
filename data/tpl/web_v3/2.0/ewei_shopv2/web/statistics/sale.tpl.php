@@ -1,6 +1,14 @@
 <?php defined('IN_IA') or exit('Access Denied');?><?php (!empty($this) && $this instanceof WeModuleSite || 1) ? (include $this->template('_header', TEMPLATE_INCLUDEPATH)) : (include template('_header', TEMPLATE_INCLUDEPATH));?>
 
 <div class="page-header">当前位置：<span class="text-primary">销售统计</span></div>
+<div class="alert alert-primary">
+    <p><b>数据说明</b></p>
+    <p>本模块计算的数值是只有平台或本商户的数据。如果是总平台，那么会显示本平台的+本平台所有商户的数据。如果是商户的，那么只会展示本商户的。<br>
+        销售统计-成交额：
+        成交额=主商城成交额+多商户成交额之和。
+        本模块计算的数值是只有平台或本商户的数据。如果是总平台，那么会显示本平台的+本平台所有商户的数据。如果是商户的，那么只会展示本商户的。
+    </p>
+</div>
 <div class="page-content">
     <form action="./index.php" method="get" class="form-horizontal table-search">
             <input type="hidden" name="c" value="site" />
@@ -34,7 +42,7 @@
                 </span>
                 <span class="input-group-select">
                     <select name="type" class='form-control'>
-                        <option value='0' <?php  if($_GPC['type']==0) { ?>selected="selected"<?php  } ?>>交易额</option>
+                        <option value='0' <?php  if($_GPC['type']==0) { ?>selected="selected"<?php  } ?>>成交额</option>
                         <option value='1' <?php  if($_GPC['type']==1) { ?>selected="selected"<?php  } ?>>交易量</option>
 
                     </select>
@@ -55,8 +63,8 @@
 <div class="panel panel-default">
     <div class='panel-heading'>
 
-        <?php  if(empty($type)) { ?>交易额<?php  } else { ?>交易量<?php  } ?>：<span style="color:red; "><?php  echo $totalcount;?></span>，
-        最高<?php  if(empty($type)) { ?>交易额<?php  } else { ?>交易量<?php  } ?>：<span style="color:red; "><?php  echo $maxcount;?></span> <?php  if(!empty($maxcount_date)) { ?><span>(<?php  echo $maxcount_date;?></span>)<?php  } ?>
+        <?php  if(empty($type)) { ?>成交额<?php  } else { ?>交易量<?php  } ?>：<span style="color:red; "><?php  echo $totalcount;?></span>，
+        最高<?php  if(empty($type)) { ?>成交额<?php  } else { ?>交易量<?php  } ?>：<span style="color:red; "><?php  echo $maxcount;?></span> <?php  if(!empty($maxcount_date)) { ?><span>(<?php  echo $maxcount_date;?></span>)<?php  } ?>
 
     </div>
     <div class="panel-body">
@@ -66,7 +74,7 @@
                     <th style='width:100px;'>
                         <?php  if(empty($_GPC['month'])) { ?>月份<?php  } else { ?>日期<?php  } ?>
                     </th>
-                    <th style='width:200px;'><?php  if(empty($type)) { ?>交易额<?php  } else { ?>交易量<?php  } ?></th>
+                    <th style='width:200px;'><?php  if(empty($type)) { ?>成交额<?php  } else { ?>交易量<?php  } ?></th>
                     <th style="width: 65px;">所占比例</th>
                     <th></th>
                 </tr>
@@ -124,4 +132,3 @@
     get_days();
  </script>
 <?php (!empty($this) && $this instanceof WeModuleSite || 1) ? (include $this->template('_footer', TEMPLATE_INCLUDEPATH)) : (include template('_footer', TEMPLATE_INCLUDEPATH));?>
-

@@ -261,8 +261,9 @@
                     </a>
                     <?php  } } ?>
                 </div>
-                <div class="swiper-button-next swiper-button-white" style="z-index: 999999;"></div>
-                <div class="swiper-button-prev swiper-button-white" style="z-index: 999999;"></div>
+
+                <div class="swiper-button-next swiper-button-white"></div>
+                <div class="swiper-button-prev swiper-button-white"></div>
             </div>
         <script>
             var goodsGroup = $(".swiper-<?php  echo $diyitemid;?> .fui-goods-group");

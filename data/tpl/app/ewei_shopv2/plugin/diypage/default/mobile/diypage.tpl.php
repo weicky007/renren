@@ -1,22 +1,25 @@
 <?php defined('IN_IA') or exit('Access Denied');?><?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('_header', TEMPLATE_INCLUDEPATH)) : (include template('_header', TEMPLATE_INCLUDEPATH));?>
 <script>document.title = "<?php  if(!empty($page)&&!empty($page['data']['page']['title'])) { ?><?php  echo $page['data']['page']['title'];?><?php  } else { ?><?php  echo $_W['shopset']['shop']['name'];?><?php  } ?>"; </script>
 <link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/swiper/swiper.min.css">
-<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v="rel="stylesheet"type="text/css"/>
+<link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v=201705261648"rel="stylesheet"type="text/css"/>
 <style type="text/css">
     <?php  if(is_h5app()&&is_ios()) { ?>
     .fui-header ~ .diy-fixedsearch {top: 3.2rem;}
     .fui-header~.fui-content .fui-topmenu {top: 3.2rem;}
     <?php  } ?>
+    .fui-icon-group.col-6 .fui-icon-col {
+        width: 16.66%;
+    }
 </style>
 <?php  if($page['type']==4) { ?>
 <?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('commission/common', TEMPLATE_INCLUDEPATH)) : (include template('commission/common', TEMPLATE_INCLUDEPATH));?>
 <?php  } ?>
-<div class='fui-page  shop-index-page fui-page-current <?php  if($page['type']==3) { ?>member-page<?php  } else if($page['type']==4) { ?>page-commission-index<?php  } ?>' style="top: 0; background-color: <?php  echo $page['data']['page']['background'];?>; ">
+<div class='fui-page  shop-index-page fui-page-current <?php  if($page['type']==3) { ?>member-page<?php  } else if($page['type']==4) { ?>page-commission-index<?php  } ?>' style="top: 0;background-color: <?php  echo $page['data']['page']['background'];?>;">
 <?php  if(!empty($page['data']['page']['followbar'])) { ?>
 <?php  $this->followBar(true, $page['merch'])?>
 <?php  } ?>
 <?php  if(!is_weixin()) { ?>
-<div class="fui-header" style="max-width:750px;">
+<div class="fui-header">
     <div class="fui-header-left">
         <?php  if($page['type']==1) { ?>
         <a href="<?php  echo mobileUrl()?>" class="external"><i class="icon icon-home"></i> </a>
@@ -32,11 +35,11 @@
 <?php  } ?>
 
 <div id="amap-container" style="display: none;"></div>
-<div class="fui-content <?php  if($page['diymenu']>-1) { ?>navbar<?php  } ?>" id="container" style="background-color: <?php  echo $page['data']['page']['background'];?>; <?php  if($page['diymenu']>-1) { ?>padding-bottom: 0;<?php  } ?> <?php  if(!empty($diyitem_search) && empty($diy_topmenu)) { ?>margin-top: 44px;<?php  } ?>">
+<div class="fui-content <?php  if($page['diymenu']>-1) { ?>navbar<?php  } ?>" id="container" style="background-color: <?php  echo $page['data']['page']['background'];?>;<?php  if($page['diymenu']>-1) { ?>padding-bottom: 0;<?php  } ?> <?php  if(!empty($diyitem_search) && empty($diy_topmenu)) { ?>margin-top: 44px;<?php  } ?>">
     <?php  if($diy_topmenu) { ?>
     <?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('diypage/template/tpl_topmenu_data', TEMPLATE_INCLUDEPATH)) : (include template('diypage/template/tpl_topmenu_data', TEMPLATE_INCLUDEPATH));?>
     <?php  } ?>
-    <div class="default-items">
+    <div class="default-items" style="<?php  if($page['data']['page']['backgroundimg'] != '') { ?>background-image:url(<?php  echo tomedia($page['data']['page']['backgroundimg'])?>);background-repeat:no-repeat;background-size:100%;<?php  } else { ?>background-color: <?php  echo $page['data']['page']['background'];?>;<?php  } ?>">
         <?php  if(!empty($diyitems)) { ?>
         <?php  if(is_array($diyitems)) { foreach($diyitems as $diyitemid => $diyitem) { ?>
         <?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('diypage/template/tpl_'.$diyitem['id'], TEMPLATE_INCLUDEPATH)) : (include template('diypage/template/tpl_'.$diyitem['id'], TEMPLATE_INCLUDEPATH));?>

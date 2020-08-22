@@ -2,7 +2,7 @@
     <div class='fui-swipe'>
         <div class='fui-swipe-wrapper'>
             <?php  if(is_array($diyitem['data'])) { foreach($diyitem['data'] as $banneritem) { ?>
-                <a class='fui-swipe-item' href="<?php  echo $banneritem['linkurl'];?>" data-nocache="true"><img src="<?php  echo tomedia($banneritem['imgurl'])?>" style="display: block; width: 100%; height: auto;"/></a>
+                <a class='fui-swipe-item' href="<?php  echo $banneritem['linkurl'];?>" data-nocache="true"><img src="<?php  echo tomedia($banneritem['imgurl'])?>" style="display: block; width: 100%; height: auto;padding:<?php  echo $diyitem['style']['paddingtop'];?>px <?php  echo $diyitem['style']['paddingleft'];?>px;border-radius:<?php  echo $diyitem['style']['yuan'];?>px;"/></a>
             <?php  } } ?>
         </div>
         <style>
@@ -12,3 +12,4 @@
         <div class="fui-swipe-page <?php  echo $diyitem['style']['dotalign'];?> <?php  echo $diyitem['style']['dotstyle'];?>" style="padding: 0 <?php  echo $diyitem['style']['leftright'];?>px; bottom: <?php  echo $diyitem['style']['bottom'];?>px; "></div>
     </div>
 <?php  } ?>
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+4-->
