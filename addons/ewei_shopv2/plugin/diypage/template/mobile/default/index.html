@@ -19,7 +19,7 @@
 {php $this->followBar(true, $page['merch'])}
 {/if}
 {if !is_weixin()}
-<div class="fui-header">
+<!--<div class="fui-header">
     <div class="fui-header-left">
         {if $page['type']==1}
         <a href="{php echo mobileUrl()}" class="external"><i class="icon icon-home"></i> </a>
@@ -27,7 +27,7 @@
     </div>
     <div class="title">{if !empty($page)&&!empty($page['data']['page']['title'])}{$page['data']['page']['title']}{else}{$_W['shopset']['shop']['name']}{/if}</div>
     <div class="fui-header-right"></div>
-</div>
+</div>-->
 {/if}
 
 {if !empty($diyitem_search) && empty($diy_topmenu)}
