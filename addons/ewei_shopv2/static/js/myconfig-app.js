@@ -1,6 +1,6 @@
 var version = +new Date();
 require.config({
-    //urlArgs: 'v=' + version,
+    urlArgs: 'v=' + version,
     baseUrl: '../addons/ewei_shopv2/static/js/app/',
     paths: {
         'jquery': '../dist/jquery/jquery-1.11.1.min',

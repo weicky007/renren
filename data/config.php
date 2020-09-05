@@ -40,7 +40,7 @@ $config['setting']['authkey'] = 'a283f128';
 $config['setting']['founder'] = '1';
 $config['setting']['development'] = 0;
 $config['setting']['referrer'] = 1;
-$config['setting']['https'] = 0;
+$config['setting']['https'] = 1;
 
 // --------------------------  CONFIG UPLOAD  --------------------------- //
 $config['upload']['image']['extentions'] = array('gif', 'jpg', 'pem', 'jpeg', 'png');
@@ -64,7 +64,7 @@ $config['setting']['proxy']['auth'] = '';
 $config['setting']['redis']['server'] = '127.0.0.1';
 $config['setting']['redis']['port'] = 6379;
 $config['setting']['redis']['pconnect'] = 1;
-$config['setting']['redis']['auth'] = '';  //redis密码, 默认为空
-$config['setting']['redis']['requirepass'] = '';  //redis密码，默认为空，没用人人商城删除这行
+$config['setting']['redis']['auth'] = 'heimakeji007../';  //redis密码, 默认为空
+$config['setting']['redis']['requirepass'] = 'heimakeji007../';  //redis密码，默认为空，没用人人商城删除这行
 $config['setting']['redis']['timeout'] = 1;
 $config['setting']['redis']['session'] = 1;

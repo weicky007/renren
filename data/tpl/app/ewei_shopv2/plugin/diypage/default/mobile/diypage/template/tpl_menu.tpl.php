@@ -3,7 +3,7 @@
     <?php  if(empty($diyitem['style']['showtype']) || count($diyitem['data'])<=intval($diyitem['style']['pagenum'])) { ?>
         <div class="fui-icon-group noborder col-<?php  echo $diyitem['style']['rownum'];?> <?php  echo $diyitem['style']['navstyle'];?>" style="background: <?php  echo $diyitem['style']['background'];?>;margin: <?php  echo $diyitem['style']['margintop'];?>px <?php  echo $diyitem['style']['marginleft'];?>px;border-radius:<?php  echo $diyitem['style']['yuan'];?>px;box-shadow:0 0 <?php  echo $diyitem['style']['yinying'];?>px <?php  echo $diyitem['style']['yinying'];?>px <?php  echo $diyitem['style']['yinyingcolor'];?>;">
             <?php  if(is_array($diyitem['data'])) { foreach($diyitem['data'] as $menuitem) { ?>
-                <a class="fui-icon-col external" href="<?php  echo $menuitem['linkurl'];?>" data-nocache="true" style="margin:<?php  echo $diyitem['style']['anniu'];?>px 0px;padding: 0px 0px;height: 70px;">
+                <a class="fui-icon-col external" href="<?php  echo $menuitem['linkurl'];?>" data-nocache="true" style="background-color:#FFFFFF; margin:<?php  echo $diyitem['style']['anniu'];?>px 0px;padding: 0px 0px;height: 70px;">
                     <div class="icon"><img src="<?php  echo tomedia($menuitem['imgurl'])?>"></div>
                     <div class="text" style="color: <?php  echo $menuitem['color'];?>;"><?php  echo $menuitem['text'];?></div>
                 </a>
