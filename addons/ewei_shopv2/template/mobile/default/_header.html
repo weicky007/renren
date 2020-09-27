@@ -6,7 +6,7 @@
     <script> document.documentElement.style.fontSize =document.documentElement.clientWidth/750*40 +"px";</script>
     <meta name="format-detection" content="telephone=no" />
     <title>{if empty($this->merch_user)}{$_W['shopset']['shop']['name']}{else}{php echo $this->merch_user['merchname']}{/if}</title>
-
+    <link rel="shortcut icon" href="<?php  echo $_W['siteroot'];?><?php  echo $_W['config']['upload']['attachdir'];?>/<?php  if(!empty($_W['setting']['copyright']['icon'])) { ?><?php  echo $_W['setting']['copyright']['icon'];?><?php  } else { ?>images/global/wechat.jpg<?php  } ?>" />
     <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/static/js/dist/foxui/css/foxui.min.css?v=0.2">
     <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/style.css">
     {if is_h5app()}
@@ -49,7 +49,7 @@
         }
     </script>
 
-
+    <script type="text/javascript" src="{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=utility&a=visit&do=showjs&m={$_W['current_module']['name']}"></script>
 
     {if !empty($_W['shopset']['shop']['loading'])}
     <style>.fui-goods-group.block .fui-goods-item .image {background-image: url("{php echo tomedia($_W['shopset']['shop']['loading'])}");}</style>

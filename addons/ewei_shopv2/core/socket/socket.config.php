@@ -8,7 +8,7 @@
 define('SOCKET_SERVER_DEBUG', false);
 
 // 设置服务端IP
-define('SOCKET_SERVER_IP', '127.0.0.1');
+define('SOCKET_SERVER_IP', 'localhost');
 
 // 设置服务端端口
 define('SOCKET_SERVER_PORT', '9501');
@@ -17,10 +17,10 @@ define('SOCKET_SERVER_PORT', '9501');
 define('SOCKET_SERVER_SSL', true);
 
 // 设置SSL KEY文件路径
-define('SOCKET_SERVER_SSL_KEY_FILE', '/etc/letsencrypt/live/mb.sstjkkj.com/privkey.pem');
+define('SOCKET_SERVER_SSL_KEY_FILE', '/var/www/html/Nginx/2_mb.sstjkkj.com.key');
 
 // 设置SSL CERT文件路径
-define('SOCKET_SERVER_SSL_CERT_FILE', '/etc/letsencrypt/live/mb.sstjkkj.com/fullchain.pem');
+define('SOCKET_SERVER_SSL_CERT_FILE', '/var/www/html/Nginx/1_mb.sstjkkj.com_bundle.crt');
 
 // 设置启动的worker进程数
 define('SOCKET_SERVER_WORKNUM', 8);

@@ -24,7 +24,7 @@
                     <ul class="fui-cell-group">
                         <li class="fui-cell">商城名称：<span class="text"><?php  echo $shop_data['name'];?></span></li>
                         <li class="fui-cell">商城介绍：<span class="text"><?php  echo $shop_data['description'];?></span></li>
-                        <li class="fui-cell">使用应用：<span class='text-no'><?php  echo $pluginnum;?></span>个 <a href="<?php  echo webUrl('plugins')?>" class="text-primary">查看</a></li>
+                        <li class="fui-cell">使用应用：<span class='text-no'><?php  echo substr($pluginnum,6);?></span>个 <a href="<?php  echo webUrl('plugins')?>" class="text-primary">查看</a></li>
                     </ul>
                 </div>
             </div>

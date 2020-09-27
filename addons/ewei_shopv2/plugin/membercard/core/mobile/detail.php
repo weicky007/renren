@@ -81,7 +81,7 @@ class Detail_EweiShopV2Page extends PluginMobilePage
 			$card_list[$key] = $value;
 		}
 
-		include $this->template();
+		include $this->template("membercard/picker");
 	}
 
 	public function get_list()
